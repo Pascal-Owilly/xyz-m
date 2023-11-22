@@ -5,11 +5,10 @@ const Home = () => {
 	return(
 
 		<>
-
 		<div className="header">
         <div className="header-left">
           <div className="menu-icon bi bi-list"></div>
-          <div className="search-toggle-icon bi bi-search" data-toggle="header_search"></div>
+          <div className="search-toggle-icon bi bi-search" data-toggle="header_searc"></div>
           <div className="header-search">
             <form>
               <div className="form-group mb-0">
@@ -33,6 +32,7 @@ const Home = () => {
             </form>
           </div>
         </div>
+
         <div className="header-right">
 				<div className="dashboard-setting user-notification">
 					<div className="dropdown">
@@ -129,6 +129,7 @@ const Home = () => {
 				</div>
 			</div>    
     </div>
+	
 	<div className="right-sidebar">
 			<div className="sidebar-title">
 				<h3 className="weight-600 font-16 text-blue">
@@ -212,7 +213,7 @@ const Home = () => {
 						</div>
 					</div>
 
-					<h4 className="weight-600 font-18 pb-10">Menu List Icon</h4>
+				<h4 className="weight-600 font-18 pb-10">Menu List Icon</h4>
 					<div className="sidebar-radio-group pb-30 mb-10">
 						<div className="custom-control custom-radio custom-control-inline">
 							<input
@@ -298,6 +299,7 @@ const Home = () => {
 				</div>
 			</div>
 		</div>
+
 <div className="left-side-bar">
   <div className="brand-logo">
   <a href="/" style={{ color: '#999999', fontSize: '18px' }}>
@@ -307,6 +309,7 @@ const Home = () => {
       <i className="ion-close-round"></i>
     </div>
   </div>
+  
   <div className="menu-block customscroll">
     <div className="sidebar-menu">
       <ul id="accordion-menu">
@@ -316,12 +319,14 @@ const Home = () => {
             ><span className="mtext">Home</span>
           </a>
           <ul className="submenu">
-            <li><a href="index.html">Supplier Dashboard</a></li>
-            <li><a href="index2.html">Buyer Dashboard </a></li>
-            <li><a href="index3.html">Bank Dashboard </a></li>
+            <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
+            <li><a href="buyer_dashboard">Buyer Dashboard </a></li>
+            <li><a href="integrated_banking">Bank Dashboard </a></li>
+			<li><a href="employee_dashboard">Employee Dashboard</a></li>
+            <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
+            <li><a href="inventory-dashboard">Inventory Dashboard </a></li>
           </ul>
         </li>
-
         <li>
           <a href="calendar.html" className="dropdown-toggle no-arrow">
             <span className="micon bi bi-calendar4-week"></span
@@ -344,82 +349,136 @@ const Home = () => {
 </div>
 
   <div className="mobile-menu-overlay"></div>
-
   <div className="main-container">
+
   <div className="">
-  <div className="container-fluid">
-	<h2 className='mb-2'>XYZ Administration </h2>
-  <div className="row">
-
-    <div className="col-lg-3 col-md-6 mb-3">
-      <div className="card-box height-100-p widget-style3">
-        <div className="d-flex flex-wrap">
-          <div className="widget-data">
-            <div className="weight-700 font-24 text-dark">Buyers</div>
-            <div className="font-14 text-secondary weight-500">5000</div>
+  <div className="container">
+  <div className="row" style={{ marginTop: '100vh' }}>
+        {/* Step 1: Welcome Message */}
+        <div className="col-md-12 col-xs-12 mb-4">
+          <div className="p-4 border rounded bg-light shadow">
+            <h2 className="text-center font-weight-bold">Welcome to Goat SCM System!</h2>
+            <p className="text-center">
+              Seamlessly manage your goat supply chain for efficiency and transparency.
+            </p>
           </div>
-          <div className="widget-icon">
-            <div className="icon" data-color="#09cc06">
-              <i className="fas fa-plane"></i>
-            </div>
+        </div>
+
+        {/* Step 2: Supplier's Journey */}
+        <div className="col-md-3 col-xs-12 mb-4">
+          <div className="p-4 border rounded bg-light shadow">
+            <h5 className="font-weight-bold">Step 1: Supplier's Journey</h5>
+            <p>
+              Goat breeders register, supply goats to XYZ Abattoir, and receive payments securely with fingerprint authentication.
+            </p>
+          </div>
+        </div>
+
+        {/* Step 3: XYZ Abattoir Operations */}
+        <div className="col-md-3 col-xs-12 mb-4">
+          <div className="p-4 border rounded bg-light shadow">
+            <h5 className="font-weight-bold">Step 2: XYZ Abattoir Operations</h5>
+            <p>
+              XYZ Abattoir efficiently processes goat supplies, tracks inventory, and ensures secure handling using fingerprint authentication.
+            </p>
+          </div>
+        </div>
+
+        {/* Step 3: Inventory Management */}
+        <div className="col-md-3 col-xs-12 mb-4">
+          <div className="p-4 border rounded bg-light shadow">
+            <h5 className="font-weight-bold">Step 3: Inventory Management</h5>
+            <p>
+              Comprehensive database tracking goat inventory, status, and categorizing export and local sales parts.
+            </p>
+          </div>
+        </div>
+
+        {/* Step 4: Slaughterhouse Processes */}
+        <div className="col-md-3 col-xs-12 mb-4">
+          <div className="p-4 border rounded bg-light shadow">
+            <h5 className="font-weight-bold">Step 4: Slaughterhouse Processes</h5>
+            <p>
+              State-of-the-art facility for slaughtering and processing goats, with detailed weight tracking and part segregation.
+            </p>
+          </div>
+        </div>
+
+        {/* Step 5: Export Handling */}
+        <div className="col-md-3 col-xs-12 mb-4">
+          <div className="p-4 border rounded bg-light shadow">
+            <h5 className="font-weight-bold">Step 5: Export Handling</h5>
+            <p>
+              Export cuts stored in a chilled warehouse, with real-time monitoring of shipping manifests and logistics.
+            </p>
+          </div>
+        </div>
+
+        {/* Step 6: Local Sales */}
+        <div className="col-md-3 col-xs-12 mb-4">
+          <div className="p-4 border rounded bg-light shadow">
+            <h5 className="font-weight-bold">Step 5: Local Sales</h5>
+            <p>
+              Screens for easy entry of non-export part sales with integrated MPESA paybill for seamless payments.
+            </p>
+          </div>
+        </div>
+
+        {/* Step 7: Integrated Banking and Payment Systems */}
+        <div className="col-md-3 col-xs-12 mb-4">
+          <div className="p-4 border rounded bg-light shadow">
+            <h5 className="font-weight-bold">Step 7: Integrated Banking and Payment Systems</h5>
+            <p>
+              Banking dashboard to catalog live deals, track deals at various stages, and manage financed and paid-off deals.
+            </p>
+          </div>
+        </div>
+
+        {/* Step 8: Management Dashboards */}
+        <div className="col-md-3 col-xs-12 mb-4">
+          <div className="p-4 border rounded bg-light shadow">
+            <h5 className="font-weight-bold">Step 8: Buyer and Supplier Dashboards</h5>
+            <p>
+              Comprehensive dashboards for insights into inventory levels, order fulfillment, supplier payments, and sales data.
+            </p>
+          </div>
+        </div>
+
+        {/* Step 9: Security Features */}
+        <div className="col-md-3 col-xs-12 mb-4">
+          <div className="p-4 border rounded bg-light shadow">
+            <h5 className="font-weight-bold">Step 9: Security features</h5>
+            <p>
+              Prioritize security with fingerprint authentication, access controls, and encrypted connections for data integrity.
+            </p>
+          </div>
+        </div>
+
+        {/* Step 10: Client Dashboard */}
+        <div className="col-md-3 col-xs-12 mb-4">
+          <div className="p-4 border rounded bg-light shadow">
+            <h5 className="font-weight-bold">Step 10: Client Dashboard</h5>
+            <p>
+              Client dashboard for invoicing buyers with quantity, price, and delivery timelines, and the ability to create multiple buyer accounts.
+            </p>
+          </div>
+        </div>
+
+        {/* Step 11: Processing Dashboard */}
+        <div className="col-md-3 col-xs-12 mb-4">
+          <div className="p-4 border rounded bg-light shadow">
+            <h5 className="font-weight-bold">Step 12: Processing Dashboard</h5>
+            <p>
+              Streamlined processing dashboard for a smooth flow from supply to export or local sales.
+            </p>
           </div>
         </div>
       </div>
-    </div>
 
-    <div className="col-lg-3 col-md-6 mb-3">
-      <div className="card-box height-100-p widget-style3">
-        <div className="d-flex flex-wrap">
-          <div className="widget-data">
-            <div className="weight-700 font-24 text-dark">Suppliers</div>
-            <div className="font-14 text-secondary weight-500">150</div>
-          </div>
-          <div className="widget-icon">
-            <div className="icon" data-color="#09cc06">
-              <i className="fas fa-plane"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div className="col-lg-3 col-md-6 mb-3">
-      <div className="card-box height-100-p widget-style3">
-        <div className="d-flex flex-wrap">
-          <div className="widget-data">
-            <div className="weight-700 font-24 text-dark">Earnings</div>
-            <div className="font-14 text-secondary weight-500">Kes 5,000,000</div>
-          </div>
-          <div className="widget-icon">
-            <div className="icon" data-color="#09cc06">
-              <i className="fas fa-plane"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div className="col-lg-3 col-md-12 mb-3">
-      <div className="card-box height-100-p widget-style3">
-        <div className="d-flex flex-wrap">
-          <div className="widget-data">
-            <div className="weight-700 font-24 text-dark">Communities</div>
-            <div className="font-14 text-secondary weight-500">3000</div>
-          </div>
-          <div className="widget-icon">
-            <div className="icon" data-color="#09cc06">
-              <i className="fas fa-plane"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
+<a href='register'><button>Register to supply</button></a>
 
 			</div>
-			</div>
+			</div></div>
 
 </>
 

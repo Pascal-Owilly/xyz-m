@@ -44,12 +44,12 @@ const SignUpForm = () => {
 
   return (
     <div style={{ height: 'auto', backgroundColor: '#fff' }}>
-      <div className='container'>
+      {/* <div className='container'>
         <div className='row'>
-          <div className='col-md-4'></div>
-          <div className='col-md-4' style={{ marginTop: '17vh' }}>
+          <div className='col-md-2'></div> */}
+          <div className='col-md-12' style={{ marginTop: '17vh' }}>
             <form
-              className='card p-3 what-card-navbar m-1 mb-5'
+              className='card p-3 m-1 mb-5'
               style={{  
                 width: '100%',
                 borderRadius: '0',
@@ -145,10 +145,10 @@ const SignUpForm = () => {
               </p>
             </form>
           </div>
-          <div className='col-md-4'></div>
+          <div className='col-md-2'></div>
         </div>
-      </div>
-    </div>
+    //   </div>
+    // </div>
   );
 };
 

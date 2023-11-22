@@ -346,7 +346,7 @@ const Home = () => {
   <div className="mobile-menu-overlay"></div>
 
  <div className='main-container'>
-  <h2>Buyer Dashboard</h2>
+  <h2>Suppliers/Goat Breeders Dashboard</h2>
   <p>Hello Marial</p>
  </div>
 

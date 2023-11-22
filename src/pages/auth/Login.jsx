@@ -28,7 +28,7 @@ const LoginTest = () => {
       e.preventDefault();
     }
     try {
-      const authToken = await authService.login(loginData);
+      const authToken = await AuthService.login(loginData);
       setIsLoggedIn(true);
       Cookies.set('authToken', authToken, { expires: 10, sameSite: 'None', secure: true });
 
@@ -137,7 +137,7 @@ const LoginTest = () => {
             </button>
             <hr />
             <p className='mb-2 text-secondary'>
-              Don't have an account? <Link to='/signup'>Signup</Link>
+              Don't have an account? <Link to='/register'>Signup</Link>
             </p>
             <p className='mb-2 text-secondary'>
               <Link to='/forgot-password'>Forgot your password?</Link>

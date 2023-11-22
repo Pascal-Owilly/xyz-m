@@ -316,12 +316,14 @@ const Home = () => {
             ><span className="mtext">Home</span>
           </a>
           <ul className="submenu">
-            <li><a href="index.html">Supplier Dashboard</a></li>
-            <li><a href="index2.html">Buyer Dashboard </a></li>
-            <li><a href="index3.html">Bank Dashboard </a></li>
+            <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
+            <li><a href="buyer_dashboard">Buyer Dashboard </a></li>
+            <li><a href="integrated_banking">Bank Dashboard </a></li>
+			<li><a href="employee_dashboard">Employee Dashboard</a></li>
+            <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
+            <li><a href="inventory-dashboard">Inventory Dashboard </a></li>
           </ul>
         </li>
-
         <li>
           <a href="calendar.html" className="dropdown-toggle no-arrow">
             <span className="micon bi bi-calendar4-week"></span
@@ -345,10 +347,81 @@ const Home = () => {
 
   <div className="mobile-menu-overlay"></div>
 
- <div className='main-container'>
-  <h2>Buyer Dashboard</h2>
-  <p>Hello Marial</p>
- </div>
+  <div className="main-container">
+  <div className="">
+  <div className="container-fluid">
+	<h2 className='mb-2'>XYZ Administration </h2>
+  <div className="row">
+
+    <div className="col-lg-3 col-md-6 mb-3">
+      <div className="card-box height-100-p widget-style3">
+        <div className="d-flex flex-wrap">
+          <div className="widget-data">
+            <div className="weight-700 font-24 text-dark">Buyers</div>
+            <div className="font-14 text-secondary weight-500">5000</div>
+          </div>
+          <div className="widget-icon">
+            <div className="icon" data-color="#09cc06">
+              <i className="fas fa-plane"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="col-lg-3 col-md-6 mb-3">
+      <div className="card-box height-100-p widget-style3">
+        <div className="d-flex flex-wrap">
+          <div className="widget-data">
+            <div className="weight-700 font-24 text-dark">Suppliers</div>
+            <div className="font-14 text-secondary weight-500">150</div>
+          </div>
+          <div className="widget-icon">
+            <div className="icon" data-color="#09cc06">
+              <i className="fas fa-plane"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="col-lg-3 col-md-6 mb-3">
+      <div className="card-box height-100-p widget-style3">
+        <div className="d-flex flex-wrap">
+          <div className="widget-data">
+            <div className="weight-700 font-24 text-dark">Earnings</div>
+            <div className="font-14 text-secondary weight-500">Kes 5,000,000</div>
+          </div>
+          <div className="widget-icon">
+            <div className="icon" data-color="#09cc06">
+              <i className="fas fa-plane"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="col-lg-3 col-md-12 mb-3">
+      <div className="card-box height-100-p widget-style3">
+        <div className="d-flex flex-wrap">
+          <div className="widget-data">
+            <div className="weight-700 font-24 text-dark">Communities</div>
+            <div className="font-14 text-secondary weight-500">3000</div>
+          </div>
+          <div className="widget-icon">
+            <div className="icon" data-color="#09cc06">
+              <i className="fas fa-plane"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+			</div>
+			</div>
 
 </>
 
