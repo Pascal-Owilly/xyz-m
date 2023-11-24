@@ -14,7 +14,7 @@ const authService = {
   },
   requestPasswordReset: async (email) => {
     try {
-      const response = await axios.post(`${BASE_URL}/api/auth/password/reset/`, { email });
+      const response = await axios.post(`${BASE_URL}/authentication/password/reset/`, { email });
       return response;
     } catch (error) {
       throw error;

@@ -69,7 +69,7 @@ const LoginTest = () => {
 
     // Redirect to another page if the user is already logged in
     if (isLoggedIn) {
-      navigate('/'); // Replace '/dashboard' with your desired route
+      navigate('/homepage'); // Replace '/dashboard' with your desired route
     }
   }, [isLoggedIn]);
 
@@ -83,11 +83,12 @@ const LoginTest = () => {
   };
 
   return (
-    <div className='container-fluid' style={{ backgroundColor: '#fff' }}>
-      <div className='row' style={{ height: '100vh', backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className='col-md-4'></div>
-        <div className='col-md-4'>
-          <form className='what-card-btn-login p-4' onSubmit={handleLoginSubmit}
+    <div className='main-container mb-5'>
+
+<div className='' style={{ height: 'auto', backgroundColor: 'transparent',right:0 }}>
+      <div className='row m-auto' style={{ height: 'auto', backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className='col-md-12'>
+          <form className='what-card-btn-login p-4  ' onSubmit={handleLoginSubmit}
            style={{  
            width: '100%',
            borderRadius: '0',
@@ -140,7 +141,7 @@ const LoginTest = () => {
               Don't have an account? <Link to='/register'>Signup</Link>
             </p>
             <p className='mb-2 text-secondary'>
-              <Link to='/forgot-password'>Forgot your password?</Link>
+              <Link to='/password_reset'>Forgot your password?</Link>
             </p>
           </form>
         </div>
@@ -153,6 +154,7 @@ const LoginTest = () => {
     </div>
   )}
   </>
+    </div>
     </div>
 
   );

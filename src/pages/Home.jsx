@@ -1,10 +1,83 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Home = () => {
+const navigate =useNavigate()
+  const baseUrl = 'http://127.0.0.1:8000';
+  const [profile, setProfile] = useState([]);
+
+  const authToken = Cookies.get('authToken');
+  const [user, setUser] = useState({})
+
+
+useEffect(() => {
+  const storedToken = Cookies.get('authToken'); // Retrieve the token from the cookie
+  if (storedToken) {
+    setIsLoggedIn(true);
+  }
+  fetchProfile();
+  fetchUserData()
+}, []);
+
+const fetchUserData = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/authentication/user/`, {
+      headers: {
+        Authorization: `Token ${authToken}`,
+      },
+    });
+    const userData = response.data;
+    setUser(userData);
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+  }
+};
+
+const fetchProfile = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/profile/profile/`, {
+      headers: {
+        Authorization: `Token ${authToken}`,
+      },
+    });
+    const userProfile = response.data;
+    setProfile(userProfile);
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+  }
+};
+
+const [isLoggedIn, setIsLoggedIn] = useState(false); // Track user's authentication state
+
+	const logout = async () => {
+		try {
+		  await axios.post(`${baseUrl}/authentication/logout/`);
+		  
+		  // Remove the authToken cookie
+		  Cookies.remove('authToken', { sameSite: 'None', secure: true });
+		  window.location.reload()
+	  
+		  setFlashMessage({ message: 'You have successfully logged out', type: 'success' });
+		  navigate('/homepage')
+	  
+		} catch (error) {
+		  setFlashMessage({ message: 'Failed to logout', type: 'error' });
+		}
+	  };
+
+	const [isChecked, setIsChecked] = useState(false);
+
+	// Handle the change event for the checkbox
+	const handleCheckboxChange = () => {
+	  setIsChecked(!isChecked);
+	};
 
 	return(
 
 		<>
+		
 		<div className="header">
         <div className="header-left">
           <div className="menu-icon bi bi-list"></div>
@@ -94,6 +167,8 @@ const Home = () => {
 				</div>
 				<div className="user-info-dropdown">
 					<div className="dropdown">
+					{isLoggedIn && (
+
 						<a
 							className="dropdown-toggle"
 							href="#"
@@ -101,25 +176,61 @@ const Home = () => {
 							data-toggle="dropdown"
 						>
 							<span className="user-icon">
+							{profile && profile.profile_pic && (
+                        <>
+                          <img
+                            src={`${baseUrl}${profile.profile_pic}`}
+                            style={{ width: '55px', height:'55px'}}
+                            alt=""
+                          />
+                        </>
+							)}
 							</span>
-							<span className="user-name">Marial Lugare</span>
+							
+							<span style={{textTransform:'capitalize'}} className="user-name">{user.username}</span>
 						</a>
+							)}
 						<div
 							className="dropdown-menu dropdown-menu-right dropdown-menu-icon-list"
 						>
-							<a className="dropdown-item" href="profile.html"
+							<a className="dropdown-item" href="/profile"
 								><i className="dw dw-user1"></i> Profile</a
 							>
-							<a className="dropdown-item" href="profile.html"
+							
+							<a className="dropdown-item" href=""
 								><i className="dw dw-settings2"></i> Setting</a
 							>
 							<a className="dropdown-item" href="faq.html"
 								><i className="dw dw-help"></i> Help</a
 							>
-							<a className="dropdown-item" href="login.html"
-								><i className="dw dw-logout"></i> Log Out</a
-							>
+
+							{/* Log Out button with onClick event */}
+
+							{isLoggedIn && (
+							<a className="dropdown-item" onClick={logout}>
+							<i className="dw dw-logout"></i> 
+							Log Out
+							</a>
+							)}
 						</div>
+					</div>
+					<div>
+						{!isLoggedIn && (
+							<>
+							<div className='d-flex'>
+							<div>
+							<a href='/login'>
+							<button className='mx-2 btn-outline-secondary btn-sm mt-3 text-white '>Login</button>
+							</a>
+</div>
+<div>
+							<a href='/register'>
+							<button className='mx-2 mt-3 btn-outline-secondary btn-sm text-white '>Supplier SignUp</button>
+							</a>
+							</div>
+							</div>
+							</>
+						)}
 					</div>
 				</div>
 				<div className="github-link">
@@ -175,38 +286,38 @@ const Home = () => {
 					<h4 className="weight-600 font-18 pb-10">Menu Dropdown Icon</h4>
 					<div className="sidebar-radio-group pb-10 mb-10">
 						<div className="custom-control custom-radio custom-control-inline">
-							<input
+							{/* <input
 								type="radio"
 								id="sidebaricon-1"
 								name="menu-dropdown-icon"
 								className="custom-control-input"
 								value="icon-style-1"
-								checked=""
-							/>
+								
+													/> */}
 							<label className="custom-control-label" htmlFor="sidebaricon-1"
 								><i className="fa fa-angle-down"></i
 							></label>
 						</div>
 						<div className="custom-control custom-radio custom-control-inline">
-							<input
+							{/* <input
 								type="radio"
 								id="sidebaricon-2"
 								name="menu-dropdown-icon"
 								className="custom-control-input"
 								value="icon-style-2"
-							/>
+							/> */}
 							<label className="custom-control-label" htmlFor="sidebaricon-2"
 								><i className="ion-plus-round"></i
 							></label>
 						</div>
 						<div className="custom-control custom-radio custom-control-inline">
-							<input
+							{/* <input
 								type="radio"
 								id="sidebaricon-3"
 								name="menu-dropdown-icon"
 								className="custom-control-input"
 								value="icon-style-3"
-							/>
+							/> */}
 							<label className="custom-control-label" htmlFor="sidebaricon-3"
 								><i className="fa fa-angle-double-right"></i
 							></label>
@@ -216,75 +327,74 @@ const Home = () => {
 				<h4 className="weight-600 font-18 pb-10">Menu List Icon</h4>
 					<div className="sidebar-radio-group pb-30 mb-10">
 						<div className="custom-control custom-radio custom-control-inline">
-							<input
+							{/* <input
 								type="radio"
 								id="sidebariconlist-1"
 								name="menu-list-icon"
 								className="custom-control-input"
 								value="icon-list-style-1"
-								checked=""
-							/>
+														/> */}
 							<label className="custom-control-label" htmlFor="sidebariconlist-1"
 								><i className="ion-minus-round"></i
 							></label>
 						</div>
 						<div className="custom-control custom-radio custom-control-inline">
-							<input
+							{/* <input
 								type="radio"
 								id="sidebariconlist-2"
 								name="menu-list-icon"
 								className="custom-control-input"
 								value="icon-list-style-2"
-							/>
+							/> */}
 							<label className="custom-control-label" htmlFor="sidebariconlist-2"
 								><i className="fa fa-circle-o" aria-hidden="true"></i
 							></label>
 						</div>
 						<div className="custom-control custom-radio custom-control-inline">
-							<input
+							{/* <input
 								type="radio"
 								id="sidebariconlist-3"
 								name="menu-list-icon"
 								className="custom-control-input"
 								value="icon-list-style-3"
-							/>
+							/> */}
 							<label className="custom-control-label" htmlFor="sidebariconlist-3"
 								><i className="dw dw-check"></i
 							></label>
 						</div>
 						<div className="custom-control custom-radio custom-control-inline">
-							<input
+							{/* <input
 								type="radio"
 								id="sidebariconlist-4"
 								name="menu-list-icon"
 								className="custom-control-input"
 								value="icon-list-style-4"
-								checked=""
-							/>
+								
+							/> */}
 							<label className="custom-control-label" htmlFor="sidebariconlist-4"
 								><i className="icon-copy dw dw-next-2"></i
 							></label>
 						</div>
 						<div className="custom-control custom-radio custom-control-inline">
-							<input
+							{/* <input
 								type="radio"
 								id="sidebariconlist-5"
 								name="menu-list-icon"
 								className="custom-control-input"
 								value="icon-list-style-5"
-							/>
+							/> */}
 							<label className="custom-control-label" htmlFor="sidebariconlist-5"
 								><i className="dw dw-fast-forward-1"></i
 							></label>
 						</div>
 						<div className="custom-control custom-radio custom-control-inline">
-							<input
+							{/* <input
 								type="radio"
 								id="sidebariconlist-6"
 								name="menu-list-icon"
 								className="custom-control-input"
 								value="icon-list-style-6"
-							/>
+							/> */}
 							<label className="custom-control-label" htmlFor="sidebariconlist-6"
 								><i className="dw dw-next"></i
 							></label>
@@ -303,7 +413,9 @@ const Home = () => {
 <div className="left-side-bar">
   <div className="brand-logo">
   <span className='mtext' style={{ color: '#999999', fontSize: '18px' }}>
+	<a href='/homepage' style={{ color: '#999999', fontSize: '18px' }}>
       XYZ Management
+	  </a>
     </span>
     <div className="close-sidebar" data-toggle="left-sidebar-close">
       <i className="ion-close-round"></i>

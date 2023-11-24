@@ -29,7 +29,7 @@ const SignUpForm = () => {
 
     try {
       const response = await axios.post(`${baseUrl}/authentication/register/`, registrationData);
-      navigate('/login');
+      navigate('/supplier_dashboard');
       // Handle successful sign-up here
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -43,13 +43,15 @@ const SignUpForm = () => {
   };
 
   return (
-    <div style={{ height: 'auto', backgroundColor: '#fff' }}>
+    <div className='main-container'>
+
+    <div className='' style={{ height: 'auto', backgroundColor: 'transparent',right:0 }}>
       {/* <div className='container'>
         <div className='row'>
           <div className='col-md-2'></div> */}
           <div className='col-md-12' style={{ marginTop: '17vh' }}>
             <form
-              className='card p-3 m-1 mb-5'
+              className='card p-3 m-1 mx-5'
               style={{  
                 width: '100%',
                 borderRadius: '0',
@@ -144,6 +146,7 @@ const SignUpForm = () => {
                 Already have an account? <Link to='/login'>Login</Link>
               </p>
             </form>
+            </div>
           </div>
           <div className='col-md-2'></div>
         </div>
