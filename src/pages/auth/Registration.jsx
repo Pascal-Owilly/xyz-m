@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const SignUpForm = () => {
   const navigate = useNavigate();
-  const baseUrl = 'https://enc.pythonanywhere.com';
+  const baseUrl = 'http://127.0.0.1:8000';
 
   const [registrationData, setRegistrationData] = useState({
     username: '',
@@ -28,7 +28,7 @@ const SignUpForm = () => {
     }
 
     try {
-      const response = await axios.post(`${baseUrl}/api/auth/register/`, registrationData);
+      const response = await axios.post(`${baseUrl}/authentication/register/`, registrationData);
       navigate('/login');
       // Handle successful sign-up here
     } catch (error) {

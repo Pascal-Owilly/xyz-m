@@ -3,9 +3,7 @@ import React from 'react';
 const Home = () => {
 
 	return(
-
 		<>
-	
 		<div className="pre-loader">
 			<div className="pre-loader-box">
 				<div className="loader-logo">

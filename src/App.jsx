@@ -17,30 +17,26 @@ const App = () => {
   return (
     <Router>
       <div className="wrapper">
-
+<Home />
         <Routes>
         {/* Authentication */}
           <Route path="/" element={<Home />} /> 
           <Route path="/register" element={<Registration />} /> 
           <Route path="/login" element={<Login />} /> 
-
           {/* Dashboards */}
           <Route path="/admin_dashboard" element={<AdministrationDashboard />} /> 
-
           <Route path="/buyer_dashboard" element={<BuyerDashboard />} /> 
           <Route path="/supplier_dashboard" element={<SupplierDashboard />} /> 
           <Route path="/slaughterhouse-dashboard" element={<SlaughterhouseDashboard />} /> 
           <Route path="/employee_dashboard" element={<EmployeeDashboard />} /> 
           <Route path="/integrated_banking" element={<ExportHandlingDashboard />} /> 
           <Route path="/export_handling_dashboard" element={<IntegratedBanking />} /> 
-
           {/* Inventory */}
           <Route path="/inventory-dashboard" element={<InventoryManagement />} /> 
-
         </Routes>
-
       </div>
       <Footer  />
+
     </Router>
   );
 }

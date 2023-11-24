@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://enc.pythonanywhere.com'; // Replace with your API base URL
+const BASE_URL = 'http://127.0.0.1:8000'; // Replace with your API base URL
 
 const authService = {
   login: async (loginData) => {
     try {
-      const response = await axios.post(`${BASE_URL}/api/auth/login/`, loginData);
+      const response = await axios.post(`${BASE_URL}/authentication/login/`, loginData);
       const authToken = response.data.key;
       return authToken;
     } catch (error) {
@@ -23,7 +23,7 @@ const authService = {
   getUserRole: async (authToken) => {
     try {
       // Implement your API request to get the user role using the authToken
-      const response = await axios.get(`${BASE_URL}/api/auth/api/user/role/`, {
+      const response = await axios.get(`${BASE_URL}/authentication/user/role/`, {
         headers: {
           Authorization: `Token ${authToken}`,
         },
