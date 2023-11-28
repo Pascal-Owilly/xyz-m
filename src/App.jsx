@@ -16,7 +16,7 @@ import IntegratedBanking from './pages/IntegratedBanking';
 import WarehouseManagement from './pages/WarehouseManagement';
 import HomeContent from './pages/HomeContent';
 import ForgotPassword from './pages/auth/ForgotPassword';
-
+import InvoiceForms from './pages/InvoiceForm';
 const App = () => {
   return (
     <Router>
@@ -37,6 +37,9 @@ const App = () => {
           <Route path="/employee_dashboard" element={<EmployeeDashboard />} /> 
           <Route path="/integrated_banking" element={<IntegratedBanking />} /> 
           <Route path="/export_handling_dashboard" element={<ExportHandlingDashboard />} /> 
+          {/* iNVOICE FORMS */}
+          <Route path="/invoices" element={<InvoiceForms />} /> 
+
           {/* Inventory */}
           <Route path="/inventory-dashboard" element={<InventoryManagement />} /> 
           <Route path="/warehouse-dashboard" element={<WarehouseManagement />} /> 

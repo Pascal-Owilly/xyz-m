@@ -4,6 +4,9 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { Card, Modal, Button } from 'react-bootstrap';
 import './Profile.css';
+import { BASE_URL } from './config';
+
+
 const Profile = () => {
 const navigate = useNavigate()
   const authToken = Cookies.get('authToken');
@@ -19,7 +22,7 @@ const navigate = useNavigate()
   });
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const baseUrl = 'http://127.0.0.1:8000';
+  const baseUrl = BASE_URL;
   const handleEditProfilePic = (file) => {
     resizeAndSetProfilePic(file);
   };
@@ -69,7 +72,7 @@ const navigate = useNavigate()
       formData.append('last_name', editedProfile.last_name);
 
       const response = await axios.put(
-        `${baseUrl}/profile/profile/${profile.id}/`,
+        `${baseUrl}/api/profile/${profile.id}/`,
         formData,
         {
           headers: {
@@ -105,7 +108,7 @@ const navigate = useNavigate()
 
   const fetchProfile = async () => {
     try {
-      const response = await axios.get(`${baseUrl}/profile/profile/`, {
+      const response = await axios.get(`${baseUrl}/api/profile/`, {
         headers: {
           Authorization: `Token ${authToken}`,
           'Content-Type': 'multipart/form-data', // Set the content type to multipart/form-data

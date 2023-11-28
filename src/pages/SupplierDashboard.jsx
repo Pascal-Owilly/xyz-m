@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaBell, FaBox, FaExclamation, FaMoneyBillWave, FaChartLine } from 'react-icons/fa';
 import Cookies from 'js-cookie';
 import axios from 'axios';
-
+import { BASE_URL } from './auth/config';
 const Supplier = () => {
     const Greetings = () => {
         const currentTime = new Date();
@@ -20,7 +20,7 @@ const Supplier = () => {
         return greeting;
       };
     
-      const baseUrl = 'http://127.0.0.1:8000';
+      const baseUrl = BASE_URL;
       const [profile, setProfile] = useState([]);
       const authToken = Cookies.get('authToken');
       const [user, setUser] = useState({});
@@ -49,7 +49,7 @@ const Supplier = () => {
     return (
         <>
             <div className='main-container'>
-                <h2 className='text-center mb-5'>Supplier Dashboard</h2>
+                <h2 className='text-center mb-1'>Supplier Dashboard</h2>
 <br /><br /><br />
                 <div>
                     {/* Flash message */}
@@ -66,12 +66,18 @@ const Supplier = () => {
                     </div>
 
                     {/* Goat supplies status */}
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                    {/* Supply to XYZ Abattoir Button */}
+                    <a href='/invoices'>
+                      <button className='mx-1 bg-dark text-white' style={{ /* your button styles */ }}>
+                        <FaBox className='mr-2' /> Supply to XYZ Abbattoir
+                      </button>
+                    </a>
+                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '25%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                         <FaBox className='mr-2' /> Goat supplies status
                     </button>
 
                     {/* Track Payments */}
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '25%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                         <FaMoneyBillWave className='mr-2' /> Track Payments
                     </button>
 

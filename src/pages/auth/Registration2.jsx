@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { BASE_URL } from './config';
+import { BASE_URL } from './config'; // Adjust the path based on your project structure
 
 const SignUpForm = () => {
   const navigate = useNavigate();
-  const baseUrl = BASE_URL;
+  const baseUrl = BASE_URL; // Use the imported BASE_URL
 
   const [registrationData, setRegistrationData] = useState({
-    username: '',
     email: '',
+    phone: '',
     password1: '',
     password2: '',
+
   });
 
   const [errorMessages, setErrorMessages] = useState({});
@@ -29,8 +30,17 @@ const SignUpForm = () => {
     }
 
     try {
-      const response = await axios.post(`${baseUrl}/authentication/register/`, registrationData);
-      navigate('/login');
+
+    const csrftoken = document.cookie.match(/csrftoken=(.*)/)[1];
+
+    // Include CSRF token in the request headers
+    const response = await axios.post(`${baseUrl}/accounts/signup/`, registrationData, {
+      headers: {
+        'X-CSRFToken': csrftoken,
+        'Content-Type': 'application/json',
+      },
+    });
+        navigate('/login');
       // Handle successful sign-up here
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -65,26 +75,9 @@ const SignUpForm = () => {
 <hr />
               {/* Username input */}
               <div className='form-group'>
-               <label htmlFor='username' className='text-secondary'>Username</label>
+               <label htmlFor='email' className='text-secondary'>Email</label>
                 <input
                   type='text'
-                  className='form-control mb-1'
-                  id='username'
-                  name='username'
-                  value={registrationData.username}
-                  onChange={handleRegistrationChange}
-                  required
-                />
-                {errorMessages.username && (
-                  <p style={{ color: 'red', fontSize:'12px' }}>{errorMessages.username[0]}</p>
-                )}
-              </div>
-
-              {/* Email input */}
-              <div className='form-group'>
-                <label htmlFor='email' className='text-secondary'>Email</label>
-                <input
-                  type='email'
                   className='form-control mb-1'
                   id='email'
                   name='email'
@@ -92,8 +85,25 @@ const SignUpForm = () => {
                   onChange={handleRegistrationChange}
                   required
                 />
-                {errorMessages.email && (
-                  <p style={{color: 'red', fontSize:'12px' }}>{errorMessages.email[0]}</p>
+                {errorMessages.username && (
+                  <p style={{ color: 'red', fontSize:'12px' }}>{errorMessages.email[0]}</p>
+                )}
+              </div>
+
+              {/* Email input */}
+              <div className='form-group'>
+                <label htmlFor='email' className='text-secondary'>Phone</label>
+                <input
+                  type='phone'
+                  className='form-control mb-1'
+                  id='phone'
+                  name='phone'
+                  value={registrationData.phone}
+                  onChange={handleRegistrationChange}
+                  required
+                />
+                {errorMessages.phone && (
+                  <p style={{color: 'red', fontSize:'12px' }}>{errorMessages.phone[0]}</p>
                 )}
               </div>
 

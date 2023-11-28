@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import AuthService from './AuthService';
-
+import { BASE_URL } from './config'; 
+import axios from 'axios';
 function FlashMessage({ message, type }) {
   return (
     <div className={`flash-message ${type}`}>
@@ -11,11 +12,25 @@ function FlashMessage({ message, type }) {
   );
 }
 
+const baseUrl = BASE_URL; 
+
+const getCsrfToken = async () => {
+  try {
+      const response = await axios.get(`${baseUrl}/csrf_token/`);
+      console.log('crf res', response)
+      return response.data.csrfToken;
+  } catch (error) {
+      console.error('Error fetching CSRF token:', error);
+      return null;
+  }
+};
 const LoginTest = () => {
+  const [csrfToken, setCsrfToken] = useState(null);
+
   const [flashMessage, setFlashMessage] = useState(null); // Initialize with null
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginData, setLoginData] = useState({
-    username: '',
+    email: '',
     password: '',
   });
   const [errorMessages, setErrorMessages] = useState({});
@@ -23,33 +38,67 @@ const LoginTest = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const login = async (e) => {
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+        const token = await getCsrfToken();
+        setCsrfToken(token);
+    };
+
+    fetchCsrfToken();
+}, []);
+
+const login = async (e) => {
+    // Prevent the default form submission behavior if the event is provided
     if (e) {
-      e.preventDefault();
+        e.preventDefault();
     }
+
     try {
-      const authToken = await AuthService.login(loginData);
-      setIsLoggedIn(true);
-      Cookies.set('authToken', authToken, { expires: 10, sameSite: 'None', secure: true });
+        // Make sure csrfToken is available and not null
+        if (!csrfToken) {
+            console.error('CSRF token not available');
+            // Handle the absence of CSRF token, e.g., by showing an error message
+            return;
+        }
 
-      window.location.reload();
+        // Include the CSRF token in the headers
+        const response = await axios.post(
+            `${baseUrl}/csrf_token/`,  // Replace with your actual login endpoint
+            loginData,
+            {
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json',  // Set the content type based on your server's expectation
+                    // Add any other headers if needed
+                },
+            }
+        );
 
-      // Reload the page after successful login
-      setFlashMessage({ message: `Welcome back ${loginData.username} !`, type: 'success' });
+        // Handle the response, e.g., update UI or navigate to a new page
+        console.log('Login successful:', response.data);
 
+        // Example: Redirect to the dashboard after successful login
+        navigate('/supplier_dashboard');  // Replace '/dashboard' with your desired route
+
+        // Reload the page after successful login (if needed)
+        // window.location.reload();
+
+        // Update state or perform other actions based on the response
+        // ... (your existing login logic)
 
     } catch (error) {
-      // Handle login error
-      if (error.response && error.response.status === 400) {
-        const errorData = error.response.data;
-        setErrorMessages({ invalidCredentials: "Invalid username or password" });
-      } else {
-        console.error('Login failed:', error);
-        setFlashMessage({ message: "That didn't go well!", type: 'error' });
-
-      }
+        // Handle login error
+        if (error.response && error.response.status === 400) {
+            const errorData = error.response.data;
+            setErrorMessages({ invalidCredentials: "Invalid username or password" });
+            // Handle specific error cases, e.g., show error message to the user
+        } else {
+            console.error('Login failed:', error);
+            setFlashMessage({ message: "That didn't go well!", type: 'error' });
+            // Handle generic error cases, e.g., show a generic error message
+        }
     }
-  };
+};
 
   useEffect(() => {
     if (flashMessage) {
@@ -99,14 +148,14 @@ const LoginTest = () => {
             <h3 className='text-secondary'>Login</h3>
             <hr style={{ color: '#d9d9d9' }} />
             <div className="form-group" style={{ color: '#d9d9d9', fontSize: '18px' }}>
-              <label className="mt-1 text-secondary" htmlFor="username">Username</label>
+              <label className="mt-1 text-secondary" htmlFor="email">Email</label>
               <input
                 type="text"
                 style={{ background: '#d9d9d9' }}
                 className="form-control"
-                id="username"
-                name="username"
-                value={loginData.username}
+                id="email"
+                name="email"
+                value={loginData.email}
                 placeholder="Enter username"
                 onChange={handleLoginChange}
               />

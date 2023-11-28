@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { BASE_URL } from './auth/config';
 
 const Home = () => {
 const navigate =useNavigate()
-  const baseUrl = 'http://127.0.0.1:8000';
+  const baseUrl = BASE_URL;
   const [profile, setProfile] = useState([]);
 
   const authToken = Cookies.get('authToken');
@@ -37,7 +38,7 @@ const fetchUserData = async () => {
 
 const fetchProfile = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/profile/profile/`, {
+    const response = await axios.get(`${baseUrl}/api/profile/`, {
       headers: {
         Authorization: `Token ${authToken}`,
       },
