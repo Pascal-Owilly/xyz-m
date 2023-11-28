@@ -22,15 +22,17 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',  color:'#999999' }}>
+    <div style={{ height: '', display: '', alignItems: 'center', justifyContent: 'center',  color:'#999999' }}>
         <div className='main-container'>
       <div className='container'>
         <div className='row'>
-          <div className='col-md-12 what-card-navbar p-3' >
+        <div className='col-md-2' ></div>
+
+          <div className='col-md-6 bg-white p-4 mb-3' >
             <h3 className='text-secondary'>Forgot Password</h3>
             <p  className='text-secondary'>Enter your email to reset your password.</p>
 
-            <form onSubmit={handleSubmit} className=''>
+            <form onSubmit={handleSubmit} >
               <div className="form-group">
                 <label htmlFor="email" className='text-secondary'>Email</label>
                 <input
@@ -55,7 +57,7 @@ const ForgotPassword = () => {
               Remember your password? <Link to="/login">Login</Link>
             </p>
           </div>
-          <div className='col-md-3'></div>
+          <div className='col-md-4'></div>
         </div>
       </div>
     </div>

@@ -47,12 +47,12 @@ const SignUpForm = () => {
     <div className='main-container'>
 
     <div className='' style={{ height: 'auto', backgroundColor: 'transparent',right:0 }}>
-      {/* <div className='container'>
+      <div className='container'>
         <div className='row'>
-          <div className='col-md-2'></div> */}
-          <div className='col-md-12' style={{ marginTop: '17vh' }}>
+          <div className='col-md-2'></div>
+          <div className='col-md-6' style={{ }}>
             <form
-              className='card p-3 m-1 mx-5'
+              className='card p-3 m-1 '
               style={{  
                 width: '100%',
                 borderRadius: '0',
@@ -149,10 +149,10 @@ const SignUpForm = () => {
             </form>
             </div>
           </div>
-          <div className='col-md-2'></div>
+          <div className='col-md-4'></div>
         </div>
-    //   </div>
-    // </div>
+      </div>
+   </div>
   );
 };
 

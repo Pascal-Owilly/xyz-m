@@ -83,12 +83,13 @@ const LoginTest = () => {
   };
 
   return (
-    <div className='main-container mb-5'>
+    <div className='main-container '>
 
 <div className='' style={{ height: 'auto', backgroundColor: 'transparent',right:0 }}>
-      <div className='row m-auto' style={{ height: 'auto', backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className='col-md-12'>
-          <form className='what-card-btn-login p-4  ' onSubmit={handleLoginSubmit}
+      <div className='row m-auto' style={{ height: 'auto', backgroundColor: '', alignItems: 'center', justifyContent: 'center' }}>
+        <div className='col-md-2'></div>
+        <div className='col-md-6'>
+          <form className='what-card-btn-login p-4 mb-3 bg-white' onSubmit={handleLoginSubmit}
            style={{  
            width: '100%',
            borderRadius: '0',
