@@ -16,7 +16,7 @@ const baseUrl = BASE_URL;
 
 const getCsrfToken = async () => {
   try {
-      const response = await axios.get(`${baseUrl}/csrf_token/`);
+      const response = await axios.get(`${baseUrl}/api/csrf_token/`);
       console.log('crf res', response)
       return response.data.csrfToken;
   } catch (error) {
@@ -63,7 +63,7 @@ const login = async (e) => {
 
         // Include the CSRF token in the headers
         const response = await axios.post(
-            `${baseUrl}/csrf_token/`,  // Replace with your actual login endpoint
+            `${baseUrl}/api/csrf_token/`,  // Replace with your actual login endpoint
             loginData,
             {
                 headers: {

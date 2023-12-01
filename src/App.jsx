@@ -17,6 +17,7 @@ import WarehouseManagement from './pages/WarehouseManagement';
 import HomeContent from './pages/HomeContent';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import InvoiceForms from './pages/InvoiceForm';
+
 const App = () => {
   return (
     <Router>
@@ -24,7 +25,7 @@ const App = () => {
 <Home />
         <Routes>
         {/* Authentication */}
-          <Route path="/homepage" element={<HomeContent />} /> 
+          <Route path="/" element={<HomeContent />} /> 
           <Route path="/register" element={<Registration />} /> 
           <Route path="/login" element={<Login />} /> 
           <Route path="/password_reset" element={<ForgotPassword />} /> 

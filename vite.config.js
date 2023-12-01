@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/',
   plugins: [react()],
   build: {
     sourcemap: true, // Enable source maps for both JavaScript and CSS
@@ -11,5 +12,8 @@ export default defineConfig({
     //   includeSources: true,
     //   // Other source map options...
     // },
+    optimizeDeps: {
+      include: ['axios'], // Include Axios in the optimized dependency bundle
+    },
   },
 });

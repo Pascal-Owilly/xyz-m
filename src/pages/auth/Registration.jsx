@@ -8,10 +8,10 @@ const SignUpForm = () => {
   const baseUrl = BASE_URL;
 
   const [registrationData, setRegistrationData] = useState({
-    username: '',
     email: '',
-    password1: '',
-    password2: '',
+    phone: '',
+    first_name: '',
+    last_name: '',
   });
 
   const [errorMessages, setErrorMessages] = useState({});

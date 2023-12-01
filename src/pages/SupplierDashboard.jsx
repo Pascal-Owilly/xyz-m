@@ -4,21 +4,23 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { BASE_URL } from './auth/config';
 const Supplier = () => {
-    const Greetings = () => {
-        const currentTime = new Date();
-        const currentHour = currentTime.getHours();
-        let greeting;
-    
-        if (currentHour < 12) {
-          greeting = 'Good morning';
-        } else if (currentHour < 18) {
-          greeting = 'Good afternoon';
-        } else {
-          greeting = 'Good evening';
-        }
-    
-        return greeting;
-      };
+  const Greetings = () => {
+    const currentTime = new Date();
+    const currentHour = currentTime.getHours();
+    let greeting;
+  
+    if (currentHour < 5) {
+      greeting = 'Good night';
+    } else if (currentHour < 12) {
+      greeting = 'Good morning';
+    } else if (currentHour < 18) {
+      greeting = 'Good afternoon';
+    } else {
+      greeting = 'Good evening';
+    }
+  
+    return greeting;
+  };  
     
       const baseUrl = BASE_URL;
       const [profile, setProfile] = useState([]);

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {  useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
-import { Card, Modal, Button } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
 import './Profile.css';
 import { BASE_URL } from './config';
 
@@ -126,7 +126,7 @@ const navigate = useNavigate()
       fetchUserData();
       fetchProfile();
     } else {
-        navigate('/homepage') 
+        navigate('/') 
    }
   }, [authToken]);
 
@@ -136,14 +136,11 @@ const navigate = useNavigate()
   
   return (
     <>
-    <div className='main-container mt-5' style={{}}>
+    <div className='main-container' style={{}}>
       <div style={{ backgroundColor: '#fff', height: '', padding:'20px' }}>
         {user && Object.keys(profile).length > 0 ? (
-          <div className="container bootstrap snippets bootdey">
-            
-            <div className="row" >
-              
-           
+          <div className="container bootstrap snippets bootdey">           
+            <div className="row">          
               <div className="profile-nav col-md-8">
                 <div className="panel" style={{width:'100%', borderRadius:'5px', border:'none'}}>
                   <div className="user-heading">
@@ -158,12 +155,8 @@ const navigate = useNavigate()
                       src={`${baseUrl}${profile.profile_pic}`} // Use the full URL
                       style={{width:'200px', height:'200px', border:'none', left: 0}}
                     />
-
 <br />  <br />  
-
                   <h3 ><span className='text-secondary' style={{color:'#999999', font:'20px Poppins, Arial, sans-serif', margin:'0 0 24px', marginBottom:'1rem', lineHeight:'26px', letterSpacing:'2px'}}>{user.email}</span></h3>
-
-
                   </div>
                   
                   </div>
@@ -180,16 +173,15 @@ const navigate = useNavigate()
                   {/* <p className='text-white'>Username : &nbsp; <span className='text-secondary'>{user.username}</span></p> */}
 
                   {/* Display Bio */}
-                  <p className='bio-graph-heading ' style={{color:'#999999', font:'16px Poppins, Arial, sans-serif', margin:'0 0 24px', marginBottom:'1rem', lineHeight:'26px', color:'#fff', fontWeight:'700'}}>Info</p>
+                  <p className='bio-graph-heading ' style={{color:'#999999', font:'16px Poppins, Arial, sans-serif', margin:'0 0 24px', marginBottom:'1rem', lineHeight:'26px', fontWeight:'700'}}>Info</p>
                   <p className='summary-head' style={{color:'#999999', fontWeight:'bold'}}>Community : &nbsp; <span className='text-secondary' style={{color:'#999999', font:'16px Poppins, Arial, sans-serif', margin:'0 0 24px', marginBottom:'1rem', lineHeight:'26px', letterSpacing:'2px'}}>{profile.bio}</span></p>
                   {/* Display Current City */}
                   <p className='summary-head' style={{color:'#999999', fontWeight:'bold'}}>Location : &nbsp; <span className='text-secondary' style={{color:'#999999', font:'16px Poppins, Arial, sans-serif', margin:'0 0 24px', marginBottom:'1rem', lineHeight:'26px', letterSpacing:'2px'}}>{profile.current_city}</span></p>
 
                 </div>
                 <ul className="text-secondary" style={{ listStyleType:'none' }}>
-                  <p>
-                    
-                    <button onClick={() => setShowEditModal(true)} className="btn btn-outline-primary" style={{textDecoration:'none'}}>
+                  <p>      
+                  <button onClick={() => setShowEditModal(true)} className="btn btn-outline-primary" style={{textDecoration:'none'}}>
                     <i className="fa fa-edit"></i> Edit profile
                   </button>
                   </p>
