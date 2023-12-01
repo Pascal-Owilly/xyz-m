@@ -28,6 +28,8 @@ const Home = () => {
     </div>
 
     <div className="col-lg-3 col-md-6 mb-3">
+    <a href='/breaders'>
+
       <div className="card-box height-100-p widget-style3">
         <div className="d-flex flex-wrap">
           <div className="widget-data">
@@ -41,6 +43,7 @@ const Home = () => {
           </div>
         </div>
       </div>
+      </a>
     </div>
 
     <div className="col-lg-3 col-md-6 mb-3">

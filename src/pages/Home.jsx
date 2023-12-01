@@ -94,7 +94,7 @@ useEffect(() => {
 
 const fetchUserData = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/authentication/user/`, {
+    const response = await axios.get(`${baseUrl}/auth/user/`, {
       headers: {
         Authorization: `Token ${authToken}`,
       },
@@ -124,7 +124,7 @@ const [isLoggedIn, setIsLoggedIn] = useState(false); // Track user's authenticat
 
 const logout = async () => {
     try {
-      await axios.post(`${baseUrl}/authentication/logout/`);
+      await axios.post(`${baseUrl}/auth/logout/`);
       Cookies.remove('authToken', { sameSite: 'None', secure: true });
       window.location.reload();
       setIsRightSidebarVisible(false);

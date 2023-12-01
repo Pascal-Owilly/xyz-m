@@ -16,8 +16,8 @@ import IntegratedBanking from './pages/IntegratedBanking';
 import WarehouseManagement from './pages/WarehouseManagement';
 import HomeContent from './pages/HomeContent';
 import ForgotPassword from './pages/auth/ForgotPassword';
-import InvoiceForms from './pages/InvoiceForm';
-
+import InvoiceForms from './pages/forms/InvoiceForm';
+import BreaderData from './pages/breaders/BreaderData';
 const App = () => {
   return (
     <Router>
@@ -44,6 +44,9 @@ const App = () => {
           {/* Inventory */}
           <Route path="/inventory-dashboard" element={<InventoryManagement />} /> 
           <Route path="/warehouse-dashboard" element={<WarehouseManagement />} /> 
+
+        {/* Breaders */}
+        <Route path="/breaders" element={<BreaderData />} /> 
 
         </Routes>
       </div>

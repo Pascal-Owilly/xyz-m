@@ -4,14 +4,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { BASE_URL } from './config';
 
 const SignUpForm = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
   const baseUrl = BASE_URL;
 
   const [registrationData, setRegistrationData] = useState({
+    username: '',
     email: '',
-    phone: '',
-    first_name: '',
-    last_name: '',
+    password1: '',
+    password2: '',
   });
 
   const [errorMessages, setErrorMessages] = useState({});
@@ -29,7 +29,7 @@ const SignUpForm = () => {
     }
 
     try {
-      const response = await axios.post(`${baseUrl}/authentication/register/`, registrationData);
+      const response = await axios.post(`${baseUrl}/auth/register/`, registrationData);
       navigate('/login');
       // Handle successful sign-up here
     } catch (error) {

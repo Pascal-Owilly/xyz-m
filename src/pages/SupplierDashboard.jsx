@@ -37,7 +37,7 @@ const Supplier = () => {
     
       const fetchUserData = async () => {
         try {
-          const response = await axios.get(`${baseUrl}/authentication/user/`, {
+          const response = await axios.get(`${baseUrl}/auth/user/`, {
             headers: {
               Authorization: `Token ${authToken}`,
             },
