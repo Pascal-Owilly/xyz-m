@@ -49,7 +49,7 @@ const authService = {
     try {
       console.log('Headers before login request:', axios.defaults.headers.common);
   
-      const response = await axios.post(`${baseUrl}/accounts/login/`, loginData, {
+      const response = await axios.post(`${baseUrl}/authentication/login/`, loginData, {
         headers: {
           'X-CSRFToken': csrfToken,
           'Content-Type': 'application/json',
@@ -78,7 +78,7 @@ const authService = {
 
   requestPasswordReset: async (email) => {
     try {
-      const response = await axios.post(`${baseUrl}/accounts/password/reset/`, { email });
+      const response = await axios.post(`${baseUrl}/authentication/password/reset/`, { email });
       return response;
     } catch (error) {
       throw error;
