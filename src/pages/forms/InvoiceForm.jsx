@@ -4,6 +4,7 @@ import { BASE_URL } from '../auth/config';
 import Cookies from 'js-cookie';
 import { Card } from 'react-bootstrap'; // Import the Card component from react-bootstrap
 import {useNavigate} from 'react-router-dom';
+
 const InvoiceForms = () => {
   const navigate = useNavigate()
   const [user, setUser] = useState(null);
@@ -19,6 +20,8 @@ const InvoiceForms = () => {
     market: '',
     head_of_family: '',
     vaccinated: false,
+    phone_number: '',
+    price: null,
     breader: null,
     abattoir: null, 
     user: null,
@@ -113,9 +116,10 @@ const InvoiceForms = () => {
         market: '',
         head_of_family: '',
         vaccinated: false,
-        animal_name: '',
+        phone_number: '',
+        price: null,
         breader: null,
-        abattoir: null,
+        abattoir: null, 
         user: null,
       });
 
@@ -145,12 +149,18 @@ const InvoiceForms = () => {
 
   return (
     <div className='main-container'>
-          {user && (  // <-- Added this condition
+      <div className='container'>
+        <div className='row'>
+        <div className='col-md-1'></div>
 
+          <div className='col-md-9'>
+
+
+          {user && (  // <-- Added this condition
       <Card className="weather-card" style={{ background: 'transparent' }}>
       <Card.Body>
-        <Card.Title style={{ color: '#A9A9A9' }}>Invoice Form for </Card.Title>
-        <table style={{ background: 'transparent', color: '#999999' }}>
+        <Card.Title style={{ color: '#A9A9A9' }}>Please fill out this Invoice Form </Card.Title>
+        <table style={{ background: 'transparent', color: '#999999', width:'100%' }}>
           <tbody>
             <tr>
               <th style={{ border: '1px dotted black', padding: '5px' }}>Breads Supplied</th>
@@ -185,6 +195,31 @@ const InvoiceForms = () => {
                   value={formData.animal_name}
                   onChange={handleInputChange}
                   className='form-control'
+                />
+              </td>
+              </tr>
+              <tr>
+              <th style={{ border: '1px dotted black', padding: '5px' }}>Unit Price</th>
+              <td style={{ border: '1px dotted black', padding: '5px' }}>
+                <input
+                  type="text"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleInputChange}
+                  className='form-control'
+                />
+              </td>
+              </tr>
+              <tr>
+              <th style={{ border: '1px dotted black', padding: '5px' }}>Phone Number</th>
+              <td style={{ border: '1px dotted black', padding: '5px' }}>
+                <input
+                  type="text"
+                  name="phone_number"
+                  value={formData.phone_number}
+                  onChange={handleInputChange}
+                  className='form-control'
+                  placeholder='use +254 ...'
                 />
               </td>
             </tr>
@@ -269,7 +304,11 @@ const InvoiceForms = () => {
       </Card.Body>
     </Card>
         )}
+          </div>
+          <div className='col-md-4'></div>
+        </div>
 
+      </div>
     </div>
   );
 };

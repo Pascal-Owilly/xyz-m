@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { SuppliesProvider } from './SuppliesContext'; // Import the SuppliesProvider
 import Home from './pages/Home';
 import Registration from './pages/auth/Registration';
 import Login from './pages/auth/Login';
@@ -18,9 +19,30 @@ import HomeContent from './pages/HomeContent';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import InvoiceForms from './pages/forms/InvoiceForm';
 import BreaderData from './pages/breaders/BreaderData';
+import BreaderInfo from './pages/breaders/BreaderInfo'; // Update the path accordingly
+import SuppliedBreedsSingleUser from './pages/breaders/SuppliedBreedsSingleUser';
+import MpesaResponse from './pages/payment/MpesaResponse';
 const App = () => {
+
+  // const response = {
+  //   data: {
+  //     msg: "M-Pesa payment initiated successfully",
+  //     response: {
+  //       CheckoutRequestID: "ws_CO_15102023102931234725276739",
+  //       CustomerMessage: "Success. Request accepted for processing",
+  //       MerchantRequestID: "92646-150652872-1",
+  //       ResponseCode: "0",
+  //       ResponseDescription: "Enter your pin to confirm payment upon reception of an Stk Push"
+  //     }
+  //   },
+  //   status: 201,
+  //   statusText: 'Created'
+  // };
+
   return (
     <Router>
+            <SuppliesProvider>
+
       <div className="wrapper">
 <Home />
         <Routes>
@@ -47,9 +69,17 @@ const App = () => {
 
         {/* Breaders */}
         <Route path="/breaders" element={<BreaderData />} /> 
+        <Route path="/breader-info/:breaderId" element={<BreaderInfo />} />
+        <Route path="/supplied-breeds" element={<SuppliedBreedsSingleUser />} />
 
+        {/* Payment */}
+        {/* <Route path="/payment/response" element={<MpesaResponse paymentResponse={response} />} />  */}
+        <Route path="/mpesa-payment-response" element={<MpesaResponse />} />                  
+                 
         </Routes>
       </div>
+      </SuppliesProvider>
+
       <Footer  />
 
     </Router>

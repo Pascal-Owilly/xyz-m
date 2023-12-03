@@ -9,7 +9,6 @@ import '../../vendors/styles/core.css';
 import '../../vendors/styles/icon-font.min.css';
 import '../../vendors/styles/style.css';
 
-
 const Home = () => {
 const navigate =useNavigate()
   const baseUrl = BASE_URL;

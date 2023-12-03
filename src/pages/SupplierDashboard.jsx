@@ -3,6 +3,10 @@ import { FaBell, FaBox, FaExclamation, FaMoneyBillWave, FaChartLine } from 'reac
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { BASE_URL } from './auth/config';
+import { useNavigate } from 'react-router-dom';
+import SuppliedBreedsSingleUser from './breaders/SuppliedBreedsSingleUser';
+import { useSupplies } from '../../src/SuppliesContext';
+
 const Supplier = () => {
   const Greetings = () => {
     const currentTime = new Date();
@@ -22,32 +26,59 @@ const Supplier = () => {
     return greeting;
   };  
     
+      const { setSuppliesData } = useSupplies();
+
       const baseUrl = BASE_URL;
+      const navigate = useNavigate()
       const [profile, setProfile] = useState([]);
       const authToken = Cookies.get('authToken');
       const [user, setUser] = useState({});
-    
+      const [localSuppliesData, setLocalSuppliesData] = useState(null);
+
       useEffect(() => {
-        const storedToken = Cookies.get('authToken');
-        if (storedToken) {
-          // Do something with the token if needed
-        }
-        fetchUserData();
-      }, []);
-    
-      const fetchUserData = async () => {
-        try {
-          const response = await axios.get(`${baseUrl}/auth/user/`, {
-            headers: {
-              Authorization: `Token ${authToken}`,
-            },
-          });
-          const userData = response.data;
-          setUser(userData);
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
-      };
+         const fetchUserData = async () => {
+           try {
+             const response = await axios.get(`${baseUrl}/auth/user/`, {
+               headers: {
+                 Authorization: `Token ${authToken}`,
+               },
+             });
+             const userData = response.data;
+             setUser(userData);
+           } catch (error) {
+             console.error('Error fetching user data:', error);
+           }
+         };
+     
+         fetchUserData();
+       }, [authToken]);
+     
+       const handleBreadSuppliesStatus = async () => {
+         try {
+           const response = await axios.get(`${baseUrl}/api/breader-trade/${user.pk}`, {
+             headers: {
+               Authorization: `Token ${authToken}`,
+             },
+           });
+       
+           // Use the context function to update global state
+           setSuppliesData(response.data);
+       
+           navigate('/supplied-breeds');
+         } catch (error) {
+           console.error('Error fetching supplies data:', error);
+         }
+       };
+     
+       // Use useEffect to navigate after suppliesData is updated
+       useEffect(() => {
+         if (localSuppliesData) {
+           // Navigate to the supplies page
+           navigate('/supplied-breeds');
+         }
+       }, [localSuppliesData, navigate]);
+   
+
     return (
         <>
             <div className='main-container'>
@@ -74,9 +105,23 @@ const Supplier = () => {
                         <FaBox className='mr-2' /> Supply to XYZ Abbattoir
                       </button>
                     </a>
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '25%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <FaBox className='mr-2' /> Goat supplies status
-                    </button>
+                    <button
+            className='mx-1'
+            style={{
+               backgroundColor: 'white',
+               color: '#333',
+               textAlign: 'left',
+               display: 'inline-block',
+               marginBottom: '10px',
+               padding: '15px',
+               width: '25%',
+               borderRadius: '10px',
+               boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            }}
+            onClick={handleBreadSuppliesStatus}
+         >
+            <FaBox className='mr-2' /> Bread supplies status
+         </button>
 
                     {/* Track Payments */}
                     <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '25%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
@@ -99,6 +144,8 @@ const Supplier = () => {
                     </button>
                 </div>
             </div>
+            {localSuppliesData && <SuppliedBreedsSingleUser suppliesData={localSuppliesData} />}
+
         </>
     );
 }

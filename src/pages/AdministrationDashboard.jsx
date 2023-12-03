@@ -1,6 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { BASE_URL } from './auth/config';
+import Cookies from 'js-cookie';
 
-const Home = () => {
+const Admin = () => {
+  const baseUrl = BASE_URL;
+
+  const [breadersCount, setBreadersCount] = useState(0);
+  const authToken = Cookies.get('authToken');
+
+  useEffect(() => {
+    // Fetch data from Django API endpoint
+    fetch(`${baseUrl}/api/breader-count/`, {
+      headers: {
+        Authorization: `Token ${authToken}`,
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        setBreadersCount(data.breader_count);
+        console.log('count', data.breader_count);
+      })
+      .catch(error => console.error('Error fetching breaders count:', error));
+  }, []);
+  
 
 	return(
 
@@ -33,8 +55,8 @@ const Home = () => {
       <div className="card-box height-100-p widget-style3">
         <div className="d-flex flex-wrap">
           <div className="widget-data">
-            <div className="weight-700 font-24 text-dark">Suppliers</div>
-            <div className="font-14 text-secondary weight-500">150</div>
+            <div className="weight-700 font-24 text-dark">Breaders</div>
+            <div className="font-14 text-secondary weight-500">{breadersCount}</div>
           </div>
           <div className="widget-icon">
             <div className="icon" data-color="#09cc06">
@@ -78,6 +100,20 @@ const Home = () => {
       </div>
     </div>
 
+    <div className="card-box height-100-p widget-style3">
+        <div className="d-flex flex-wrap">
+          <div className="widget-data">
+            <div className="weight-700 font-24 text-dark">Inventory</div>
+            <div className="font-14 text-secondary weight-500">500 Breads</div>
+          </div>
+          <div className="widget-icon">
+            <div className="icon" data-color="#09cc06">
+              <i className="fas fa-plane"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
 	
 
   </div>
@@ -91,7 +127,7 @@ const Home = () => {
 	)
 }
 
-export default Home;
+export default Admin;
 
 
 
