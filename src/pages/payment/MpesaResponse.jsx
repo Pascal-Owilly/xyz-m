@@ -10,16 +10,16 @@ const PaymentResponsePage = ({ paymentResponse }) => {
 
           <div style={{ display:'flex', alignItems:'center', flexDirection:'column', height:'20vh'}}>
       {/* <h2 className='text-center' style={{color:'#999999',fontWeight:'800',margintTop:'14vh'}}>{paymentResponse.data.response.ResponseDescription}</h2> */}
-      <h3>Reuest accepted for processing</h3>
+      <h3 className='text-center'>Request accepted for processing</h3>
       <br />
-      <p>Enter pin to confirm payment upon reception of a push notification</p>
+      <p className='text-center'>Enter pin to confirm payment upon reception of a push notification</p>
       <br />
       <h4 className='text-secondary'>Thank you!</h4>
       {/* <p>Customer Message: {paymentResponse.data.msg}</p> */}
       {/* <p>Your Id is {paymentResponse.data.response.MerchantRequestID}</p>
       <p>Merchant Request ID: {paymentResponse.data.response.MerchantRequestID}</p> */}
       <br />
-      <a href='/'> Return to home page </a>
+      <a href='/supplier_dashboard'> Return to your dashboard </a>
     </div>
 
           </div>

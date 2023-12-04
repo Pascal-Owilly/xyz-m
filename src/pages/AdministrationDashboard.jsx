@@ -29,8 +29,8 @@ const Admin = () => {
 		<>
   <div className="main-container">
   <div className="">
-  <div className="container-fluid">
-	<h2 className='mb-2'>SCM Administration </h2>
+  <div className="container-fluid" style={{minHeight:'80vh'}}>
+	<h2 className='' style={{marginBottom:'6vh'}}>SCM Administration </h2>
   <div className="row">
 
     <div className="col-lg-3 col-md-6 mb-3">

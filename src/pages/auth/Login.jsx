@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import AuthService from './AuthService';
+import { checkUserRole } from './CheckUserRoleUtils'; // Import the checkUserRole function
 
 function FlashMessage({ message, type }) {
   return (
@@ -27,29 +28,39 @@ const LoginTest = () => {
     if (e) {
       e.preventDefault();
     }
+
     try {
       const authToken = await AuthService.login(loginData);
       setIsLoggedIn(true);
       Cookies.set('authToken', authToken, { expires: 10, sameSite: 'None', secure: true });
 
-      window.location.reload();
+      // Fetch user role
+      const role = await checkUserRole();
+
+      // Redirect based on user role
+      switch (role) {
+        case 'superuser':
+          navigate('/admin_dashboard');
+          break;
+        case 'regular':
+          navigate('/supplier_dashboard');
+          break;
+        // Add more cases for other roles if needed
+
+        default:
+          // Redirect to the default page (e.g., home page)
+          navigate('/');
+      }
 
       // Reload the page after successful login
-      setFlashMessage({ message: `Welcome back ${loginData.username} !`, type: 'success' });
+      window.location.reload();
 
-
+      setFlashMessage({ message: `Welcome back ${loginData.username}!`, type: 'success' });
     } catch (error) {
-      // Handle login error
-      if (error.response && error.response.status === 400) {
-        const errorData = error.response.data;
-        setErrorMessages({ invalidCredentials: "Invalid username or password" });
-      } else {
-        console.error('Login failed:', error);
-        setFlashMessage({ message: "That didn't go well!", type: 'error' });
-
-      }
+      // ... (handle login error)
     }
   };
+  
 
   useEffect(() => {
     if (flashMessage) {
@@ -69,7 +80,8 @@ const LoginTest = () => {
 
     // Redirect to another page if the user is already logged in
     if (isLoggedIn) {
-      navigate('/supplier_dashboard'); // Replace '/dashboard' with your desired route
+      // navigate('/supplier_dashboard'); // Replace '/dashboard' with your desired route
+      console.log('login success')
     }
   }, [isLoggedIn]);
 

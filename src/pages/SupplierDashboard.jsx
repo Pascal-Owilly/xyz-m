@@ -81,17 +81,16 @@ const Supplier = () => {
 
     return (
         <>
-            <div className='main-container'>
-                <h2 className='text-center mb-1'>Supplier Dashboard</h2>
-<br /><br /><br />
+            <div className='main-container' style={{minHeight:'90vh'}}>
+                <h2 className='text-center mb-4' >Supplier Dashboard</h2>
                 <div>
                     {/* Flash message */}
-                    <div style={{ marginBottom: '40px', padding: '15px', backgroundColor: '#e0e0e0', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-            <p className='text-center'>
-              {`${Greetings()}, `}
-              <span style={{ textTransform: 'capitalize' }}>{user.username}!</span>
-            </p>
-          </div>
+                    <div style={{ marginBottom: '40px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                      <p className='text-center'>
+                        {`${Greetings()}, `}
+                        <span style={{ textTransform: 'capitalize' }}>{user.username}!</span>
+                      </p>
+                    </div>
 
                     {/* Notifications */}
                     <div style={{ borderRadius: '50%', position: 'relative', float: 'right', top: 0, backgroundColor: 'lightblue', padding: '10px', width: '40px', height: '40px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
@@ -101,7 +100,7 @@ const Supplier = () => {
                     {/* Goat supplies status */}
                     {/* Supply to XYZ Abattoir Button */}
                     <a href='/invoices'>
-                      <button className='mx-1 bg-dark text-white' style={{ /* your button styles */ }}>
+                      <button className='mx-1 bg-dark text-white mb-3' style={{ /* your button styles */ }}>
                         <FaBox className='mr-2' /> Supply to XYZ Abbattoir
                       </button>
                     </a>
@@ -124,7 +123,7 @@ const Supplier = () => {
          </button>
 
                     {/* Track Payments */}
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '25%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '50%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                         <FaMoneyBillWave className='mr-2' /> Track Payments
                     </button>
 

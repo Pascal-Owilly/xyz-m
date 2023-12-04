@@ -107,6 +107,7 @@ const InvoiceForms = () => {
   
       setSuccessMessage('Invoice form submitted successfully!');
       setIsFormSubmitted(true);
+      navigate('/submission-successful')
   
       // Clear the form
       setFormData({
@@ -148,18 +149,17 @@ const InvoiceForms = () => {
   };
 
   return (
-    <div className='main-container'>
-      <div className='container'>
+    <div className='main-container' >
+      <div className='container' style={{height:'auto'}}>
         <div className='row'>
         <div className='col-md-1'></div>
 
           <div className='col-md-9'>
-
-
-          {user && (  // <-- Added this condition
+          
+      {user && ( 
       <Card className="weather-card" style={{ background: 'transparent' }}>
       <Card.Body>
-        <Card.Title style={{ color: '#A9A9A9' }}>Please fill out this Invoice Form </Card.Title>
+        <Card.Title style={{ color: '#A9A9A9' }}>Please fill out this Invoice Form {successMessage} </Card.Title>
         <table style={{ background: 'transparent', color: '#999999', width:'100%' }}>
           <tbody>
             <tr>
@@ -199,7 +199,7 @@ const InvoiceForms = () => {
               </td>
               </tr>
               <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>Unit Price</th>
+              <th style={{ border: '1px dotted black', padding: '5px' }}>Bread Price</th>
               <td style={{ border: '1px dotted black', padding: '5px' }}>
                 <input
                   type="text"

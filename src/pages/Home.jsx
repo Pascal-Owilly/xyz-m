@@ -8,6 +8,9 @@ import './Home.css';
 import '../../vendors/styles/core.css';
 import '../../vendors/styles/icon-font.min.css';
 import '../../vendors/styles/style.css';
+import authService from './auth/AuthService'; // Make sure the path is correct
+
+import { checkUserRole } from './auth/CheckUserRoleUtils'; // Update the path accordingly
 
 const Home = () => {
 const navigate =useNavigate()
@@ -25,6 +28,15 @@ const [isNotificationPanelVisible, setIsNotificationPanelVisible] = useState(fal
 
   const [defaultBackgroundColor, setDefaultBackgroundColor] = useState('#ffffff');
 const [defaultTextColor, setDefaultTextColor] = useState('#000000');
+const [userRole, setUserRole] = useState('loading'); // Initialize with 'loading'
+
+useEffect(() => {
+  // Check user role and update state
+  checkUserRole().then((role) => {
+    setUserRole(role);
+  })
+  });
+
 
 const toggleNotificationPanel = () => {
 	setIsNotificationPanelVisible(!isNotificationPanelVisible);
@@ -122,19 +134,32 @@ const fetchProfile = async () => {
 const [isLoggedIn, setIsLoggedIn] = useState(false); // Track user's authentication state
 
 const logout = async () => {
-    try {
-      await axios.post(`${baseUrl}/auth/logout/`);
-      Cookies.remove('authToken', { sameSite: 'None', secure: true });
-      window.location.reload();
-      setIsRightSidebarVisible(false);
-      setIsProfileDropdownVisible(false);
-      setIsSettingsDropdownVisible(false);
-      setIsLeftSidebarVisible(false);
-      navigate('/');
-    } catch (error) {
-      console.error('Failed to logout', error);
+  try {
+    await axios.post(`${baseUrl}/auth/logout/`);
+    Cookies.remove('authToken', { sameSite: 'None', secure: true });
+    window.location.reload();
+    setIsRightSidebarVisible(false);
+    setIsProfileDropdownVisible(false);
+    setIsSettingsDropdownVisible(false);
+    setIsLeftSidebarVisible(false);
+
+    // Redirect based on user role
+    switch (userRole) {
+      case 'superuser':
+        navigate('/');
+        break;
+      case 'regular':
+        navigate('/');
+        break;
+      // Add more cases for other roles if needed
+      default:
+        navigate('/');
     }
-  };
+  } catch (error) {
+    console.error('Failed to logout', error);
+  }
+};
+
   
 
   const handleProfileDropdownToggle = () => {
@@ -469,15 +494,18 @@ style={{
 {isDashboardsVisible && (
 
 		<ul className="menu-dashboards" style={{ maxHeight: isDashboardsVisible ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
-			
+			          {userRole === 'superuser' && ( // Render only if user is a superuser
 		  <li><a href="admin_dashboard">SCM Administration</a></li>
+                )}
             <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
             <li><a href="buyer_dashboard">Buyer Dashboard </a></li>
 			<li><a href="slaughterhouse-dashboard">Slaughter House</a></li>
             <li><a href="integrated_banking">Bank Dashboard </a></li>
 			<li><a href="employee_dashboard">Employee Dashboard</a></li>
             <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
+            {userRole === 'superuser' && ( // Render only if user is a superuser
             <li><a href="inventory-dashboard">Inventory Dashboard </a></li>
+            )}
     		</ul>
 )}
         </li>
