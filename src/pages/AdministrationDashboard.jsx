@@ -1,12 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { BASE_URL } from './auth/config';
 import Cookies from 'js-cookie';
+import { Link, useNavigate } from 'react-router-dom';
+import { checkUserRole } from './auth/CheckUserRoleUtils'; // Update the path accordingly
+
 
 const Admin = () => {
+  const navigate = useNavigate()
+
   const baseUrl = BASE_URL;
 
   const [breadersCount, setBreadersCount] = useState(0);
   const authToken = Cookies.get('authToken');
+  const [userRole, setUserRole] = useState('');
+
+  useEffect(() => {
+    // Define the fetchData function inside the useEffect
+    const fetchData = async () => {
+      try {
+        // Fetch data from Django API endpoint
+        const response = await fetch(`${baseUrl}/api/breader-count/`, {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        });
+        const data = await response.json();
+        setBreadersCount(data.breader_count);
+        console.log('count', data.breader_count);
+      } catch (error) {
+        console.error('Error fetching breaders count:', error);
+      }
+    };
+
+    // Call fetchData unconditionally
+    fetchData();
+  }, [baseUrl, authToken]); // Include dependencies in the dependency array
 
   useEffect(() => {
     // Fetch data from Django API endpoint
@@ -22,6 +50,21 @@ const Admin = () => {
       })
       .catch(error => console.error('Error fetching breaders count:', error));
   }, []);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const userRole = await checkUserRole(); // Use the checkUserRole function
+      // Set the userRole state or perform other actions based on the role
+      setUserRole(userRole);
+
+      // Check if the user has superuser role, if not, redirect
+      if (userRole !== 'superuser') {
+        navigate('/unauthorized'); // Redirect to the unauthorized page
+      }
+    };
+
+    checkUser();
+  }, [navigate]);
   
 
 	return(

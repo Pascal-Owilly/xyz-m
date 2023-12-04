@@ -23,8 +23,8 @@ import BreaderInfo from './pages/breaders/BreaderInfo';
 import SuppliedBreedsSingleUser from './pages/breaders/SuppliedBreedsSingleUser';
 import MpesaResponse from './pages/payment/MpesaResponse';
 import FormSubmissionSuccess from './pages/forms/FormSubmissionSuccess';
-import SuperuserRoute from './pages/auth/SuperuserRole'; // Import the HOC
-
+// import SuperuserRoute from './pages/auth/SuperuserRole'; // Import the HOC
+import Unauthorized from './pages/auth/Unauthorised';
 const App = () => {
   return (
     <Router>
@@ -39,7 +39,9 @@ const App = () => {
             <Route path="/password_reset" element={<ForgotPassword />} />
             <Route path="/profile" element={<Profile />} />
             {/* Dashboards */}
-            <Route path="/admin_dashboard" element={<SuperuserRoute><AdministrationDashboard /></SuperuserRoute>} />
+            <Route path="/admin_dashboard" element={<AdministrationDashboard />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
+
             <Route path="/buyer_dashboard" element={<BuyerDashboard />} />
             <Route path="/supplier_dashboard" element={<SupplierDashboard />} />
             <Route path="/slaughterhouse-dashboard" element={<SlaughterhouseDashboard />} />
