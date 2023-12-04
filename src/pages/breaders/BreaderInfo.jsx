@@ -185,7 +185,7 @@ const BreaderInfo = () => {
                 Authorization: `Token ${authToken}`,
                 'Content-Type': 'application/json',
             },
-            // timeout: 30000,
+            timeout: 30000,
         });
 
         console.log('M-Pesa API Response:', response);
@@ -200,17 +200,17 @@ const BreaderInfo = () => {
             console.log('Callback URL:', callbackUrl);
 
             // Introduce a 3-second delay using setTimeout
-            // setTimeout(() => {
+            setTimeout(() => {
                 // Redirect the user to the M-Pesa payment page after the delay
-                // navigate('/mpesa-payment-response');
-            // });
+                navigate('/mpesa-payment-response');
+            }, 3000);
         }
     } catch (error) {
         console.error('Oops! M-Pesa payment did not work:', error);
-        // setTimeout(() => {
+        setTimeout(() => {
           // Redirect the user to the M-Pesa payment page after the delay
-          // navigate('/mpesa-payment-response');
-      // });
+          navigate('/mpesa-payment-response');
+      }, 3000);
         // Handle any errors that may occur during the M-Pesa payment process
     }
 };
