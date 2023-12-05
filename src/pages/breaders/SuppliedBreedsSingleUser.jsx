@@ -38,7 +38,7 @@ const SuppliedBreedsSingleUser = () => {
   };
 
   return (
-    <div className='main-container' style={{ textAlign: 'left', marginBottom: '20px' }}>
+    <div className='main-container' style={{ textAlign: 'left', marginBottom: '20px',minHeight:'85vh'}}>
       <h2>Supplied Breads to the Abattoir</h2>
       <table style={tableStyle}>
         <tbody>

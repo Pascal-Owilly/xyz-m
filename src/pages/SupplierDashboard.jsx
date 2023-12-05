@@ -81,7 +81,7 @@ const Supplier = () => {
 
     return (
         <>
-            <div className='main-container' style={{minHeight:'90vh'}}>
+            <div className='main-container' style={{minHeight:'85vh'}}>
                 <h2 className='text-center mb-4' >Supplier Dashboard</h2>
                 <div>
                     {/* Flash message */}

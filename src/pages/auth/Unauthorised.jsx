@@ -5,7 +5,7 @@ const Unauthorized = () => {
   return (
 
     <div className='main-container'>
-    <div className="unauthorized-container" style={{height:'70vh'}}>
+    <div className="unauthorized-container" style={{height:'72vh'}}>
       <h1>Unauthorized Access</h1>
       <p>
         Oops! It seems like you don't have the necessary permissions to access this page.

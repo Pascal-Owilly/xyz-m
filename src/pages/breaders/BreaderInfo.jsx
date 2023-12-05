@@ -338,8 +338,8 @@ const BreaderInfo = () => {
 
   return (
     <div className='main-container'>
-      <div className='container-fluid'>
-    <div className='row mt-5'>
+      <div className='container-fluid' style={{minHeight:'72vh'}}>
+    <div className='row mt-2'>
       {/* <div className='col-md-1'></div> */}
       <div className="col-md-12">
       <div className='d-flex justify-content-between align-items-center mb-4'>

@@ -18,7 +18,7 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '70vh',
+    minHeight: '85vh',
   },
   successMessage: {
     fontSize: '24px',   

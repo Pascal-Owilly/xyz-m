@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { SuppliesProvider } from './SuppliesContext';
 import Home from './pages/Home';
-import Registration from './pages/auth/Registration';
+import Registration2 from './pages/auth/Registration2';
 import Login from './pages/auth/Login';
 import Profile from './pages/auth/Profile';
 import Footer from './pages/Footer';
@@ -25,6 +25,7 @@ import MpesaResponse from './pages/payment/MpesaResponse';
 import FormSubmissionSuccess from './pages/forms/FormSubmissionSuccess';
 // import SuperuserRoute from './pages/auth/SuperuserRole'; // Import the HOC
 import Unauthorized from './pages/auth/Unauthorised';
+
 const App = () => {
   return (
     <Router>
@@ -34,7 +35,7 @@ const App = () => {
           <Routes>
             {/* Authentication */}
             <Route path="/" element={<HomeContent />} />
-            <Route path="/register" element={<Registration />} />
+            <Route path="/register" element={<Registration2 />} />
             <Route path="/login" element={<Login />} />
             <Route path="/password_reset" element={<ForgotPassword />} />
             <Route path="/profile" element={<Profile />} />

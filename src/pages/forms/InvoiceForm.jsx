@@ -163,7 +163,7 @@ const InvoiceForms = () => {
         <table style={{ background: 'transparent', color: '#999999', width:'100%' }}>
           <tbody>
             <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>Breads Supplied</th>
+              <th style={{ border: '1px dotted black', padding: '5px' }}>Number of Breads Supplied</th>
               <td style={{ border: '1px dotted black', padding: '5px' }}>
                 <input
                   type="number"
@@ -171,6 +171,7 @@ const InvoiceForms = () => {
                   value={formData.breads_supplied}
                   onChange={handleInputChange}
                   className='form-control'
+                  placeholder='Example 30'
                 />
               </td>
             </tr>
@@ -183,6 +184,8 @@ const InvoiceForms = () => {
                   value={formData.goat_weight}
                   onChange={handleInputChange}
                   className='form-control'
+                  placeholder='eg. 450'
+
                 />
               </td>
             </tr>
@@ -195,6 +198,8 @@ const InvoiceForms = () => {
                   value={formData.animal_name}
                   onChange={handleInputChange}
                   className='form-control'
+                  placeholder='eg. Goats'
+
                 />
               </td>
               </tr>
@@ -207,6 +212,8 @@ const InvoiceForms = () => {
                   value={formData.price}
                   onChange={handleInputChange}
                   className='form-control'
+                  placeholder='Example 45000'
+
                 />
               </td>
               </tr>
@@ -219,7 +226,7 @@ const InvoiceForms = () => {
                   value={formData.phone_number}
                   onChange={handleInputChange}
                   className='form-control'
-                  placeholder='use +254 ...'
+                  placeholder='+254712345678'
                 />
               </td>
             </tr>
@@ -233,6 +240,8 @@ const InvoiceForms = () => {
                   value={formData.community}
                   onChange={handleInputChange}
                   className='form-control'
+                  placeholder='Name of your community'
+
                 />
               </td>
             </tr>
@@ -245,6 +254,8 @@ const InvoiceForms = () => {
                   value={formData.market}
                   onChange={handleInputChange}
                   className='form-control'
+                  placeholder='Name of your market'
+
                 />
               </td>
             </tr>
@@ -257,6 +268,8 @@ const InvoiceForms = () => {
                   value={formData.head_of_family}
                   onChange={handleInputChange}
                   className='form-control'
+                  placeholder='Your family name'
+
                 />
               </td>
             </tr>

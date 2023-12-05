@@ -43,7 +43,7 @@ const Breader = () => {
   };
 
   return (
-    <div className="main-container">
+    <div className="main-container" style={{minHeight:'85vh'}}>
       {breaderData && (
         <div>
           <h2 className='mb-4'>Breaders List</h2>

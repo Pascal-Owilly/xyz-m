@@ -1,169 +1,144 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
-import { BASE_URL } from './config'; // Adjust the path based on your project structure
+import React, { useState, useEffect } from 'react';
+import { BASE_URL } from './config';
+const RegistrationForm = () => {
+  const baseUrl = BASE_URL; 
+  const [csrfToken, setCsrfToken] = useState('');
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      try {
+        const response = await fetch(`${baseUrl}/registration/get-csrf-token/`);
+        const data = await response.json();
+        setCsrfToken(data.csrf_token);
+        console.log('token is:  ', response)
+      } catch (error) {
+        console.error('Error fetching CSRF token:', error);
+      }
+    };
 
-const SignUpForm = () => {
-  const navigate = useNavigate();
-  const baseUrl = BASE_URL; // Use the imported BASE_URL
+    fetchCsrfToken();
+  }, []);
 
-  const [registrationData, setRegistrationData] = useState({
-    email: '',
-    phone: '',
-    password1: '',
-    password2: '',
-
-  });
-
-  const [errorMessages, setErrorMessages] = useState({});
-
-  const handleRegistrationChange = (e) => {
-    setRegistrationData({ ...registrationData, [e.target.name]: e.target.value });
-  };
-
-  const signUp = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (registrationData.password1 !== registrationData.password2) {
-      setErrorMessages({ passwords: "Passwords don't match" });
-      return;
-    }
-
-    try {
-
-    const csrftoken = document.cookie.match(/csrftoken=(.*)/)[1];
-
-    // Include CSRF token in the request headers
-    const response = await axios.post(`${baseUrl}/accounts/signup/`, registrationData, {
+    // Use csrfToken in your request headers
+    fetch(`${baseUrl}/registration/register/`, {
+      method: 'POST',
       headers: {
-        'X-CSRFToken': csrftoken,
         'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
       },
+      // other request configurations...
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response
+        console.log('response', response);
+      })
+      .catch(error => {
+        // Handle errors  
+        console.error('Registration error:', error);
+      });
+  };
+
+  const [formData, setFormData] = useState({
+    email: '',
+    password1: '',
+    password2: '',
+    first_name: '',
+    last_name: '',
+    id_number: '',
+    community: '',
+    market: '',
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
     });
-        navigate('/login');
-      // Handle successful sign-up here
-    } catch (error) {
-      if (error.response && error.response.status === 400) {
-        const errorData = error.response.data;
-        setErrorMessages(errorData);
-      } else {
-        // Handle other types of errors (network, server, etc.)
-        console.error('Error during sign-up:', error);
-      }
-    }
   };
 
   return (
-    <div className='main-container'>
+    <div className='main-container' style={{height:'85vh'}}>
+    <form onSubmit={handleSubmit} style={{marginTop:'5vh'}}>
+      <label>Email:</label>
+      <input
+        type="email"
+        name="email"
+        value={formData.email}
+        onChange={handleChange}
+        required
+      />
 
-    <div className='' style={{ height: 'auto', backgroundColor: 'transparent',right:0 }}>
-      {/* <div className='container'>
-        <div className='row'>
-          <div className='col-md-2'></div> */}
-          <div className='col-md-12' style={{ marginTop: '17vh' }}>
-            <form
-              className='card p-3 m-1 mx-5'
-              style={{  
-                width: '100%',
-                borderRadius: '0',
-                margin: 'auto',
-                transition: 'top 0.3s ease-in-out',
-                boxShadow: '0px 24px 36px -19px rgba(0, 0, 0, 0.09)'
-                 }}              onSubmit={signUp}
-            >
-              <h4 className='text-secondary'>Sign Up</h4>
-<hr />
-              {/* Username input */}
-              <div className='form-group'>
-               <label htmlFor='email' className='text-secondary'>Email</label>
-                <input
-                  type='text'
-                  className='form-control mb-1'
-                  id='email'
-                  name='email'
-                  value={registrationData.email}
-                  onChange={handleRegistrationChange}
-                  required
-                />
-                {errorMessages.username && (
-                  <p style={{ color: 'red', fontSize:'12px' }}>{errorMessages.email[0]}</p>
-                )}
-              </div>
+      <label>Password:</label>
+      <input
+        type="password"
+        name="password1"
+        value={formData.password1}
+        onChange={handleChange}
+        required
+      />
 
-              {/* Email input */}
-              <div className='form-group'>
-                <label htmlFor='email' className='text-secondary'>Phone</label>
-                <input
-                  type='phone'
-                  className='form-control mb-1'
-                  id='phone'
-                  name='phone'
-                  value={registrationData.phone}
-                  onChange={handleRegistrationChange}
-                  required
-                />
-                {errorMessages.phone && (
-                  <p style={{color: 'red', fontSize:'12px' }}>{errorMessages.phone[0]}</p>
-                )}
-              </div>
+      <label>Confirm Password:</label>
+      <input
+        type="password"
+        name="password2"
+        value={formData.password2}
+        onChange={handleChange}
+        required
+      />
 
-              {/* Password input */}
-              <div className='form-group'>
-               <label htmlFor='password1' className='text-secondary'>Password</label>
-                <input
-                  type='password'
-                  className='form-control mb-1'
-                  id='password1'
-                  name='password1'
-                  value={registrationData.password1}
-                  onChange={handleRegistrationChange}
-                  required
-                />
-                {errorMessages.password1 && (
-                  <p style={{ color: 'red', fontSize:'12px'  }}>{errorMessages.password1[0]}</p>
-                )}
-              </div>
+      <label>First Name:</label>
+      <input
+        type="text"
+        name="first_name"
+        value={formData.first_name}
+        onChange={handleChange}
+        required
+      />
 
-              {/* Confirm Password input */}
-              <div className='form-group'>
-                <label htmlFor='password2' className='text-secondary'>Confirm Password</label>
-                <input
-                  type='password'
-                  className='form-control mb-1'
-                  id='password2'
-                  name='password2'
-                  value={registrationData.password2}
-                  onChange={handleRegistrationChange}
-                  required
-                />
-                {errorMessages.password2 && (
-                  <p style={{ color: 'red', fontSize:'12px'  }}>{errorMessages.password2[0]}</p>
-                )}
-                {errorMessages.passwords && (
-                  <p style={{ color: 'red', fontSize:'12px' }}>{errorMessages.passwords}</p>
-                )}
-              </div>
+      <label>Last Name:</label>
+      <input
+        type="text"
+        name="last_name"
+        value={formData.last_name}
+        onChange={handleChange}
+        required
+      />
 
-              <button
-                type='submit'
-                className='btn btn-sm btn-outline-secondary text-primary mt-1'
-                style={{ background: '#fff' }}
-              >
-                Sign Up
-              </button>
+      <label>ID Number:</label>
+      <input
+        type="text"
+        name="id_number"
+        value={formData.id_number}
+        onChange={handleChange}
+        required
+      />
 
-              <hr />
-              <p>
-                Already have an account? <Link to='/login'>Login</Link>
-              </p>
-            </form>
-            </div>
-          </div>
-          <div className='col-md-2'></div>
-        </div>
-    //   </div>
-    // </div>
+      <label>Community:</label>
+      <input
+        type="text"
+        name="community"
+        value={formData.community}
+        onChange={handleChange}
+        required
+      />
+
+      <label>Market:</label>
+      <input
+        type="text"
+        name="market"
+        value={formData.market}
+        onChange={handleChange}
+        required
+      />
+
+      <button type="submit">Register</button>
+    </form>
+    </div>
   );
 };
 
-export default SignUpForm;
+export default RegistrationForm;

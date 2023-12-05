@@ -72,7 +72,7 @@ const Admin = () => {
 		<>
   <div className="main-container">
   <div className="">
-  <div className="container-fluid" style={{minHeight:'80vh'}}>
+  <div className="container-fluid" style={{minHeight:'72vh'}}>
 	<h2 className='' style={{marginBottom:'6vh'}}>SCM Administration </h2>
   <div className="row">
 

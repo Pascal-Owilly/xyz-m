@@ -1,7 +1,7 @@
 import React from 'react';
 import { HiBell, HiCube, HiExclamation, HiCurrencyDollar, HiChartBar } from 'react-icons/hi';
 
-const Home = () => {
+const Buyer = () => {
     return (
         <>
             <div className='main-container'>
@@ -48,4 +48,4 @@ const Home = () => {
     );
 }
 
-export default Home;
+export default Buyer;

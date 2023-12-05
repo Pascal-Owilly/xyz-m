@@ -18,6 +18,12 @@ const Home = () => {
                         <HiBell size={20} color='white' />
                     </div>
 
+
+                    {/* Status for received goat supplies */}
+                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                        <HiCube className='mr-2' /> Authenticate breed supply
+                    </button>
+
                     {/* Status for received goat supplies */}
                     <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                         <HiCube className='mr-2' /> Status for received goat supplies
