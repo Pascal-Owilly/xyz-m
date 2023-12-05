@@ -1,7 +1,10 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { HiBell, HiCube, HiExclamation, HiCurrencyDollar, HiChartBar } from 'react-icons/hi';
+import { BASE_URL } from './auth/config';
 
-const Home = () => {
+const Home = () => {      
+
+
     return (
         <>
             <div className='main-container'>
