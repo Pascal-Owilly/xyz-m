@@ -428,15 +428,15 @@ const logout = async () => {
 					<div className="sidebar-btn-group pb-30 mb-10">
 					<button
                 className={`btn btn-outline-primary header-white ${
-                  backgroundColor === '#ffffff' ? 'active' : ''
+                  backgroundColor === '#001f33' ? 'active' : ''
                 }`}
-                onClick={() => handleBackgroundColorChange('#ffffff')}
+                onClick={() => handleBackgroundColorChange('#111')}
               >
                 White 
               </button>
               <button
                 className={`btn btn-outline-primary header-dark ${
-                  backgroundColor === '#ffffff' ? 'active' : ''
+                  backgroundColor === '#001f33' ? 'active' : ''
                 }`}
                 onClick={() => handleBackgroundColorChange('#343A40')}
               >
@@ -500,14 +500,17 @@ style={{
             <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
             <li><a href="buyer_dashboard">Buyer Dashboard </a></li>
 			<li><a href="slaughterhouse-dashboard">Slaughter House</a></li>
+      {userRole === 'superuser' && ( // Render only if user is a superuser
+            <li><a href="inventory-dashboard">Inventory Dashboard </a></li>
+            )}
+                        {userRole === 'superuser' && ( // Render only if user is a superuser
+
+            <li><a href="warehouse">Warehouse Dashboard </a></li>
+                        )}
             <li><a href="integrated_banking">Bank Dashboard </a></li>
 			<li><a href="employee_dashboard">Employee Dashboard</a></li>
             <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
-            {userRole === 'superuser' && ( // Render only if user is a superuser
-            <li><a href="inventory-dashboard">Inventory Dashboard </a></li>
-            )}
-            <li><a href="warehouse">Warehouse Dashboard </a></li>
-
+            
     		</ul>
 )}
         </li>
