@@ -86,72 +86,76 @@ const InventoryPage = () => {
 
   return (
     <div className='main-container'>
-      <div className='container' style={{ minHeight: '75vh' }}>
-        <div className='row'>
-          <div className='col-md-12'>
-            <Card className="weather-card" style={{ background: 'transparent' }}>
-              <Card.Body>
+    <div className='container' style={{ minHeight: '75vh' }}>
+      <div className='row'>
+        <div className='col-md-12'>
+          <Card className="weather-card" style={{ background: 'transparent' }}>
+            <Card.Body>
 
-                <Card.Title className='text-center mb-3' style={{ color: '#A9A9A9', fontSize: '2rem', marginBottom: '1rem' }}>Inventory Informaion</Card.Title>
-                <h2 style={{ fontSize: '1.7rem', color: '#3498db', fontWeight: 'bold' }}>
-                  Total Breeds in the Yard: <span style={{ color: 'green' }}>{inventoryData.totalBreeds}</span>
-                </h2>
-                <hr />
-                <Row>
-                  <Col md={6}>
-                    <h4 className='mb-2' style={{ fontSize: '1.5rem' }}>Total By Categories</h4>
-                  </Col>
-                  <Col md={3} className=' mb-3'>
-                    <ul>
-                      {Object.entries(inventoryData.breedTotals).map(([breed, total]) => (
-                        <li key={breed} style={{ fontSize: '1.2rem' }}>{capitalizeFirstLetter(breed)}: {total}</li>
-                      ))}
-                    </ul>
-                  </Col>
-                  <Col className='mb-2' md={6}>
-                    <hr />
-                    <h4 style={{ fontSize: '1.5rem' }}>Slaughtered History</h4>
-                  </Col>
-                  <Col md={3} className=' mb-3'>
-                    <ul>
-                      <li style={{ fontSize: '1.2rem' }}>Total Slaughtered: {inventoryData.totalSlaughtered}</li>
-                      <li style={{ fontSize: '1.2rem' }}>Total breed parts category in warehouse: {inventoryData.inWarehouse}</li>
-                      <li style={{ fontSize: '1.2rem' }}>Quantity of Breeds Supplied: {inventoryData.quantitySupplied}</li>
-                    </ul>
-                  </Col>
-                  <Col className='mb-2' md={12}>
-                  <hr />
-                    <h4 className='mb-4' style={{ fontSize: '1.5rem' }}>Breed Parts in Warehouse</h4>
-                  </Col>
-                  <Col md={12} className=''>
-                    {Object.entries(inventoryData.breedPartsInWarehouse).map(([breed, parts]) => (
-                      <Col key={breed} md={6}>
-                        <Card style={{ marginBottom: '1.5rem' }}>
-                          <Card.Header style={{ fontSize: '1.3rem', fontWeight: 'bold' }}>{capitalizeFirstLetter(breed)}</Card.Header>
-                          <Card.Body>
-                            <ul>
-                              {Object.entries(parts).map(([partName, details]) => (
-                                <li key={partName} style={{ fontSize: '1.2rem' }}>
-                                  {capitalizeFirstLetter(partName)} - {details.map((detail) => (
-                                    <span key={detail.saleType} style={{ marginRight: '1rem' }}>
-                                      {detail.quantity} parts ({capitalizeFirstLetter(detail.saleType)})
-                                    </span>
-                                  ))}
-                                </li>
-                              ))}
-                            </ul>
-                          </Card.Body>
-                        </Card>
-                      </Col>
+              <Card.Title className='text-center mb-3' style={{ color: '#A9A9A9', fontSize: '2rem', marginBottom: '1rem' }}>Inventory Information</Card.Title>
+              <h2 style={{ fontSize: '1.7rem', color: '#3498db', fontWeight: 'bold' }}>
+                Total Breeds in the Yard: <span style={{ color: 'green' }}>{inventoryData.totalBreeds}</span>
+              </h2>
+              <hr />
+              <Row>
+                <Col md={6}>
+                  <h4 className='mb-2' style={{ fontSize: '1.5rem' }}>Total By Categories</h4>
+                  <ul>
+                    {Object.entries(inventoryData.breedTotals).map(([breed, total]) => (
+                      <li key={breed} style={{ fontSize: '1.2rem' }}>{capitalizeFirstLetter(breed)}: {total}</li>
                     ))}
+                  </ul>
+                </Col>
+                <Col md={6}>
+                  <hr />
+                  <h4 style={{ fontSize: '1.5rem' }}>Slaughtered History</h4>
+                  <ul>
+                    <li style={{ fontSize: '1.2rem' }}>Total Slaughtered: {inventoryData.totalSlaughtered}</li>
+                    <li style={{ fontSize: '1.2rem' }}>Total breed parts category in warehouse: {inventoryData.inWarehouse}</li>
+                    <li style={{ fontSize: '1.2rem' }}>Quantity of Breeds Supplied: {inventoryData.quantitySupplied}</li>
+                  </ul>
+                </Col>
+              </Row>
+              <Col className='mb-2' md={12}>
+                <hr />
+                <h4 className='mb-4 text-center' style={{ fontSize: '1.5rem' }}>Breed Parts in Warehouse</h4>
+              </Col>
+              <Row>
+                {Object.entries(inventoryData.breedPartsInWarehouse).map(([breed, parts]) => (
+                  <Col key={breed} md={3}>
+                    <Card style={{ marginBottom: '1.5rem' }}>
+                      <Card.Header style={{ fontSize: '1.3rem', fontWeight: 'bold' }}>{capitalizeFirstLetter(breed)}</Card.Header>
+                      <Card.Body>
+                        <ul>
+                        <li className='mb-2' style={{ fontSize: '1.2rem', fontFamily:'verdana', fontWeight:'bold' }}>Export Parts:</li>
+                          {Object.entries(parts)
+                            .filter(([partName, details]) => details.some(part => part.saleType === 'export_cut'))
+                            .map(([partName, details]) => (
+                              <li key={partName} style={{ fontSize: '1.2rem' }}>
+                                {capitalizeFirstLetter(partName)}: {details.reduce((acc, part) => part.saleType === 'export_cut' ? acc + part.quantity : acc, 0)}
+                              </li>
+                            ))}
+                            <hr />
+                          <li className='mb-2'  style={{ fontSize: '1.2rem', fontFamily:'verdana', fontWeight:'bold' }}>Local Sale Parts:</li>
+                          {Object.entries(parts)
+                            .filter(([partName, details]) => details.some(part => part.saleType === 'local_sale'))
+                            .map(([partName, details]) => (
+                              <li key={partName} style={{ fontSize: '1.2rem' }}>
+                                {capitalizeFirstLetter(partName)}: {details.reduce((acc, part) => part.saleType === 'local_sale' ? acc + part.quantity : acc, 0)}
+                              </li>
+                            ))}
+                        </ul>
+                      </Card.Body>
+                    </Card>
                   </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-          </div>
+                ))}
+              </Row>
+            </Card.Body>
+          </Card>
         </div>
       </div>
     </div>
+  </div>
   );
 };
 

@@ -44,8 +44,8 @@ const toggleNotificationPanel = () => {
   
   
 useEffect(() => {
-	setDefaultBackgroundColor('#ffffff');
-	setDefaultTextColor('#000000');
+	setDefaultBackgroundColor('0074cc');
+	setDefaultTextColor('#fff');
   }, []);
 
   const handleResetSettings = () => {
@@ -54,18 +54,18 @@ useEffect(() => {
   };
   
   const handleCloseSidebar = () => {
-	setIsRightSidebarVisible(false);
+	setIsRightSidebarVisible(false)
   };
 
   // New state for managing background color
-  const [backgroundColor, setBackgroundColor] = useState('#ffffff'); // Set the initial background color
+  const [backgroundColor, setBackgroundColor] = useState('#001f33'); // Set the initial background color
   const [textColor, setTextColor] = useState('#000000'); // Set the initial text color
 
     // Function to handle background color change
 	const handleBackgroundColorChange = (color) => {
 		setBackgroundColor(color);
 		// Set text color based on background color
-		setTextColor(color === '#ffffff' ? '#343A40' : '#000000');
+		setTextColor(color === '#ffffff' ? '#ffffff' : '#000000');
 	  };
 
   const handleDashboardsToggle = () => {
@@ -471,7 +471,7 @@ style={{
 	
   <div className="brand-logo">
   <span className='mtext' style={{ color: '#999999', fontSize: '18px' }}>
-	<a href='/' style={{ color: '#999999', fontSize: '18px' }}>
+	<a href='/' style={{ color: '#fff', fontSize: '18px', fontWeight:'bold' }}>
       XYZ Management
 	  </a>
     </span>
@@ -486,9 +486,9 @@ style={{
     <div className="sidebar-menu">
       <ul id="accordion-menu" >
         <li className="dropdown">
-		<span href="" className="dropdown-toggle" style={{color:'#999999', fontWeight: 800}}>
-   <span className="micon bi bi-house" style={{color:'#999999', fontWeight: 800}}></span>
-   <span className="mtext" style={{color:'#999999', fontWeight: 800}}>Home</span>
+		<span href="" className="dropdown-toggle" style={{color:'#fff', fontWeight: 800}}>
+   <span className="micon bi bi-house" style={{color:'#fff', fontWeight: 800}}></span>
+   <span className="mtext" style={{color:'#fff', fontWeight: 800}}>Home</span>
 </span>
 
 {isDashboardsVisible && (
