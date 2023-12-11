@@ -1,51 +1,139 @@
-import React from 'react';
-import { HiBell, HiCube, HiExclamation, HiCurrencyDollar, HiChartBar } from 'react-icons/hi';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { BASE_URL } from './auth/config';
+import Cookies from 'js-cookie';
 
-const Home = () => {
-    return (
-        <>
-            <div className='main-container'>
-                <h2 className='text-center'> Integrated Banking Dashboard</h2>
+const WarehouseDashboard = () => {
+  const baseUrl = BASE_URL;
+  const authToken = Cookies.get('authToken');
 
-                <div>
-                    {/* Flash message */}
-                    <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#e0e0e0', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <p className='text-center'>Good morning, Mel!</p>
-                    </div>
+  const [inventoryData, setInventoryData] = useState({
+    partName: 'ribs',
+    saleType: 'export_cut',
+    status: 'in_the_warehouse',
+    quantity: 20,
+  });
 
-                    {/* Notifications */}
-                    <div style={{ borderRadius: '50%', position: 'relative', float: 'right', top: 0, backgroundColor: 'lightblue', padding: '10px', width: '40px', height: '40px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-                        <HiBell size={20} color='white' />
-                    </div>
+  const handleInventoryInputChange = (e) => {
+    setInventoryData({
+      ...inventoryData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-                    {/* Purchase Issuance */}
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiCube className='mr-2' /> Deal Catalog
-                    </button>
+  const handleInventorySubmit = async (e) => {
+    e.preventDefault();
 
-                    {/* Banking Transactions */}
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiCurrencyDollar className='mr-2' /> Banking Transactions
-                    </button>
+    try {
+      // Fetch the current inventory data
+      const currentInventoryResponse = await axios.get(
+        `${baseUrl}/api/inventory-breed-sales/`,
+        {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        }
+      );
+      console.log('breed sales data', currentInventoryResponse);
 
-                    {/* Cataloging live deals */}
-                    <button style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiExclamation className='mr-2' /> Cataloging live deals
-                    </button>
+      // Get the existing inventory item for the submitted partName
+      const existingInventoryItem = currentInventoryResponse.data.find(
+        (item) => item.partName === inventoryData.partName
+      );
 
-                    {/* Management of deals at different stages */}
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiCube className='mr-2' /> Management of deals at different stages
-                    </button>
+      if (existingInventoryItem) {
+        // Calculate the new quantity in inventory after the sale
+        const newQuantity = existingInventoryItem.quantity - inventoryData.quantity;
 
-                    {/* Tracking financed and paid-off deals */}
-                    <button style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', marginBottom: '10px', padding: '15px', width: '100%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiChartBar className='mr-2' /> Tracking financed and paid-off deals
-                    </button>
-                </div>
-            </div>
-        </>
-    );
-}
+        // Submit the updated data back to the server
+        const updatedInventoryResponse = await axios.put(
+          `${baseUrl}/api/inventory-breed-sales/${existingInventoryItem.id}/`,
+          {
+            ...existingInventoryItem,
+            quantity: newQuantity,
+          },
+          {
+            headers: {
+              Authorization: `Token ${authToken}`,
+            },
+          }
+        );
 
-export default Home;
+        console.log('Updated Inventory response:', updatedInventoryResponse.data);
+
+        // Clear the form fields after successful submission
+        setInventoryData({
+          partName: 'ribs',
+          saleType: 'export_cut',
+          status: 'in_the_warehouse',
+          quantity: 20,
+        });
+      }
+    } catch (error) {
+      console.error('Error making sale and updating inventory:', error);
+    }
+  };
+
+  return (
+    <div className='main-container warehouse-container'>
+      <h2 className='text-center'>Warehouse Dashboard</h2>
+      <form onSubmit={handleInventorySubmit}>
+        <label>
+          Part Name:
+          <select
+            name="partName"
+            value={inventoryData.partName}
+            onChange={handleInventoryInputChange}
+            required
+          >
+            <option value="ribs">Ribs</option>
+            <option value="thighs">Thighs</option>
+            {/* Add more options as needed */}
+          </select>
+        </label>
+        <br />
+        <label>
+          Sale Type:
+          <select
+            name="saleType"
+            value={inventoryData.saleType}
+            onChange={handleInventoryInputChange}
+            required
+          >
+            <option value="export_cut">Export Cut</option>
+            <option value="local_sale">Local Sale Cut</option>
+            {/* Add more options as needed */}
+          </select>
+        </label>
+        <br />
+        <label>
+          Status:
+          <select
+            name="status"
+            value={inventoryData.status}
+            onChange={handleInventoryInputChange}
+            required
+          >
+            <option value="in_the_warehouse">In the Warehouse</option>
+            {/* Add more options as needed */}
+          </select>
+        </label>
+        <br />
+        <label>
+          Quantity:
+          <input
+            type="number"
+            name="quantity"
+            value={inventoryData.quantity}
+            onChange={handleInventoryInputChange}
+            required
+          />
+        </label>
+        <br />
+        <button type="submit">Make Sale</button>
+      </form>
+    </div>
+  );
+};
+
+export default WarehouseDashboard;

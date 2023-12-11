@@ -385,7 +385,7 @@ const BreaderInfo = () => {
               </thead>
               <tbody style={{ background: 'white' }}>
                 <tr>
-                  <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.animal_name}</td>
+                  <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.breed}</td>
                   <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.breads_supplied}</td>
                   <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.goat_weight} Kg</td>
                   <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{formattedTransactionDate}</td>

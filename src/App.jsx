@@ -25,6 +25,7 @@ import MpesaResponse from './pages/payment/MpesaResponse';
 import FormSubmissionSuccess from './pages/forms/FormSubmissionSuccess';
 // import SuperuserRoute from './pages/auth/SuperuserRole'; // Import the HOC
 import Unauthorized from './pages/auth/Unauthorised';
+import Inventory from './pages/inventory/Inventory';
 
 const App = () => {
   return (
@@ -62,6 +63,12 @@ const App = () => {
             {/* Payment */}
             {/* <Route path="/payment/response" element={<MpesaResponse paymentResponse={response} />} /> */}
             <Route path="/mpesa-payment-response" element={<MpesaResponse />} />
+
+            {/* Inventory */}
+
+            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/warehouse" element={<WarehouseManagement />} />
+
           </Routes>
         </div>
       </SuppliesProvider>

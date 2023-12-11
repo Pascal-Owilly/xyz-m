@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { BASE_URL } from '../pages/auth/config';
+import { BASE_URL } from '../auth/config';
 import Cookies from 'js-cookie';
 import { Card, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -92,27 +92,28 @@ const InventoryPage = () => {
             <Card className="weather-card" style={{ background: 'transparent' }}>
               <Card.Body>
 
-                <Card.Title className='text-center mb-3' style={{ color: '#A9A9A9', fontSize: '2rem', marginBottom: '1rem' }}>Inventory Informaion</Card.Title>
-                <h2 style={{ fontSize: '1.7rem', color: '#3498db', fontWeight: 'bold' }}>
-                  Total Breeds in the Yard: <span style={{ color: 'green' }}>{inventoryData.totalBreeds}</span>
-                </h2>
-                <hr />
-                <Row>
-                  <Col md={6}>
-                    <h4 className='mb-2' style={{ fontSize: '1.5rem' }}>Total By Categories</h4>
-                  </Col>
-                  <Col md={3} className=' mb-3'>
+                <Card.Title style={{ color: '#A9A9A9', fontSize: '2rem', marginBottom: '1rem' }}>Inventory Informaion</Card.Title>
+                                <h2 style={{ fontSize: '1.7rem', color: '#3498db', fontWeight: 'bold' }}>
+                                      Total Breeds in the Yard: <span style={{color:'green'}}>{inventoryData.totalBreeds}</span>
+                                    </h2>
+                                    <hr />
+                  <Row>
+
+                  <Col md={12}>
+                    <h4 className='mb-2' style={{ fontSize: '1.5rem' }}>Total In Categories</h4>
+                    </Col>
+                    <Col md={3} className='mx-5 mb-3'>
                     <ul>
                       {Object.entries(inventoryData.breedTotals).map(([breed, total]) => (
                         <li key={breed} style={{ fontSize: '1.2rem' }}>{capitalizeFirstLetter(breed)}: {total}</li>
                       ))}
                     </ul>
                   </Col>
-                  <Col className='mb-2' md={6}>
-                    <hr />
+                  <Col className='mb-2' md={12}>
                     <h4 style={{ fontSize: '1.5rem' }}>Slaughtered History</h4>
-                  </Col>
-                  <Col md={3} className=' mb-3'>
+                    </Col>
+                    <Col md={3} className='mx-5 mb-3'>
+                  
                     <ul>
                       <li style={{ fontSize: '1.2rem' }}>Total Slaughtered: {inventoryData.totalSlaughtered}</li>
                       <li style={{ fontSize: '1.2rem' }}>Total breed parts category in warehouse: {inventoryData.inWarehouse}</li>
@@ -120,29 +121,24 @@ const InventoryPage = () => {
                     </ul>
                   </Col>
                   <Col className='mb-2' md={12}>
-                  <hr />
-                    <h4 className='mb-4' style={{ fontSize: '1.5rem' }}>Breed Parts in Warehouse</h4>
-                  </Col>
-                  <Col md={12} className=''>
+                    <h4 style={{ fontSize: '1.5rem' }}>Breed Parts in Warehouse</h4>
+                    </Col>
+                    <Col md={12} className='mx-5'>
                     {Object.entries(inventoryData.breedPartsInWarehouse).map(([breed, parts]) => (
-                      <Col key={breed} md={6}>
-                        <Card style={{ marginBottom: '1.5rem' }}>
-                          <Card.Header style={{ fontSize: '1.3rem', fontWeight: 'bold' }}>{capitalizeFirstLetter(breed)}</Card.Header>
-                          <Card.Body>
-                            <ul>
-                              {Object.entries(parts).map(([partName, details]) => (
-                                <li key={partName} style={{ fontSize: '1.2rem' }}>
-                                  {capitalizeFirstLetter(partName)} - {details.map((detail) => (
-                                    <span key={detail.saleType} style={{ marginRight: '1rem' }}>
-                                      {detail.quantity} parts ({capitalizeFirstLetter(detail.saleType)})
-                                    </span>
-                                  ))}
-                                </li>
+                      <div key={breed} style={{ marginBottom: '1.5rem' }}>
+                        <h5 style={{ fontSize: '1.3rem' }}>{capitalizeFirstLetter(breed)}:</h5>
+                        <ul>
+                          {Object.entries(parts).map(([partName, details]) => (
+                            <li key={partName} style={{ fontSize: '1.2rem' }}>
+                              {capitalizeFirstLetter(partName)} - {details.map((detail) => (
+                                <span key={detail.saleType} style={{ marginRight: '1rem' }}>
+                                  {detail.quantity} parts ({capitalizeFirstLetter(detail.saleType)})
+                                </span>
                               ))}
-                            </ul>
-                          </Card.Body>
-                        </Card>
-                      </Col>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     ))}
                   </Col>
                 </Row>

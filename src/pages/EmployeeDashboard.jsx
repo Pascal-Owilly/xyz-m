@@ -1,7 +1,8 @@
 import React from 'react';
 import { HiBell, HiCube, HiExclamation, HiCurrencyDollar, HiChartBar } from 'react-icons/hi';
+import axios from 'axios';
 
-const Home = () => {
+const Employee = () => {
     return (
         <>
             <div className='main-container'>
@@ -49,4 +50,4 @@ const Home = () => {
     );
 }
 
-export default Home;
+export default Employee;

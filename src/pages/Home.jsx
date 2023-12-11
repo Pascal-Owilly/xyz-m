@@ -506,6 +506,8 @@ style={{
             {userRole === 'superuser' && ( // Render only if user is a superuser
             <li><a href="inventory-dashboard">Inventory Dashboard </a></li>
             )}
+            <li><a href="warehouse">Warehouse Dashboard </a></li>
+
     		</ul>
 )}
         </li>

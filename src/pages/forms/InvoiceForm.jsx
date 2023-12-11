@@ -17,6 +17,7 @@ const InvoiceForms = () => {
     breads_supplied: null,
     goat_weight: null,
     community: '',
+    breed: 'goats', // Set a default breed
     market: '',
     head_of_family: '',
     vaccinated: false,
@@ -25,6 +26,8 @@ const InvoiceForms = () => {
     breader: null,
     abattoir: null, 
     user: null,
+    animalOptions: ['Goats', 'Sheep', 'Cows', 'Pigs'], // Add more options as needed
+    selectedAnimal: 'Goats', // Set a default animal
   });
 
   useEffect(() => {
@@ -104,7 +107,6 @@ const InvoiceForms = () => {
           },
         }
       );
-  
       setSuccessMessage('Invoice form submitted successfully!');
       setIsFormSubmitted(true);
       navigate('/submission-successful')
@@ -119,6 +121,7 @@ const InvoiceForms = () => {
         vaccinated: false,
         phone_number: '',
         price: null,
+        breed: '',
         breader: null,
         abattoir: null, 
         user: null,
@@ -190,19 +193,22 @@ const InvoiceForms = () => {
               </td>
             </tr>
             <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>Bread Name</th>
-              <td style={{ border: '1px dotted black', padding: '5px' }}>
-                <input
-                  type="text"
-                  name="animal_name"
-                  value={formData.animal_name}
-                  onChange={handleInputChange}
-                  className='form-control'
-                  placeholder='eg. Goats'
-
-                />
-              </td>
-              </tr>
+  <th style={{ border: '1px dotted black', padding: '5px' }}>Bread Name</th>
+  <td style={{ border: '1px dotted black', padding: '5px' }}>
+    <select
+      name="breed"
+      value={formData.breed}
+      onChange={handleInputChange}
+      className='form-control'
+    >
+      {['goats', 'sheep', 'cows', 'pigs'].map((breed) => (
+        <option key={breed} value={breed}>
+          {breed.charAt(0).toUpperCase() + breed.slice(1)}
+        </option>
+      ))}
+    </select>
+  </td>
+</tr>
               <tr>
               <th style={{ border: '1px dotted black', padding: '5px' }}>Bread Price</th>
               <td style={{ border: '1px dotted black', padding: '5px' }}>

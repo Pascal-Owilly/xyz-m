@@ -26,7 +26,6 @@ const Admin = () => {
         });
         const data = await response.json();
         setBreadersCount(data.breader_count);
-        console.log('count', data.breader_count);
       } catch (error) {
         console.error('Error fetching breaders count:', error);
       }
@@ -46,7 +45,7 @@ const Admin = () => {
       .then(response => response.json())
       .then(data => {
         setBreadersCount(data.breader_count);
-        console.log('count', data.breader_count);
+
       })
       .catch(error => console.error('Error fetching breaders count:', error));
   }, []);
@@ -143,11 +142,14 @@ const Admin = () => {
       </div>
     </div>
 
-    <div className="card-box height-100-p widget-style3">
+    <div className="col-lg-3 col-md-12 mb-3">
+    <a href='/inventory-dashboard'>
+
+      <div className="card-box height-100-p widget-style3">
         <div className="d-flex flex-wrap">
           <div className="widget-data">
             <div className="weight-700 font-24 text-dark">Inventory</div>
-            <div className="font-14 text-secondary weight-500">500 Breads</div>
+            <div className="font-14 text-secondary weight-500">5 Activities</div>
           </div>
           <div className="widget-icon">
             <div className="icon" data-color="#09cc06">
@@ -156,12 +158,11 @@ const Admin = () => {
           </div>
         </div>
       </div>
+      </a>
 
-	
-
+    </div>
   </div>
 </div>
-
 			</div>
 			</div>
 
