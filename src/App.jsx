@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { SuppliesProvider } from './SuppliesContext';
 import Home from './pages/Home';
-import Registration2 from './pages/auth/Registration2';
+import Registration2 from './pages/auth/Registration';
 import Login from './pages/auth/Login';
 import Profile from './pages/auth/Profile';
 import Footer from './pages/Footer';
