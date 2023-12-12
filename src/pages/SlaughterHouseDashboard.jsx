@@ -318,7 +318,7 @@ const Home = () => {
       console.log('Cut post response:', response.data);
 
       // Show success message and hide the form
-      setCutSubmitMessage({ type: 'success', text: 'Breed Cut Form submitted successfully!' });
+      setCutSubmitMessage({ type: 'success', text: 'Breed Parts Form submitted successfully!' });
       setShowCutForm(false);
 
       // Clear the form fields after successful submission
@@ -332,7 +332,7 @@ const Home = () => {
       console.error('Error submitting cut form:', error);
 
       // Show failure message
-      setCutSubmitMessage({ type: 'error', text: 'Failed to submit Breed Cut Form. Please refresh the page and try again.' });
+      setCutSubmitMessage({ type: 'error', text: 'Failed to submit Breed parts Form. Please refresh the page and try again.' });
     }
   };
 
