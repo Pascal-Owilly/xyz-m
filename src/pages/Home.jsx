@@ -58,7 +58,7 @@ useEffect(() => {
   };
 
   // New state for managing background color
-  const [backgroundColor, setBackgroundColor] = useState('#001f33'); // Set the initial background color
+  const [backgroundColor, setBackgroundColor] = useState('#0074cc'); // Set the initial background color
   const [textColor, setTextColor] = useState('#000000'); // Set the initial text color
 
     // Function to handle background color change
@@ -228,7 +228,7 @@ const logout = async () => {
             data-toggle="right-sidebar"
             onClick={handleRightSidebarToggle}
           >
-            <i className="dw dw-settings2" style={{cursor:'pointer'}}></i>
+            <i className="dw dw-settings2 text-white" style={{cursor:'pointer'}}></i>
           </span>
         </div>
       </div>
@@ -247,14 +247,14 @@ const logout = async () => {
         }}
       ></div>
 				<div className="user-notification" >
-					<div className="dropdown" >
+					<div className="dropdown text-white" >
 					<span
 						className={`dropdown-toggle no-arrow ${isNotificationPanelVisible ? 'active' : ''}`}
 						data-toggle="dropdown"
 						onClick={toggleNotificationPanel}
 						>
-						<i className="icon-copy dw dw-notification" style={{cursor:'pointer'}}></i>
-						<span className="badge notification-active"></span>
+						<i className="icon-copy dw dw-notification text-white" style={{cursor:'pointer'}}></i>
+						<span className="badge notification-active "></span>
 					</span>
 
 					{isNotificationPanelVisible && (
@@ -333,7 +333,7 @@ const logout = async () => {
                   </>
                 )}
               </span>
-              <span style={{ textTransform: 'capitalize' }} className="user-name">
+              <span style={{ textTransform: 'capitalize' }} className="user-name text-white">
                 {user.username}
               </span>
             </a>

@@ -66,6 +66,44 @@ const Admin = () => {
     checkUser();
   }, [navigate]);
 
+
+  useEffect(() => {
+    // Define the fetchData function inside the useEffect
+    const fetchData = async () => {
+      try {
+        // Fetch data from Django API endpoint
+        const response = await fetch(`${baseUrl}/api/breader-count/`, {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        });
+        const data = await response.json();
+        setBreadersCount(data.breader_count);
+      } catch (error) {
+        console.error('Error fetching breaders count:', error);
+      }
+    };
+
+    // Call fetchData unconditionally
+    fetchData();
+  }, [baseUrl, authToken]); // Include dependencies in the dependency array
+
+  useEffect(() => {
+    // Fetch data from Django API endpoint
+    fetch(`${baseUrl}/api/breader-count/`, {
+      headers: {
+        Authorization: `Token ${authToken}`,
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        setBreadersCount(data.breader_count);
+
+      })
+      .catch(error => console.error('Error fetching breaders count:', error));
+  }, []);
+
+
   return (
     <>
       <div className="main-container">
@@ -146,10 +184,20 @@ const Admin = () => {
     </div>
             </div>
           </div>
-          <div>
-            <h3 className='mt-4'>Breed Supply vs Demand</h3>
+          <div className='container-fluid'>
+            <div className='row'>
+              <div className='col-md-8'>
+              <div>
+            <h4 className='mt-4' style={{color:'#001f33', opacity: .5}}>Breed Supply vs Demand</h4>
             <ReactApexChart options={chartData.options} series={chartData.series} type="bar" height={350} />
           </div>
+              </div>
+              <div className='col-md-4'>
+                
+              </div>
+            </div>
+          </div>
+          
         </div>
       </div>
     </>

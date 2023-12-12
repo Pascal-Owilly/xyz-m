@@ -177,11 +177,13 @@ const [saleChoices, setSaleChoices] = useState(SALE_CHOICES);
                   <form onSubmit={handleSubmit}>
                     <label htmlFor="breedSelect" className="form-label">Select Breed:</label>
                     <select
+                                    style={{background:'#001f33', padding:'0.2rem', borderRadius:'30px'}}
+
                       id="breedSelect"
                       name="breed"
                       value={breed.selectedAnimal}
                       onChange={handleInputChange}
-                      className='form-select mb-3'
+                      className='form-select mb-3 mx-2'
                     >
                       {['goats', 'sheep', 'cows', 'pigs'].map((animal) => (
                         <option key={animal} value={animal}>
@@ -189,7 +191,8 @@ const [saleChoices, setSaleChoices] = useState(SALE_CHOICES);
                         </option>
                       ))}
                     </select>
-
+                      
+                      <p>
                     <label htmlFor="quantityInput" className="form-label">Quantity:</label>
                     <input
                       id="quantityInput"
@@ -199,7 +202,7 @@ const [saleChoices, setSaleChoices] = useState(SALE_CHOICES);
                       className="form-control mb-3"
                       required
                     />
-
+</p>
                     <button type="submit" className="btn btn-primary">Submit</button>
                   </form>
                 </div>
@@ -212,14 +215,16 @@ const [saleChoices, setSaleChoices] = useState(SALE_CHOICES);
                 <div className="card-body">
                   <form onSubmit={handleCutSubmit}>
                     <h3 className="mb-3">Breed Cut Form</h3>
-
-                    <label htmlFor="breedCutSelect" className="form-label">Select Breed:</label>
+<p>
+                      <label htmlFor="breedCutSelect" className="form-label">Select Breed:</label>
                     <select
+                                                        style={{background:'#001f33', padding:'0.2rem', borderRadius:'30px'}}
+
                       id="breedCutSelect"
                       name="breed"
                       value={cutData.breed}
                       onChange={handleCutInputChange}
-                      className='form-select mb-3'
+                      className='form-select mb-3 mx-2'
                     >
                       {['goats', 'sheep', 'cows', 'pigs'].map((animal) => (
                         <option key={animal} value={animal}>
@@ -227,14 +232,16 @@ const [saleChoices, setSaleChoices] = useState(SALE_CHOICES);
                         </option>
                       ))}
                     </select>
-
+</p>
                     <label htmlFor="partNameSelect" className="form-label">Select Part Name:</label>
                     <select
+                                                        style={{background:'#001f33', padding:'0.2rem', borderRadius:'30px'}}
+
                       id="partNameSelect"
                       name="partName"
                       value={cutData.partName}
                       onChange={handleCutInputChange}
-                      className='form-select mb-3'
+                      className='form-select mb-3 mx-2'
                     >
                       {/* Use the PART_CHOICES here */}
                       {PART_CHOICES.map(([value, label]) => (
@@ -243,14 +250,16 @@ const [saleChoices, setSaleChoices] = useState(SALE_CHOICES);
                         </option>
                       ))}
                     </select>
-
+<p>
                     <label htmlFor="saleTypeSelect" className="form-label">Select Sale Type:</label>
                     <select
+                                                        style={{background:'#001f33', padding:'0.2rem', borderRadius:'30px'}}
+
                       id="saleTypeSelect"
                       name="saleType"
                       value={cutData.saleType}
                       onChange={handleCutInputChange}
-                      className='form-select mb-3'
+                      className='form-select mb-3 mx-2'
                     >
                       {/* Use the SALE_CHOICES here */}
                       {SALE_CHOICES.map(([value, label]) => (
@@ -259,7 +268,7 @@ const [saleChoices, setSaleChoices] = useState(SALE_CHOICES);
                         </option>
                       ))}
                     </select>
-
+</p>
                     <label htmlFor="quantityInputCut" className="form-label">Quantity:</label>
                     <input
                       id="quantityInputCut"

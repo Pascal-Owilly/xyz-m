@@ -107,12 +107,11 @@ const InventoryPage = () => {
                   </ul>
                 </Col>
                 <Col md={6}>
-                  <hr />
                   <h4 style={{ fontSize: '1.5rem' }}>Slaughtered History</h4>
                   <ul>
-                    <li style={{ fontSize: '1.2rem' }}>Total Slaughtered: {inventoryData.totalSlaughtered}</li>
+                    <li style={{ fontSize: '1.2rem' }}>Total Slaughtered count: {inventoryData.totalSlaughtered}</li>
                     <li style={{ fontSize: '1.2rem' }}>Total breed parts category in warehouse: {inventoryData.inWarehouse}</li>
-                    <li style={{ fontSize: '1.2rem' }}>Quantity of Breeds Supplied: {inventoryData.quantitySupplied}</li>
+                    {/* <li style={{ fontSize: '1.2rem' }}>Quantity of Breeds Supplied: {inventoryData.quantitySupplied}</li> */}
                   </ul>
                 </Col>
               </Row>
