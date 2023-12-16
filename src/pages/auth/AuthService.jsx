@@ -1,13 +1,14 @@
 import axios from 'axios';
-import { BASE_URL } from './config';
 import Cookies from 'js-cookie';
-const baseUrl = BASE_URL; 
+import { BASE_URL } from './config'; // Make sure the path is correct
 import { jwtDecode } from 'jwt-decode';
+
+const baseUrl = BASE_URL;
+
 const authService = {
-  
   login: async (loginData) => {
     try {
-      const response = await axios.post(`${BASE_URL}/auth/login/`, loginData);
+      const response = await axios.post(`${baseUrl}/auth/login/`, loginData);
       const tokens = response.data.tokens;
 
       // Decode the access token to get user details
@@ -35,52 +36,86 @@ const authService = {
   getUser: () => {
     const accessToken = Cookies.get('accessToken'); // Ensure that accessToken is defined
     const userCookie = Cookies.get('user');
-    
+
     if (accessToken) {
       const decodedToken = jwtDecode(accessToken);
       console.log('Decoded Token:', decodedToken);
     }
     return userCookie ? JSON.parse(userCookie) : null;
   },
-  
 
-handleTokenRefresh: async () => {
-  try {
-      const response = await axios.post(`${BASE_URL}/auth/token/refresh/`, { refresh: Cookies.get('refreshToken') });
+  refreshAccessToken: async () => {
+    try {
+      const refreshToken = Cookies.get('refreshToken');
+
+      if (!refreshToken) {
+        throw new Error('Refresh token not found.');
+      }
+
+      const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+        refresh: refreshToken,
+      });
+
       const newAccessToken = response.data.access;
-
       // Update the stored access token
       Cookies.set('accessToken', newAccessToken, { expires: 10, sameSite: 'None', secure: true });
 
-      return newAccessToken;
-  } catch (error) {
-      // Handle token refresh error (e.g., redirect to login page)
-      throw error;
-  }
-},
-
-  requestPasswordReset: async (email) => {
-    try {
-      const response = await axios.post(`${baseUrl}/auth/password/reset/`, { email });
-      return response;
+      // Optional: You can also update the user data using the new access token
+      await fetchUserData();
     } catch (error) {
-      throw error;
+      console.error('Error refreshing access token:', error);
+      // Handle the error, e.g., redirect to login page
+      throw error; // Propagate the error to the caller if needed
     }
   },
+
+  fetchUserData: async () => {
+    try {
+      const accessToken = Cookies.get('accessToken');
+
+      if (accessToken) {
+        const response = await axios.get(`${baseUrl}/auth/user/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        const userProfile = response.data;
+        console.log('user profile', userProfile);
+        return userProfile;
+      }
+    } catch (error) {
+      // Check if the error indicates an expired access token
+      if (error.response && error.response.status === 401) {
+        // Attempt to refresh the access token
+        await authService.refreshAccessToken();
+      } else {
+        console.error('Error fetching user data:', error);
+      }
+    }
+  },
+
   getUserRole: async (accessToken) => {
     try {
-      // Implement your API request to get the user role using the authToken
-      const response = await axios.get(`${baseUrl}/auth/api/user/role/`, {
+      const response = await axios.get(`${baseUrl}/get-user-role/`, {
         headers: {
-          Authorization: `Token ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
-
-      return response.data; // Assuming your API returns the user's role
+  
+      // Check if the user has any roles in the 'roles' array
+      const userRoles = response.data.roles || [];
+      const hasRoles = userRoles.length > 0;
+  
+      // If the user has roles, return the primary role; otherwise, return 'anonymous'
+      return hasRoles ? response.data.primary_role : 'anonymous';
     } catch (error) {
-      throw error;
+      console.error('Error fetching user role:', error);
+      return 'anonymous'; // Handle errors gracefully, assume anonymous role
     }
   },
+  
+
 };
 
 export default authService;

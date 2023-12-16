@@ -95,7 +95,7 @@ const Profile = () => {
                 {userProfile.user.username}'s Profile
               </h1>
               {/* Role */}
-              <h2 style={{ fontSize: '18px', marginRight: '2rem' }}>Role: {userProfile.user.groups} Breeder</h2>
+              <h2 style={{ fontSize: '18px', marginRight: '2rem' }}>Role: {userProfile.user.groups[0] || 'No Role'}</h2>
             </div>
         <table style={{ borderCollapse: 'collapse', width: '100%' }}>
           <tbody>

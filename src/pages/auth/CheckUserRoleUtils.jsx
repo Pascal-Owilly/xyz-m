@@ -2,17 +2,19 @@ import Cookies from 'js-cookie';
 import AuthService from './AuthService'; // Make sure the path is correct
 
 
+
 const checkUserRole = async () => {
     try {
-      const authToken = Cookies.get('authToken'); // Get the authToken from cookies
-      if (!authToken) {
+
+      const accessToken = Cookies.get('accessToken'); // Get the authToken from cookies
+      if (!accessToken) {
         return 'anonymous'; // No authToken, assume anonymous role
       }
-  
-      // Make a request to your API to get user role (you need to implement this API endpoint)
-      const response = await AuthService.getUserRole(authToken);
+      console.log('Checking user role...');
 
-      
+      // Make a request to your API to get user role (you need to implement this API endpoint)
+      const response = await AuthService.getUserRole(accessToken);
+
       // Assuming your API returns user role as 'superuser' or 'regular'
 
       return response.role;

@@ -536,26 +536,25 @@ style={{
 
 {isDashboardsVisible && (
 
-		<ul className="menu-dashboards" style={{ maxHeight: isDashboardsVisible ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
-			          {userRole === 'superuser' && ( // Render only if user is a superuser
-		  <li><a href="admin_dashboard">SCM Administration</a></li>
-                )}
-            <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
-            <li><a href="buyer_dashboard">Buyer Dashboard </a></li>
-			<li><a href="slaughterhouse-dashboard">Slaughter House</a></li>
-      {userRole === 'superuser' && ( // Render only if user is a superuser
-            <li><a href="inventory-dashboard">Inventory Dashboard </a></li>
-            )}
-                        {userRole === 'superuser' && ( // Render only if user is a superuser
+      <ul className="menu-dashboards" style={{ maxHeight: isDashboardsVisible ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
+          <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
+          <li><a href="buyer_dashboard">Buyer Dashboard </a></li>
+          <li><a href="slaughterhouse-dashboard">Slaughter House</a></li>
 
-            <li><a href="warehouse">Warehouse Dashboard </a></li>
-                        )}
-            <li><a href="integrated_banking">Bank Dashboard </a></li>
-			<li><a href="employee_dashboard">Employee Dashboard</a></li>
-            <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
-            
-    		</ul>
-)}
+          {userRole === 'superuser' && (
+            <>
+              <li><a href="admin_dashboard">SCM Administration</a></li>
+              <li><a href="inventory-dashboard">Inventory Dashboard </a></li>
+              <li><a href="warehouse">Warehouse Dashboard </a></li>
+            </>
+          )}
+
+          <li><a href="integrated_banking">Bank Dashboard </a></li>
+          <li><a href="employee_dashboard">Employee Dashboard</a></li>
+          <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
+
+          		</ul>
+      )}
         </li>
 
         <li>
