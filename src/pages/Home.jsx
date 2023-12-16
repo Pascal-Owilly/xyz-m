@@ -178,6 +178,8 @@ const logout = async () => {
   try {
     await axios.post(`${baseUrl}/auth/logout/`);
     Cookies.remove('accessToken', { sameSite: 'None', secure: true });
+    Cookies.remove('refreshToken');
+    Cookies.remove('user')
     window.location.reload();
     setIsRightSidebarVisible(false);
     setIsProfileDropdownVisible(false);
