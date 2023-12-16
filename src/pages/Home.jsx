@@ -8,23 +8,27 @@ import './Home.css';
 import '../../vendors/styles/core.css';
 import '../../vendors/styles/icon-font.min.css';
 import '../../vendors/styles/style.css';
-import authService from './auth/AuthService'; // Make sure the path is correct
+import AuthService from './auth/AuthService'; // Make sure the path is correct
+import { jwtDecode } from 'jwt-decode';
 
 import { checkUserRole } from './auth/CheckUserRoleUtils'; // Update the path accordingly
 
 const Home = () => {
 const navigate =useNavigate()
+
+
   const baseUrl = BASE_URL;
   const [profile, setProfile] = useState([]);
+  // const [user, setUser] = useState(null);
 
-  const authToken = Cookies.get('authToken');
-  const [user, setUser] = useState({})
+  const accessToken = Cookies.get('accessToken');
+  const [user, setUser] = useState(null); // Initialize with null or an empty object
   const [isRightSidebarVisible, setIsRightSidebarVisible] = useState(false);
   const [isProfileDropdownVisible, setIsProfileDropdownVisible] = useState(false);
   const [isSettingsDropdownVisible, setIsSettingsDropdownVisible] = useState(false);
   const [isLeftSidebarVisible, setIsLeftSidebarVisible] = useState(true);
   const [isDashboardsVisible, setIsDashboardsVisible] = useState(true);
-const [isNotificationPanelVisible, setIsNotificationPanelVisible] = useState(false);
+  const [isNotificationPanelVisible, setIsNotificationPanelVisible] = useState(false);
 
   const [defaultBackgroundColor, setDefaultBackgroundColor] = useState('#ffffff');
 const [defaultTextColor, setDefaultTextColor] = useState('#000000');
@@ -75,7 +79,7 @@ useEffect(() => {
  
 
   useEffect(() => {
-    const storedToken = Cookies.get('authToken');
+    const storedToken = Cookies.get('accessToken');
     if (storedToken) {
       setIsLoggedIn(true);
     }
@@ -103,25 +107,26 @@ useEffect(() => {
     };
   }, []);
 
-const fetchUserData = async () => {
-  try {
-    const response = await axios.get(`${baseUrl}/auth/user/`, {
-      headers: {
-        Authorization: `Token ${authToken}`,
-      },
-    });
-    const userData = response.data;
-    setUser(userData);
-  } catch (error) {
-    console.error('Error fetching user data:', error);
-  }
-};
+  useEffect(() => {
+    fetchUserData();
+  }, [accessToken, baseUrl]);
+
+  const fetchUserData = async () => {
+    try {
+      // No need to call a separate user endpoint, use the user details stored in the token
+      const user = AuthService.getUser();
+      console.log('User Data:', user);
+      // You can set the user details to state or use them as needed in your component
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
 
 const fetchProfile = async () => {
   try {
     const response = await axios.get(`${baseUrl}/api/profile/`, {
       headers: {
-        Authorization: `Token ${authToken}`,
+        Authorization: `Token ${accessToken}`,
       },
     });
     const userProfile = response.data;
@@ -136,7 +141,7 @@ const [isLoggedIn, setIsLoggedIn] = useState(false); // Track user's authenticat
 const logout = async () => {
   try {
     await axios.post(`${baseUrl}/auth/logout/`);
-    Cookies.remove('authToken', { sameSite: 'None', secure: true });
+    Cookies.remove('accessToken', { sameSite: 'None', secure: true });
     window.location.reload();
     setIsRightSidebarVisible(false);
     setIsProfileDropdownVisible(false);
@@ -334,7 +339,7 @@ const logout = async () => {
                 )}
               </span>
               <span style={{ textTransform: 'capitalize' }} className="user-name text-white">
-                {user.username}
+                {/* {user.first_name} */}
               </span>
             </a>
           )}

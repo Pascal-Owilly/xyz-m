@@ -30,10 +30,9 @@ const LoginTest = () => {
     }
 
     try {
-      const authToken = await AuthService.login(loginData);
+      const accessToken = await AuthService.login(loginData); // Update this line
       setIsLoggedIn(true);
-      Cookies.set('authToken', authToken, { expires: 10, sameSite: 'None', secure: true });
-
+      Cookies.set('accessToken', accessToken, { expires: 10, sameSite: 'None', secure: true });
       // Fetch user role
       const role = await checkUserRole();
 
@@ -61,7 +60,6 @@ const LoginTest = () => {
     }
   };
   
-
   useEffect(() => {
     if (flashMessage) {
       const timer = setTimeout(() => {
@@ -73,7 +71,7 @@ const LoginTest = () => {
   }, [flashMessage]);
 
   useEffect(() => {
-    const storedToken = Cookies.get('authToken');
+    const storedToken = Cookies.get('accessToken');
     if (storedToken) {
       setIsLoggedIn(true);
     }
@@ -85,10 +83,52 @@ const LoginTest = () => {
     }
   }, [isLoggedIn]);
 
-  const handleLoginSubmit = (event) => {
-    event.preventDefault();
-    login();
+  const handleLoginSubmit = async (event) => {
+    try {
+      event.preventDefault();
+      
+      // Log the login data for debugging purposes
+      console.log('loginData:', loginData);
+  
+      // Call the AuthService.login function and await the result
+      const accessToken = await AuthService.login(loginData);
+  
+      // Set the user as logged in
+      setIsLoggedIn(true);
+  
+      // Fetch user role
+      const role = await checkUserRole();
+  
+      // Redirect based on user role
+      switch (role) {
+        case 'superuser':
+          navigate('/admin_dashboard');
+          break;
+        case 'regular':
+          navigate('/supplier_dashboard');
+          break;
+        // Add more cases for other roles if needed
+  
+        default:
+          // Redirect to the default page (e.g., home page)
+          navigate('/');
+      }
+  
+      // Note: Removing the page reload for testing
+      // window.location.reload();
+  
+      // Set a flash message for successful login
+      setFlashMessage({ message: `Welcome back ${loginData.username}!`, type: 'success' });
+    } catch (error) {
+      // Handle login error
+      // For example, log the error to the console for debugging
+      console.error('Login error:', error);
+  
+      // You might want to set a flash message for unsuccessful login
+      setFlashMessage({ message: 'Login failed. Please check your credentials.', type: 'error' });
+    }
   };
+ 
 
   const handleLoginChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });

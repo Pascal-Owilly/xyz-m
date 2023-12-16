@@ -1,17 +1,25 @@
+// SignUpForm.js
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { BASE_URL } from './config';
 
 const SignUpForm = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const baseUrl = BASE_URL;
 
   const [registrationData, setRegistrationData] = useState({
     username: '',
     email: '',
-    password1: '',
-    password2: '',
+    password: '',
+    first_name: '',
+    last_name: '',
+    id_number: null,
+    market: '',
+    community: '',
+    head_of_family: false,
+    country: '',
   });
 
   const [errorMessages, setErrorMessages] = useState({});
@@ -22,35 +30,33 @@ const SignUpForm = () => {
 
   const signUp = async (e) => {
     e.preventDefault();
-
-    if (registrationData.password1 !== registrationData.password2) {
-      setErrorMessages({ passwords: "Passwords don't match" });
-      return;
-    }
-
+  
     try {
-      const response = await axios.post(`${baseUrl}/auth/register/`, registrationData);
+      const url = new URL('auth/register/', baseUrl); // Use new URL constructor
+      const response = await axios.post(url.toString(), registrationData);
       navigate('/login');
       // Handle successful sign-up here
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        const errorData = error.response.data;
-        setErrorMessages(errorData);
-      } else {
-        // Handle other types of errors (network, server, etc.)
-        console.error('Error during sign-up:', error);
+      console.error('Error during sign-up:', error);
+  
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', error.response.data);
       }
+  
+      setErrorMessages({ generic: 'An error occurred during sign-up. Please try again.' });
     }
   };
+  
+  
 
   return (
     <div className='main-container'>
-
-    <div className='' style={{ height: 'auto', backgroundColor: 'transparent',right:0 }}>
-      <div className='container'>
-        <div className='row'>
-          <div className='col-md-2'></div>
-          <div className='col-md-6' style={{ }}>
+      <div className='' style={{ height: 'auto', backgroundColor: 'transparent', right: 0 }}>
+        <div className='container'>
+          <div className='row'>
+            <div className='col-md-2'></div>
+            <div className='col-md-6' style={{}}>
             <form
               className='card p-3 m-1 '
               style={{  
@@ -63,23 +69,60 @@ const SignUpForm = () => {
             >
               <h4 className='text-secondary'>Sign Up</h4>
 <hr />
-              {/* Username input */}
-              <div className='form-group'>
-               <label htmlFor='username' className='text-secondary'>Username</label>
-                <input
-                  type='text'
-                  className='form-control mb-1'
-                  id='username'
-                  name='username'
-                  value={registrationData.username}
-                  onChange={handleRegistrationChange}
-                  required
-                />
-                {errorMessages.username && (
-                  <p style={{ color: 'red', fontSize:'12px' }}>{errorMessages.username[0]}</p>
-                )}
-              </div>
+<div className='form-group'>
+                  <label htmlFor='first_name' className='text-secondary'>
+                    First Name
+                  </label>
+                  <input
+                    type='text'
+                    className='form-control mb-1'
+                    id='first_name'
+                    name='first_name'
+                    value={registrationData.first_name}
+                    onChange={handleRegistrationChange}
+                    required
+                  />
+                  {errorMessages.first_name && (
+                    <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.first_name[0]}</p>
+                  )}
+                </div>
+                <div className='form-group'>
+                  <label htmlFor='last_name' className='text-secondary'>
+                    Last Name
+                  </label>
+                  <input
+                    type='text'
+                    className='form-control mb-1'
+                    id='last_name'
+                    name='last_name'
+                    value={registrationData.last_name}
+                    onChange={handleRegistrationChange}
+                    required
+                  />
+                  {errorMessages.last_name && (
+                    <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.last_name[0]}</p>
+                  )}
+                </div>
 
+                <div className='form-group'>
+                  <label htmlFor='username' className='text-secondary'>
+                    Username
+                  </label>
+                  <input
+                    type='text'
+                    className='form-control mb-1'
+                    id='username'
+                    name='username'
+                    value={registrationData.username}
+                    onChange={handleRegistrationChange}
+                    required
+                  />
+                  {errorMessages.username && (
+                    <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.username[0]}</p>
+                  )}
+                </div>
+                
+                
               {/* Email input */}
               <div className='form-group'>
                 <label htmlFor='email' className='text-secondary'>Email</label>
@@ -97,37 +140,102 @@ const SignUpForm = () => {
                 )}
               </div>
 
-              {/* Password input */}
+              {/* Email input */}
               <div className='form-group'>
-               <label htmlFor='password1' className='text-secondary'>Password</label>
+                <label htmlFor='id_number' className='text-secondary'>Id Number</label>
                 <input
-                  type='password'
+                  type='id_number'
                   className='form-control mb-1'
-                  id='password1'
-                  name='password1'
-                  value={registrationData.password1}
+                  id='id_number'
+                  name='id_number'
+                  value={registrationData.id_number}
                   onChange={handleRegistrationChange}
                   required
                 />
-                {errorMessages.password1 && (
-                  <p style={{ color: 'red', fontSize:'12px'  }}>{errorMessages.password1[0]}</p>
+                {errorMessages.id_number && (
+                  <p style={{color: 'red', fontSize:'12px' }}>{errorMessages.id_number[0]}</p>
+                )}
+              </div>
+
+              <div className='form-group'>
+               <label htmlFor='community' className='text-secondary'>Community</label>
+                <input
+                  type='text'
+                  className='form-control mb-1'
+                  id='community'
+                  name='community'
+                  value={registrationData.community}
+                  onChange={handleRegistrationChange}
+                  required
+                />
+                {errorMessages.community && (
+                  <p style={{ color: 'red', fontSize:'12px' }}>{errorMessages.community[0]}</p>
+                )}
+              </div>
+
+              <div className='form-group'>
+               <label htmlFor='market' className='text-secondary'>Market</label>
+                <input
+                  type='text'
+                  className='form-control mb-1'
+                  id='market'
+                  name='market'
+                  value={registrationData.market}
+                  onChange={handleRegistrationChange}
+                  required
+                />
+                {errorMessages.market && (
+                  <p style={{ color: 'red', fontSize:'12px' }}>{errorMessages.market[0]}</p>
+                )}
+              </div>
+
+              <div className='form-group'>
+               <label htmlFor='head_of_family' className='text-secondary'>Head of Family</label>
+                <input
+                  type='text'
+                  className='form-control mb-1'
+                  id='head_of_family'
+                  name='head_of_family'
+                  value={registrationData.head_of_family}
+                  onChange={handleRegistrationChange}
+                  required
+                />
+                {errorMessages.head_of_family && (
+                  <p style={{ color: 'red', fontSize:'12px' }}>{errorMessages.head_of_family[0]}</p>
+                )}
+              </div>
+
+              {/* Password input */}
+              <div className='form-group'>
+               <label htmlFor='country' className='text-secondary'>Country</label>
+                <input
+                  type='country'
+                  className='form-control mb-1'
+                  id='country'
+                  name='country'
+                  value={registrationData.country}
+                  onChange={handleRegistrationChange}
+                  required
+                />
+                {errorMessages.country && (
+                  <p style={{ color: 'red', fontSize:'12px'  }}>{errorMessages.country[0]}</p>
                 )}
               </div>
 
               {/* Confirm Password input */}
               <div className='form-group'>
-                <label htmlFor='password2' className='text-secondary'>Confirm Password</label>
+                <label htmlFor='password' className='text-secondary'>Password</label>
                 <input
                   type='password'
                   className='form-control mb-1'
-                  id='password2'
-                  name='password2'
-                  value={registrationData.password2}
+                  id='password'
+                  name='password'
+                  value={registrationData.password}
                   onChange={handleRegistrationChange}
                   required
                 />
-                {errorMessages.password2 && (
-                  <p style={{ color: 'red', fontSize:'12px'  }}>{errorMessages.password2[0]}</p>
+                {errorMessages.password && (
+                  <p style={{ color: 'red', fontSize:'12px'  }}>{errorMessages.password[0]}</p>
                 )}
                 {errorMessages.passwords && (
                   <p style={{ color: 'red', fontSize:'12px' }}>{errorMessages.passwords}</p>
@@ -152,7 +260,7 @@ const SignUpForm = () => {
           <div className='col-md-4'></div>
         </div>
       </div>
-   </div>
+    </div>
   );
 };
 
