@@ -34,7 +34,7 @@ const Profile = () => {
       const accessToken = Cookies.get('accessToken');
 
       if (accessToken) {
-        const response = await axios.get(`${baseUrl}/auth/user/`, {
+        const response = await axios.get(`${baseUrl}auth/user/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -110,6 +110,10 @@ const Profile = () => {
             <tr>
               <td style={{ padding: '10px', textAlign: 'left' }}>Last Name:</td>
               <td style={{ padding: '10px', textAlign: 'left' }}>{userProfile.user.last_name}</td>
+            </tr>
+            <tr>
+              <td style={{ padding: '10px', textAlign: 'left' }}>Market:</td>
+              <td style={{ padding: '10px', textAlign: 'left' }}>{userProfile.user.market}</td>
             </tr>
             <tr>
               <td style={{ padding: '10px', textAlign: 'left' }}>Community:</td>

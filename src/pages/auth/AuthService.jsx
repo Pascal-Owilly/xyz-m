@@ -8,7 +8,7 @@ const baseUrl = BASE_URL;
 const authService = {
   login: async (loginData) => {
     try {
-      const response = await axios.post(`${baseUrl}/auth/login/`, loginData);
+      const response = await axios.post(`${baseUrl}/api/login/`, loginData);
       const tokens = response.data.tokens;
 
       // Decode the access token to get user details
@@ -74,7 +74,7 @@ const authService = {
       const accessToken = Cookies.get('accessToken');
 
       if (accessToken) {
-        const response = await axios.get(`${baseUrl}/auth/user/`, {
+        const response = await axios.get(`${baseUrl}/api/user/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },

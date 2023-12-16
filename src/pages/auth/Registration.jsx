@@ -32,7 +32,7 @@ const SignUpForm = () => {
     e.preventDefault();
   
     try {
-      const url = new URL('auth/register/', baseUrl); // Use new URL constructor
+      const url = new URL('api/register/', baseUrl); // Use new URL constructor
       const response = await axios.post(url.toString(), registrationData);
       navigate('/login');
       // Handle successful sign-up here

@@ -10,7 +10,7 @@ const Admin = () => {
   const navigate = useNavigate();
 
   const baseUrl = BASE_URL;
-  const authToken = Cookies.get('authToken');
+  const accessToken = Cookies.get('accessToken');
   const [userRole, setUserRole] = useState('');
   const [breadersCount, setBreadersCount] = useState(0);
   const [supplyVsDemandData, setSupplyVsDemandData] = useState([]);
@@ -51,7 +51,7 @@ const Admin = () => {
 
   useEffect(() => {
     // ... your other useEffect logic
-  }, [baseUrl, authToken]);
+  }, [baseUrl, accessToken]);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -74,7 +74,7 @@ const Admin = () => {
         // Fetch data from Django API endpoint
         const response = await fetch(`${baseUrl}/api/breader-count/`, {
           headers: {
-            Authorization: `Token ${authToken}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         });
         const data = await response.json();
@@ -86,13 +86,13 @@ const Admin = () => {
 
     // Call fetchData unconditionally
     fetchData();
-  }, [baseUrl, authToken]); // Include dependencies in the dependency array
+  }, [baseUrl, accessToken]); // Include dependencies in the dependency array
 
   useEffect(() => {
     // Fetch data from Django API endpoint
     fetch(`${baseUrl}/api/breader-count/`, {
       headers: {
-        Authorization: `Token ${authToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     })
       .then(response => response.json())

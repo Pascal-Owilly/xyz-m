@@ -12,7 +12,7 @@ import AuthService from './auth/AuthService'; // Make sure the path is correct
 import { jwtDecode } from 'jwt-decode';
 
 import { checkUserRole } from './auth/CheckUserRoleUtils'; // Update the path accordingly
-
+import defaultImg from './../../images/default.png'
 const Home = () => {
 const navigate =useNavigate()
 
@@ -31,15 +31,31 @@ const navigate =useNavigate()
   const [isNotificationPanelVisible, setIsNotificationPanelVisible] = useState(false);
 
   const [defaultBackgroundColor, setDefaultBackgroundColor] = useState('#ffffff');
-const [defaultTextColor, setDefaultTextColor] = useState('#000000');
-const [userRole, setUserRole] = useState('loading'); // Initialize with 'loading'
+  const [defaultTextColor, setDefaultTextColor] = useState('#000000');
+  const [userRole, setUserRole] = useState('loading'); // Initialize with 'loading'
+
+
+// USE THIS INSTEAD INCASE OF DIFEERENT BEHAVIOUR IN USER SESSION
+      // useEffect(() => {
+      //   if (accessToken && baseUrl) {
+      //     fetchUserData();
+      //   }
+      // }, [accessToken, baseUrl]);
+// END USE
+
+useEffect(() => {
+  if (accessToken && baseUrl) {
+    fetchUserData();
+  }
+}, [accessToken, baseUrl]);
+
 
 useEffect(() => {
   // Check user role and update state
   checkUserRole().then((role) => {
     setUserRole(role);
   })
-  });
+  }, []);
 
 
 const toggleNotificationPanel = () => {
@@ -83,8 +99,8 @@ useEffect(() => {
     if (storedToken) {
       setIsLoggedIn(true);
     }
-    fetchProfile();
-    fetchUserData();
+    // fetchProfile();
+    // fetchUserData();
 
     // Determine initial state for the left sidebar based on the device width
     const handleWindowSizeChange = () => {
@@ -106,13 +122,12 @@ useEffect(() => {
       window.removeEventListener('resize', handleWindowSizeChange);
     };
   }, []);
-
-  useEffect(() => {
-    fetchUserData();
-  }, [accessToken, baseUrl]);
+  
 
   const refreshAccessToken = async () => {
     try {
+      console.log('fetching token refresh ... ')
+
       const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
   
       const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
@@ -122,7 +137,6 @@ useEffect(() => {
       const newAccessToken = response.data.access;
       // Update the stored access token
       Cookies.set('accessToken', newAccessToken);
-  
       // Optional: You can also update the user data using the new access token
       await fetchUserData();
     } catch (error) {
@@ -143,40 +157,37 @@ useEffect(() => {
           },
         });
   
+        console.log('User Data Response:', response.data); // Log the response data
+        
         const userProfile = response.data;
-        setProfile(userProfile);
+        const firstName = userProfile.first_name;
+
+        setUser(userProfile);
       }
     } catch (error) {
-      // Check if the error indicates an expired access token
-      if (error.response && error.response.status === 401) {
-        // Attempt to refresh the access token
-        await refreshAccessToken();
-      } else {
-        console.error('Error fetching user data:', error);
-      }
+      console.error('Error fetching user data:', error); // Log any errors
     }
   };
-  
 
-const fetchProfile = async () => {
-  try {
-    const response = await axios.get(`${baseUrl}/auth/user/`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    const userProfile = response.data;
-    setProfile(userProfile);
-  } catch (error) {
-    console.error('Error fetching user profile:', error);
-  }
-};
+// const fetchProfile = async () => {
+//   try {
+//     const response = await axios.get(`${baseUrl}/auth/user/`, {
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//       },
+//     });
+//     const userProfile = response.data;
+//     setProfile(userProfile);
+//   } catch (error) {
+//     console.error('Error fetching user profile:', error);
+//   }
+// };
 
 const [isLoggedIn, setIsLoggedIn] = useState(false); // Track user's authentication state
 
 const logout = async () => {
   try {
-    await axios.post(`${baseUrl}/auth/logout/`);
+    await axios.post(`${baseUrl}/api/logout/`);
     Cookies.remove('accessToken', { sameSite: 'None', secure: true });
     Cookies.remove('refreshToken');
     Cookies.remove('user')
@@ -202,8 +213,6 @@ const logout = async () => {
     console.error('Failed to logout', error);
   }
 };
-
-  
 
   const handleProfileDropdownToggle = () => {
     setIsProfileDropdownVisible(!isProfileDropdownVisible);
@@ -366,6 +375,12 @@ const logout = async () => {
             <a className="dropdown-toggle" href="#" role="button" data-toggle="dropdown"
 			>
               <span className="user-icon">
+              <img
+                      src={defaultImg}
+                      style={{ width: '55px', height: '55px' }}
+                      alt=""
+                    />
+                    
                 {profile && profile.profile_pic && (
                   <>
                     <img
@@ -377,7 +392,7 @@ const logout = async () => {
                 )}
               </span>
               <span style={{ textTransform: 'capitalize' }} className="user-name text-white">
-                {/* {user.first_name} */}
+                {user && user.username}
               </span>
             </a>
           )}
@@ -541,13 +556,13 @@ style={{
           <li><a href="buyer_dashboard">Buyer Dashboard </a></li>
           <li><a href="slaughterhouse-dashboard">Slaughter House</a></li>
 
-          {userRole === 'superuser' && (
+          {/* {userRole === 'superuser' && ( */}
             <>
               <li><a href="admin_dashboard">SCM Administration</a></li>
               <li><a href="inventory-dashboard">Inventory Dashboard </a></li>
               <li><a href="warehouse">Warehouse Dashboard </a></li>
             </>
-          )}
+          {/* )} */}
 
           <li><a href="integrated_banking">Bank Dashboard </a></li>
           <li><a href="employee_dashboard">Employee Dashboard</a></li>
