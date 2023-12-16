@@ -15,6 +15,7 @@ const authService = {
       const user = {
         id: decodedToken.user_id,
         username: decodedToken.username,
+        first_name: decodedToken.first_name,
         // Extract other user details from the decoded token
       };
 
@@ -39,7 +40,6 @@ const authService = {
       const decodedToken = jwtDecode(accessToken);
       console.log('Decoded Token:', decodedToken);
     }
-
     return userCookie ? JSON.parse(userCookie) : null;
   },
   

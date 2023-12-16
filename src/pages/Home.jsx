@@ -111,22 +111,58 @@ useEffect(() => {
     fetchUserData();
   }, [accessToken, baseUrl]);
 
-  const fetchUserData = async () => {
+  const refreshAccessToken = async () => {
     try {
-      // No need to call a separate user endpoint, use the user details stored in the token
-      const user = AuthService.getUser();
-      console.log('User Data:', user);
-      // You can set the user details to state or use them as needed in your component
+      const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
+  
+      const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+        refresh: refreshToken,
+      });
+  
+      const newAccessToken = response.data.access;
+      // Update the stored access token
+      Cookies.set('accessToken', newAccessToken);
+  
+      // Optional: You can also update the user data using the new access token
+      await fetchUserData();
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error('Error refreshing access token:', error);
+      // Handle the error, e.g., redirect to login page
     }
   };
+  
+
+  const fetchUserData = async () => {
+    try {
+      const accessToken = Cookies.get('accessToken');
+  
+      if (accessToken) {
+        const response = await axios.get(`${baseUrl}/auth/user/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+  
+        const userProfile = response.data;
+        setProfile(userProfile);
+      }
+    } catch (error) {
+      // Check if the error indicates an expired access token
+      if (error.response && error.response.status === 401) {
+        // Attempt to refresh the access token
+        await refreshAccessToken();
+      } else {
+        console.error('Error fetching user data:', error);
+      }
+    }
+  };
+  
 
 const fetchProfile = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/api/profile/`, {
+    const response = await axios.get(`${baseUrl}/auth/user/`, {
       headers: {
-        Authorization: `Token ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     });
     const userProfile = response.data;
