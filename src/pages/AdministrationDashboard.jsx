@@ -55,10 +55,10 @@ const Admin = () => {
 
   useEffect(() => {
     const checkUser = async () => {
-      const userRole = await checkUserRole();
-      setUserRole(userRole);
+      const role = await checkUserRole();
+      setUserRole(role);
 
-      if (userRole !== 'superuser') {
+      if (role !== 'superuser') {
         navigate('/unauthorized');
       }
     };
@@ -67,11 +67,10 @@ const Admin = () => {
   }, [navigate]);
 
 
+
   useEffect(() => {
-    // Define the fetchData function inside the useEffect
     const fetchData = async () => {
       try {
-        // Fetch data from Django API endpoint
         const response = await fetch(`${baseUrl}/api/breader-count/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -84,10 +83,10 @@ const Admin = () => {
       }
     };
 
-    // Call fetchData unconditionally
     fetchData();
-  }, [baseUrl, accessToken]); // Include dependencies in the dependency array
+  }, [baseUrl, accessToken]);
 
+  
   useEffect(() => {
     // Fetch data from Django API endpoint
     fetch(`${baseUrl}/api/breader-count/`, {
