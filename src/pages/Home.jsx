@@ -157,17 +157,20 @@ useEffect(() => {
           },
         });
   
-        console.log('User Data Response:', response.data); // Log the response data
-        
         const userProfile = response.data;
-        const firstName = userProfile.first_name;
-
-        setUser(userProfile);
+        setProfile(userProfile);
       }
     } catch (error) {
-      console.error('Error fetching user data:', error); // Log any errors
+      // Check if the error indicates an expired access token
+      if (error.response && error.response.status === 401) {
+        // Attempt to refresh the access token
+        await refreshAccessToken();
+      } else {
+        console.error('Error fetching user data:', error);
+      }
     }
   };
+  
 
 // const fetchProfile = async () => {
 //   try {

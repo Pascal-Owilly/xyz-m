@@ -34,7 +34,7 @@ const Profile = () => {
       const accessToken = Cookies.get('accessToken');
 
       if (accessToken) {
-        const response = await axios.get(`${baseUrl}auth/user/`, {
+        const response = await axios.get(`${baseUrl}/auth/user/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
