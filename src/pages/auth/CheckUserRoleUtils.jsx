@@ -70,7 +70,7 @@ const checkUserRole = async () => {
     // Assuming your API returns user role as 'superuser' or 'regular'
     const userRole = user.user.role;
     console.log('User Role:', userRole);
-    console.log('user', user);
+    // console.log('user', user);
     return userRole;
   } catch (error) {
     console.error('Error checking user role:', error);

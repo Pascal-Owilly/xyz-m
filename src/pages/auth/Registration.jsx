@@ -18,7 +18,7 @@ const SignUpForm = () => {
     id_number: null,
     market: '',
     community: '',
-    head_of_family: false,
+    head_of_family: '',
     country: '',
   });
 

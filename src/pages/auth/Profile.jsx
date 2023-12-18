@@ -2,12 +2,21 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { BASE_URL } from './config';
-import defaultIng from '../../../images/default.png'; 
+import defaultIng from '../../../images/default.png';
+import { checkUserRole } from './CheckUserRoleUtils'; 
 
 const Profile = () => {
   const [userProfile, setUserProfile] = useState(null);
   const baseUrl = BASE_URL;
   const accessToken = Cookies.get('accessToken'); // Get the authentication token from cookies
+  const [userRole, setUserRole] = useState('loading'); // Initialize with 'loading'
+
+  useEffect(() => {
+    // Check user role and update state
+    checkUserRole().then((role) => {
+      setUserRole(role);
+    })
+    }, []);
 
   const refreshAccessToken = async () => {
     try {
@@ -60,15 +69,16 @@ const Profile = () => {
   }, []);
 
   return (
-    <div className='main-container'>
-    <div 
-    style={{
+    <div className='' style={{
       background: 'linear-gradient(to right, #4caf50, #2196f3)', // Green to Blue gradient
       color: '#111',
       padding: '5px',
       minHeight: '100vh',
       
-    }}
+    }}>
+    <div className='main-container'>
+    <div 
+    
   >
     <div className='container-fluid'>
       <div className='row'>
@@ -95,8 +105,9 @@ const Profile = () => {
                 {userProfile.user.username}'s Profile
               </h1>
               {/* Role */}
-              <h2 style={{ fontSize: '18px', marginRight: '2rem' }}>Role: {userProfile.user.groups[0] || 'No Role'}</h2>
-            </div>
+              <h2 style={{ fontSize: '18px', marginRight: '2rem', fontWeight: 'bold', color: 'black' }}>
+  Role: {userProfile.user.role ? userProfile.user.role.charAt(0).toUpperCase() + userProfile.user.role.slice(1) : 'No Role'}
+</h2>            </div>
         <table style={{ borderCollapse: 'collapse', width: '100%' }}>
           <tbody>
             <tr>
@@ -138,6 +149,7 @@ const Profile = () => {
     </div>
    
   </div> 
+  </div>
   </div>
    );
 };

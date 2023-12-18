@@ -52,7 +52,6 @@ const LoginTest = () => {
       }
 
       // Reload the page after successful login
-      window.location.reload();
 
       setFlashMessage({ message: `Welcome back ${loginData.username}!`, type: 'success' });
     } catch (error) {

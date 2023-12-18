@@ -31,33 +31,66 @@ const Supplier = () => {
       const baseUrl = BASE_URL;
       const navigate = useNavigate()
       const [profile, setProfile] = useState([]);
-      const authToken = Cookies.get('authToken');
+      const accessToken = Cookies.get('accessToken');
       const [user, setUser] = useState({});
       const [localSuppliesData, setLocalSuppliesData] = useState(null);
 
       useEffect(() => {
-         const fetchUserData = async () => {
-           try {
-             const response = await axios.get(`${baseUrl}/auth/user/`, {
-               headers: {
-                 Authorization: `Token ${authToken}`,
-               },
-             });
-             const userData = response.data;
-             setUser(userData);
-           } catch (error) {
-             console.error('Error fetching user data:', error);
-           }
-         };
+        const refreshAccessToken = async () => {
+          try {
+            console.log('fetching token refresh ... ')
+      
+            const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
+        
+            const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+              refresh: refreshToken,
+            });
+        
+            const newAccessToken = response.data.access;
+            // Update the stored access token
+            Cookies.set('accessToken', newAccessToken);
+            // Optional: You can also update the user data using the new access token
+            await fetchUserData();
+          } catch (error) {
+            console.error('Error refreshing access token:', error);
+            // Handle the error, e.g., redirect to login page
+          }
+        };
+        
+      
+        const fetchUserData = async () => {
+          try {
+            const accessToken = Cookies.get('accessToken');
+        
+            if (accessToken) {
+              const response = await axios.get(`${baseUrl}/auth/user/`, {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              });
+        
+              const userProfile = response.data;
+              setProfile(userProfile);
+            }
+          } catch (error) {
+            // Check if the error indicates an expired access token
+            if (error.response && error.response.status === 401) {
+              // Attempt to refresh the access token
+              await refreshAccessToken();
+            } else {
+              console.error('Error fetching user data:', error);
+            }
+          }
+        };
      
          fetchUserData();
-       }, [authToken]);
+       }, [accessToken]);
      
        const handleBreadSuppliesStatus = async () => {
          try {
            const response = await axios.get(`${baseUrl}/api/breader-trade/${user.pk}`, {
              headers: {
-               Authorization: `Token ${authToken}`,
+               Authorization: `Bearer ${accessToken}`,
              },
            });
        

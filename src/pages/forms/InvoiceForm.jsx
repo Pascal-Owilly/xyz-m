@@ -2,17 +2,20 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../auth/config';
 import Cookies from 'js-cookie';
-import { Card } from 'react-bootstrap'; // Import the Card component from react-bootstrap
-import {useNavigate} from 'react-router-dom';
+import { Card } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const InvoiceForms = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+  const [profile, setProfile] = useState([]);
+  const [username, setUsername] = useState('');
 
-  const authToken = Cookies.get('authToken');
+  const accessToken = Cookies.get('accessToken');
   const baseUrl = BASE_URL;
+
   const [formData, setFormData] = useState({
     breads_supplied: null,
     goat_weight: null,
@@ -23,95 +26,195 @@ const InvoiceForms = () => {
     vaccinated: false,
     phone_number: '',
     price: null,
-    breader: null,
-    abattoir: null, 
+    breeder: null,
+    abattoir: null,
     user: null,
-    animalOptions: ['Goats', 'Sheep', 'Cows', 'Pigs'], // Add more options as needed
-    selectedAnimal: 'Goats', // Set a default animal
+    animalOptions: ['Goats', 'Sheep', 'Cows', 'Pigs'],
+    selectedAnimal: 'Goats',
   });
 
-  useEffect(() => {
-    if (authToken) {
-      // Fetch user data
-      axios.get(`${baseUrl}/auth/user/`, {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      })
-      .then((response) => {
-        setUser(response.data);
-        console.log('Users data:', response.data);
+  const refreshAccessToken = async () => {
+    try {
+      console.log('fetching token refresh ... ')
 
-        setFormData((prevData) => ({
-          ...prevData,
-          breader: response.data.username || '', // Use the correct path
-        }));
-      })
-      
-      .catch((error) => {
-        console.log('Error fetching user data:', error);
+      const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
+  
+      const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+        refresh: refreshToken,
       });
-
-      // ... (rest of the code)
-    } else {
-      // Redirect unauthenticated users to the login page
-      navigate('/login');
+  
+      const newAccessToken = response.data.access;
+      // Update the stored access token
+      Cookies.set('accessToken', newAccessToken);
+      // Optional: You can also update the user data using the new access token
+      await fetchUserData();
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
+      // Handle the error, e.g., redirect to login page
     }
-  }, [navigate, authToken]);
-
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch data from other endpoints as needed
-        const abattoirResponse = await axios.get(`${baseUrl}/api/abattoirs/1`, {
+        const breederResponse = await axios.get(`${baseUrl}/auth/user/`, {
           headers: {
-            Authorization: `Token ${authToken}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
           },
         });
-        const abattoirData = abattoirResponse.data;
-        console.log('abattoir data', abattoirData);
   
-        setFormData((prevData) => ({
-          ...prevData,
-          abattoir: abattoirData.id,  // Use the correct field name
-          abattoir_name: abattoirData.name,
-        }));
+        const breederData = breederResponse.data;
+        if (breederData.length > 0) {
+          const breeder = breederData[0].user;
+          
+          // Display abattoir data
+          const abattoirResponse = await axios.get(`${baseUrl}/api/abattoirs/`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          });
+          const abattoirData = abattoirResponse.data;
+  
+          if (abattoirData.length > 0) {
+            setFormData((prevData) => ({
+              ...prevData,
+              abattoir: abattoirData[0].id,
+              abattoir_name: abattoirData[0].user,
+            }));
+          }
+  
+          // Display user data
+          setFormData((prevData) => ({
+            ...prevData,
+            breeder: breeder.id,
+            breeder_name: breeder.username,
+            // Add other fields you want to populate in the state
+          }));
+  
+          setUsername(breeder.username || ''); // Assuming you want to set the username in a separate state variable
+        }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        // Handle errors
+        console.error('Error fetching user data:', error);
       }
     };
   
     fetchData();
-  }, [authToken]);
+  }, [accessToken]);
   
+
+  useEffect(() => {
+    fetchUserData();
+  }, [navigate, accessToken]);
+  
+
+  const fetchUserData = async () => {
+    try {
+      const accessToken = Cookies.get('accessToken');
+  
+      if (accessToken) {
+        const breederResponse = await axios.get(`${baseUrl}/auth/user/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+  
+        const breederData = breederResponse.data;
+      if (breederData.length > 0) {
+        setFormData({
+          ...formData,
+          breeder_name: breederData[0].user.username,  // Use user.username here
+          // Add other fields you want to populate in the state
+        });
+      }
+        console.log('breeder data', breederData)
+
+      }
+    } catch (error) {
+      // Check if the error indicates an expired access token
+      if (error.response && error.response.status === 401) {
+        // Attempt to refresh the access token
+        await refreshAccessToken();
+      } else {
+        console.error('Error fetching user data:', error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, [navigate, accessToken]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const abattoirResponse = await axios.get(`${baseUrl}/api/abattoirs/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const abattoirData = abattoirResponse.data;
+        if (abattoirData.length > 0) {
+          setFormData((prevData) => ({
+            ...prevData,
+            abattoir: abattoirData[0].id,
+            abattoir_name: abattoirData[0].user,
+          }));
+        }
+
+        setFormData((prevData) => ({
+          ...prevData,
+          breeder: user?.id,
+          user: user?.id,
+          breeder_name: user?.username,
+        }));
+        setUsername(user?.username || '');
+
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          await refreshAccessToken();
+        } 
+        console.error('Error fetching data:', error);
+        if (error.response && error.response.status === 401) {
+          await refreshAccessToken();
+          await fetchUserData();
+        }
+      }
+    };
+
+    fetchData();
+  }, [accessToken, user]);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
-      const authToken = Cookies.get('authToken');
-  
+      console.log('Breeder Data:', user.user);  // Log the breeder data
+
       const response = await axios.post(
         `${baseUrl}/api/breader-trade/`,
         {
           ...formData,
-          breader: user.pk,
-          user: user.pk,
+          breader: user.id,  // Use user.id instead of user.user.id
+          user: user.id, 
         },
         {
           headers: {
-            'Authorization': `Token ${authToken}`,
+            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
         }
       );
+
+      console.log('breeder trade', response);
+
       setSuccessMessage('Invoice form submitted successfully!');
       setIsFormSubmitted(true);
-      navigate('/submission-successful')
-  
-      // Clear the form
+      navigate('/submission-successful');
+
       setFormData({
         breads_supplied: null,
         goat_weight: null,
@@ -121,21 +224,16 @@ const InvoiceForms = () => {
         vaccinated: false,
         phone_number: '',
         price: null,
+        country: '',
         breed: '',
-        breader: null,
-        abattoir: null, 
+        breeder: null,
+        abattoir: null,
         user: null,
       });
-
-      // window.location.reload();
-
     } catch (error) {
-      console.error('Error submitting invoice form:', error.response.data);
+      console.error('Error submitting invoice form:', error.response);
     }
   };
-  
-
-  
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -147,9 +245,6 @@ const InvoiceForms = () => {
     }));
   };
 
-  const capitalizeFirstLetter = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  };
 
   return (
     <div className='main-container' >
@@ -159,7 +254,7 @@ const InvoiceForms = () => {
 
           <div className='col-md-9'>
           
-      {user && ( 
+    {/* {user && user.role === 'superuser' && ( */}
       <Card className="weather-card" style={{ background: 'transparent' }}>
       <Card.Body>
         <Card.Title style={{ color: '#A9A9A9' }}>Please fill out this Invoice Form {successMessage} </Card.Title>
@@ -209,6 +304,18 @@ const InvoiceForms = () => {
     </select>
   </td>
 </tr>
+<tr>
+              <th style={{ border: '1px dotted black', padding: '5px' }}>Vaccinated:</th>
+              <td style={{ border: '1px dotted black', padding: '5px' }}>
+                <input
+                  className='bg-white'
+                  type="checkbox"
+                  name="vaccinated"
+                  checked={formData.vaccinated}
+                  onChange={handleInputChange}
+                />
+              </td>
+            </tr>
               <tr>
               <th style={{ border: '1px dotted black', padding: '5px' }}>Bread Price</th>
               <td style={{ border: '1px dotted black', padding: '5px' }}>
@@ -243,9 +350,11 @@ const InvoiceForms = () => {
                 <input
                   type="text"
                   name="community"
-                  value={formData.community}
+                  value={user && user.user && user.user.community ? user.user.community : ''}
                   onChange={handleInputChange}
                   className='form-control'
+                  readOnly
+
                   placeholder='Name of your community'
 
                 />
@@ -257,9 +366,11 @@ const InvoiceForms = () => {
                 <input
                   type="text"
                   name="market"
-                  value={formData.market}
+                  value={user && user.user && user.user.market ? user.user.market : ''}
                   onChange={handleInputChange}
                   className='form-control'
+                  readOnly
+
                   placeholder='Name of your market'
 
                 />
@@ -268,36 +379,28 @@ const InvoiceForms = () => {
             <tr>
               <th style={{ border: '1px dotted black', padding: '5px' }}>Head of Family:</th>
               <td style={{ border: '1px dotted black', padding: '5px' }}>
-                <input
+              <input
                   type="text"
                   name="head_of_family"
-                  value={formData.head_of_family}
+                  value={user && user.user && user.user.head_of_family ? user.user.head_of_family : ''}
                   onChange={handleInputChange}
                   className='form-control'
-                  placeholder='Your family name'
+                  readOnly
+
+                  placeholder='Family head'
 
                 />
               </td>
             </tr>
+           
             <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>Vaccinated:</th>
-              <td style={{ border: '1px dotted black', padding: '5px' }}>
-                <input
-                  type="checkbox"
-                  name="vaccinated"
-                  checked={formData.vaccinated}
-                  onChange={handleInputChange}
-                />
-              </td>
-            </tr>
-            <tr>
-            <th style={{ border: '1px dotted black', padding: '5px' }}>Breader Name</th>
+            <th style={{ border: '1px dotted black', padding: '5px' }}>Breeder Name</th>
 
             <td style={{ border: '1px dotted black', padding: '5px', textTransform: 'capitalize' }}>
               <input
                 type="text"
-                name="breader_id"
-                value={formData.breader ? capitalizeFirstLetter(formData.breader) : ''}
+                name="breeder_name"
+                value={formData.abattoir_name ? formData.abattoir_name : ''}
                 readOnly
                 className='form-control'
               />
@@ -322,7 +425,7 @@ const InvoiceForms = () => {
         <button type="submit" className='btn btn-dark mt-3' style={{ width: '200px' }} onClick={handleFormSubmit}>Submit</button>
       </Card.Body>
     </Card>
-        )}
+        {/* )} */}
           </div>
           <div className='col-md-4'></div>
         </div>
