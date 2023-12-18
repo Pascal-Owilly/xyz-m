@@ -7,15 +7,72 @@ import { Card, Row, Col } from 'react-bootstrap';
 
 const WarehouseDashboard = () => {
   const baseUrl = BASE_URL;
-  const authToken = Cookies.get('authToken');
+  const accessToken = Cookies.get('accessToken');
   const navigate = useNavigate();
+  const [buyers, setBuyers] = useState([]);
 
+  const [showInvoiceForm, setShowInvoiceForm] = useState(false);
+  const [selectedBuyer, setSelectedBuyer] = useState(null);
+
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+
+  const toggleInvoiceForm = () => {
+    setShowInvoiceForm(!showInvoiceForm);
+  };
+
+  const refreshAccessToken = async () => {
+    try {
+      console.log('fetching token refresh ... ')
+
+      const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
+  
+      const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+        refresh: refreshToken,
+      });
+  
+      const newAccessToken = response.data.access;
+      // Update the stored access token
+      Cookies.set('accessToken', newAccessToken);
+      // Optional: You can also update the user data using the new access token
+      await fetchUserData();
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
+      // Handle the error, e.g., redirect to login page
+    }
+  };
+
+  useEffect(() => {
+    const fetchBuyers = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/api/buyers/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        console.log('buyer list', response.data)
+        setBuyers(response.data);
+      } catch (error) {
+
+        // Check if the error indicates an expired access token
+      if (error.response && error.response.status === 401) {
+        // Attempt to refresh the access token
+        await refreshAccessToken();
+      } else{
+        console.error('Error fetching buyers:', error);
+      }}
+    };
+  
+    fetchBuyers();
+  }, [accessToken, baseUrl]);
+  
   useEffect(() => {
     const fetchInventoryData = async () => {
       try {
         // Define headers
         const headers = {
-          Authorization: `Token ${authToken}`,
+          Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         };
 
@@ -28,8 +85,7 @@ const WarehouseDashboard = () => {
           axios.get(`${baseUrl}/api/inventory-breed-sales/`, { headers }),
           axios.get(`${baseUrl}/api/breed-cut/`, { headers }),
         ]);
-        console.log(slaughteredData.data)
-        console.log(breedCut.data)
+  
 
         // Group breederTotals data by breed
         const breedTotalsMap = breederTotals.data.reduce((acc, item) => {
@@ -68,7 +124,7 @@ const WarehouseDashboard = () => {
     };
 
     fetchInventoryData();
-  }, [authToken, baseUrl]);
+  }, [accessToken, baseUrl]);
 
 
   const [inventoryBreedData, setInventoryBreedData] = useState({
@@ -92,7 +148,7 @@ const WarehouseDashboard = () => {
       // Fetch the current inventory data
       const currentInventoryResponse = await axios.get(`${baseUrl}/api/inventory-breed-sales/`, {
         headers: {
-          Authorization: `Token ${authToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
@@ -114,7 +170,7 @@ const WarehouseDashboard = () => {
           },
           {
             headers: {
-              Authorization: `Token ${authToken}`,
+              Authorization: `Bearer ${accessToken}`,
             },
           }
         );
@@ -134,14 +190,7 @@ const WarehouseDashboard = () => {
     }
   };
 
-  const [invoiceData, setInvoiceData] = useState({
-    partName: 'ribs',
-    saleType: 'export_cut',
-    quantity: 20,
-    unitPrice: 0,
-    clientName: '',
-    clientEmail: '',
-  });
+
   const [inventoryData, setInventoryData] = useState({
     totalBreeds: 0,
     totalSlaughtered: 0,
@@ -158,7 +207,14 @@ const WarehouseDashboard = () => {
     });
   };
   
-
+  const [invoiceData, setInvoiceData] = useState({
+    breed: null,
+    part_name: null,
+    sale_type: null,
+    quantity: null,
+    unit_price: null,
+    total_price: null,
+  });
   const handleGenerateInvoice = async () => {
     // Validate the invoice data (add your own validation logic)
   
@@ -167,33 +223,36 @@ const WarehouseDashboard = () => {
   
     // Prepare data for the invoice
     const invoiceDetails = {
-      partName: invoiceData.partName,
-      saleType: invoiceData.saleType,
+      breed: invoiceData.breed,
+      part_name: invoiceData.part_name,
+      sale_type: invoiceData.sale_type,
       quantity: invoiceData.quantity,
-      unitPrice: invoiceData.unitPrice,
-      clientName: invoiceData.clientName,
-      clientEmail: invoiceData.clientEmail,
-      totalPrice: totalPrice,
+      unit_price: invoiceData.unit_price,
+      buyer: selectedBuyer, // Include the selected buyer
     };
   
     try {
       // Make a POST request to your Django API endpoint for invoice generation
-      const response = await axios.post(`${baseUrl}/generate-invoice/`, invoiceDetails, {
+      const response = await axios.post(`${baseUrl}/api/generate-invoice/`, invoiceDetails, {
         headers: {
-          Authorization: `Token ${authToken}`,
+          Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
       });
   
       // Handle the response as needed
-      console.log('Invoice generation response:', response.data);
+      console.log('sending invoice to:', invoiceDetails);
   
-      // Optionally, you can update the state or perform any other actions upon successful invoice generation
+      setSuccessMessage('Invoice sent successfully!');
+      setErrorMessage(null); 
+      setShowForm(false); // Hide the form after success
     } catch (error) {
       console.error('Error generating invoice:', error.response);
       // Handle the error, show a message, etc.
-    }
+      setErrorMessage('Error generating invoice. Please try again.');
+      setSuccessMessage(null);    }
   };
+  
   
 
   const capitalizeFirstLetter = (string) => {
@@ -202,7 +261,22 @@ const WarehouseDashboard = () => {
 
   useEffect(() => {
     // Fetch initial data and update state
-  }, [authToken, baseUrl]);
+  }, [accessToken, baseUrl]);
+
+  const handleGenerateAnother = () => {
+    setShowForm(true);
+    setSuccessMessage(null);
+    setErrorMessage(null);
+    setInvoiceData({
+      breed: null,
+      part_name: null,
+      sale_type: null,
+      quantity: null,
+      unit_price: null,
+      total_price: null,
+    });
+    setSelectedBuyer(null);
+  };
 
   return (
     <div className='main-container warehouse-container' style={{ minHeight: '85vh', background: 'rgb(249, 250, 251' }}>
@@ -211,106 +285,130 @@ const WarehouseDashboard = () => {
         <div className='row'>
           <div className='col-md-4'>
             <div className="card border-success mb-3 mt-4" style={{ maxWidth: '18rem' }}>
-              <div className="card-header bg-success text-white">Buyer Invoice Generator</div>
-              <div className="card-body">
-                <form onSubmit={handleInventorySubmit}>
-                  {/* Inventory Form Fields */}
-                  {/* ... */}
-                  <button type="submit" className="btn btn-success">
-                    Make Sale
-                  </button>
-                </form>
-                <hr />
-                <form onSubmit={(e) => {
-                  e.preventDefault();
-                  handleGenerateInvoice();
-                }}>
-            <div className="mb-3">
-              <label className="form-label">Part Name:</label>
-              <select
-                style={{background:'#001f33', padding:'0.2rem', borderRadius:'30px'}}
-                className="form-select mx-2"
-                name="partName"
-                value={invoiceData.partName}
-                onChange={handleInvoiceInputChange}
-                required
-              >
-                <option className='mx-1' value="ribs">Ribs</option>
-                <option className='mx-1' value="thighs">Thighs</option>
-                <option className='mx-1' value="loin">Loin</option>
-                <option className='mx-1' value="thighs">Thighs</option>
-                <option className='mx-1' value="shoulder">Shoulder</option>
-                <option className='mx-1' value="shanks">Shanks</option>
-                <option className='mx-1' value="organ_meat">Organ Meat</option>
-                <option className='mx-1' value="intestines">Intestines</option>
-                <option className='mx-1' value="tripe">Tripe</option>
-                <option className='mx-1' value="sweetbreads">sweetbreads</option>
-              </select>
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Sale Type:</label>
-              <select
-                style={{background:'#001f33', padding:'0.2rem', borderRadius:'30px'}}
-                className="form-select mx-2"
-                name="saleType"
-                value={invoiceData.saleType}
-                onChange={handleInvoiceInputChange}
-                required
-              >
-                <option value="export_cut">Export Cut</option>
-                <option value="local_sale">Local Sale Cut</option>
-                {/* Add more options as needed */}
-              </select>
-            </div>
-            
-            <div className="mb-3">
-              <label className="form-label">Quantity:</label>
-              <input
-                type="number"
-                className="form-control"
-                name="quantity"
-                value={invoiceData.quantity}
-                onChange={handleInvoiceInputChange}
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Unit Price:</label>
-              <input
-                type="number"
-                className="form-control"
-                name="unitPrice"
-                value={invoiceData.unitPrice}
-                onChange={handleInvoiceInputChange}
-                required
-              />
-            </div>
+            <div className="card-header bg-success text-white" onClick={toggleInvoiceForm} style={{ cursor: 'pointer' }}>
+            {showForm ? 'Buyer Invoice Generator' : 'Buyer Invoice Generator'}
+          </div>
 
-            <div className="mb-3">
-    <label className="form-label">Client Name:</label>
-    <input
-      type="text"
-      className="form-control"
-      name="clientName"
-      value={invoiceData.clientName}
+              <div className="card-body">
+              {showForm ? (
+
+                <form onSubmit={(e) => {
+  e.preventDefault();
+  handleGenerateInvoice();
+}} style={{transition:'1s'}}>
+  <div className="" style={{transition:'1s'}}>
+    <label className="form-label">Breed:</label>
+    <select
+      style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
+      className="form-select"
+      name="breed"
+      value={invoiceData.breed}
       onChange={handleInvoiceInputChange}
       required
+    >
+      <option className='text-dark' value="">Select breed meat</option>
+
+      <option className='text-dark' value="chevon"> Goat Meat</option>
+      <option className='text-dark' value="mutton"> Mutton (Sheep Meat)</option>
+      <option className='text-dark' value="beef">Beef</option>
+      <option className='text-dark' value="pork">Pork</option>
+    </select>
+  </div>
+
+  <div className="">
+              <label className="form-label">Part:</label><p></p>
+              <select
+      style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
+      className="form-select"
+                name="part_name"
+                value={invoiceData.part_name}
+                onChange={handleInvoiceInputChange}
+                required
+              >
+                  <option className='mx-1' value="">Select part</option>
+
+                <option className='mx-1 text-dark' value="ribs">Ribs</option>
+                <option className='mx-1 text-dark' value="thighs">Thighs</option>
+                <option className='mx-1 text-dark' value="loin">Loin</option>
+                <option className='mx-1 text-dark' value="thighs">Thighs</option>
+                <option className='mx-1 text-dark' value="shoulder">Shoulder</option>
+                <option className='mx-1 text-dark' value="shanks">Shanks</option>
+                <option className='mx-1 text-dark' value="organ_meat">Organ Meat</option>
+                <option className='mx-1 text-dark' value="intestines">Intestines</option>
+                <option className='mx-1 text-dark' value="tripe">Tripe</option>
+                <option className='mx-1 text-dark' value="sweetbreads">sweetbreads</option>
+              </select>
+            </div>
+
+  <div className="">
+              <label className="form-label">Sale Type:</label>
+              <p></p>
+              <select
+      style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
+      className="form-select"
+                name="sale_type"
+                value={invoiceData.sale_type}
+                onChange={handleInvoiceInputChange}
+                required
+              >
+      <option value="">Select sale type</option>
+
+                <option className='text-dark' value="export_cut">Export Cut</option>
+                <option className='text-dark' value="local_sale">Local Sale Cut</option>
+              </select>
+            </div>  
+  <div className="">
+    <label className="form-labe">Quantity:</label>
+    <input
+      type="number"
+      className="form-control"
+      name="quantity"
+      value={invoiceData.quantity}
+      onChange={handleInvoiceInputChange}
+      required
+      style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white' }}
+    />
+  </div>
+  <div className="">
+    <label className="form-labe">Unit Price:</label>
+    <input
+      type="number"
+      className="form-control"
+      name="unit_price"
+      value={invoiceData.unit_price}
+      onChange={handleInvoiceInputChange}
+      required
+      style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
     />
   </div>
   <div className="mb-3">
-    <label className="form-label">Client Email:</label>
-    <input
-      type="email"
-      className="form-control"
-      name="clientEmail"
-      value={invoiceData.clientEmail}
-      onChange={handleInvoiceInputChange}
-      required
-    />
-  </div>
+  <label className="form-label">Buyer:</label>
+  <select
+    style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
+    className="form-select mx-2"
+    name="buyer"
+    value={selectedBuyer}
+    onChange={(e) => setSelectedBuyer(e.target.value)}
+    required
+  >
+    <option className='text-dark' value="">Select a buyer</option>
+    {buyers.map((buyer) => (
+      <option className='text-dark' key={buyer.id} value={buyer.id}>
+        {buyer.name} - {buyer.email}
+      </option>
+    ))}
+  </select>
+</div>
+  <button type="submit" className="btn btn-success">Generate Invoice</button>
 
-            <button type="submit" className="btn btn-success">Generate Invoice</button>
-          </form>
+</form>
+ ) : (
+  <button onClick={handleGenerateAnother} className="btn btn-sm btn-success mt-3">Generate</button>
+  )}
+{/* Display success or error messages */}
+{successMessage && <div className="alert alert-success mt-3">{successMessage}</div>}
+            {errorMessage && <div className="alert alert-danger mt-3">{errorMessage}</div>}
+
               </div>
             </div>
           </div>
@@ -318,7 +416,7 @@ const WarehouseDashboard = () => {
           <Card className="weather-card" style={{ background: 'transparent' }}>
             <Card.Body>
 
-              <Card.Title className='text-center mb-3' style={{ color: '#A9A9A9', fontSize: '1.5rem', marginBottom: '1rem' }}>Breed parts in the warehouse</Card.Title>
+              <Card.Title className='text-center mb-3' style={{ color: '#A9A9A9', fontSize: '1.5rem', marginBottom: '1rem' }}>Breed parts available in the warehouse</Card.Title>
 
               <Row>
                 {Object.entries(inventoryData.breedPartsInWarehouse).map(([breed, parts]) => (
@@ -335,7 +433,6 @@ const WarehouseDashboard = () => {
                                 {capitalizeFirstLetter(partName)}: {details.reduce((acc, part) => part.saleType === 'export_cut' ? acc + part.quantity : acc, 0)}
                               </li>
                             ))}
-                            <hr />
                           <li className='mb-2'  style={{ fontSize: '1.2rem', fontFamily:'verdana', fontWeight:'bold' }}>Local Sale Parts:</li>
                           {Object.entries(parts)
                             .filter(([partName, details]) => details.some(part => part.saleType === 'local_sale'))
