@@ -11,7 +11,6 @@ const InvoiceForms = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [profile, setProfile] = useState([]);
-  const [username, setUsername] = useState('');
 
   const accessToken = Cookies.get('accessToken');
   const baseUrl = BASE_URL;
@@ -32,6 +31,11 @@ const InvoiceForms = () => {
     animalOptions: ['Goats', 'Sheep', 'Cows', 'Pigs'],
     selectedAnimal: 'Goats',
   });
+
+useEffect(() => {
+  fetchUserData();
+}, [navigate, accessToken]);
+console.log(setFormData);
 
   const refreshAccessToken = async () => {
     try {
@@ -55,54 +59,53 @@ const InvoiceForms = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+
+    const refreshAccessToken = async () => {
       try {
-        const breederResponse = await axios.get(`${baseUrl}/auth/user/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+        console.log('fetching token refresh ... ')
+  
+        const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
+    
+        const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+          refresh: refreshToken,
         });
-  
-        const breederData = breederResponse.data;
-        if (breederData.length > 0) {
-          const breeder = breederData[0].user;
-          
-          // Display abattoir data
-          const abattoirResponse = await axios.get(`${baseUrl}/api/abattoirs/`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-            },
-          });
-          const abattoirData = abattoirResponse.data;
-  
-          if (abattoirData.length > 0) {
-            setFormData((prevData) => ({
-              ...prevData,
-              abattoir: abattoirData[0].id,
-              abattoir_name: abattoirData[0].user,
-            }));
-          }
-  
-          // Display user data
-          setFormData((prevData) => ({
-            ...prevData,
-            breeder: breeder.id,
-            breeder_name: breeder.username,
-            // Add other fields you want to populate in the state
-          }));
-  
-          setUsername(breeder.username || ''); // Assuming you want to set the username in a separate state variable
-        }
+    
+        const newAccessToken = response.data.access;
+        // Update the stored access token
+        Cookies.set('accessToken', newAccessToken);
+        // Optional: You can also update the user data using the new access token
+        await fetchUserData();
       } catch (error) {
-        // Handle errors
-        console.error('Error fetching user data:', error);
+        console.error('Error refreshing access token:', error);
+        // Handle the error, e.g., redirect to login page
       }
     };
-  
+
+    
+    const fetchData = async () => {
+      try {
+        const abattoirResponse = await axios.get(`${baseUrl}/api/abattoirs/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        // ... (other code)
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          // Token expired, try refreshing the token
+          await refreshAccessToken();
+          // Retry fetching user data
+          await fetchUserData();
+        } else {
+          // Handle other errors
+        }
+      }
+    };
+
     fetchData();
-  }, [accessToken]);
-  
+  }, [accessToken, user]);
 
   useEffect(() => {
     fetchUserData();
@@ -114,22 +117,15 @@ const InvoiceForms = () => {
       const accessToken = Cookies.get('accessToken');
   
       if (accessToken) {
-        const breederResponse = await axios.get(`${baseUrl}/auth/user/`, {
+        const response = await axios.get(`${baseUrl}/auth/user/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
   
-        const breederData = breederResponse.data;
-      if (breederData.length > 0) {
-        setFormData({
-          ...formData,
-          breeder_name: breederData[0].user.username,  // Use user.username here
-          // Add other fields you want to populate in the state
-        });
-      }
-        console.log('breeder data', breederData)
-
+        const userProfile = response.data.user; // Access the user information correctly
+        console.log('profile', userProfile)
+        setUser(userProfile);
       }
     } catch (error) {
       // Check if the error indicates an expired access token
@@ -171,8 +167,7 @@ const InvoiceForms = () => {
           user: user?.id,
           breeder_name: user?.username,
         }));
-        setUsername(user?.username || '');
-
+        console.log(setFormData)
       } catch (error) {
         if (error.response && error.response.status === 401) {
           await refreshAccessToken();
@@ -191,15 +186,36 @@ const InvoiceForms = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
+    const refreshAccessToken = async () => {
+      try {
+        console.log('fetching token refresh ... ')
+  
+        const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
+    
+        const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+          refresh: refreshToken,
+        });
+    
+        const newAccessToken = response.data.access;
+        // Update the stored access token
+        Cookies.set('accessToken', newAccessToken);
+        // Optional: You can also update the user data using the new access token
+        await fetchUserData();
+      } catch (error) {
+        console.error('Error refreshing access token:', error);
+        // Handle the error, e.g., redirect to login page
+      }
+    };
+
     try {
-      console.log('Breeder Data:', user.user);  // Log the breeder data
+      console.log('User ID:', user?.id); // Log the user ID
 
       const response = await axios.post(
         `${baseUrl}/api/breader-trade/`,
         {
           ...formData,
-          breader: user.id,  // Use user.id instead of user.user.id
-          user: user.id, 
+          breeder: user?.id,  // Update with the correct field name
+          user: user?.i,
         },
         {
           headers: {
@@ -231,7 +247,7 @@ const InvoiceForms = () => {
         user: null,
       });
     } catch (error) {
-      console.error('Error submitting invoice form:', error.response);
+      console.error('Error submitting invoice form:', error.response.data);
     }
   };
 
@@ -244,6 +260,14 @@ const InvoiceForms = () => {
       [name]: inputValue,
     }));
   };
+
+  useEffect(() => {
+    console.log('User:', user); // Log the entire user object
+  }, [user]);
+
+  useEffect(() => {
+    fetchUserData();
+  }, [accessToken]);
 
 
   return (
@@ -399,8 +423,8 @@ const InvoiceForms = () => {
             <td style={{ border: '1px dotted black', padding: '5px', textTransform: 'capitalize' }}>
               <input
                 type="text"
-                name="breeder_name"
-                value={formData.abattoir_name ? formData.abattoir_name : ''}
+                name="breeder"
+                value={formData.breeder_name ? formData.breeder_name : ''}
                 readOnly
                 className='form-control'
               />
