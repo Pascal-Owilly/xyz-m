@@ -4,19 +4,30 @@ import { BASE_URL } from './auth/config';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { Card, Row, Col } from 'react-bootstrap';
+import { checkUserRole } from './auth/CheckUserRoleUtils';
 
 const WarehouseDashboard = () => {
   const baseUrl = BASE_URL;
   const accessToken = Cookies.get('accessToken');
   const navigate = useNavigate();
   const [buyers, setBuyers] = useState([]);
-
+  const [users, setUsers] = useState([]);
   const [showInvoiceForm, setShowInvoiceForm] = useState(false);
   const [selectedBuyer, setSelectedBuyer] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userRole, setUserRole] = useState('');
+  const [allUsers, setAllUsers] = useState([]); // Add state for all users
 
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [showForm, setShowForm] = useState(false);
+
+  // Filter user roles
+  // Filter users based on role
+  // const filteredUsers = users.filter((user) => {
+  //   // Replace 'buyer' with the actual role name for buyers
+  //   return user.role === 'buyer';
+  // });
 
   const toggleInvoiceForm = () => {
     setShowInvoiceForm(!showInvoiceForm);
@@ -42,31 +53,61 @@ const WarehouseDashboard = () => {
       // Handle the error, e.g., redirect to login page
     }
   };
+  
+  useEffect(() => {
+    console.log('Buyers:', buyers);
+  
+    // rest of the code...
+  }, [buyers, accessToken, baseUrl]);
 
   useEffect(() => {
     const fetchBuyers = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/api/buyers/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        console.log('buyer list', response.data)
-        setBuyers(response.data);
+        const role = await checkUserRole();
+        console.log('User Role trouble shoot:', role);
+  
+        // rest of the code...
       } catch (error) {
-
-        // Check if the error indicates an expired access token
-      if (error.response && error.response.status === 401) {
-        // Attempt to refresh the access token
-        await refreshAccessToken();
-      } else{
-        console.error('Error fetching buyers:', error);
-      }}
+        // Handle errors...
+      }
     };
   
     fetchBuyers();
   }, [accessToken, baseUrl]);
   
+
+  useEffect(() => {
+    const fetchAllUsers = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/auth/all-profiles/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        if (Array.isArray(response.data)) {
+          // Filter users with the "buyer" role
+          const buyerUsers = response.data.filter((user) => user.user.role === 'buyer');
+          setBuyers(buyerUsers);
+          setAllUsers(response.data);
+        } else if (response.data && response.data.user) {
+          // If the response is an object with a 'user' property, treat it as a single user
+          const buyerUsers = [response.data].filter((user) => user.user.role === 'buyer');
+          setBuyers(buyerUsers);
+          setAllUsers([response.data]);
+          console.log('all profiles:', allUsers);
+        } else {
+          console.error('Invalid response data format:', response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching users:', error);
+        // Handle errors...
+      }
+    };
+  
+    fetchAllUsers();
+  }, [accessToken]);
+  
+ 
   useEffect(() => {
     const fetchInventoryData = async () => {
       try {
@@ -170,7 +211,7 @@ const WarehouseDashboard = () => {
           },
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Token ${accessToken}`,
             },
           }
         );
@@ -200,21 +241,44 @@ const WarehouseDashboard = () => {
     breedTotals: {},
     breedPartsInWarehouse: {},
   });
-  const handleInvoiceInputChange = (e) => {
-    setInvoiceData({
-      ...invoiceData,
-      [e.target.name]: e.target.value,
-    });
-  };
-  
+
   const [invoiceData, setInvoiceData] = useState({
     breed: null,
     part_name: null,
     sale_type: null,
     quantity: null,
     unit_price: null,
+    buyer: null, // Set initial value to null
     total_price: null,
   });
+
+  const handleInvoiceInputChange = (e) => {
+    if (e.target.name === 'buyer') {
+      // Find the selected buyer object based on the selected value
+      const selectedBuyer = buyers.find((buyer) => buyer.id === parseInt(e.target.value));
+  
+      // Update the selectedBuyer state
+      setSelectedBuyer(selectedBuyer);
+  
+      // Update the buyer property with the selected buyer
+      setInvoiceData((prevData) => ({
+        ...prevData,
+        buyer: selectedBuyer ? { user: selectedBuyer.user, id: selectedBuyer.id } : null,
+      }));
+    } else {
+      // Update other properties in the usual way
+      setInvoiceData({
+        ...invoiceData,
+        [e.target.name]: e.target.value,
+      });
+    }
+  };
+  
+  
+  
+  // Rest of your code...
+  
+  
   const handleGenerateInvoice = async () => {
     // Validate the invoice data (add your own validation logic)
   
@@ -228,8 +292,11 @@ const WarehouseDashboard = () => {
       sale_type: invoiceData.sale_type,
       quantity: invoiceData.quantity,
       unit_price: invoiceData.unit_price,
-      buyer: selectedBuyer, // Include the selected buyer
-    };
+      buyer: {
+        id: selectedBuyer.id,
+        user: selectedBuyer.user,
+      },
+        };
   
     try {
       // Make a POST request to your Django API endpoint for invoice generation
@@ -243,7 +310,7 @@ const WarehouseDashboard = () => {
       // Handle the response as needed
       console.log('sending invoice to:', invoiceDetails);
   
-      setSuccessMessage('Invoice sent successfully!');
+      setSuccessMessage('Invoice generated successfully!');
       setErrorMessage(null); 
       setShowForm(false); // Hide the form after success
     } catch (error) {
@@ -325,8 +392,7 @@ const WarehouseDashboard = () => {
                 onChange={handleInvoiceInputChange}
                 required
               >
-                  <option className='mx-1' value="">Select part</option>
-
+                <option className='mx-1' value="">Select part</option>
                 <option className='mx-1 text-dark' value="ribs">Ribs</option>
                 <option className='mx-1 text-dark' value="thighs">Thighs</option>
                 <option className='mx-1 text-dark' value="loin">Loin</option>
@@ -383,21 +449,22 @@ const WarehouseDashboard = () => {
   </div>
   <div className="mb-3">
   <label className="form-label">Buyer:</label>
+
   <select
-    style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
-    className="form-select mx-2"
-    name="buyer"
-    value={selectedBuyer}
-    onChange={(e) => setSelectedBuyer(e.target.value)}
-    required
-  >
-    <option className='text-dark' value="">Select a buyer</option>
-    {buyers.map((buyer) => (
-      <option className='text-dark' key={buyer.id} value={buyer.id}>
-        {buyer.name} - {buyer.email}
-      </option>
-    ))}
-  </select>
+  className="form-select"
+  name="buyer"
+  value={selectedUser ? selectedUser.id : ''}
+  onChange={(e) => setSelectedUser(e.target.value ? buyers.find((user) => user.id === parseInt(e.target.value)) : null)}
+  required
+>
+  <option value="">Select a buyer</option>
+  {buyers.map((buyer) => (
+    <option key={buyer.id} value={buyer.id}>
+      {buyer.user.market}
+    </option>
+  ))}
+</select>
+
 </div>
   <button type="submit" className="btn btn-success">Generate Invoice</button>
 

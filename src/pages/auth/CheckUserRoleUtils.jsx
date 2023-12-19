@@ -41,6 +41,7 @@ const fetchUserData = async () => {
       // Use userData instead of profile
       const userData = response.data;
       return userData;
+      
     }
   } catch (error) {
     // Check if the error indicates an expired access token
