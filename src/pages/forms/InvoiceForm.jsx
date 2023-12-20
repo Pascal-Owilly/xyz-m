@@ -16,7 +16,7 @@ const InvoiceForms = () => {
   const baseUrl = BASE_URL;
 
   const [formData, setFormData] = useState({
-    breads_supplied: null,
+    breeds_supplied: null,
     goat_weight: null,
     community: '',
     breed: 'goats', // Set a default breed
@@ -35,7 +35,6 @@ const InvoiceForms = () => {
 useEffect(() => {
   fetchUserData();
 }, [navigate, accessToken]);
-console.log(setFormData);
 
   const refreshAccessToken = async () => {
     try {
@@ -167,7 +166,6 @@ console.log(setFormData);
           user: user?.id,
           breeder_name: user?.username,
         }));
-        console.log(setFormData)
       } catch (error) {
         if (error.response && error.response.status === 401) {
           await refreshAccessToken();
@@ -186,26 +184,26 @@ console.log(setFormData);
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    const refreshAccessToken = async () => {
-      try {
-        console.log('fetching token refresh ... ')
+    // const refreshAccessToken = async () => {
+    //   try {
+    //     console.log('fetching token refresh ... ')
   
-        const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
+    //     const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
     
-        const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
-          refresh: refreshToken,
-        });
+    //     const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+    //       refresh: refreshToken,
+    //     });
     
-        const newAccessToken = response.data.access;
-        // Update the stored access token
-        Cookies.set('accessToken', newAccessToken);
-        // Optional: You can also update the user data using the new access token
-        await fetchUserData();
-      } catch (error) {
-        console.error('Error refreshing access token:', error);
-        // Handle the error, e.g., redirect to login page
-      }
-    };
+    //     const newAccessToken = response.data.access;
+    //     // Update the stored access token
+    //     Cookies.set('accessToken', newAccessToken);
+    //     // Optional: You can also update the user data using the new access token
+    //     await fetchUserData();
+    //   } catch (error) {
+    //     console.error('Error refreshing access token:', error);
+    //     // Handle the error, e.g., redirect to login page
+    //   }
+    // };
 
     try {
       console.log('User ID:', user?.id); // Log the user ID
@@ -232,7 +230,7 @@ console.log(setFormData);
       navigate('/submission-successful');
 
       setFormData({
-        breads_supplied: null,
+        breeds_supplied: null,
         goat_weight: null,
         community: '',
         market: '',
@@ -259,6 +257,8 @@ console.log(setFormData);
       ...prevData,
       [name]: inputValue,
     }));
+    console.log(inputValue)
+
   };
 
   useEffect(() => {
@@ -285,12 +285,12 @@ console.log(setFormData);
         <table style={{ background: 'transparent', color: '#999999', width:'100%' }}>
           <tbody>
             <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>Number of Breads Supplied</th>
+              <th style={{ border: '1px dotted black', padding: '5px' }}>How many breeds?</th>
               <td style={{ border: '1px dotted black', padding: '5px' }}>
                 <input
                   type="number"
-                  name="breads_supplied"
-                  value={formData.breads_supplied}
+                  name="breeds_supplied"
+                  value={formData.breeds_supplied}
                   onChange={handleInputChange}
                   className='form-control'
                   placeholder='Example 30'
@@ -298,7 +298,7 @@ console.log(setFormData);
               </td>
             </tr>
             <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>Bread Weight</th>
+              <th style={{ border: '1px dotted black', padding: '5px' }}>Total Weight</th>
               <td style={{ border: '1px dotted black', padding: '5px' }}>
                 <input
                   type="number"
@@ -312,7 +312,7 @@ console.log(setFormData);
               </td>
             </tr>
             <tr>
-  <th style={{ border: '1px dotted black', padding: '5px' }}>Bread Name</th>
+  <th style={{ border: '1px dotted black', padding: '5px' }}>Name of breed</th>
   <td style={{ border: '1px dotted black', padding: '5px' }}>
     <select
       name="breed"
@@ -374,7 +374,7 @@ console.log(setFormData);
                 <input
                   type="text"
                   name="community"
-                  value={user && user.user && user.user.community ? user.user.community : ''}
+                  value={user && user.community ? user.community : ''}
                   onChange={handleInputChange}
                   className='form-control'
                   readOnly
@@ -390,7 +390,7 @@ console.log(setFormData);
                 <input
                   type="text"
                   name="market"
-                  value={user && user.user && user.user.market ? user.user.market : ''}
+                  value={user && user.market ? user.market : ''}
                   onChange={handleInputChange}
                   className='form-control'
                   readOnly
@@ -406,7 +406,7 @@ console.log(setFormData);
               <input
                   type="text"
                   name="head_of_family"
-                  value={user && user.user && user.user.head_of_family ? user.user.head_of_family : ''}
+                  value={user && user.head_of_family ? user.head_of_family : ''}
                   onChange={handleInputChange}
                   className='form-control'
                   readOnly

@@ -7,7 +7,7 @@ import Login from './pages/auth/Login';
 import Profile from './pages/auth/Profile';
 import Footer from './pages/Footer';
 import BuyerDashboard from './pages/BuyerDashboard';
-import SupplierDashboard from './pages/SupplierDashboard';
+import BreederDashboard from './pages/BreederDashboard';
 import SlaughterhouseDashboard from './pages/SlaughterHouseDashboard';
 import InventoryManagement from './pages/InventoryManagement';
 import AdministrationDashboard from './pages/AdministrationDashboard';
@@ -45,13 +45,13 @@ const App = () => {
             <Route path="/unauthorized" element={<Unauthorized />} />
 
             <Route path="/buyer_dashboard" element={<BuyerDashboard />} />
-            <Route path="/supplier_dashboard" element={<SupplierDashboard />} />
+            <Route path="/supplier_dashboard" element={<BreederDashboard />} />
             <Route path="/slaughterhouse-dashboard" element={<SlaughterhouseDashboard />} />
             <Route path="/employee_dashboard" element={<EmployeeDashboard />} />
             <Route path="/integrated_banking" element={<IntegratedBanking />} />
             <Route path="/export_handling_dashboard" element={<ExportHandlingDashboard />} />
             {/* iNVOICE FORMS */}
-            <Route path="/invoices" element={<InvoiceForms />} />
+            <Route path="/breeder_invoices" element={<InvoiceForms />} />
             {/* Inventory */}
             <Route path="/inventory-dashboard" element={<InventoryManagement />} />
             <Route path="/warehouse-dashboard" element={<WarehouseManagement />} />

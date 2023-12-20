@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Table, Button } from 'react-bootstrap';
+import { Container, Row, Col, Table, Button, Pagination } from 'react-bootstrap';
 import { HiBell, HiCube, HiExclamation, HiCurrencyDollar, HiChartBar } from 'react-icons/hi';
 import axios from 'axios';
 import { BASE_URL } from './auth/config';
@@ -35,11 +35,40 @@ const styles = {
 };
 
 const BuyerInvoice = () => {
+
+  const Greetings = () => {
+    const currentTime = new Date();
+    const currentHour = currentTime.getHours();
+    let greeting;
+  
+    if (currentHour < 5) {
+      greeting = 'Good night';
+    } else if (currentHour < 12) {
+      greeting = 'Good morning';
+    } else if (currentHour < 18) {
+      greeting = 'Good afternoon';
+    } else {
+      greeting = 'Good evening';
+    }
+  
+    return greeting;
+  };  
+
   // Sample invoice data
 const baseUrl = BASE_URL;
+
   const role = checkUserRole()
+  const [profile, setProfile] = useState([]);
+      const accessToken = Cookies.get('accessToken');
+      const [user, setUser] = useState({});
+      
   const navigate = useNavigate()
   const [invoiceData, setInvoiceData] = useState([]);
+
+  // paination logic
+  const itemsPerPage = 4; // Number of items to display per page
+  const [currentPage, setCurrentPage] = useState(1);
+
 
   const refreshAccessToken = async () => {
     try {
@@ -132,6 +161,15 @@ const baseUrl = BASE_URL;
       taxRate: 0.08,
   }));
 
+  // Pagination
+  const totalPages = Math.ceil(invoices.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentInvoices = invoices.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+
   // State to manage expanded/minimized state of invoices
   const [expandedInvoices, setExpandedInvoices] = useState({});
 
@@ -143,96 +181,120 @@ const baseUrl = BASE_URL;
   };
 
   return (
+
     <Container fluid className='main-container' style={{ height: 'auto', backgroundColor: '#ddd' }}>
-  <Row>
-    <Col lg={8} style={styles.invoiceContainer}>
-      {invoices.map((invoice, index) => (
-        <Container key={index} style={{ ...styles.invoiceItems, height: expandedInvoices ? 'auto' : '100%', marginBottom: '20px' }}>
-          <Button variant="link" onClick={() => toggleInvoice(invoice.invoiceNumber)}>
-            {expandedInvoices[invoice.invoiceNumber] ? 'Hide Invoice' : 'Show Invoice'} - {invoice.invoiceNumber}
-          </Button>
-          {expandedInvoices[invoice.invoiceNumber] && (
-            <Table borderless>
-              <tbody>
-                <tr>
-                  <td><strong>Invoice Number:</strong></td>
-                  <td style={{ textTransform: 'uppercase' }}>{invoice.invoiceNumber}</td>
-                  <td><strong>Date:</strong></td>
-                  <td>{invoice.date}</td>
-                </tr>
-                <tr>
-                  <td><strong>Due Date:</strong></td>
-                  <td>{invoice.dueDate}</td>
-                  <td colSpan="2"></td>
-                </tr>
-                <tr>
-                  <td colSpan="2"></td>
-                  <td colSpan="2"></td>
-                </tr>
-                {/* Bill To */}
-                <tr>
-                  <td colSpan="4">
-                    <h5>Bill To:</h5>
-                    <p>{invoice.billTo.name}</p>
-                    <p>{invoice.billTo.address}</p>
-                    <p>Email: {invoice.billTo.email}</p>
-                    <p>Phone: {invoice.billTo.phone}</p>
-                    <hr />
-                  </td>
-                </tr>
-                {/* Ship To */}
-                <tr>
-                  <td colSpan="4">
-                    <h5>Ship To:</h5>
-                    <p>{invoice.shipTo}</p>
-                    <hr />
-                  </td>
-                </tr>
-                {/* Items */}
-                <tr>
-                  <td colSpan="4">
-                    <h5>Items:</h5>
-                    <Table>
-                      <thead>
-                        <tr>
-                          <th>Title</th>
-                          <th>Description</th>
-                          <th>Quantity</th>
-                          <th>Sale Type</th>
-                          <th>Unit Price</th>
-                          <th>Total Price</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {invoice.items.map((item, itemIndex) => (
-                          <tr key={itemIndex}>
-                            <td>{item.title}</td>
-                            <td>{item.description}</td>
-                            <td>{item.quantity} pc</td>
-                            <td>{item.saleType}</td>
-                            <td>$ {item.unitPrice}</td>
-                            <td>$ {item.quantity * item.unitPrice}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                    <hr />
-                  </td>
-                </tr>
-              </tbody>
-            </Table>
-          )}
-        </Container>
-      ))}
+      <Row>
+    <Col lg={{ span: 3, offset: 9 }} className='text-right'>
+      <div style={{ marginBottom: '25px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width:'auto' }}>
+        <p className='text-center mt-1'>{`${Greetings()}, `} !</p>
+        <span style={{ textTransform: 'capitalize' }}></span>
+
+      </div>
     </Col>
+  </Row>
+
+  <Row>
+    
+  <Col lg={8} style={styles.invoiceContainer}>
+  <h3 className='mb-3'>Manage Your Invoices and Transactions
+ </h3>
+
+  {currentInvoices.map((invoice, index) => (
+    <Container key={index} style={{ ...styles.invoiceItems, height: expandedInvoices ? 'auto' : '100%', marginBottom: '20px' }}>
+      <Button variant="link" onClick={() => toggleInvoice(invoice.invoiceNumber)}>
+        {expandedInvoices[invoice.invoiceNumber] ? 'Hide Invoice' : 'Show Invoice'} - {invoice.invoiceNumber}
+      </Button>
+      {expandedInvoices[invoice.invoiceNumber] && (
+        <Table borderless>
+          <tbody>
+            <tr>
+              <td><strong>Invoice Number:</strong></td>
+              <td style={{ textTransform: 'uppercase' }}>{invoice.invoiceNumber}</td>
+              <td><strong>Date:</strong></td>
+              <td>{invoice.date}</td>
+            </tr>
+            <tr>
+              <td><strong>Due Date:</strong></td>
+              <td>{invoice.dueDate}</td>
+              <td colSpan="2"></td>
+            </tr>
+            <tr>
+              <td colSpan="2"></td>
+              <td colSpan="2"></td>
+            </tr>
+            {/* Bill To */}
+            <tr>
+              <td colSpan="4">
+                <h5>Bill To:</h5>
+                <p>{invoice.billTo.name}</p>
+                <p>{invoice.billTo.address}</p>
+                <p>Email: {invoice.billTo.email}</p>
+                <p>Phone: {invoice.billTo.phone}</p>
+                <hr />
+              </td>
+            </tr>
+            {/* Ship To */}
+            <tr>
+              <td colSpan="4">
+                <h5>Ship To:</h5>
+                <p>{invoice.shipTo}</p>
+                <hr />
+              </td>
+            </tr>
+            {/* Items */}
+            <tr>
+              <td colSpan="4">
+                <h5>Items:</h5>
+                <Table>
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Description</th>
+                      <th>Quantity</th>
+                      <th>Sale Type</th>
+                      <th>Unit Price</th>
+                      <th>Total Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {invoice.items.map((item, itemIndex) => (
+                      <tr key={itemIndex}>
+                        <td>{item.title}</td>
+                        <td>{item.description}</td>
+                        <td>{item.quantity} pc</td>
+                        <td>{item.saleType}</td>
+                        <td>$ {item.unitPrice}</td>
+                        <td>$ {item.quantity * item.unitPrice}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+                <hr />
+              </td>
+            </tr>
+          </tbody>
+        </Table>
+      )}
+    </Container>
+  ))}
+  {/* Pagination */}
+  <div className="d-flex justify-content-center mt-3">
+    <Pagination>
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <Pagination.Item key={page} active={page === currentPage} onClick={() => paginate(page)}>
+          {page}
+        </Pagination.Item>
+      ))}
+    </Pagination>
+  </div>
+</Col>
+
                 {/* Column 4 (Placeholder) */}
                 <Col lg={4}>
           <div style={{  padding: '' }}>
 <div>
                     {/* Flash message */}
-                    <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#e0e0e0', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <p className='text-center'>Good morning, Achienge!</p>
-                    </div>
+            
 
                     {/* Notifications */}
                     <div style={{ borderRadius: '50%', position: 'relative', float: 'right', top: 0, backgroundColor: 'lightblue', padding: '10px', width: '40px', height: '40px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>

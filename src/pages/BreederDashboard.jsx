@@ -5,7 +5,7 @@ import axios from 'axios';
 import { BASE_URL } from './auth/config';
 import { useNavigate } from 'react-router-dom';
 import SuppliedBreedsSingleUser from './breaders/SuppliedBreedsSingleUser';
-import { useSupplies } from '../../src/SuppliesContext';
+import { useSupplies } from '../SuppliesContext';
 
 const Supplier = () => {
   const Greetings = () => {
@@ -132,7 +132,7 @@ const Supplier = () => {
 
                     {/* Goat supplies status */}
                     {/* Supply to XYZ Abattoir Button */}
-                    <a href='/invoices'>
+                    <a href='/breeder_invoices'>
                       <button className='mx-1 bg-dark text-white mb-3' style={{ /* your button styles */ }}>
                         <FaBox className='mr-2' /> Supply to XYZ Abbattoir
                       </button>
