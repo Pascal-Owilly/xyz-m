@@ -290,13 +290,16 @@ const WarehouseDashboard = () => {
   
   
   const handleBuyerChange = (buyerUsername) => {
-    console.log('Buyer Username:', buyerUsername);
-  
     const selectedBuyer = buyers.find((buyer) => buyer.user.username === buyerUsername);
-    console.log('Selected Buyer:', selectedBuyer);
+  
+    if (!selectedBuyer) {
+      // Handle the case where selectedBuyer is null or undefined
+      console.error('Selected buyer is null or undefined');
+      return;
+    }
   
     // Update the selectedBuyer state
-    setSelectedUser(selectedBuyer);
+    setSelectedBuyer(selectedBuyer);
   
     // Log the current state before updating
     console.log('Before Update - invoiceData:', invoiceData);
@@ -305,16 +308,19 @@ const WarehouseDashboard = () => {
     setInvoiceData((prevData) => {
       const updatedData = {
         ...prevData,
-        buyer: {
-          username: selectedBuyer ? selectedBuyer.user.username : null,
-        },
+        buyer: selectedBuyer
+          ? { user: { username: selectedBuyer.user.username }, id: selectedBuyer.id }
+          : null,
       };
       console.log('After Update - invoiceData:', updatedData);
-      console.log('After Update - invoiceData:', updatedData.id);
+      console.log('After Update - invoiceData.user:', updatedData.buyer.user);
+      console.log('After Update - invoiceData.username:', updatedData.buyer.user.username);
 
       return updatedData;
     });
   };
+  
+  
   
   
 
@@ -330,21 +336,10 @@ const WarehouseDashboard = () => {
       quantity: invoiceData.quantity,
       unit_price: invoiceData.unit_price,
       buyer: {
-        id: null,
-        username: null,
+        id: selectedBuyer && selectedBuyer.id ? selectedBuyer.id : null,
+        username: selectedBuyer.user.id,
       },
-    }
-    //   buyer: selectedBuyer
-    //     ? {
-    //         id: selectedBuyer.id,
-    //         user: {
-    //           id: selectedBuyer.user.id,
-    //           username: selectedBuyer.user.username,
-    //           // Add other user properties as needed
-    //         },
-    //       }
-    //     : null,
-    // };
+    };
   
     // Log the invoice details before making the request
     console.log('Invoice Details:', invoiceDetails);
@@ -361,7 +356,7 @@ const WarehouseDashboard = () => {
       // Handle the response as needed
       console.log('Invoice Generation Response:', response.data);
   
-      setSuccessMessage('Invoice generated successfully!');
+      setSuccessMessage('Invoice generated and sent successfully!');
       setErrorMessage(null);
       setShowForm(false); // Hide the form after success
     } catch (error) {
@@ -472,7 +467,7 @@ const WarehouseDashboard = () => {
       <option value="">Select sale type</option>
 
                 <option className='text-dark' value="export_cut">Export Cut</option>
-                <option className='text-dark' value="local_sale">Local Sale Cut</option>
+                <option className='text-dark' value="local_cut">Local Sale Cut</option>
               </select>
             </div>  
   <div className="">
@@ -506,18 +501,19 @@ const WarehouseDashboard = () => {
   <select
   className="form-select"
   name="buyer"
-  value={selectedUser ? selectedUser.username : ''}
+  value={selectedBuyer ? selectedBuyer.id : ''}
   onChange={(e) => handleBuyerChange(e.target.value)}
   required
   style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white' }}
 >
   <option value="">Select a buyer</option>
   {buyers.map((buyer) => (
-<option key={buyer.id} value={buyer.user.username}>
-  {buyer.user.username}
-</option>
+    <option key={buyer.id} value={buyer.id}>
+      {buyer.user.username}
+    </option>
   ))}
 </select>
+
 
 
 

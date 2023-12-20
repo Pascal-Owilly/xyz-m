@@ -1,6 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Table, Button } from 'react-bootstrap';
 import { HiBell, HiCube, HiExclamation, HiCurrencyDollar, HiChartBar } from 'react-icons/hi';
+import axios from 'axios';
+import { BASE_URL } from './auth/config';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
+import { checkUserRole } from './auth/CheckUserRoleUtils';
 
 const styles = {
   invoiceContainer: {
@@ -31,44 +36,101 @@ const styles = {
 
 const BuyerInvoice = () => {
   // Sample invoice data
-  const invoices = [
-    {
-      invoiceNumber: 'INV-20230115',
-      date: 'January 15, 2023',
-      dueDate: 'February 1, 2023',
+const baseUrl = BASE_URL;
+  const role = checkUserRole()
+  const navigate = useNavigate()
+  const [invoiceData, setInvoiceData] = useState([]);
+
+  const refreshAccessToken = async () => {
+    try {
+      console.log('fetching token refresh ... ')
+
+      const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
+  
+      const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+        refresh: refreshToken,
+      });
+  
+      const newAccessToken = response.data.access;
+      // Update the stored access token
+      Cookies.set('accessToken', newAccessToken);
+      // Optional: You can also update the user data using the new access token
+      await fetchUserData();
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
+      // Handle the error, e.g., redirect to login page
+    }
+  };
+
+  const fetchUserData = async () => {
+    try {
+      const accessToken = Cookies.get('accessToken');
+  
+      if (accessToken) {
+        const response = await axios.get(`${baseUrl}/auth/user/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+  
+        const userProfile = response.data;
+        setProfile(userProfile);
+      }
+    } catch (error) {
+      // Check if the error indicates an expired access token
+      if (error.response && error.response.status === 401) {
+        // Attempt to refresh the access token
+        await refreshAccessToken();
+      } else {
+        console.error('Error fetching user data:', error);
+      }
+    }
+  };
+
+  const fetchInvoiceData = async () => {
+    try {
+      const accessToken = Cookies.get('accessToken');
+      const response = await axios.get(`${baseUrl}/api/generate-invoice/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      setInvoiceData(response.data);
+
+      console.log(response.data)
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        // Handle unauthorized access, refresh token, and retry
+        await refreshAccessToken();
+        await fetchInvoiceData();
+      } else {
+        console.error('Error fetching invoice data:', error);
+      }
+    }
+  };
+
+  // Fetch invoice data when the component mounts
+  useEffect(() => {
+    fetchInvoiceData();
+  }, []);
+
+  const invoices = invoiceData.map((invoice) => ({
+      invoiceNumber: invoice.invoice_number,
+      date: invoice.invoice_date,
+      dueDate: invoice.invoice_date,
       billTo: {
-        name: 'John Doe',
+        name: invoice.buyer ? invoice.buyer.username : '', // Check if buyer is not null or undefined
         address: '123 Main Street, City, State, ZIP',
         email: 'john.doe@example.com',
         phone: '(123) 456-7890',
       },
       shipTo: 'Same as Bill To',
       items: [
-        { title: 'Product 1', description: 'High-quality product with advanced features', quantity: 2, unitPrice: 19.99 },
-        { title: 'Product 2', description: 'Top-of-the-line product with cutting-edge technology', quantity: 1, unitPrice: 29.99 },
+        { title: invoice.breed, description: 'Goat meat from Africa', saleType: invoice.sale_type, quantity: invoice.quantity, unitPrice: invoice.unit_price  },
+        { title: invoice.breed, description: 'Goat meat from Africa', saleType: invoice.sale_type, quantity: invoice.quantity, unitPrice: invoice.unit_price  },
       ],
       taxRate: 0.08,
-    },
-
-    {
-        invoiceNumber: 'INV-20230115',
-        date: 'January 15, 2023',
-        dueDate: 'February 1, 2023',
-        billTo: {
-          name: 'John Doe',
-          address: '123 Main Street, City, State, ZIP',
-          email: 'john.doe@example.com',
-          phone: '(123) 456-7890',
-        },
-        shipTo: 'Same as Bill To',
-        items: [
-          { title: 'Product 1', description: 'High-quality product with advanced features', quantity: 2, unitPrice: 19.99 },
-          { title: 'Product 2', description: 'Top-of-the-line product with cutting-edge technology', quantity: 1, unitPrice: 29.99 },
-        ],
-        taxRate: 0.08,
-      },
-    // Add more invoice objects as needed
-  ];
+  }));
 
   // State to manage expanded/minimized state of invoices
   const [expandedInvoices, setExpandedInvoices] = useState({});
@@ -81,94 +143,88 @@ const BuyerInvoice = () => {
   };
 
   return (
-    <Container fluid className='main-container' style={{height: 'auto', backgroundColor: '#ddd'}}>
-      <Row>
-
-
-        {/* Column 8 (Invoice List and Details) */}
-        <Col lg={8} style={styles.invoiceContainer}>
-          <Container style={{ ...styles.invoiceItems, height: expandedInvoices ? 'auto' : '100%' }}>
-            {/* Invoice List */}
-            <ul style={styles.invoiceList}>
-              {invoices.map((invoice, index) => (
-                <li key={index} style={styles.listItem}>
-                  <Button variant="link" onClick={() => toggleInvoice(invoice.invoiceNumber)}>
-                    {expandedInvoices[invoice.invoiceNumber] ? 'Hide Invoice' : 'Show Invoice'} - {invoice.invoiceNumber}
-                  </Button>
-                  {expandedInvoices[invoice.invoiceNumber] && (
-                    <Table borderless>
+    <Container fluid className='main-container' style={{ height: 'auto', backgroundColor: '#ddd' }}>
+  <Row>
+    <Col lg={8} style={styles.invoiceContainer}>
+      {invoices.map((invoice, index) => (
+        <Container key={index} style={{ ...styles.invoiceItems, height: expandedInvoices ? 'auto' : '100%', marginBottom: '20px' }}>
+          <Button variant="link" onClick={() => toggleInvoice(invoice.invoiceNumber)}>
+            {expandedInvoices[invoice.invoiceNumber] ? 'Hide Invoice' : 'Show Invoice'} - {invoice.invoiceNumber}
+          </Button>
+          {expandedInvoices[invoice.invoiceNumber] && (
+            <Table borderless>
+              <tbody>
+                <tr>
+                  <td><strong>Invoice Number:</strong></td>
+                  <td style={{ textTransform: 'uppercase' }}>{invoice.invoiceNumber}</td>
+                  <td><strong>Date:</strong></td>
+                  <td>{invoice.date}</td>
+                </tr>
+                <tr>
+                  <td><strong>Due Date:</strong></td>
+                  <td>{invoice.dueDate}</td>
+                  <td colSpan="2"></td>
+                </tr>
+                <tr>
+                  <td colSpan="2"></td>
+                  <td colSpan="2"></td>
+                </tr>
+                {/* Bill To */}
+                <tr>
+                  <td colSpan="4">
+                    <h5>Bill To:</h5>
+                    <p>{invoice.billTo.name}</p>
+                    <p>{invoice.billTo.address}</p>
+                    <p>Email: {invoice.billTo.email}</p>
+                    <p>Phone: {invoice.billTo.phone}</p>
+                    <hr />
+                  </td>
+                </tr>
+                {/* Ship To */}
+                <tr>
+                  <td colSpan="4">
+                    <h5>Ship To:</h5>
+                    <p>{invoice.shipTo}</p>
+                    <hr />
+                  </td>
+                </tr>
+                {/* Items */}
+                <tr>
+                  <td colSpan="4">
+                    <h5>Items:</h5>
+                    <Table>
+                      <thead>
+                        <tr>
+                          <th>Title</th>
+                          <th>Description</th>
+                          <th>Quantity</th>
+                          <th>Sale Type</th>
+                          <th>Unit Price</th>
+                          <th>Total Price</th>
+                        </tr>
+                      </thead>
                       <tbody>
-                        <tr>
-                          <td><strong>Invoice Number:</strong></td>
-                          <td>{invoice.invoiceNumber}</td>
-                          <td><strong>Date:</strong></td>
-                          <td>{invoice.date}</td>
-                        </tr>
-                        <tr>
-                          <td><strong>Due Date:</strong></td>
-                          <td>{invoice.dueDate}</td>
-                          <td colSpan="2"></td>
-                        </tr>
-                        <tr>
-                          <td colSpan="2"></td>
-                          <td colSpan="2"></td>
-                        </tr>
-                        {/* Bill To */}
-                        <tr>
-                          <td colSpan="4">
-                            <h5>Bill To:</h5>
-                            <p>{invoice.billTo.name}</p>
-                            <p>{invoice.billTo.address}</p>
-                            <p>Email: {invoice.billTo.email}</p>
-                            <p>Phone: {invoice.billTo.phone}</p>
-                            <hr />
-                          </td>
-                        </tr>
-                        {/* Ship To */}
-                        <tr>
-                          <td colSpan="4">
-                            <h5>Ship To:</h5>
-                            <p>{invoice.shipTo}</p>
-                            <hr />
-                          </td>
-                        </tr>
-                        {/* Items */}
-                        <tr>
-                          <td colSpan="4">
-                            <h5>Items:</h5>
-                            <Table>
-                              <thead>
-                                <tr>
-                                  <th>Title</th>
-                                  <th>Description</th>
-                                  <th>Quantity</th>
-                                  <th>Unit Price</th>
-                                  <th>Total Price</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {invoice.items.map((item, itemIndex) => (
-                                  <tr key={itemIndex}>
-                                    <td>{item.title}</td>
-                                    <td>{item.description}</td>
-                                    <td>{item.quantity}</td>
-                                    <td>{item.unitPrice}</td>
-                                    <td>{item.quantity * item.unitPrice}</td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </Table>
-                            <hr />
-                          </td>
-                        </tr>
+                        {invoice.items.map((item, itemIndex) => (
+                          <tr key={itemIndex}>
+                            <td>{item.title}</td>
+                            <td>{item.description}</td>
+                            <td>{item.quantity} pc</td>
+                            <td>{item.saleType}</td>
+                            <td>$ {item.unitPrice}</td>
+                            <td>$ {item.quantity * item.unitPrice}</td>
+                          </tr>
+                        ))}
                       </tbody>
                     </Table>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </Container>
-        </Col>
+                    <hr />
+                  </td>
+                </tr>
+              </tbody>
+            </Table>
+          )}
+        </Container>
+      ))}
+    </Col>
                 {/* Column 4 (Placeholder) */}
                 <Col lg={4}>
           <div style={{  padding: '' }}>
