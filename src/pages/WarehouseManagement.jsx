@@ -64,7 +64,6 @@ const WarehouseDashboard = () => {
     const fetchBuyers = async () => {
       try {
         const role = await checkUserRole();
-        console.log('User Role trouble shoot:', role);
   
         // rest of the code...
       } catch (error) {
@@ -176,11 +175,23 @@ const WarehouseDashboard = () => {
   });
 
   const handleInventoryInputChange = (e) => {
-    setInventoryBreedData({
-      ...inventoryBreedData,
-      [e.target.name]: e.target.value,
-    });
+    // Ensure that e and e.target are defined
+    if (e && e.target) {
+      // Ensure that e.target.name is defined
+      const propertyName = e.target.name;
+      if (propertyName) {
+        setInventoryBreedData({
+          ...inventoryBreedData,
+          [propertyName]: e.target.value,
+        });
+      } else {
+        console.error("Event target name is undefined:", e);
+      }
+    } else {
+      console.error("Event or event target is undefined:", e);
+    }
   };
+  
 
   const handleInventorySubmit = async (e) => {
     e.preventDefault();
@@ -254,16 +265,19 @@ const WarehouseDashboard = () => {
 
   const handleInvoiceInputChange = (e) => {
     if (e.target.name === 'buyer') {
-      // Find the selected buyer object based on the selected value
-      const selectedBuyer = buyers.find((buyer) => buyer.id === parseInt(e.target.value));
-  
-      // Update the selectedBuyer state
-      setSelectedBuyer(selectedBuyer);
-  
-      // Update the buyer property with the selected buyer
+      // Update the buyer property in invoiceData
+      const selectedBuyer = buyers.find((buyer) => buyer.id === parseInt(e.target.value, 10));
       setInvoiceData((prevData) => ({
         ...prevData,
         buyer: selectedBuyer ? { user: selectedBuyer.user, id: selectedBuyer.id } : null,
+      }));
+    } else if (e.target.name === 'buyerMarket') {
+      // Update the buyer market in invoiceData
+      setInvoiceData((prevData) => ({
+        ...prevData,
+        buyer: selectedBuyer
+          ? { id: selectedBuyer.id, username: selectedBuyer.user.username }
+          : null,
       }));
     } else {
       // Update other properties in the usual way
@@ -275,28 +289,65 @@ const WarehouseDashboard = () => {
   };
   
   
+  const handleBuyerChange = (buyerUsername) => {
+    console.log('Buyer Username:', buyerUsername);
   
-  // Rest of your code...
+    const selectedBuyer = buyers.find((buyer) => buyer.user.username === buyerUsername);
+    console.log('Selected Buyer:', selectedBuyer);
+  
+    // Update the selectedBuyer state
+    setSelectedUser(selectedBuyer);
+  
+    // Log the current state before updating
+    console.log('Before Update - invoiceData:', invoiceData);
+  
+    // Update the buyer property in invoiceData
+    setInvoiceData((prevData) => {
+      const updatedData = {
+        ...prevData,
+        buyer: {
+          username: selectedBuyer ? selectedBuyer.user.username : null,
+        },
+      };
+      console.log('After Update - invoiceData:', updatedData);
+      console.log('After Update - invoiceData:', updatedData.id);
+
+      return updatedData;
+    });
+  };
+  
+  
+
+    // Rest of your code...
   
   
   const handleGenerateInvoice = async () => {
     // Validate the invoice data (add your own validation logic)
-  
-    // Calculate total price
-    const totalPrice = invoiceData.quantity * invoiceData.unitPrice;
-  
-    // Prepare data for the invoice
-    const invoiceDetails = {
+     const invoiceDetails = {
       breed: invoiceData.breed,
       part_name: invoiceData.part_name,
       sale_type: invoiceData.sale_type,
       quantity: invoiceData.quantity,
       unit_price: invoiceData.unit_price,
       buyer: {
-        id: selectedBuyer.id,
-        user: selectedBuyer.user,
+        id: null,
+        username: null,
       },
-        };
+    }
+    //   buyer: selectedBuyer
+    //     ? {
+    //         id: selectedBuyer.id,
+    //         user: {
+    //           id: selectedBuyer.user.id,
+    //           username: selectedBuyer.user.username,
+    //           // Add other user properties as needed
+    //         },
+    //       }
+    //     : null,
+    // };
+  
+    // Log the invoice details before making the request
+    console.log('Invoice Details:', invoiceDetails);
   
     try {
       // Make a POST request to your Django API endpoint for invoice generation
@@ -308,16 +359,17 @@ const WarehouseDashboard = () => {
       });
   
       // Handle the response as needed
-      console.log('sending invoice to:', invoiceDetails);
+      console.log('Invoice Generation Response:', response.data);
   
       setSuccessMessage('Invoice generated successfully!');
-      setErrorMessage(null); 
+      setErrorMessage(null);
       setShowForm(false); // Hide the form after success
     } catch (error) {
       console.error('Error generating invoice:', error.response);
       // Handle the error, show a message, etc.
       setErrorMessage('Error generating invoice. Please try again.');
-      setSuccessMessage(null);    }
+      setSuccessMessage(null);
+    }
   };
   
   
@@ -448,22 +500,30 @@ const WarehouseDashboard = () => {
     />
   </div>
   <div className="mb-3">
+  <div className="">
   <label className="form-label">Buyer:</label>
 
   <select
   className="form-select"
   name="buyer"
-  value={selectedUser ? selectedUser.id : ''}
-  onChange={(e) => setSelectedUser(e.target.value ? buyers.find((user) => user.id === parseInt(e.target.value)) : null)}
+  value={selectedUser ? selectedUser.username : ''}
+  onChange={(e) => handleBuyerChange(e.target.value)}
   required
+  style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white' }}
 >
   <option value="">Select a buyer</option>
   {buyers.map((buyer) => (
-    <option key={buyer.id} value={buyer.id}>
-      {buyer.user.market}
-    </option>
+<option key={buyer.id} value={buyer.user.username}>
+  {buyer.user.username}
+</option>
   ))}
 </select>
+
+
+
+
+</div>
+
 
 </div>
   <button type="submit" className="btn btn-success">Generate Invoice</button>
