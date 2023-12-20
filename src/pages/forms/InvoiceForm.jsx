@@ -11,6 +11,7 @@ const InvoiceForms = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [profile, setProfile] = useState([]);
+  const [errors, setErrors] = useState({}); // Initialize errors state
 
   const accessToken = Cookies.get('accessToken');
   const baseUrl = BASE_URL;
@@ -184,29 +185,42 @@ useEffect(() => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    // const refreshAccessToken = async () => {
-    //   try {
-    //     console.log('fetching token refresh ... ')
-  
-    //     const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
-    
-    //     const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
-    //       refresh: refreshToken,
-    //     });
-    
-    //     const newAccessToken = response.data.access;
-    //     // Update the stored access token
-    //     Cookies.set('accessToken', newAccessToken);
-    //     // Optional: You can also update the user data using the new access token
-    //     await fetchUserData();
-    //   } catch (error) {
-    //     console.error('Error refreshing access token:', error);
-    //     // Handle the error, e.g., redirect to login page
-    //   }
-    // };
+     // Initialize errors object
+     const errors = {};
+
+     // Validate phone number format
+     const phoneNumberRegex = /^\+\d{1,3}\d{9}$/;
+     if (!formData.phone_number || !phoneNumberRegex.test(formData.phone_number)) {
+       errors.phone_number = 'Please enter a valid phone number in the format +254123456789.';
+     }
+
+     // Validate breeds supplied
+  if (!formData.breeds_supplied || formData.breeds_supplied <= 0) {
+    errors.breeds_supplied = 'Please enter a valid number of breeds supplied.';
+  }
+
+  // Validate total weight
+  if (!formData.goat_weight || formData.goat_weight <= 0) {
+    errors.goat_weight = 'Please enter a valid total weight.';
+  }
+
+    // Validate total weight
+    if (!formData.price || formData.price <= 0) {
+      errors.price = 'Please enter a valid amount.';
+    }
+ 
+ 
+     if (Object.keys(errors).length > 0) {
+       // Set form errors and stop form submission
+       setErrors(errors);
+       return;
+     }
 
     try {
       console.log('User ID:', user?.id); // Log the user ID
+
+      // Clear form errors on successful submission
+      setErrors({});
 
       const response = await axios.post(
         `${baseUrl}/api/breader-trade/`,
@@ -295,6 +309,8 @@ useEffect(() => {
                   className='form-control'
                   placeholder='Example 30'
                 />
+              <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.breeds_supplied}</div>
+
               </td>
             </tr>
             <tr>
@@ -309,6 +325,8 @@ useEffect(() => {
                   placeholder='eg. 450'
 
                 />
+                <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.goat_weight}</div>
+
               </td>
             </tr>
             <tr>
@@ -341,10 +359,10 @@ useEffect(() => {
               </td>
             </tr>
               <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>Bread Price</th>
+              <th style={{ border: '1px dotted black', padding: '5px' }}>Breed Price</th>
               <td style={{ border: '1px dotted black', padding: '5px' }}>
                 <input
-                  type="text"
+                  type="number"
                   name="price"
                   value={formData.price}
                   onChange={handleInputChange}
@@ -352,6 +370,8 @@ useEffect(() => {
                   placeholder='Example 45000'
 
                 />
+             <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.price}</div>
+
               </td>
               </tr>
               <tr>
@@ -365,6 +385,8 @@ useEffect(() => {
                   className='form-control'
                   placeholder='+254712345678'
                 />
+              <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.phone_number}</div>
+
               </td>
             </tr>
             
