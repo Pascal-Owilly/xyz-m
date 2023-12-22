@@ -1,4 +1,4 @@
-// AuthUtils.js
+// CheckUserRoleUtils.js
 
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -41,7 +41,6 @@ const fetchUserData = async () => {
       // Use userData instead of profile
       const userData = response.data;
       return userData;
-      
     }
   } catch (error) {
     // Check if the error indicates an expired access token
@@ -71,12 +70,24 @@ const checkUserRole = async () => {
     // Assuming your API returns user role as 'superuser' or 'regular'
     const userRole = user.user.role;
     console.log('User Role:', userRole);
-    // console.log('user', user);
+
+    // Notify the user about the assigned role
+    notifyUserAboutRole(userRole);
+
     return userRole;
   } catch (error) {
     console.error('Error checking user role:', error);
     return 'anonymous';
   }
+};
+
+const notifyUserAboutRole = (userRole) => {
+  // Here you can implement your notification mechanism
+  // For example, you can use a library like react-toastify to show a notification
+  // or update the state in a higher-level component to display a notification banner
+  // with the assigned role.
+  console.log(`You have been assigned the role: ${userRole}`);
+  // Implement your notification logic here
 };
 
 export { refreshAccessToken, fetchUserData, checkUserRole };

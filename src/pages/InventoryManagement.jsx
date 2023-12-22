@@ -92,8 +92,8 @@ const InventoryPage = () => {
           <Card className="weather-card" style={{ background: 'transparent' }}>
             <Card.Body>
 
-              <Card.Title className='text-center mb-3' style={{ color: '#A9A9A9', fontSize: '2rem', marginBottom: '1rem' }}>Inventory Information</Card.Title>
-              <h2 style={{ fontSize: '1.7rem', color: '#3498db', fontWeight: 'bold' }}>
+              <Card.Title className=' mb-3' style={{ color: '#A9A9A9', fontSize: '1rem', marginBottom: '1rem' }}>Inventory Information</Card.Title>
+              <h2 style={{ fontSize: '1.5rem', color: '#3498db', fontWeight: 'bold' }}>
                 Total Breeds in the Yard: <span style={{ color: 'green' }}>{inventoryData.totalBreeds}</span>
               </h2>
               <hr />

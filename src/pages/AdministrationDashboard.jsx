@@ -14,6 +14,57 @@ const Admin = () => {
   const [userRole, setUserRole] = useState('');
   const [breadersCount, setBreadersCount] = useState(0);
   const [supplyVsDemandData, setSupplyVsDemandData] = useState([]);
+  const [totalBuyers, setTotalBuyers] = useState(0);
+  const [totalSuppliers, setTotalSuppliers] = useState(0);
+  const [profile, setProfile] = useState([]);
+  const [user, setUser] = useState(null);
+
+  const refreshAccessToken = async () => {
+    try {
+      console.log('fetching token refresh ... ')
+
+      const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
+  
+      const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+        refresh: refreshToken,
+      });
+  
+      const newAccessToken = response.data.access;
+      // Update the stored access token
+      Cookies.set('accessToken', newAccessToken);
+      // Optional: You can also update the user data using the new access token
+      await fetchUserData();
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
+      // Handle the error, e.g., redirect to login page
+    }
+  };
+  
+
+  const fetchUserData = async () => {
+    try {
+      const accessToken = Cookies.get('accessToken');
+  
+      if (accessToken) {
+        const response = await axios.get(`${baseUrl}/auth/user/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+  
+        const userProfile = response.data;
+        setProfile(userProfile);
+      }
+    } catch (error) {
+      // Check if the error indicates an expired access token
+      if (error.response && error.response.status === 401) {
+        // Attempt to refresh the access token
+        await refreshAccessToken();
+      } else {
+        console.error('Error fetching user data:', error);
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,18 +104,83 @@ const Admin = () => {
     // ... your other useEffect logic
   }, [baseUrl, accessToken]);
 
+  const circularBarChartData = {
+    options: {
+      chart: {
+        type: 'radialBar',
+      },
+      plotOptions: {
+        radialBar: {
+          startAngle: -135,
+          endAngle: 135,
+          hollow: {
+            margin: 0,
+            size: '70%',
+            background: 'lightgreen',
+          },
+          track: {
+            background: 'lightblue',
+            strokeWidth: '67%',
+            margin: 0, // margin is in pixels
+            dropShadow: {
+              enabled: false,
+              top: 2,
+              left: 0,
+              color: '#999',
+              opacity: 1,
+              blur: 2,
+            },
+          },
+          dataLabels: {
+            name: {
+              offsetY: -10,
+              show: true,
+              color: '#888',
+              fontSize: '17px',
+            },
+            value: {
+              color: '#111',
+              fontSize: '36px',
+              show: true,
+            },
+          },
+        },
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shade: 'dark',
+          type: 'horizontal',
+          shadeIntensity: 0.5,
+          gradientToColors: ['#FFD700'],
+          inverseColors: true,
+          opacityFrom: 1,
+          opacityTo: 1,
+          stops: [0, 100],
+        },
+      },
+      stroke: {
+        dashArray: 4,
+      },
+    },
+    series: [supplyVsDemandData.map((item) => item.supply_frequency)],
+    labels: ['Supply Frequency'],
+  };
+
+
   useEffect(() => {
     const checkUser = async () => {
       const role = await checkUserRole();
       setUserRole(role);
-
-      if (role !== 'superuser') {
+  
+      if (role !== 'superuser' && role !== 'admin') {
         navigate('/unauthorized');
       }
     };
-
+  
     checkUser();
   }, [navigate]);
+  
 
 
 
@@ -78,6 +194,7 @@ const Admin = () => {
         });
         const data = await response.json();
         setBreadersCount(data.breader_count);
+        console.log('breeder count', data)
       } catch (error) {
         console.error('Error fetching breaders count:', error);
       }
@@ -108,10 +225,10 @@ const Admin = () => {
       <div className="main-container">
         <div className="">
           <div className="container-fluid" style={{ minHeight: '10vh' }}>
-            <h2 className="" style={{ marginBottom: '6vh' }}>SCM Administration </h2>
+            <h2 className="" style={{ marginBottom: '6vh', color:'#999999' }}>SCM Administration </h2>
             <div className="row">
             <div className="col-lg-3 col-md-6 mb-3">
-      <div className="card-box height-100-p widget-style3">
+            <div className="card-box height-100-p widget-style3 custom-card">
         <div className="d-flex flex-wrap">
           <div className="widget-data">
             <div className="weight-700 font-24 text-dark">Buyers</div>
@@ -129,7 +246,7 @@ const Admin = () => {
     <div className="col-lg-3 col-md-6 mb-3">
     <a href='/breaders'>
 
-      <div className="card-box height-100-p widget-style3">
+    <div className="card-box height-100-p widget-style3 custom-card">
         <div className="d-flex flex-wrap">
           <div className="widget-data">
             <div className="weight-700 font-24 text-dark">Breaders</div>
@@ -161,14 +278,13 @@ const Admin = () => {
       </div>
     </div>
 
-
     <div className="col-lg-3 col-md-12 mb-3">
     <a href='/inventory-dashboard'>
 
       <div className="card-box height-100-p widget-style3">
         <div className="d-flex flex-wrap">
           <div className="widget-data">
-            <div className="weight-700 font-24 text-dark">Inventory</div>
+            <div className="weight-700 font-24 text-dark">Payments</div>
             <div className="font-14 text-secondary weight-500">5 Activities</div>
           </div>
           <div className="widget-icon">
@@ -181,22 +297,26 @@ const Admin = () => {
       </a>
  
     </div>
-            </div>
+
+           </div>
           </div>
           <div className='container-fluid'>
             <div className='row'>
               <div className='col-md-8'>
-              <div>
-            <h4 className='mt-4' style={{color:'#001f33', opacity: .5}}>Breed Supply vs Demand</h4>
-            <ReactApexChart options={chartData.options} series={chartData.series} type="bar" height={350} />
-          </div>
+              <div className="chart-container">
+                  <h4 className='mt-4' style={{ color: '#001f33', opacity: 0.5 }}>Breed Supply vs Demand</h4>
+                  <ReactApexChart options={chartData.options} series={chartData.series} type="bar" height={350} />
+                </div>
               </div>
               <div className='col-md-4'>
-                
+              <h4 className='mt-4 text-center' style={{ color: '#001f33', opacity: 0.5 }}>Supply Frequency</h4>
+
+              <ReactApexChart options={circularBarChartData.options} series={circularBarChartData.series} type="radialBar" height={350} />
+
               </div>
             </div>
           </div>
-          
+
         </div>
       </div>
     </>

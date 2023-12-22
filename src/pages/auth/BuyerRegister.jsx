@@ -41,6 +41,11 @@ const SignUpForm = () => {
   } else if (!/\S+@\S+\.\S+/.test(registrationData.email)) {
     validationErrors.email = ['Invalid email format.'];
   }
+
+  // Add validation for user role
+  if (!selectedRole) {
+    validationErrors.role = ['User Role is required.'];
+  }
   // Add more validations for other fields as needed
 
   // If there are validation errors, update the state and return without making the API call
@@ -52,13 +57,17 @@ const SignUpForm = () => {
   try {
     // Clear previous error messages on successful validation
     setErrorMessages({});
+
+    // Include the selected role in the registrationData
+    const updatedRegistrationData = { ...registrationData, role: selectedRole };
+
     
     // Make the API call
     const url = new URL('api/register/', baseUrl);
-    const response = await axios.post(url.toString(), registrationData);
+    const response = await axios.post(url.toString(), updatedRegistrationData);
   
     // Handle successful sign-up here, e.g., navigate to login page
-    navigate('/login');
+    navigate('/buyer-register-success');
   } catch (error) {
     console.error('Error during sign-up:', error);
   
@@ -82,6 +91,19 @@ const SignUpForm = () => {
   }
   
 };
+
+// regidter buyer
+
+const [selectedRole, setSelectedRole] = useState('');
+
+const handleRoleChange = (e) => {
+  setSelectedRole(e.target.value);
+};
+ // Role choices defined directly in the SignUpForm.js file
+ const ROLE_CHOICES = [
+    ['no_role', 'No Role'],
+    ['buyer', 'buyer'],
+  ];
 
   return (
     <div className='main-container'>
@@ -255,6 +277,32 @@ const SignUpForm = () => {
                   <p style={{ color: 'red', fontSize:'12px'  }}>{errorMessages.country[0]}</p>
                 )}
               </div>
+
+              {/* User Role input */}
+<div className='form-group'>
+  <label htmlFor='role' className='text-secondary'>
+    User Role
+  </label>
+  <select
+              className='form-control mb-1'
+              id='role'
+              name='role'
+              value={selectedRole}
+              onChange={handleRoleChange}
+              required
+            >
+              <option value=''>Select User Role</option>
+              {ROLE_CHOICES.map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+  {errorMessages.role && (
+    <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.role[0]}</p>
+  )}
+</div>
+
 
               {/* Confirm Password input */}
               <div className='form-group'>

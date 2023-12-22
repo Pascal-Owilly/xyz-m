@@ -103,9 +103,28 @@ const LoginTest = () => {
         case 'superuser':
           navigate('/admin_dashboard');
           break;
-        case 'regular':
-          navigate('/supplier_dashboard');
+        case 'admin':
+          navigate('/admin_dashboard');
           break;
+          case 'admin':
+            navigate('/admin_dashboard');
+            break;
+            case 'Breeder':
+              navigate('/supplier_dashboard');
+              break;
+            case 'buyer':
+              navigate('/buyer_dashboard');
+              break;
+                case 'warehouse personnel':
+                  navigate('/warehouse');
+                  break;
+              case 'inventory manager':
+                navigate('/inventory');
+                break;
+                case 'Slaughterhouse Manager':
+                  navigate('/inventory');
+                  break;
+
         // Add more cases for other roles if needed
   
         default:
@@ -115,7 +134,8 @@ const LoginTest = () => {
   
       // Note: Removing the page reload for testing
       // window.location.reload();
-  
+      window.location.reload();
+
       // Set a flash message for successful login
       setFlashMessage({ message: `Welcome back ${loginData.username}!`, type: 'success' });
     } catch (error) {
@@ -124,7 +144,7 @@ const LoginTest = () => {
       console.error('Login error:', error);
   
       // You might want to set a flash message for unsuccessful login
-      setFlashMessage({ message: 'Login failed. Please check your credentials.', type: 'error' });
+      setFlashMessage({ message: 'Invalid credentials. try again.', type: 'error' });
     }
   };
  
@@ -188,7 +208,16 @@ const LoginTest = () => {
               >
               Login
             </button>
+
             <hr />
+            {flashMessage && (
+    <div className="flash-message text-danger" style={{backgroundColor:'transparent',  fontWeight:'normal'}}>
+      {flashMessage.message}
+      <hr />
+    </div>
+    
+  )}
+
             <p className='mb-2 text-secondary'>
               Don't have an account? <Link to='/register'>Signup</Link>
             </p>
@@ -200,11 +229,7 @@ const LoginTest = () => {
           <div className='col-md-4'></div>
         </div>
         <>
-  {flashMessage && (
-    <div className="flash-message text-secondary" style={{backgroundColor:'transparent',  fontWeight:'normal'}}>
-      {flashMessage.message}
-    </div>
-  )}
+
   </>
     </div>
     </div>

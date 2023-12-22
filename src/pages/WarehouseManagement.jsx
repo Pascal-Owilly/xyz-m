@@ -7,6 +7,24 @@ import { Card, Row, Col } from 'react-bootstrap';
 import { checkUserRole } from './auth/CheckUserRoleUtils';
 
 const WarehouseDashboard = () => {
+  const Greetings = () => {
+    const currentTime = new Date();
+    const currentHour = currentTime.getHours();
+    let greeting;
+  
+    if (currentHour < 5) {
+      greeting = 'Good night';
+    } else if (currentHour < 12) {
+      greeting = 'Good morning';
+    } else if (currentHour < 18) {
+      greeting = 'Good afternoon';
+    } else {
+      greeting = 'Good evening';
+    }
+  
+    return greeting;
+  };  
+
   const baseUrl = BASE_URL;
   const accessToken = Cookies.get('accessToken');
   const navigate = useNavigate();
@@ -17,10 +35,13 @@ const WarehouseDashboard = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [userRole, setUserRole] = useState('');
   const [allUsers, setAllUsers] = useState([]); // Add state for all users
+  const [profile, setProfile] = useState(null);
 
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [showForm, setShowForm] = useState(false);
+
+  const [username, setUsername] = useState('');
 
   // Filter user roles
   // Filter users based on role
@@ -51,6 +72,33 @@ const WarehouseDashboard = () => {
     } catch (error) {
       console.error('Error refreshing access token:', error);
       // Handle the error, e.g., redirect to login page
+    }
+  };
+
+  const fetchUserData = async () => {
+    try {
+      const accessToken = Cookies.get('accessToken');
+
+      if (accessToken) {
+        const response = await axios.get(`${baseUrl}/auth/user/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        const userProfile = response.data;
+        setProfile(userProfile);
+        setUsername(userProfile.user.first_name); // Set the username
+        // console.log('user profile', userProfile.user.first_name)
+      }
+    } catch (error) {
+      // Check if the error indicates an expired access token
+      if (error.response && error.response.status === 401) {
+        // Attempt to refresh the access token
+        await refreshAccessToken();
+      } else {
+        console.error('Error fetching user data:', error);
+      }
     }
   };
   
@@ -321,8 +369,6 @@ const WarehouseDashboard = () => {
   };
   
   
-  
-  
 
     // Rest of your code...
   
@@ -392,9 +438,27 @@ const WarehouseDashboard = () => {
     setSelectedBuyer(null);
   };
 
+  useEffect(() => {
+    fetchUserData(); // Fetch user data when the component mounts
+    // fetchUserRole(); // Fetch user role when the component mounts
+  }, []);
   return (
     <div className='main-container warehouse-container' style={{ minHeight: '85vh', background: 'rgb(249, 250, 251' }}>
-      <h2 className='mb-2'>The XYZ Warehouse</h2>
+<div className='row'>
+    <Col lg={{ span: 3, offset: 9 }} className='text-right'>
+      <div style={{ marginBottom: '25px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width:'auto' }}>
+      <p className='text-center' style={{ fontSize: '16px', fontWeight: 'bold', color: '#2E8B57' }}>{`${Greetings()}, `}{` ${username}!`} </p>
+        <span style={{ textTransform: 'capitalize' }}></span>
+      </div>
+    </Col>
+    <Col lg={{ span: 3, offset: 0 }} className='text-left'>
+      <a href='/register-buyer'>
+      <button className='' style={{ fontSize: '16px', fontWeight: 'bold', color: '#2E8B57' }}>Register buyer </button>
+      </a>
+    </Col>
+  </div>
+      {/* )} */}
+      <h2 className='mb-2 mt-5'>The XYZ Warehouse</h2>
       <div className='container'>
         <div className='row'>
           <div className='col-md-4'>
@@ -504,13 +568,14 @@ const WarehouseDashboard = () => {
   value={selectedBuyer ? selectedBuyer.id : ''}
   onChange={(e) => handleBuyerChange(e.target.value)}
   required
-  style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white' }}
+  style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
 >
-  <option value="">Select a buyer</option>
+  <option value="" style={{ color: 'green', background: 'linear-gradient(45deg, green, rgb(249, 250, 251))' }}>Select a buyer</option>
   {buyers.map((buyer) => (
-    <option key={buyer.id} value={buyer.id}>
-      {buyer.user.username}
-    </option>
+    <option key={buyer.id} value={buyer.id} style={{ color: 'blue', background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding:'1rem', width:'100%' }}>
+      <span style={{ textTransform: 'capitalize' }}>
+        {buyer.user.username}
+      </span>    </option>
   ))}
 </select>
 

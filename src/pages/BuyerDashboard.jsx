@@ -61,7 +61,8 @@ const baseUrl = BASE_URL;
   const [profile, setProfile] = useState([]);
       const accessToken = Cookies.get('accessToken');
       const [user, setUser] = useState({});
-      
+      const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate()
   const [invoiceData, setInvoiceData] = useState([]);
 
@@ -119,22 +120,28 @@ const baseUrl = BASE_URL;
   const fetchInvoiceData = async () => {
     try {
       const accessToken = Cookies.get('accessToken');
-      const response = await axios.get(`${baseUrl}/api/generate-invoice/`, {
+
+      // Fetch user data to get the user's ID
+      const userResponse = await axios.get(`${baseUrl}/auth/user/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      setInvoiceData(response.data);
 
-      console.log(response.data)
+      const userId = userResponse.data.id;
+
+      // Fetch invoices related to the logged-in user
+      const response = await axios.get(`${baseUrl}/api/generate-invoice/?buyer=${userId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      setInvoiceData(response.data);
+      console.log('buyer response', response.data);
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        // Handle unauthorized access, refresh token, and retry
-        await refreshAccessToken();
-        await fetchInvoiceData();
-      } else {
-        console.error('Error fetching invoice data:', error);
-      }
+      // Handle errors
+      console.error('Error fetching invoice data:', error);
     }
   };
 
@@ -148,7 +155,7 @@ const baseUrl = BASE_URL;
       date: invoice.invoice_date,
       dueDate: invoice.invoice_date,
       billTo: {
-        name: invoice.buyer ? invoice.buyer.username : '', // Check if buyer is not null or undefined
+        name: invoice.buyer ? invoice.buyer.first_name : '', // Check if buyer is not null or undefined
         address: '123 Main Street, City, State, ZIP',
         email: 'john.doe@example.com',
         phone: '(123) 456-7890',
@@ -186,7 +193,7 @@ const baseUrl = BASE_URL;
       <Row>
     <Col lg={{ span: 3, offset: 9 }} className='text-right'>
       <div style={{ marginBottom: '25px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width:'auto' }}>
-        <p className='text-center mt-1'>{`${Greetings()}, `} !</p>
+        <p className='text-center mt-1'>{`${Greetings()} `} </p>
         <span style={{ textTransform: 'capitalize' }}></span>
 
       </div>
@@ -195,18 +202,29 @@ const baseUrl = BASE_URL;
 
   <Row>
     
-  <Col lg={8} style={styles.invoiceContainer}>
-  <h3 className='mb-3'>Manage Your Invoices and Transactions
- </h3>
-
-  {currentInvoices.map((invoice, index) => (
-    <Container key={index} style={{ ...styles.invoiceItems, height: expandedInvoices ? 'auto' : '100%', marginBottom: '20px' }}>
-      <Button variant="link" onClick={() => toggleInvoice(invoice.invoiceNumber)}>
-        {expandedInvoices[invoice.invoiceNumber] ? 'Hide Invoice' : 'Show Invoice'} - {invoice.invoiceNumber}
-      </Button>
-      {expandedInvoices[invoice.invoiceNumber] && (
-        <Table borderless>
-          <tbody>
+<Col lg={8} style={styles.invoiceContainer}>
+  <h3 className='mb-3'>Manage Your Invoices and Transactions</h3>
+  {/* {loading ? (
+            <div className="text-center mt-5">
+              Loading invoices...
+            </div>
+          ) : (
+            <> */}
+  {invoiceData.length === 0 ? (
+    <div className="text-center mt-5">
+      <HiExclamation size={40} color='#ccc' />
+      <p className="mt-3">No invoices yet !</p>
+    </div>
+  ) : (
+    <>
+      {currentInvoices.map((invoice, index) => (
+        <Container key={index} style={{ ...styles.invoiceItems, height: expandedInvoices ? 'auto' : '100%', marginBottom: '20px' }}>
+          <Button variant="link" onClick={() => toggleInvoice(invoice.invoiceNumber)}>
+            {expandedInvoices[invoice.invoiceNumber] ? 'Hide Invoice' : 'Show Invoice'} - {invoice.invoiceNumber}
+          </Button>
+          {expandedInvoices[invoice.invoiceNumber] && (
+            <Table borderless>
+<tbody>
             <tr>
               <td><strong>Invoice Number:</strong></td>
               <td style={{ textTransform: 'uppercase' }}>{invoice.invoiceNumber}</td>
@@ -272,22 +290,27 @@ const baseUrl = BASE_URL;
                 <hr />
               </td>
             </tr>
-          </tbody>
-        </Table>
-      )}
-    </Container>
-  ))}
-  {/* Pagination */}
-  <div className="d-flex justify-content-center mt-3">
-    <Pagination>
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-        <Pagination.Item key={page} active={page === currentPage} onClick={() => paginate(page)}>
-          {page}
-        </Pagination.Item>
+          </tbody>            </Table>
+          )}
+        </Container>
       ))}
-    </Pagination>
-  </div>
+      {/* Pagination */}
+      <div className="d-flex justify-content-center mt-3">
+        <Pagination>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <Pagination.Item key={page} active={page === currentPage} onClick={() => paginate(page)}>
+              {page}
+            </Pagination.Item>
+          ))}
+        </Pagination>
+      </div>
+    </>
+  )}
+  {/* </>
+  )} */}
+
 </Col>
+
 
                 {/* Column 4 (Placeholder) */}
                 <Col lg={4}>

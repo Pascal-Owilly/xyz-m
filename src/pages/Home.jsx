@@ -13,6 +13,8 @@ import { jwtDecode } from 'jwt-decode';
 
 import { checkUserRole } from './auth/CheckUserRoleUtils'; // Update the path accordingly
 import defaultImg from './../../images/default.png'
+import { Link } from 'react-router-dom';
+
 const Home = () => {
 const navigate =useNavigate()
 
@@ -42,6 +44,11 @@ const navigate =useNavigate()
       //   }
       // }, [accessToken, baseUrl]);
 // END USE
+
+const handleNavigation = (url) => {
+  // Add any custom logic you need here
+  navigate(url);
+};
 
 useEffect(() => {
   if (accessToken && baseUrl) {
@@ -241,6 +248,123 @@ const logout = async () => {
 	const handleRightSidebarToggle = () => {
 		setIsRightSidebarVisible(!isRightSidebarVisible);
 	  };
+    const handleLinkClick = () => {
+      console.log('Link clicked!');
+    };
+
+    const renderDashboards = () => {
+      switch (userRole) {
+        case 'superuser':
+          return (
+            <>
+             <li>
+             <li>
+                <a onClick={() => handleNavigation('/admin_dashboard')}>SCM Administration</a>
+              </li>                          </li>
+              <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
+              <Link to="/buyer_dashboard" onClick={handleLinkClick}>
+                Buyer Dashboard
+              </Link>
+                <li><a href="slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
+                         
+                <li>
+                  <a href="inventory-dashboard">Inventory Dashboard </a>
+                </li>
+                <li>
+                  <a href="warehouse">Warehouse Dashboard </a>
+                </li>
+                <li><a href="integrated_banking">Bank Dashboard </a></li>
+            {/* <li><a href="employee_dashboard">Employee Dashboard</a></li> */}
+          <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
+
+            </>
+          );
+          case 'admin':
+            return (
+              <>
+               <li>
+                <a href="admin_dashboard">SCM Administration</a>
+                            </li>
+                <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
+                <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
+                <li><a href="slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
+                           
+                            <li>
+                              <a href="inventory-dashboard">Inventory Dashboard </a>
+                            </li>
+                            <li>
+                              <a href="warehouse">Warehouse Dashboard </a>
+                            </li>
+                            <li><a href="integrated_banking">Bank Dashboard </a></li>
+              {/* <li><a href="employee_dashboard">Employee Dashboard</a></li> */}
+            <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
+            <li><a href="/">Home page</a></li>
+
+              </>
+            );
+        case 'regular':
+          return (
+            <>
+              <li><a href="/">Home page</a></li>
+              {/* Add more dashboards for regular user */}
+            </>
+          );
+        case 'buyer':
+          return (
+            <>
+                          <li><a href="/">Home page</a></li>
+
+              <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
+              {/* Add more dashboards for buyer */}
+            </>
+          );
+          case 'warehouse_personnel':
+          return (
+            <>
+                          <li><a href="/">Home page</a></li>
+
+              <li><a href="warehouse">Warehouse Dashboard</a></li>
+              <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
+              <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
+
+            </>
+          );
+          case 'slaughterhouse_manager':
+            return (
+              <>
+                            <li><a href="/">Home page</a></li>
+
+                <li><a href="slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
+                {/* Add more dashboards for buyer */}
+              </>
+            );
+            case 'breeder':
+              return (
+                <>
+                              <li><a href="/">Home page</a></li>
+
+                  <li><a href="supplier_dashboard">Breeder Dashboard</a></li>
+                  {/* Add more dashboards for buyer */}
+                </>
+              );
+              case 'inventory_manager':
+              return (
+                <>
+                              <li><a href="/">Home page</a></li>
+
+                  <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
+                  <li>
+                     <a href="inventory-dashboard">Inventory Dashboard </a>
+                  </li>
+                  
+                  {/* Add more dashboards for buyer */}
+                </>
+              );
+        // Add cases for other roles as needed...
+        default:
+          return null; // No specific dashboard for unknown roles
+      }
+    };
 	  
 
 	return(
@@ -452,7 +576,7 @@ const logout = async () => {
         </div>
       </div>
 		<div className="github-link">
-			<a href="https://github.com/mariallugare" target="_blank"
+			<a href="/" target="_blank"
 				><img src="vendors/images/github.svg" alt=""
 			/></a>
 		</div>
@@ -522,10 +646,10 @@ style={{
 	position: 'fixed',
 	top: 0,
 	left: 0,
-	height: '100%',
+	minHeight: '200vh',
 	width: isLeftSidebarVisible ? '279px' : '0',
-	overflowX: 'hidden',
-	overflowY: 'hidden',
+	// overflowX: 'hidden',
+	// overflowY: 'scroll',
 	transition: 'left 0.3s ease',
 	backgroundColor: backgroundColor,
   }}
@@ -555,33 +679,9 @@ style={{
 
 {isDashboardsVisible && (
 
-      <ul className="menu-dashboards" style={{ maxHeight: isDashboardsVisible ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
-
-          
-
-          {userRole === 'superuser' && (
-                        <>
-                        <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
-          <li><a href="buyer_dashboard">Buyer Dashboard </a></li>
-          <li><a href="slaughterhouse-dashboard">Slaughter House</a></li>
-                          <li>
-                            <a href="admin_dashboard">SCM Administration</a>
-                          </li>
-                          <li>
-                            <a href="inventory-dashboard">Inventory Dashboard </a>
-                          </li>
-                          <li>
-                            <a href="warehouse">Warehouse Dashboard </a>
-                          </li>
-                          <li><a href="integrated_banking">Bank Dashboard </a></li>
-          <li><a href="employee_dashboard">Employee Dashboard</a></li>
-          <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
-
-                        </>
-                      )}
-
-          
-          		</ul>
+<ul className="menu-dashboards" style={{ maxHeight: isDashboardsVisible ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.3s ease'}}>
+          {renderDashboards()}
+        </ul>
       )}
         </li>
 

@@ -28,8 +28,11 @@ const authService = {
       // Return access token
       return tokens.access;
     } catch (error) {
-      // Handle login error
-      throw error;
+      if (error.response && error.response.status === 401) {
+        throw new Error('Invalid username or password');
+      } else {
+        throw new Error('Login failed. Please try again later. If the issue persists please contact us');
+      }
     }
   },
 

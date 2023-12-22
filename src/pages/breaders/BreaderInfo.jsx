@@ -15,9 +15,67 @@ const BreaderInfo = () => {
   const { breaderId } = useParams();
   const [breaderData, setBreaderData] = useState({});
   const [loading, setLoading] = useState(true);
-  const authToken = Cookies.get('authToken');
-  const [user, setUser] = useState(null);
+  const accessToken = Cookies.get('accessToken');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [user, setUser] = useState(null); // Initialize with null or an empty object
+  const [profile, setProfile] = useState([]);
+
+
+  const refreshAccessToken = async () => {
+    try {
+      console.log('fetching token refresh ... ')
+
+      const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
+  
+      const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+        refresh: refreshToken,
+      });
+  
+      const newAccessToken = response.data.access;
+      // Update the stored access token
+      Cookies.set('accessToken', newAccessToken);
+      // Optional: You can also update the user data using the new access token
+      await fetchUserData();
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
+      // Handle the error, e.g., redirect to login page
+    }
+  };
+  
+
+  const fetchUserData = async () => {
+    try {
+      const accessToken = Cookies.get('accessToken');
+  
+      if (accessToken) {
+        const response = await axios.get(`${baseUrl}/auth/user/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+  
+        const userProfile = response.data;
+        setProfile(userProfile);
+      setUser(userProfile.user); 
+
+      }
+    } catch (error) {
+      // Check if the error indicates an expired access token
+      if (error.response && error.response.status === 401) {
+        // Attempt to refresh the access token
+        await refreshAccessToken();
+      } else {
+        console.error('Error fetching user data:', error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (accessToken && baseUrl) {
+      fetchUserData();
+    }
+  }, [accessToken, baseUrl]);
+  
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -152,7 +210,7 @@ const BreaderInfo = () => {
       try {
         const response = await axios.get(`${baseUrl}/auth/user/`, {
           headers: {
-            Authorization: `Token ${authToken}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         });
         const userData = response.data;
@@ -163,7 +221,7 @@ const BreaderInfo = () => {
     };
 
     fetchUserData();
-  }, [authToken]);
+  }, [accessToken]);
 
   const handlePaymentMpesa = async (e) => {
     try {
@@ -182,7 +240,7 @@ const BreaderInfo = () => {
 
         const response = await axios.post(mpesaEndpoint, mpesaData, {
             headers: {
-                Authorization: `Token ${authToken}`,
+                Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
             },
             timeout: 30000,
@@ -202,15 +260,15 @@ const BreaderInfo = () => {
             // Introduce a 3-second delay using setTimeout
             setTimeout(() => {
                 // Redirect the user to the M-Pesa payment page after the delay
-                navigate('/mpesa-payment-response');
-            }, 3000);
+                navigate('/mpesa-payment-response', { replace: true });
+              }, 3000);
         }
     } catch (error) {
         console.error('Oops! M-Pesa payment did not work:', error);
         setTimeout(() => {
           // Redirect the user to the M-Pesa payment page after the delay
-          navigate('/mpesa-payment-response');
-      }, 3000);
+          navigate('/mpesa-payment-response', { replace: true });
+        }, 3000);
         // Handle any errors that may occur during the M-Pesa payment process
     }
 };
@@ -242,11 +300,12 @@ const BreaderInfo = () => {
        try {
           const response = await axios.get(`${baseUrl}/api/breader-trade/${breaderId}/`, {
              headers: {
-                Authorization: `Token ${authToken}`,
+                Authorization: `Bearer ${accessToken}`,
              },
           });
 
           setBreaderData(response.data);
+          console.log('info', response.data.breeder_market)
        } catch (error) {
           console.error('Error fetching data:', error);
        } finally {
@@ -257,7 +316,7 @@ const BreaderInfo = () => {
     if (breaderId) {
        fetchData();
     }
- }, [authToken, breaderId]);
+ }, [accessToken, breaderId]);
 
 
   // Format the transaction date
@@ -356,7 +415,7 @@ const BreaderInfo = () => {
                   style={{ backgroundColor: 'goldenrod', borderRadius: '30px', fontSize:'14px' }}
                   onClick={openModal}
                 >
-                  Make Payment to {breaderData.head_of_family}'s family
+                  Make Payment to {breaderData.breeder_head_of_family}'s family
                 </button>
               </div>
           <div>
@@ -372,7 +431,7 @@ const BreaderInfo = () => {
               <thead className="thead-dark">
                 <tr>
                   <th>Bread Name</th>
-                  <th>Breads Supplied</th>
+                  <th>Number Supplied</th>
                   <th>Bread Weight</th>
                   <th>Date Supplied</th>
                   <th>Price</th>
@@ -386,15 +445,15 @@ const BreaderInfo = () => {
               <tbody style={{ background: 'white' }}>
                 <tr>
                   <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.breed}</td>
-                  <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.breads_supplied}</td>
+                  <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.breeds_supplied}</td>
                   <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.goat_weight} Kg</td>
                   <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{formattedTransactionDate}</td>
                   <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.price}</td>
                   <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.phone_number}</td>
-                  <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.community}</td>
-                  <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.market}</td>
+                  <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.breeder_community}</td>
+                  <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.breeder_market}</td>
                   <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.vaccinated ? 'Yes' : 'No'}</td>
-                  <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.head_of_family}</td>
+                  <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.breeder_head_of_family}</td>
                 </tr>
               </tbody>
             </table>

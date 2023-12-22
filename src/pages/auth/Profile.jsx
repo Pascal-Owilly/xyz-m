@@ -4,14 +4,23 @@ import Cookies from 'js-cookie';
 import { BASE_URL } from './config';
 import defaultIng from '../../../images/default.png';
 import { checkUserRole } from './CheckUserRoleUtils'; 
-
+import { useNavigate } from 'react-router-dom';
 const Profile = () => {
+  const navigate = useNavigate()
   const [userProfile, setUserProfile] = useState(null);
   const baseUrl = BASE_URL;
   const accessToken = Cookies.get('accessToken'); // Get the authentication token from cookies
   const [userRole, setUserRole] = useState('loading'); // Initialize with 'loading'
 
+
+
   useEffect(() => {
+     // Check if accessToken is available
+     if (!accessToken) {
+      // No accessToken, navigate to home page
+      navigate('/');
+      return;
+    }
     // Check user role and update state
     checkUserRole().then((role) => {
       setUserRole(role);
@@ -59,6 +68,7 @@ const Profile = () => {
         // Attempt to refresh the access token
         await refreshAccessToken();
       } else {
+        
         console.error('Error fetching user data:', error);
       }
     }
@@ -67,6 +77,7 @@ const Profile = () => {
   useEffect(() => {
     fetchUserData();
   }, []);
+  
 
   return (
     <div className='' style={{

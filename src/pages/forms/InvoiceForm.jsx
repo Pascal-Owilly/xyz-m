@@ -298,6 +298,23 @@ useEffect(() => {
         <Card.Title style={{ color: '#A9A9A9' }}>Please fill out this Invoice Form {successMessage} </Card.Title>
         <table style={{ background: 'transparent', color: '#999999', width:'100%' }}>
           <tbody>
+          <tr>
+  <th style={{ border: '1px dotted black', padding: '5px' }}>Name of breed</th>
+  <td style={{ border: '1px dotted black', padding: '5px' }}>
+    <select
+      name="breed"
+      value={formData.breed}
+      onChange={handleInputChange}
+      className='form-control'
+    >
+      {['goats', 'sheep', 'cows', 'pigs'].map((breed) => (
+        <option key={breed} value={breed}>
+          {breed.charAt(0).toUpperCase() + breed.slice(1)}
+        </option>
+      ))}
+    </select>
+  </td>
+</tr>
             <tr>
               <th style={{ border: '1px dotted black', padding: '5px' }}>How many breeds?</th>
               <td style={{ border: '1px dotted black', padding: '5px' }}>
@@ -329,23 +346,7 @@ useEffect(() => {
 
               </td>
             </tr>
-            <tr>
-  <th style={{ border: '1px dotted black', padding: '5px' }}>Name of breed</th>
-  <td style={{ border: '1px dotted black', padding: '5px' }}>
-    <select
-      name="breed"
-      value={formData.breed}
-      onChange={handleInputChange}
-      className='form-control'
-    >
-      {['goats', 'sheep', 'cows', 'pigs'].map((breed) => (
-        <option key={breed} value={breed}>
-          {breed.charAt(0).toUpperCase() + breed.slice(1)}
-        </option>
-      ))}
-    </select>
-  </td>
-</tr>
+
 <tr>
               <th style={{ border: '1px dotted black', padding: '5px' }}>Vaccinated:</th>
               <td style={{ border: '1px dotted black', padding: '5px' }}>

@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { SuppliesProvider } from './SuppliesContext';
 import Home from './pages/Home';
 import Registration2 from './pages/auth/Registration';
+import RegisterBuyer from './pages/auth/BuyerRegister';
+import BuyerRegidterSuccess from './pages/auth/BuyerRegisterSuccess';
 import Login from './pages/auth/Login';
 import Profile from './pages/auth/Profile';
 import Footer from './pages/Footer';
@@ -37,6 +39,9 @@ const App = () => {
             {/* Authentication */}
             <Route path="/" element={<HomeContent />} />
             <Route path="/register" element={<Registration2 />} />
+            <Route path="/register-buyer" element={<RegisterBuyer />} />
+            <Route path="/buyer-register-success" element={<BuyerRegidterSuccess />} />
+
             <Route path="/login" element={<Login />} />
             <Route path="/password_reset" element={<ForgotPassword />} />
             <Route path="/profile" element={<Profile />} />
