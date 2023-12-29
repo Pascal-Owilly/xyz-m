@@ -226,6 +226,10 @@ const Admin = () => {
         <div className="">
           <div className="container-fluid" style={{ minHeight: '10vh' }}>
             <h2 className="" style={{ marginBottom: '6vh', color:'#999999' }}>SCM Administration </h2>
+            <a href='/register-buyer'>
+
+            <button className=''>Register Buyer</button>
+            </a>
             <div className="row">
             <div className="col-lg-3 col-md-6 mb-3">
             <div className="card-box height-100-p widget-style3 custom-card">

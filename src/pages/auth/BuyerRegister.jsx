@@ -1,6 +1,6 @@
 // SignUpForm.js
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { BASE_URL } from './config';
@@ -20,9 +20,33 @@ const SignUpForm = () => {
     community: '',
     head_of_family: '',
     country: '',
+    role: null, // or role: ''
+
   });
 
   const [errorMessages, setErrorMessages] = useState({});
+  const [roleChoices, setRoleChoices] = useState([]);
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await axios.get('api/roles/', {
+          headers: {
+            'Content-Type': 'application/json',
+            // Add any other headers if needed
+          },
+        });
+
+        setRoleChoices(response.data.roleChoices);
+      } catch (error) {
+        console.error('Error fetching roles:', error);
+      }
+    };
+
+    fetchRoles();
+  }, []); // Empty dependency array to run the effect only once
+
+  
 
   const handleRegistrationChange = (e) => {
     setRegistrationData({ ...registrationData, [e.target.name]: e.target.value });
@@ -43,9 +67,9 @@ const SignUpForm = () => {
   }
 
   // Add validation for user role
-  if (!selectedRole) {
-    validationErrors.role = ['User Role is required.'];
-  }
+  // if (!selectedRole) {
+  //   validationErrors.role = ['User Role is required.'];
+  // }
   // Add more validations for other fields as needed
 
   // If there are validation errors, update the state and return without making the API call
@@ -99,11 +123,8 @@ const [selectedRole, setSelectedRole] = useState('');
 const handleRoleChange = (e) => {
   setSelectedRole(e.target.value);
 };
- // Role choices defined directly in the SignUpForm.js file
- const ROLE_CHOICES = [
-    ['no_role', 'No Role'],
-    ['buyer', 'buyer'],
-  ];
+
+ 
 
   return (
     <div className='main-container'>
@@ -279,30 +300,6 @@ const handleRoleChange = (e) => {
               </div>
 
               {/* User Role input */}
-<div className='form-group'>
-  <label htmlFor='role' className='text-secondary'>
-    User Role
-  </label>
-  <select
-              className='form-control mb-1'
-              id='role'
-              name='role'
-              value={selectedRole}
-              onChange={handleRoleChange}
-              required
-            >
-              <option value=''>Select User Role</option>
-              {ROLE_CHOICES.map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-  {errorMessages.role && (
-    <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.role[0]}</p>
-  )}
-</div>
-
 
               {/* Confirm Password input */}
               <div className='form-group'>

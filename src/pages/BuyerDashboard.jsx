@@ -155,15 +155,14 @@ const baseUrl = BASE_URL;
       date: invoice.invoice_date,
       dueDate: invoice.invoice_date,
       billTo: {
-        name: invoice.buyer ? invoice.buyer.first_name : '', // Check if buyer is not null or undefined
+        name: invoice.buyer ? invoice.buyer.username : '', // Check if buyer is not null or undefined
         address: '123 Main Street, City, State, ZIP',
         email: 'john.doe@example.com',
         phone: '(123) 456-7890',
       },
       shipTo: 'Same as Bill To',
       items: [
-        { title: invoice.breed, description: 'Goat meat from Africa', saleType: invoice.sale_type, quantity: invoice.quantity, unitPrice: invoice.unit_price  },
-        { title: invoice.breed, description: 'Goat meat from Africa', saleType: invoice.sale_type, quantity: invoice.quantity, unitPrice: invoice.unit_price  },
+        { title: invoice.breed, saleType: invoice.sale_type, quantity: invoice.quantity, unitPrice: invoice.unit_price  },
       ],
       taxRate: 0.08,
   }));
@@ -311,14 +310,12 @@ const baseUrl = BASE_URL;
 
 </Col>
 
-
                 {/* Column 4 (Placeholder) */}
                 <Col lg={4}>
           <div style={{  padding: '' }}>
-<div>
+            <div>
                     {/* Flash message */}
             
-
                     {/* Notifications */}
                     <div style={{ borderRadius: '50%', position: 'relative', float: 'right', top: 0, backgroundColor: 'lightblue', padding: '10px', width: '40px', height: '40px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
                         <HiBell size={20} color='white' />

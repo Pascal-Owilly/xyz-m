@@ -390,6 +390,21 @@ useEffect(() => {
 
               </td>
             </tr>
+            <tr>
+              <th style={{ border: '1px dotted black', padding: '5px' }}>Account No</th>
+              <td style={{ border: '1px dotted black', padding: '5px' }}>
+                <input
+                  type="text"
+                  name="bank_account_number"
+                  value={formData.bank_account_number}
+                  onChange={handleInputChange}
+                  className='form-control'
+                  placeholder='+254712345678'
+                />
+              <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.bank_account_number}</div>
+
+              </td>
+            </tr>
             
             <tr>
               <th style={{ border: '1px dotted black', padding: '5px',color: '#999999' }}>Community:</th>

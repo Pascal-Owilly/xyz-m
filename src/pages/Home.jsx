@@ -157,7 +157,9 @@ useEffect(() => {
   const fetchUserData = async () => {
     try {
       const accessToken = Cookies.get('accessToken');
-  
+      if(!accessToken){
+        navigate('/')
+      }
       if (accessToken) {
         const response = await axios.get(`${baseUrl}/auth/user/`, {
           headers: {
@@ -208,18 +210,29 @@ const logout = async () => {
     setIsSettingsDropdownVisible(false);
     setIsLeftSidebarVisible(false);
 
+    
+
     // Redirect based on user role
-    switch (userRole) {
-      case 'superuser':
-        navigate('/');
-        break;
-      case 'regular':
-        navigate('/');
-        break;
-      // Add more cases for other roles if needed
-      default:
-        navigate('/');
-    }
+    // switch (userRole) {
+    //   case 'superuser':
+    //     navigate('/');
+    //     break;
+    //     case 'admin':
+    //       navigate('/');
+    //       break;
+    //     case 'buyer':
+    //       navigate('/');
+    //       break;
+    //       case 'supplier':
+    //       navigate('/');
+    //       break;
+    //   case 'regular':
+    //     navigate('/');
+    //     break;
+    //   // Add more cases for other roles if needed
+    //   default:
+    //     navigate('/');
+    // }
   } catch (error) {
     console.error('Failed to logout', error);
   }
@@ -262,9 +275,9 @@ const logout = async () => {
                 <a onClick={() => handleNavigation('/admin_dashboard')}>SCM Administration</a>
               </li>                          </li>
               <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
-              <Link to="/buyer_dashboard" onClick={handleLinkClick}>
+              <li><a href="/buyer_dashboard" onClick={handleLinkClick}>
                 Buyer Dashboard
-              </Link>
+              </a></li>
                 <li><a href="slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
                          
                 <li>
@@ -286,7 +299,7 @@ const logout = async () => {
                 <a href="admin_dashboard">SCM Administration</a>
                             </li>
                 <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
-                <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
+                {/* <li><a href="buyer_dashboard">Buyer Dashboard</a></li> */}
                 <li><a href="slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
                            
                             <li>
@@ -312,10 +325,8 @@ const logout = async () => {
         case 'buyer':
           return (
             <>
-                          <li><a href="/">Home page</a></li>
-
+              <li><a href="/">Home page</a></li>
               <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
-              {/* Add more dashboards for buyer */}
             </>
           );
           case 'warehouse_personnel':
@@ -378,7 +389,7 @@ const logout = async () => {
           <div className="search-toggle-icon bi bi-search" data-toggle="header_searc"></div>
           <div className="header-search">
             <form>
-              <div className="form-group mb-0">
+              <div className="form-group mb-0"> 
                 <i className="dw dw-search2 search-icon"></i>
                 <input
                   type="text"
@@ -674,7 +685,9 @@ style={{
         <li className="dropdown">
 		<span href="" className="dropdown-toggle" style={{color:'#fff', fontWeight: 800}}>
    <span className="micon bi bi-house" style={{color:'#fff', fontWeight: 800}}></span>
+   <a href='/'>
    <span className="mtext" style={{color:'#fff', fontWeight: 800}}>Home</span>
+   </a>
 </span>
 
 {isDashboardsVisible && (
