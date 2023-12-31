@@ -20,6 +20,28 @@ const InventoryPage = () => {
     breedPartsInWarehouse: {},
   });
 
+// Calculate overallTotal
+
+  const breedTotals = inventoryData.breedTotals;
+const overallTotal = Object.values(breedTotals).reduce((acc, total) => acc + total, 0);
+
+// Function to determine color class based on breed
+const getColorClass = (breed) => {
+  switch (breed.toLowerCase()) {
+    case 'cherry':
+      return 'cherry';
+    case 'blue-dark':
+      return 'blue-dark';
+    case 'green-dark':
+      return 'green-dark';
+    case 'orange-dark':
+      return 'orange-dark';
+    default:
+      return 'cyan'; // Default color
+  }
+};
+
+
   useEffect(() => {
     const fetchInventoryData = async () => {
       try {
@@ -98,26 +120,51 @@ const InventoryPage = () => {
               </h2>
               <hr />
               <Row>
+              <Col md={12}>
+  <h4 className='mb-2' style={{ fontSize: '1.5rem' }}>Total By Categories</h4>
+  <Row>
+    {Object.entries(inventoryData.breedTotals).map(([breed, total]) => {
+      const percentage = (total / overallTotal) * 100;
+
+      return (
+        <Col key={breed} xl={3} lg={6} style={{ marginBottom: '1.5rem' }}>
+          <div className={`card l-bg-${getColorClass(breed)}`}>
+            <div className="card-statistic-3 p-4">
+              <div className="card-icon card-icon-large"><i className="fas fa-shopping-cart"></i></div>
+              <div className="mb-4">
+                <h5 className="card-title mb-0">{capitalizeFirstLetter(breed)}</h5>
+              </div>
+              <div className="row align-items-center mb-2 d-flex">
+                <div className="col-8">
+                  <h2 className="d-flex align-items-center mb-0">
+                    {total}
+                  </h2>
+                </div>
+                <div className="col-4 text-right">
+                  <span>{percentage.toFixed(2)}% <i className="fa fa-arrow-up"></i></span>
+                </div>
+              </div>
+              <div className="progress mt-1" data-height="8" style={{ height: '8px' }}>
+                <div className={`progress-bar l-bg-${getColorClass(breed)}`} role="progressbar" data-width={percentage + "%"} aria-valuenow={percentage} aria-valuemin="0" aria-valuemax="100" style={{ width: percentage + "%" }}></div>
+              </div>
+            </div>
+          </div>
+        </Col>
+      );
+    })}
+  </Row>
+</Col>
+
                 <Col md={6}>
-                  <h4 className='mb-2' style={{ fontSize: '1.5rem' }}>Total By Categories</h4>
                   <ul>
-                    {Object.entries(inventoryData.breedTotals).map(([breed, total]) => (
-                      <li key={breed} style={{ fontSize: '1.2rem' }}>{capitalizeFirstLetter(breed)}: {total}</li>
-                    ))}
-                  </ul>
-                </Col>
-                <Col md={6}>
-                  <h4 style={{ fontSize: '1.5rem' }}>Slaughtered History</h4>
-                  <ul>
-                    <li style={{ fontSize: '1.2rem' }}>Total Slaughtered count: {inventoryData.totalSlaughtered}</li>
-                    <li style={{ fontSize: '1.2rem' }}>Total breed parts category in warehouse: {inventoryData.inWarehouse}</li>
+                    {/* <li style={{ fontSize: '1.2rem' }}>Total breed parts category in warehouse: {inventoryData.inWarehouse}</li> */}
                     {/* <li style={{ fontSize: '1.2rem' }}>Quantity of Breeds Supplied: {inventoryData.quantitySupplied}</li> */}
                   </ul>
                 </Col>
               </Row>
               <Col className='mb-2' md={12}>
                 <hr />
-                <h4 className='mb-4 text-center' style={{ fontSize: '1.5rem' }}>Breed Parts in Warehouse</h4>
+                <h4 className='mb-4 ' style={{ fontSize: '1.5rem' }}>Breed Parts in Warehouse</h4>
               </Col>
               <Row>
                 {Object.entries(inventoryData.breedPartsInWarehouse).map(([breed, parts]) => (

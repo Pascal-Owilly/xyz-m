@@ -3,6 +3,7 @@ import { HiBell, HiCube, HiCurrencyDollar } from 'react-icons/hi';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { BASE_URL } from './auth/config';
+import { Container, Row, Col, Table, Button, Pagination, Card } from 'react-bootstrap';
 
 const Greetings = () => {
   const currentTime = new Date();
@@ -38,12 +39,13 @@ const SALE_CHOICES = [
 ];
 
 const UserProfile = ({ user }) => (
-  <div className="mb-4 p-3 bg-lightgreen rounded">
-    <p className='text-center'>
-      {`${Greetings()}, `}
-      <span style={{ textTransform: 'capitalize' }}>{user.username}!</span>
-    </p>
+  <Col lg={{ span: 3, offset: 9 }} className='text-right'>
+  <div style={{ marginBottom: '25px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width:'auto' }}>
+    <p className='text-center mt-1'>{`${Greetings()} `} </p>
+    <span style={{ textTransform: 'capitalize' }}></span>
+
   </div>
+</Col>
 );
 
 const Message = ({ type, text }) => {
@@ -339,7 +341,8 @@ const Home = () => {
   return (
     <>
       <div className='main-container'>
-        <h2 className='text-center'> Slaughterhouse Dashboard</h2>
+        <h2> Slaughterhouse Dashboard</h2>
+        
         <div>
           {/* User Profile */}
           <UserProfile user={user} />
@@ -384,23 +387,16 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="row">
-            <div className="col-md-6 mb-3">
-              <div className="card">
-                <div className="card-body">
-                  <HiCube className='mr-2' /> Manage goats slaughtered and processed
-                </div>
-              </div>
-            </div>
-
-            <div className="col-md-6 mb-3">
+          <Row>
+            {/* Carcass Tracking */}
+            <Col md={6} className="mb-3">
               <div className="card">
                 <div className="card-body">
                   <HiCurrencyDollar className='mr-2' /> Carcass Tracking weighing and segregating export/non-export parts
                 </div>
               </div>
-            </div>
-          </div>
+            </Col>
+          </Row>
         </div>
       </div>
     </>

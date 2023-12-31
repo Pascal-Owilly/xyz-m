@@ -293,14 +293,14 @@ useEffect(() => {
           <div className='col-md-9'>
           
     {/* {user && user.role === 'superuser' && ( */}
-      <Card className="weather-card" style={{ background: 'transparent' }}>
+      <Card className="weather-card" style={{ background: '#ffffff' }}>
       <Card.Body>
         <Card.Title style={{ color: '#A9A9A9' }}>Please fill out this Invoice Form {successMessage} </Card.Title>
         <table style={{ background: 'transparent', color: '#999999', width:'100%' }}>
           <tbody>
           <tr>
-  <th style={{ border: '1px dotted black', padding: '5px' }}>Name of breed</th>
-  <td style={{ border: '1px dotted black', padding: '5px' }}>
+  <th style={{ border: '1px solid #999999', padding: '5px' }}>Name of breed</th>
+  <td style={{ border: '1px solid #999999', padding: '5px' }}>
     <select
       name="breed"
       value={formData.breed}
@@ -316,8 +316,8 @@ useEffect(() => {
   </td>
 </tr>
             <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>How many breeds?</th>
-              <td style={{ border: '1px dotted black', padding: '5px' }}>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>How many breeds?</th>
+              <td style={{ border: '1px solid #999999', padding: '5px' }}>
                 <input
                   type="number"
                   name="breeds_supplied"
@@ -331,8 +331,8 @@ useEffect(() => {
               </td>
             </tr>
             <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>Total Weight</th>
-              <td style={{ border: '1px dotted black', padding: '5px' }}>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>Total Weight</th>
+              <td style={{ border: '1px solid #999999', padding: '5px' }}>
                 <input
                   type="number"
                   name="goat_weight"
@@ -348,8 +348,8 @@ useEffect(() => {
             </tr>
 
 <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>Vaccinated:</th>
-              <td style={{ border: '1px dotted black', padding: '5px' }}>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>Vaccinated:</th>
+              <td style={{ border: '1px solid #999999', padding: '5px' }}>
                 <input
                   className='bg-white'
                   type="checkbox"
@@ -360,8 +360,8 @@ useEffect(() => {
               </td>
             </tr>
               <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>Breed Price</th>
-              <td style={{ border: '1px dotted black', padding: '5px' }}>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>Breed Price</th>
+              <td style={{ border: '1px solid #999999', padding: '5px' }}>
                 <input
                   type="number"
                   name="price"
@@ -376,8 +376,8 @@ useEffect(() => {
               </td>
               </tr>
               <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>Phone Number</th>
-              <td style={{ border: '1px dotted black', padding: '5px' }}>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>Phone Number</th>
+              <td style={{ border: '1px solid #999999', padding: '5px' }}>
                 <input
                   type="text"
                   name="phone_number"
@@ -391,8 +391,8 @@ useEffect(() => {
               </td>
             </tr>
             <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>Account No</th>
-              <td style={{ border: '1px dotted black', padding: '5px' }}>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>Account No</th>
+              <td style={{ border: '1px solid #999999', padding: '5px' }}>
                 <input
                   type="text"
                   name="bank_account_number"
@@ -406,11 +406,11 @@ useEffect(() => {
               </td>
             </tr>
             
-            <tr>
-              <th style={{ border: '1px dotted black', padding: '5px',color: '#999999' }}>Community:</th>
-              <td style={{ border: '1px dotted black', padding: '5px' }}>
+            {/* <tr> */}
+              {/* <th style={{ border: '1px dotted black', padding: '5px',color: '#999999' }}>Community:</th> */}
+              {/* <td style={{ border: '1px dotted black', padding: '5px' }}> */}
                 <input
-                  type="text"
+                  type="hidden"
                   name="community"
                   value={user && user.community ? user.community : ''}
                   onChange={handleInputChange}
@@ -420,13 +420,13 @@ useEffect(() => {
                   placeholder='Name of your community'
 
                 />
-              </td>
-            </tr>
+              {/* </td> */}
+            {/* </tr> */}
             <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>Market:</th>
-              <td style={{ border: '1px dotted black', padding: '5px' }}>
+              {/* <th style={{ border: '1px dotted black', padding: '5px' }}>Market:</th> */}
+              {/* <td style={{ border: '1px dotted black', padding: '5px' }}> */}
                 <input
-                  type="text"
+                  type="hidden"
                   name="market"
                   value={user && user.market ? user.market : ''}
                   onChange={handleInputChange}
@@ -436,13 +436,13 @@ useEffect(() => {
                   placeholder='Name of your market'
 
                 />
-              </td>
+              {/* </td> */}
             </tr>
-            <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>Head of Family:</th>
-              <td style={{ border: '1px dotted black', padding: '5px' }}>
+            {/* <tr> */}
+              {/* <th style={{ border: '1px dotted black', padding: '5px' }}>Head of Family:</th> */}
+              {/* <td style={{ border: '1px dotted black', padding: '5px' }}> */}
               <input
-                  type="text"
+                  type="hidden"
                   name="head_of_family"
                   value={user && user.head_of_family ? user.head_of_family : ''}
                   onChange={handleInputChange}
@@ -452,39 +452,46 @@ useEffect(() => {
                   placeholder='Family head'
 
                 />
-              </td>
-            </tr>
+              {/* </td> */}
+            {/* </tr> */}
            
-            <tr>
-            <th style={{ border: '1px dotted black', padding: '5px' }}>Breeder Name</th>
+            {/* <tr> */}
+            {/* <th style={{ border: '1px dotted black', padding: '5px' }}>Breeder Name</th> */}
 
-            <td style={{ border: '1px dotted black', padding: '5px', textTransform: 'capitalize' }}>
+            {/* <td style={{ border: '1px dotted black', padding: '5px', textTransform: 'capitalize' }}> */}
               <input
-                type="text"
+                type="hidden"
                 name="breeder"
                 value={formData.breeder_name ? formData.breeder_name : ''}
                 readOnly
                 className='form-control'
               />
-            </td>
+            {/* </td> */}
 
-            </tr>
-            <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>Abattoir Name</th>
-              <td style={{ border: '1px dotted black', padding: '5px', textTransform:'capitalize' }}>
+            {/* </tr> */}
+            {/* <tr> */}
+              {/* <th style={{ border: '1px dotted black', padding: '5px' }}>Abattoir Name</th> */}
+              {/* <td style={{ border: '1px dotted black', padding: '5px', textTransform:'capitalize' }}> */}
                 <input
                 style={{}}
-                  type="text"
+                  type="hidden"
                   name="abattoir_name"
                   value={formData.abattoir_name ? formData.abattoir_name : ''}
                   readOnly
                   className='form-control'
                 />
-              </td>
-            </tr>
+              {/* </td> */}
+            {/* </tr> */}
           </tbody>
         </table>
-        <button type="submit" className='btn btn-dark mt-3' style={{ width: '200px' }} onClick={handleFormSubmit}>Submit</button>
+        <button
+  type="submit"
+  className='btn btn-primary mt-3'
+  style={{ width: '200px', marginLeft: 'auto', display: 'block' }}
+  onClick={handleFormSubmit}
+>
+  Submit
+</button>
       </Card.Body>
     </Card>
         {/* )} */}

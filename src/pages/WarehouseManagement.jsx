@@ -444,21 +444,23 @@ const WarehouseDashboard = () => {
   }, []);
   return (
     <div className='main-container warehouse-container' style={{ minHeight: '85vh', background: 'rgb(249, 250, 251' }}>
+      <h2 className=' '>The XYZ Warehouse</h2>
+
 <div className='row'>
+
     <Col lg={{ span: 3, offset: 9 }} className='text-right'>
       <div style={{ marginBottom: '25px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width:'auto' }}>
       <p className='text-center' style={{ fontSize: '16px', fontWeight: 'bold', color: '#2E8B57' }}>{`${Greetings()}, `}{` ${username}!`} </p>
         <span style={{ textTransform: 'capitalize' }}></span>
       </div>
     </Col>
-    <Col lg={{ span: 3, offset: 0 }} className='text-left'>
+    {/* <Col lg={{ span: 3, offset: 0 }} className='text-left'>
       <a href='/register-buyer'>
       <button className='' style={{ fontSize: '16px', fontWeight: 'bold', color: '#2E8B57' }}>Register buyer </button>
       </a>
-    </Col>
+    </Col> */}
   </div>
       {/* )} */}
-      <h2 className='mb-2 mt-5'>The XYZ Warehouse</h2>
       <div className='container'>
         <div className='row'>
           <div className='col-md-4'>
@@ -591,7 +593,7 @@ const WarehouseDashboard = () => {
 
 </form>
  ) : (
-  <button onClick={handleGenerateAnother} className="btn btn-sm btn-success mt-3">Generate</button>
+  <button onClick={handleGenerateAnother} className="btn btn-sm btn-success mt-3">Generate invoice</button>
   )}
 {/* Display success or error messages */}
 {successMessage && <div className="alert alert-success mt-3">{successMessage}</div>}
@@ -601,7 +603,7 @@ const WarehouseDashboard = () => {
             </div>
           </div>
           <div className='col-md-8'>
-          <Card className="weather-card" style={{ background: 'transparent' }}>
+          <Card className="weather-card" style={{ background: '#ffffff' }}>
             <Card.Body>
 
               <Card.Title className='text-center mb-3' style={{ color: '#A9A9A9', fontSize: '1.5rem', marginBottom: '1rem' }}>Breed parts available in the warehouse</Card.Title>

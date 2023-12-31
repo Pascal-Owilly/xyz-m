@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Row, Col, Card } from 'react-bootstrap';
+
 import { FaBell, FaBox, FaExclamation, FaMoneyBillWave, FaChartLine } from 'react-icons/fa';
 import Cookies from 'js-cookie';
 import axios from 'axios';
@@ -6,8 +8,12 @@ import { BASE_URL } from './auth/config';
 import { useNavigate } from 'react-router-dom';
 import SuppliedBreedsSingleUser from './breaders/SuppliedBreedsSingleUser';
 import { useSupplies } from '../SuppliesContext';
+import { checkUserRole } from './auth/CheckUserRoleUtils'; 
 
 const Supplier = () => {
+
+
+
   const Greetings = () => {
     const currentTime = new Date();
     const currentHour = currentTime.getHours();
@@ -34,7 +40,7 @@ const Supplier = () => {
       const accessToken = Cookies.get('accessToken');
       const [user, setUser] = useState({});
       const [localSuppliesData, setLocalSuppliesData] = useState(null);
-
+      const [userRole, setUserRole] = useState('')
       useEffect(() => {
         const refreshAccessToken = async () => {
           try {
@@ -61,7 +67,10 @@ const Supplier = () => {
         const fetchUserData = async () => {
           try {
             const accessToken = Cookies.get('accessToken');
-        
+            if (!accessToken) {
+              navigate('/'); // Redirect to the home page if no access token is detected
+              return;
+            }
             if (accessToken) {
               const response = await axios.get(`${baseUrl}/auth/user/`, {
                 headers: {
@@ -85,6 +94,21 @@ const Supplier = () => {
      
          fetchUserData();
        }, [accessToken]);
+
+       useEffect(() => {
+        const checkUser = async () => {
+          const role = await checkUserRole();
+    
+          if (role !== 'superuser' && role !== 'admin' && role !== 'Breeder') {
+            navigate('/unauthorized'); // Redirect unauthorized users to the home page
+            return;
+          }
+          console('user role from the breeder dash', role)
+          setUserRole(role);
+        };
+    
+        checkUser();
+      }, [navigate]);
      
        const handleBreadSuppliesStatus = async () => {
          try {
@@ -110,72 +134,85 @@ const Supplier = () => {
            navigate('/supplied-breeds');
          }
        }, [localSuppliesData, navigate]);
+
+       
    
 
     return (
         <>
-            <div className='main-container' style={{minHeight:'85vh'}}>
-                <h2 className='text-center mb-4' >Supplier Dashboard</h2>
-                <div>
-                    {/* Flash message */}
-                    <div style={{ marginBottom: '40px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                      <p className='text-center'>
-                        {`${Greetings()}, `}
-                        <span style={{ textTransform: 'capitalize' }}>{user.username}!</span>
-                      </p>
-                    </div>
+            <div className='main-container' style={{ minHeight: '85vh' }}>
 
-                    {/* Notifications */}
-                    <div style={{ borderRadius: '50%', position: 'relative', float: 'right', top: 0, backgroundColor: 'lightblue', padding: '10px', width: '40px', height: '40px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-                        <FaBell size={20} color='white' />
-                    </div>
+      <Row className=''>
+      <h2 className=''>Breeder Dashboard</h2> <br />
 
-                    {/* Goat supplies status */}
-                    {/* Supply to XYZ Abattoir Button */}
-                    <a href='/breeder_invoices'>
-                      <button className='mx-1 bg-dark text-white mb-3' style={{ /* your button styles */ }}>
-                        <FaBox className='mr-2' /> Supply to XYZ Abbattoir
-                      </button>
-                    </a>
-                    <button
-            className='mx-1'
-            style={{
-               backgroundColor: 'white',
-               color: '#333',
-               textAlign: 'left',
-               display: 'inline-block',
-               marginBottom: '10px',
-               padding: '15px',
-               width: '25%',
-               borderRadius: '10px',
-               boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-            }}
-            onClick={handleBreadSuppliesStatus}
-         >
-            <FaBox className='mr-2' /> Bread supplies status
-         </button>
+      <Col lg={{ span: 3, offset: 9 }} className='text-right'>
+      <div style={{ marginBottom: '25px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width:'auto' }}>
+        <p className='text-center mt-1'>{`${Greetings()} `} </p>
+        <span style={{ textTransform: 'capitalize' }}></span>
 
-                    {/* Track Payments */}
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '50%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <FaMoneyBillWave className='mr-2' /> Track Payments
-                    </button>
+      </div>
+    </Col>
+            {/* Notifications */}
+            <Col className='mt-2' xs={6} md={6}>
+            {/* <FaBell size={20} color='white' /> */}
+        </Col>
+        {/* Flash message */}
+        <Col xs={6} md={6}>
+         
+        </Col>
 
-                    {/* Pending actions alerts */}
-                    <button style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <FaExclamation className='mr-2' /> Pending actions alerts
-                    </button>
 
-                    {/* Manage Supplies for supplied goats */}
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <FaBox className='mr-2' /> Manage Supplies for supplied goats.
-                    </button>
 
-                    {/* Overview of payment status */}
-                    <button style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', marginBottom: '10px', padding: '15px', width: '100%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <FaChartLine className='mr-2' /> Overview of payment status
-                    </button>
-                </div>
-            </div>
+
+        {/* Goat supplies status */}
+        <Col xs={12} md={6} lg={4}>
+          <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+            <Card.Body>
+              <FaBox size={40} className='mb-3' />
+              <Card.Title>Supply to XYZ Abattoir</Card.Title>
+              <Card.Text>Click below to supply goats to XYZ Abattoir and manage your transactions.</Card.Text>
+              <a href='/breeder_invoices' className='btn btn-primary'>Go to Invoices</a>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        {/* Bread supplies status */}
+        <Col xs={12} md={6} lg={4}>
+          <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }} onClick={handleBreadSuppliesStatus}>
+            <Card.Body>
+              <FaBox size={40} className='mb-3' />
+              <Card.Title>Bread Supplies Status</Card.Title>
+              <Card.Text>Check the status of your bread supplies and manage orders efficiently.</Card.Text>
+              <a href='#' className='btn btn-primary'>View Status</a>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        {/* Track Payments */}
+        <Col xs={12} md={6} lg={4}>
+          <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+            <Card.Body>
+              <FaMoneyBillWave size={40} className='mb-3' />
+              <Card.Title>Track Payments</Card.Title>
+              <Card.Text>Monitor your payment transactions and keep track of your earnings.</Card.Text>
+              <a href='#' className='btn btn-primary'>View Payments</a>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        {/* Pending actions alerts */}
+        <Col xs={12} md={6} lg={4}>
+          <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+            <Card.Body>
+              <FaExclamation size={40} className='mb-3' />
+              <Card.Title>Pending Actions Alerts</Card.Title>
+              <Card.Text>Stay informed about pending actions and take necessary steps promptly.</Card.Text>
+              <a href='#' className='btn btn-primary'>Check Alerts</a>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </div>
             {localSuppliesData && <SuppliedBreedsSingleUser suppliesData={localSuppliesData} />}
 
         </>

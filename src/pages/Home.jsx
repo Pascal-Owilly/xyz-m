@@ -71,7 +71,7 @@ const toggleNotificationPanel = () => {
   
   
 useEffect(() => {
-	setDefaultBackgroundColor('0074cc');
+	setDefaultBackgroundColor('#0074cc');
 	setDefaultTextColor('#fff');
   }, []);
 
@@ -85,7 +85,7 @@ useEffect(() => {
   };
 
   // New state for managing background color
-  const [backgroundColor, setBackgroundColor] = useState('#0074cc'); // Set the initial background color
+  const [backgroundColor, setBackgroundColor] = useState('#001b31'); // Set the initial background color
   const [textColor, setTextColor] = useState('#000000'); // Set the initial text color
 
     // Function to handle background color change
@@ -272,14 +272,15 @@ const logout = async () => {
             <>
              <li>
              <li>
-                <a onClick={() => handleNavigation('/admin_dashboard')}>SCM Administration</a>
+                <a onClick={() => handleNavigation('/admin_dashboard')} style={{}}>SCM Administration</a>
               </li>                          </li>
               <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
               <li><a href="/buyer_dashboard" onClick={handleLinkClick}>
                 Buyer Dashboard
               </a></li>
                 <li><a href="slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
-                         
+                <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
+
                 <li>
                   <a href="inventory-dashboard">Inventory Dashboard </a>
                 </li>
@@ -299,7 +300,7 @@ const logout = async () => {
                 <a href="admin_dashboard">SCM Administration</a>
                             </li>
                 <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
-                {/* <li><a href="buyer_dashboard">Buyer Dashboard</a></li> */}
+                <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
                 <li><a href="slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
                            
                             <li>
@@ -311,28 +312,24 @@ const logout = async () => {
                             <li><a href="integrated_banking">Bank Dashboard </a></li>
               {/* <li><a href="employee_dashboard">Employee Dashboard</a></li> */}
             <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
-            <li><a href="/">Home page</a></li>
 
               </>
             );
         case 'regular':
           return (
             <>
-              <li><a href="/">Home page</a></li>
               {/* Add more dashboards for regular user */}
             </>
           );
         case 'buyer':
           return (
             <>
-              <li><a href="/">Home page</a></li>
               <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
             </>
           );
           case 'warehouse_personnel':
           return (
             <>
-                          <li><a href="/">Home page</a></li>
 
               <li><a href="warehouse">Warehouse Dashboard</a></li>
               <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
@@ -343,7 +340,6 @@ const logout = async () => {
           case 'slaughterhouse_manager':
             return (
               <>
-                            <li><a href="/">Home page</a></li>
 
                 <li><a href="slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
                 {/* Add more dashboards for buyer */}
@@ -352,7 +348,6 @@ const logout = async () => {
             case 'breeder':
               return (
                 <>
-                              <li><a href="/">Home page</a></li>
 
                   <li><a href="supplier_dashboard">Breeder Dashboard</a></li>
                   {/* Add more dashboards for buyer */}
@@ -361,7 +356,6 @@ const logout = async () => {
               case 'inventory_manager':
               return (
                 <>
-                              <li><a href="/">Home page</a></li>
 
                   <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
                   <li>
@@ -388,7 +382,7 @@ const logout = async () => {
           <div className="menu-icon bi bi-list"></div>
           <div className="search-toggle-icon bi bi-search" data-toggle="header_searc"></div>
           <div className="header-search">
-            <form>
+            {/* <form>
               <div className="form-group mb-0"> 
                 <i className="dw dw-search2 search-icon"></i>
                 <input
@@ -407,7 +401,7 @@ const logout = async () => {
                   </a>
                 </div>
               </div>
-            </form>
+            </form> */}
           </div>
         </div>
 
@@ -682,12 +676,12 @@ style={{
   <div className="menu-block customscroll" >
     <div className="sidebar-menu">
       <ul id="accordion-menu" >
+
+<a href='/'>
         <li className="dropdown">
 		<span href="" className="dropdown-toggle" style={{color:'#fff', fontWeight: 800}}>
    <span className="micon bi bi-house" style={{color:'#fff', fontWeight: 800}}></span>
-   <a href='/'>
    <span className="mtext" style={{color:'#fff', fontWeight: 800}}>Home</span>
-   </a>
 </span>
 
 {isDashboardsVisible && (
@@ -697,20 +691,8 @@ style={{
         </ul>
       )}
         </li>
+        </a>
 
-        <li>
-          <a href="calendar.html" className="dropdown-toggle no-arrow">
-            <span className="micon bi bi-calendar4-week"></span
-            ><span className="mtext">Calendar</span>
-          </a>
-        </li>
-
-        <li>
-          <a href="invoice.html" className="dropdown-toggle no-arrow">
-            <span className="micon bi bi-receipt-cutoff"></span
-            ><span className="mtext">Invoice</span>
-          </a>
-        </li>
         <li>
           <div className="dropdown-divider"></div>
         </li>

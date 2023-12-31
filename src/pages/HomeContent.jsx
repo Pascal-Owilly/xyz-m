@@ -7,6 +7,7 @@ import { FaCheckCircle, FaMoneyBill, FaShieldAlt, FaUsers, FaCogs } from "react-
 import { checkUserRole } from "./auth/CheckUserRoleUtils";
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import AuthService from './auth/AuthService'
+import backgroundSvg from '../../images/background.svg';
 
 const HomeContent = () => {
   const baseUrl = BASE_URL;
@@ -249,144 +250,131 @@ const [flashMessage, setFlashMessage] = useState(null); // Initialize with null
 
 // End Login
 
+// hero
+const containerStyle = {
+  minHeight: '100vh',
+  background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://mdbcdn.b-cdn.net/img/new/slides/041.webp')`,
+  backgroundSize: 'cover',
+};  
+
   return (
     <>
       <div className="main-container" style={{ minHeight: '100vh'}}>
 
-        <Container fluid>
-
-          <Row>
-            <Col md={12}>
-            {userRole && (
-        <div style={{ textAlign: 'right', marginTop: '' }}>
-          <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#2E8B57' }}>{`Welcome, ${username}!`}  <br />
-          <span className='mx-3' style={{ fontSize: '14px', color: '#2E8B57' }}>Role: {userRole}</span>
-          </span>
-        </div>
-      )}
-                  {renderRoleNotification()}
-
-            </Col>
-
-            <Col md={8}>
-            <div style={{ width: '100%', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-        {/* Display user role and greeting */}
-      
-
-          <div style={{ padding: '20px', borderRadius: '10px', backgroundColor: '' }}>
-
-            <h3 style={{ marginBottom: '20px', color: '#2E8B57', textAlign: 'left' }}>Are You a Breeder?</h3>
-            <ul className="p-3" style={{ fontSize: '16px', lineHeight: '1.6' }}>
-              <li style={{ marginBottom: '20px' }}>
-                <FaCheckCircle style={{ color: '#2E8B57', marginRight: '10px' }} />
-                Supply breeds to XYZ abattoir and get paid seamlessly.
-              </li>
-              <li style={{ marginBottom: '20px' }}>
-                <FaShieldAlt style={{ color: '#2E8B57', marginRight: '10px' }} />
-                Secure authentication for the check-in of goats.
-              </li>
-              <li style={{ marginBottom: '20px' }}>
-                <FaMoneyBill style={{ color: '#2E8B57', marginRight: '10px' }} />
-                Integrated banking for swift and hassle-free payments.
-              </li>
-              <li style={{ marginBottom: '20px' }}>
-                <FaUsers style={{ color: '#2E8B57', marginRight: '10px' }} />
-                Be part of a transparent and efficient goat supply chain management system.
-              </li>
-              <li>
-                <FaCogs style={{ color: '#2E8B57', marginRight: '10px' }} />
-                Explore advanced features for effective breeding management.
-              </li>
-            </ul>
+      <Container className='p-4' fluid style={containerStyle}>
+           <Row>
+              <Col md={12}>
+              {userRole && (
+          <div style={{ textAlign: 'right', marginTop: '' }}>
+            <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#f8f8f8' }}>{`Welcome, ${username}!`}  <br />
+            <span className='mx-3' style={{ fontSize: '14px', color: '#f8f8f8' }}>Role: {userRole}</span>
+            
+            </span>
+          
           </div>
-          <br />
-          <a href='register' style={{ display: 'flex', justifyContent: 'left' }}>
-            <button className="btn mb-3 mx-2 btn-success btn-lg">
-              Register Now
-            </button>
-          </a>
-        </div>
-            </Col>
-            {!isLoggedIn && (
+        )}
+                    {renderRoleNotification()}
 
-
-            <Col md={4}>
-              <div className='' style={{ width: '100%', backgroundColor: 'transparent',right:0 }}>
-      <div className='row m-auto' style={{ height: 'auto', backgroundColor: '', alignItems: 'center', justifyContent: 'center' }}>
-          <form className='what-card-btn-login p-4 mb-3 bg-white' onSubmit={handleLoginSubmit}
-           style={{  
-           width: '100%',
-           borderRadius: '0',
-           margin: 'auto',
-           transition: 'top 0.3s ease-in-out',
-           boxShadow: '0px 24px 36px -19px rgba(0, 0, 0, 0.09)'
-            }}>
-            <h3 className='text-secondary'>Login</h3>
-            <hr style={{ color: '#d9d9d9' }} />
-            <div className="form-group" style={{ color: '#d9d9d9', fontSize: '18px' }}>
-              <label className="mt-1 text-secondary" htmlFor="username">Username</label>
-              <input
-                type="text"
-                style={{ background: '#d9d9d9' }}
-                className="form-control"
-                id="username"
-                name="username"
-                value={loginData.username}
-                placeholder="Enter username"
-                onChange={handleLoginChange}
-              />
-            </div>
-
-            <div className="form-group" style={{ color: '#d9d9d9', fontSize: '18px' }}>
-              <label className="mt-1 text-secondary" htmlFor="password">Password</label>
-              <input
-                type="password"
-                style={{ background: '#d9d9d9' }}
-                placeholder="Enter password"
-                className="form-control"
-                id="password"
-                name="password"
-                value={loginData.password}
-                onChange={handleLoginChange}
-              />
-              {errorMessages.invalidCredentials && (
-                <p style={{ color: 'red', fontSize:'12px'}}>{errorMessages.invalidCredentials}</p>
-              )}
-            </div>
-
-            <button
-                type='submit'
-                className='btn btn-sm btn-outline-primary text-secondary mt-1'
-                style={{ background: '#fff', width:'100%' }}
-              >
-              Login
-            </button>
-
-            <hr />
-            {flashMessage && (
-    <div className="flash-message text-danger" style={{backgroundColor:'transparent',  fontWeight:'normal'}}>
-      {flashMessage.message}
-      <hr />
-    </div>
-    
-  )}
-
-            <p className='mb-2 text-secondary'>
-              Don't have an account? <Link to='/register'>Signup</Link>
-            </p>
-            <p className='mb-2 text-secondary'>
-              <Link to='/password_reset'>Forgot your password?</Link>
-            </p>
-          </form>
-        </div>
-        </div>
-        <>
-
-  </>
               </Col>
-                          )}
-          </Row>
-        </Container>
+
+              <Col md={8}>
+              <div className="text-center bg-image rounded-3" style={{ 
+      height: '400px'
+    }}>
+      <div className="mask" style={{ }}>
+        <div className="mt-5 h-100">
+          <div className="text-white">
+            <h1 className="mb-3" style={{color:'#f8f8f8', textAlign:'center'}}>
+            Supply breeds to XYZ abattoir and get paid seamlessly
+
+            </h1>
+            <a className="btn btn-outline-light btn-lg" href="/register" role="button">Register Now!</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Col>
+              {!isLoggedIn && (
+
+
+              <Col md={4}>
+                
+                <div className='' style={{ width: '100%', backgroundColor: 'transparent',right:0 }}>
+        <div className='row m-auto' style={{ height: 'auto', backgroundColor: '', alignItems: 'center', justifyContent: 'center' }}>
+            <form className='what-card-btn-login p-4 mt-3 mb-3 bg-white' onSubmit={handleLoginSubmit}
+            style={{  
+            width: '100%',
+            borderRadius: '0',
+            margin: 'auto',
+            transition: 'top 0.3s ease-in-out',
+            boxShadow: '0px 24px 36px -19px rgba(0, 0, 0, 0.09)'
+              }}>
+              <h4 className='text-secondary'> Breeder Login</h4>
+              <hr style={{ color: '#d9d9d9' }} />
+              <div className="form-group" style={{ color: '#d9d9d9', fontSize: '18px' }}>
+                <label className="mt-1 text-secondary" htmlFor="username">Username</label>
+                <input
+                  type="text"
+                  style={{ background: '#d9d9d9' }}
+                  className="form-control"
+                  id="username"
+                  name="username"
+                  value={loginData.username}
+                  placeholder="Enter username"
+                  onChange={handleLoginChange}
+                />
+              </div>
+
+              <div className="form-group" style={{ color: '#d9d9d9', fontSize: '18px' }}>
+                <label className="mt-1 text-secondary" htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  style={{ background: '#d9d9d9' }}
+                  placeholder="Enter password"
+                  className="form-control"
+                  id="password"
+                  name="password"
+                  value={loginData.password}
+                  onChange={handleLoginChange}
+                />
+                {errorMessages.invalidCredentials && (
+                  <p style={{ color: 'red', fontSize:'12px'}}>{errorMessages.invalidCredentials}</p>
+                )}
+              </div>
+
+              <button
+                  type='submit'
+                  className='btn btn-sm btn-outline-primary text-secondary mt-1'
+                  style={{ background: '#fff', width:'100%' }}
+                >
+                Login
+              </button>
+
+              <hr />
+              {flashMessage && (
+      <div className="flash-message text-danger" style={{backgroundColor:'transparent',  fontWeight:'normal'}}>
+        {flashMessage.message}
+        <hr />
+      </div>
+      
+    )}
+
+              <p className='mb-2 text-secondary'>
+                Don't have an account? <Link to='/register'>Signup</Link>
+              </p>
+              <p className='mb-2 text-secondary'>
+                <Link to='/password_reset'>Forgot your password?</Link>
+              </p>
+            </form>
+          </div>
+          </div>
+          <>
+
+    </>
+                </Col>
+                            )}
+            </Row>
+          </Container>
         
       </div>
     </>

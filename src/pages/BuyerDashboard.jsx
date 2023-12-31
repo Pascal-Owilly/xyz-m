@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Table, Button, Pagination } from 'react-bootstrap';
+import { Container, Row, Col, Table, Button, Pagination, Card } from 'react-bootstrap';
 import { HiBell, HiCube, HiExclamation, HiCurrencyDollar, HiChartBar } from 'react-icons/hi';
 import axios from 'axios';
 import { BASE_URL } from './auth/config';
@@ -93,6 +93,7 @@ const baseUrl = BASE_URL;
   };
 
   const fetchUserData = async () => {
+    
     try {
       const accessToken = Cookies.get('accessToken');
   
@@ -120,7 +121,10 @@ const baseUrl = BASE_URL;
   const fetchInvoiceData = async () => {
     try {
       const accessToken = Cookies.get('accessToken');
-
+      if (!accessToken) {
+        navigate('/'); // Redirect to the home page if no access token is detected
+        return;
+      }
       // Fetch user data to get the user's ID
       const userResponse = await axios.get(`${baseUrl}/auth/user/`, {
         headers: {
@@ -138,15 +142,21 @@ const baseUrl = BASE_URL;
       });
 
       setInvoiceData(response.data);
+      setLoading(false); // Set loading to false when data is loaded
+
       console.log('buyer response', response.data);
     } catch (error) {
       // Handle errors
+      setLoading(false); // Set loading to false in case of an error
+
       console.error('Error fetching invoice data:', error);
     }
   };
 
   // Fetch invoice data when the component mounts
   useEffect(() => {
+    setLoading(true); // Set loading to true when component mounts
+
     fetchInvoiceData();
   }, []);
 
@@ -190,6 +200,8 @@ const baseUrl = BASE_URL;
 
     <Container fluid className='main-container' style={{ height: 'auto', backgroundColor: '#ddd' }}>
       <Row>
+      <h3 className='mb-3'>Manage Your Invoices and Transactions</h3>
+
     <Col lg={{ span: 3, offset: 9 }} className='text-right'>
       <div style={{ marginBottom: '25px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width:'auto' }}>
         <p className='text-center mt-1'>{`${Greetings()} `} </p>
@@ -202,7 +214,6 @@ const baseUrl = BASE_URL;
   <Row>
     
 <Col lg={8} style={styles.invoiceContainer}>
-  <h3 className='mb-3'>Manage Your Invoices and Transactions</h3>
   {/* {loading ? (
             <div className="text-center mt-5">
               Loading invoices...
@@ -312,42 +323,45 @@ const baseUrl = BASE_URL;
 
                 {/* Column 4 (Placeholder) */}
                 <Col lg={4}>
-          <div style={{  padding: '' }}>
-            <div>
-                    {/* Flash message */}
-            
-                    {/* Notifications */}
-                    <div style={{ borderRadius: '50%', position: 'relative', float: 'right', top: 0, backgroundColor: 'lightblue', padding: '10px', width: '40px', height: '40px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-                        <HiBell size={20} color='white' />
-                    </div>
+      <div style={{ padding: '' }}>
+        <Card>
+          <Card.Body>
+            {/* Notifications */}
+            <div className='mb-4' style={{ borderRadius: '50%', position: 'relative', float: 'right', top: 0, backgroundColor: 'lightblue', padding: '10px', width: '40px', height: '40px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
+              <HiBell size={20} color='white' />
+            </div>
 
-                    {/* Purchase Issuance */}
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiCube className='mr-2' /> Purchase Issuance
-                    </button>
+            {/* Purchase Issuance */}
+            <Card.Text>
+              <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '100%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                <HiCube className='mr-2' /> Initiate Purchase
+              </button>
+            </Card.Text>
 
-                    {/* Banking Transactions */}
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiCurrencyDollar className='mr-2' /> Banking Transactions
-                    </button>
+            {/* Cataloging live deals */}
+            <Card.Text>
+              <button style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '100%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                <HiExclamation className='mr-2' /> Catalog Live Deals
+              </button>
+            </Card.Text>
 
-                    {/* Cataloging live deals */}
-                    <button style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiExclamation className='mr-2' /> Cataloging live deals
-                    </button>
+            {/* Management of deals at different stages */}
+            <Card.Text>
+              <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '100%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                <HiCube className='mr-2' /> Manage Deals
+              </button>
+            </Card.Text>
 
-                    {/* Management of deals at different stages */}
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiCube className='mr-2' /> Management of deals at different stages
-                    </button>
-
-                    {/* Tracking financed and paid-off deals */}
-                    <button style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', marginBottom: '10px', padding: '15px', width: '100%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiChartBar className='mr-2' /> Tracking financed and paid-off deals
-                    </button> 
-                    </div>
-                    </div>
-        </Col>
+            {/* Tracking financed and paid-off deals */}
+            <Card.Text>
+              <button style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', marginBottom: '10px', padding: '15px', width: '100%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                <HiChartBar className='mr-2' /> Track Financed Deals
+              </button>
+            </Card.Text>
+          </Card.Body>
+        </Card>
+      </div>
+    </Col>
       </Row>
     </Container>
     

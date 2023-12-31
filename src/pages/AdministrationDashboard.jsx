@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { FaFileInvoice, FaList, FaMoneyBillAlt, FaWarehouse, FaArchive } from 'react-icons/fa'; // Import the desired icons
+
 import { BASE_URL } from './auth/config';
 import Cookies from 'js-cookie';
 import { Link, useNavigate } from 'react-router-dom';
@@ -112,15 +114,15 @@ const Admin = () => {
       plotOptions: {
         radialBar: {
           startAngle: -135,
-          endAngle: 135,
+          endAngle: 80,
           hollow: {
             margin: 0,
-            size: '70%',
+            size: '30%',
             background: 'lightgreen',
           },
           track: {
             background: 'lightblue',
-            strokeWidth: '67%',
+            strokeWidth: '20%',
             margin: 0, // margin is in pixels
             dropShadow: {
               enabled: false,
@@ -181,9 +183,6 @@ const Admin = () => {
     checkUser();
   }, [navigate]);
   
-
-
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -225,82 +224,96 @@ const Admin = () => {
       <div className="main-container">
         <div className="">
           <div className="container-fluid" style={{ minHeight: '10vh' }}>
-            <h2 className="" style={{ marginBottom: '6vh', color:'#999999' }}>SCM Administration </h2>
+          <h2 className="" style={{ marginBottom: '6vh', color: '#999999' }}>
+              SCM Admin{' '}
+            </h2>
             <a href='/register-buyer'>
-
-            <button className=''>Register Buyer</button>
+              <button
+                className=''
+                style={{
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  color: '#fff',
+                  backgroundColor:'#000092',
+                  position: 'absolute',
+                  top: '11vh',
+                  right: 10,
+                }}
+              >
+                Register buyer{' '}
+              </button>
             </a>
             <div className="row">
+
             <div className="col-lg-3 col-md-6 mb-3">
-            <div className="card-box height-100-p widget-style3 custom-card">
-        <div className="d-flex flex-wrap">
-          <div className="widget-data">
-            <div className="weight-700 font-24 text-dark">Buyers</div>
-            <div className="font-14 text-secondary weight-500">5000</div>
-          </div>
-          <div className="widget-icon">
-            <div className="icon" data-color="#09cc06">
-              <i className="fas fa-plane"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div className="col-lg-3 col-md-6 mb-3">
-    <a href='/breaders'>
-
+  <a href='/warehouse'>
     <div className="card-box height-100-p widget-style3 custom-card">
-        <div className="d-flex flex-wrap">
-          <div className="widget-data">
-            <div className="weight-700 font-24 text-dark">Breaders</div>
-            <div className="font-14 text-secondary weight-500">{breadersCount}</div>
-          </div>
-          <div className="widget-icon">
-            <div className="icon" data-color="#09cc06">
-              <i className="fas fa-plane"></i>
-            </div>
-          </div>
+      <div className="d-flex flex-wrap">
+        <div className="widget-data">
+          <div className="weight-700 font-20 text-dark">Send invoice</div>
+          <div className="font-14 text-secondary weight-500">Buyers</div>
         </div>
-      </div>
-      </a>
-    </div>
-
-    <div className="col-lg-3 col-md-6 mb-3">
-      <div className="card-box height-100-p widget-style3">
-        <div className="d-flex flex-wrap">
-          <div className="widget-data">
-            <div className="weight-700 font-24 text-dark">Earnings</div>
-            <div className="font-14 text-secondary weight-500">Kes 5,000,000</div>
-          </div>
-          <div className="widget-icon">
-            <div className="icon" data-color="#09cc06">
-              <i className="fas fa-plane"></i>
-            </div>
+        <div className="widget-icon">
+          <div className="icon" data-color="#09cc06">
+            <FaFileInvoice /> {/* Use the FaFileInvoice icon */}
           </div>
         </div>
       </div>
     </div>
+  </a>
+</div>
 
-    <div className="col-lg-3 col-md-12 mb-3">
-    <a href='/inventory-dashboard'>
-
-      <div className="card-box height-100-p widget-style3">
-        <div className="d-flex flex-wrap">
-          <div className="widget-data">
-            <div className="weight-700 font-24 text-dark">Payments</div>
-            <div className="font-14 text-secondary weight-500">5 Activities</div>
-          </div>
-          <div className="widget-icon">
-            <div className="icon" data-color="#09cc06">
-              <i className="fas fa-plane"></i>
-            </div>
+<div className="col-lg-3 col-md-6 mb-3">
+  <a href='/breaders'>
+    <div className="card-box height-100-p widget-style3 custom-card">
+      <div className="d-flex flex-wrap">
+        <div className="widget-data">
+          <div className="weight-700 font-20 text-dark">Breaders</div>
+          <div className="font-14 text-secondary weight-500">List</div>
+        </div>
+        <div className="widget-icon">
+          <div className="icon" data-color="#09cc06">
+            <FaList /> {/* Use the FaList icon */}
           </div>
         </div>
       </div>
-      </a>
- 
     </div>
+  </a>
+</div>
+
+<div className="col-lg-3 col-md-6 mb-3">
+  <div className="card-box height-100-p widget-style3">
+    <div className="d-flex flex-wrap">
+      <div className="widget-data">
+        <div className="weight-700 font-20 text-dark">Earnings</div>
+        <div className="font-14 text-secondary weight-500">Kes 5,000,000</div>
+      </div>
+      <div className="widget-icon">
+        <div className="icon" data-color="#09cc06">
+          <FaMoneyBillAlt /> {/* Use the FaMoneyBillAlt icon */}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div className="col-lg-3 col-md-12 mb-3">
+  <a href='/inventory-dashboard'>
+    <div className="card-box height-100-p widget-style3">
+      <div className="d-flex flex-wrap">
+        <div className="widget-data">
+          <div className="weight-700 font-20 text-dark">Inventory</div>
+          <div className="font-14 text-secondary weight-500">Information</div>
+        </div>
+        <div className="widget-icon">
+          <div className="icon" data-color="#09cc06">
+            <FaArchive /> {/* Use the FaArchive icon */}
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+</div>
 
            </div>
           </div>
