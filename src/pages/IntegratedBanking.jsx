@@ -1,51 +1,56 @@
-import React from 'react';
-import { HiBell, HiCube, HiExclamation, HiCurrencyDollar, HiChartBar } from 'react-icons/hi';
+import React, { useState, useEffect } from 'react';
+import { Row, Col, Card } from 'react-bootstrap';
+import { HiBell, HiCube, HiCurrencyDollar, HiExclamation, HiChartBar } from 'react-icons/hi';
 
-const Home = () => {
-    return (
-        <>
-            <div className='main-container'>
-                <h2 className='text-center'> Integrated Banking Dashboard</h2>
-
-                <div>
-                    {/* Flash message */}
-                    <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#e0e0e0', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <p className='text-center'>Good morning, Mel!</p>
-                    </div>
-
-                    {/* Notifications */}
-                    <div style={{ borderRadius: '50%', position: 'relative', float: 'right', top: 0, backgroundColor: 'lightblue', padding: '10px', width: '40px', height: '40px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-                        <HiBell size={20} color='white' />
-                    </div>
-
-                    {/* Purchase Issuance */}
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiCube className='mr-2' /> Deal Catalog
-                    </button>
-
-                    {/* Banking Transactions */}
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiCurrencyDollar className='mr-2' /> Banking Transactions
-                    </button>
-
-                    {/* Cataloging live deals */}
-                    <button style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiExclamation className='mr-2' /> Cataloging live deals
-                    </button>
-
-                    {/* Management of deals at different stages */}
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiCube className='mr-2' /> Management of deals at different stages
-                    </button>
-
-                    {/* Tracking financed and paid-off deals */}
-                    <button style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', marginBottom: '10px', padding: '15px', width: '100%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiChartBar className='mr-2' /> Tracking financed and paid-off deals
-                    </button>
-                </div>
+const InventoryTransactionCard = ({ title, icon, amount, percentage }) => {
+  return (
+    <Col md={6}>
+      <Card style={{ marginBottom: '1.5rem', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+        <Card.Body>
+          <div className="row align-items-center mb-2 d-flex">
+            <div className="col-8">
+              <h2 className="d-flex align-items-center mb-0">
+                {amount}
+              </h2>
             </div>
-        </>
-    );
-}
+            <div className="col-4 text-right">
+              <span>{percentage}% <i className="fa fa-arrow-up"></i></span>
+            </div>
+          </div>
+          <div className="progress mt-1" data-height="8" style={{ height: '8px' }}>
+            <div className="progress-bar" role="progressbar" data-width={`${percentage}%`} aria-valuenow={percentage} aria-valuemin="0" aria-valuemax="100" style={{ width: `${percentage}%` }}></div>
+          </div>
+        </Card.Body>
+        <Card.Footer style={{ fontSize: '1rem', fontWeight: 'bold', backgroundColor: 'linear-gradient(to right, green, green)' }}>
+          {icon} {title}
+        </Card.Footer>
+      </Card>
+    </Col>
+  );
+};
 
-export default Home;
+const InventoryManagement = () => {
+  // Sample data for transactions
+  const transactions = [
+    { title: 'New Orders', icon: <HiCube />, amount: 3243, percentage: 12.5 },
+    { title: 'Banking Transactions', icon: <HiCurrencyDollar />, amount: 584, percentage: 8.3 },
+    { title: 'Cataloging Live Deals', icon: <HiExclamation />, amount: 125, percentage: 5.2 },
+    { title: 'Management of Deals', icon: <HiCube />, amount: 790, percentage: 15.9 },
+    { title: 'Financed and Paid-off Deals', icon: <HiChartBar />, amount: 432, percentage: 20.1 },
+  ];
+
+  return (
+    <div className='main-container'>
+      <h4 className='mb-2' style={{ fontSize: '1.5rem' }}>
+        Banking Transactions
+      </h4>
+      <Row>
+        {transactions.map((transaction, index) => (
+          <InventoryTransactionCard key={index} {...transaction} />
+        ))}
+      </Row>
+    </div>
+  );
+};
+
+export default InventoryManagement;

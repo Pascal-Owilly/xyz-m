@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../auth/config';
 import Cookies from 'js-cookie';
-import { Card } from 'react-bootstrap';
+import { Card , Modal, Button} from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import './InvoiceForm.css';
 
 const InvoiceForms = () => {
   const navigate = useNavigate();
@@ -12,6 +13,23 @@ const InvoiceForms = () => {
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [profile, setProfile] = useState([]);
   const [errors, setErrors] = useState({}); // Initialize errors state
+
+  // confirm breed supply
+ 
+  // Function to open the confirmation modal
+  const openConfirmationModal = () => {
+    setShowConfirmationModal(true);
+  };
+
+  // NEW
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [confirmationCode, setConfirmationCode] = useState('');
+  const [isFormSubmitSuccessful, setIsFormSubmitSuccessful] = useState(false);
+
+  // END
+
+
+  // end confirrm
 
   const accessToken = Cookies.get('accessToken');
   const baseUrl = BASE_URL;
@@ -184,44 +202,43 @@ useEffect(() => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
-     // Initialize errors object
-     const errors = {};
-
-     // Validate phone number format
-     const phoneNumberRegex = /^\+\d{1,3}\d{9}$/;
-     if (!formData.phone_number || !phoneNumberRegex.test(formData.phone_number)) {
-       errors.phone_number = 'Please enter a valid phone number in the format +254123456789.';
-     }
-
-     // Validate breeds supplied
-  if (!formData.breeds_supplied || formData.breeds_supplied <= 0) {
-    errors.breeds_supplied = 'Please enter a valid number of breeds supplied.';
-  }
-
-  // Validate total weight
-  if (!formData.goat_weight || formData.goat_weight <= 0) {
-    errors.goat_weight = 'Please enter a valid total weight.';
-  }
-
+  
+    // Initialize errors object
+    const errors = {};
+  
+    // Validate phone number format
+    const phoneNumberRegex = /^\+\d{1,3}\d{9}$/;
+    if (!formData.phone_number || !phoneNumberRegex.test(formData.phone_number)) {
+      errors.phone_number = 'Please enter a valid phone number in the format +254123456789.';
+    }
+  
+    // Validate breeds supplied
+    if (!formData.breeds_supplied || formData.breeds_supplied <= 0) {
+      errors.breeds_supplied = 'Please enter a valid number of breeds supplied.';
+    }
+  
+    // Validate total weight
+    if (!formData.goat_weight || formData.goat_weight <= 0) {
+      errors.goat_weight = 'Please enter a valid total weight.';
+    }
+  
     // Validate total weight
     if (!formData.price || formData.price <= 0) {
       errors.price = 'Please enter a valid amount.';
     }
- 
- 
-     if (Object.keys(errors).length > 0) {
-       // Set form errors and stop form submission
-       setErrors(errors);
-       return;
-     }
-
+  
+    if (Object.keys(errors).length > 0) {
+      // Set form errors and stop form submission
+      setErrors(errors);
+      return;
+    }
+  
     try {
       console.log('User ID:', user?.id); // Log the user ID
-
+  
       // Clear form errors on successful submission
       setErrors({});
-
+  
       const response = await axios.post(
         `${baseUrl}/api/breader-trade/`,
         {
@@ -236,13 +253,15 @@ useEffect(() => {
           },
         }
       );
-
+  
       console.log('breeder trade', response);
-
+  
       setSuccessMessage('Invoice form submitted successfully!');
-      setIsFormSubmitted(true);
-      navigate('/submission-successful');
+      // setIsFormSubmitted(true);
+      setIsFormSubmitSuccessful(true); // Set the flag for successful form submission
 
+      // navigate('/submission-successful');
+  
       setFormData({
         breeds_supplied: null,
         goat_weight: null,
@@ -258,10 +277,47 @@ useEffect(() => {
         abattoir: null,
         user: null,
       });
+  
+      // confirm supply
+      setShowConfirmationModal(true);
+      // end confirm
+  
     } catch (error) {
       console.error('Error submitting invoice form:', error.response.data);
     }
   };
+  
+
+  
+// confirm breed supply
+const confirmSubmission = async () => {
+  openConfirmationModal(); // Open the confirmation modal
+
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/api/accept-breeds/`, // Replace with your actual endpoint for accepting breeds
+      { confirmation_code: confirmationCode },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCSRFToken(), 
+        },
+      }
+    );
+    console.log('accept breed headers:', headers)
+
+    // Handle success (e.g., show a success message)
+    console.log('Breeds accepted successfully:', response);
+    setSuccessMessage('Breeds accepted successfully!');
+    setShowConfirmationModal(false);
+  } catch (error) {
+    console.error('Error accepting breeds:', error.response.data);
+    // Handle error (e.g., show an error message)
+  }
+};
+
+// end confirm
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -283,9 +339,59 @@ useEffect(() => {
     fetchUserData();
   }, [accessToken]);
 
+  // Define the modal style
+  const modalStyle = {
+    // display: 'flex',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // You can keep the existing styles
+    // padding: '20px',
+    borderRadius: '8px',
+    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)',
+    marginTop:'5rem',
+
+  };
 
   return (
     <div className='main-container' >
+
+       {/* React Bootstrap Modal for confirmation */}
+       {isFormSubmitSuccessful ? (
+  <div>
+    {/* React Bootstrap Modal for confirmation */}
+    <Modal style={modalStyle} show={showConfirmationModal} onHide={() => setShowConfirmationModal(false)}>
+      <Modal.Header closeButton>
+        <Modal.Title>Enter the confirmation code:</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>Enter the confirmation code:</p>
+        <input
+          type="text"
+          style={{
+            width: '100%',
+            padding: '.4rem',
+            borderRadius: '30px',
+            border: 'none',
+            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)',
+          }}
+          value={confirmationCode}
+          onChange={(e) => setConfirmationCode(e.target.value)}
+          className='bg-light text-dark mx-auto'
+        />
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="primary" onClick={confirmSubmission}>
+          Confirm
+        </Button>
+        <Button className='btn-sm' variant="secondary" onClick={() => setShowConfirmationModal(false)}>
+            Cancel
+          </Button>
+      </Modal.Footer>
+    </Modal>
+  </div>
+) : null}
+
+      {/* end confirm */}
       <div className='container' style={{height:'auto'}}>
         <div className='row'>
         <div className='col-md-1'></div>
@@ -391,7 +497,7 @@ useEffect(() => {
               </td>
             </tr>
             <tr>
-              <th style={{ border: '1px solid #999999', padding: '5px' }}>Account No</th>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>Bank Account No</th>
               <td style={{ border: '1px solid #999999', padding: '5px' }}>
                 <input
                   type="text"
@@ -399,7 +505,7 @@ useEffect(() => {
                   value={formData.bank_account_number}
                   onChange={handleInputChange}
                   className='form-control'
-                  placeholder='+254712345678'
+                  placeholder='1234567890123'
                 />
               <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.bank_account_number}</div>
 

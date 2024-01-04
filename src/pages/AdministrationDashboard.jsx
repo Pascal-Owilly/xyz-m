@@ -224,7 +224,7 @@ const Admin = () => {
       <div className="main-container">
         <div className="">
           <div className="container-fluid" style={{ minHeight: '10vh' }}>
-          <h2 className="" style={{ marginBottom: '6vh', color: '#999999' }}>
+          <h2 className="" style={{ marginBottom: '6vh', color: 'rgb(0, 27, 49)' }}>
               SCM Admin{' '}
             </h2>
             <a href='/register-buyer'>
@@ -234,7 +234,7 @@ const Admin = () => {
                   fontSize: '14px',
                   fontWeight: 'bold',
                   color: '#fff',
-                  backgroundColor:'#000092',
+                  backgroundColor:'rgb(0, 27, 49)',
                   position: 'absolute',
                   top: '11vh',
                   right: 10,
@@ -253,7 +253,7 @@ const Admin = () => {
           <div className="weight-700 font-20 text-dark">Send invoice</div>
           <div className="font-14 text-secondary weight-500">Buyers</div>
         </div>
-        <div className="widget-icon">
+        <div className="widget-icon" style={{background:'rgb(0, 27, 49)'}}>
           <div className="icon" data-color="#09cc06">
             <FaFileInvoice /> {/* Use the FaFileInvoice icon */}
           </div>
@@ -271,7 +271,7 @@ const Admin = () => {
           <div className="weight-700 font-20 text-dark">Breaders</div>
           <div className="font-14 text-secondary weight-500">List</div>
         </div>
-        <div className="widget-icon">
+        <div className="widget-icon" style={{background:'rgb(0, 27, 49)'}}>
           <div className="icon" data-color="#09cc06">
             <FaList /> {/* Use the FaList icon */}
           </div>
@@ -288,7 +288,7 @@ const Admin = () => {
         <div className="weight-700 font-20 text-dark">Earnings</div>
         <div className="font-14 text-secondary weight-500">Kes 5,000,000</div>
       </div>
-      <div className="widget-icon">
+      <div className="widget-icon" style={{background:'rgb(0, 27, 49)'}}>
         <div className="icon" data-color="#09cc06">
           <FaMoneyBillAlt /> {/* Use the FaMoneyBillAlt icon */}
         </div>
@@ -305,7 +305,7 @@ const Admin = () => {
           <div className="weight-700 font-20 text-dark">Inventory</div>
           <div className="font-14 text-secondary weight-500">Information</div>
         </div>
-        <div className="widget-icon">
+        <div className="widget-icon" style={{background:'rgb(0, 27, 49)'}}>
           <div className="icon" data-color="#09cc06">
             <FaArchive /> {/* Use the FaArchive icon */}
           </div>

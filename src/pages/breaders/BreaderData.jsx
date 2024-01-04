@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 
+
 // timestamp
 import { formatDistanceToNow } from 'date-fns';
 import { parseISO } from 'date-fns';
@@ -132,7 +133,7 @@ const Breader = () => {
         <div className="card-body">
           <h5 className="card-title">{breader.breeder_community} Community</h5>
           <div className="card-text">
-          <strong>Breader:</strong> {breader.breeder_first_name} {breader.breeder_last_name} <br />  <strong>supplied </strong> {formatTimestamp(breader.transaction_date)}
+          <strong>Breader:</strong> {breader.breeder_first_name} {breader.breeder_last_name} <br />  <strong>supplied </strong> {formatTimestamp(breader.created_at)}
 
           </div>
           <div className="card-text">

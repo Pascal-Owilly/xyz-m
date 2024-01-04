@@ -274,7 +274,7 @@ const logout = async () => {
              <li>
                 <a onClick={() => handleNavigation('/admin_dashboard')} style={{}}>SCM Administration</a>
               </li>                          </li>
-              <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
+              <li><a href="supplier_dashboard">Breeder Dashboard</a></li>
               <li><a href="/buyer_dashboard" onClick={handleLinkClick}>
                 Buyer Dashboard
               </a></li>
@@ -299,7 +299,7 @@ const logout = async () => {
                <li>
                 <a href="admin_dashboard">SCM Administration</a>
                             </li>
-                <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
+                <li><a href="supplier_dashboard">Breeder Dashboard</a></li>
                 <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
                 <li><a href="slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
                            
@@ -357,7 +357,7 @@ const logout = async () => {
               return (
                 <>
 
-                  <li><a href="supplier_dashboard">Supplier Dashboard</a></li>
+                  <li><a href="supplier_dashboard">Breeder Dashboard</a></li>
                   <li>
                      <a href="inventory-dashboard">Inventory Dashboard </a>
                   </li>

@@ -284,18 +284,18 @@ const handleRoleChange = (e) => {
 
               {/* Password input */}
               <div className='form-group'>
-               <label htmlFor='country' className='text-secondary'>Country</label>
+               <label htmlFor='county' className='text-secondary'>County</label>
                 <input
-                  type='country'
+                  type='county'
                   className='form-control mb-1'
-                  id='country'
-                  name='country'
-                  value={registrationData.country}
+                  id='county'
+                  name='county'
+                  value={registrationData.county}
                   onChange={handleRegistrationChange}
                   required
                 />
-                {errorMessages.country && (
-                  <p style={{ color: 'red', fontSize:'12px'  }}>{errorMessages.country[0]}</p>
+                {errorMessages.county && (
+                  <p style={{ color: 'red', fontSize:'12px'  }}>{errorMessages.county[0]}</p>
                 )}
               </div>
 

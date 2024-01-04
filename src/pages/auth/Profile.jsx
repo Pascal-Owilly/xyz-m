@@ -142,8 +142,8 @@ const Profile = () => {
               <td style={{ padding: '10px', textAlign: 'left' }}>{userProfile.user.community}</td>
             </tr>
             <tr>
-              <td style={{ padding: '10px', textAlign: 'left' }}>Country:</td>
-              <td style={{ padding: '10px', textAlign: 'left' }}>{userProfile.user.country}</td>
+              <td style={{ padding: '10px', textAlign: 'left' }}>County:</td>
+              <td style={{ padding: '10px', textAlign: 'left' }}>{userProfile.user.county}</td>
             </tr>
             <tr>
               <td style={{ padding: '10px', textAlign: 'left' }}>Head of Family:</td>

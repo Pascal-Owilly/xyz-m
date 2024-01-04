@@ -9,6 +9,7 @@ import Login from './pages/auth/Login';
 import Profile from './pages/auth/Profile';
 import Footer from './pages/Footer';
 import BuyerDashboard from './pages/BuyerDashboard';
+import BreederPayment from './pages/breaders/BreederPayment';
 import BreederDashboard from './pages/BreederDashboard';
 import SlaughterhouseDashboard from './pages/SlaughterHouseDashboard';
 import InventoryManagement from './pages/InventoryManagement';
@@ -57,6 +58,10 @@ const App = () => {
             <Route path="/export_handling_dashboard" element={<ExportHandlingDashboard />} />
             {/* iNVOICE FORMS */}
             <Route path="/breeder_invoices" element={<InvoiceForms />} />
+
+            {/* Payments */}
+            <Route path="/breeder-payment" element={<BreederPayment />} />
+          
             {/* Inventory */}
             <Route path="/inventory-dashboard" element={<InventoryManagement />} />
             <Route path="/warehouse-dashboard" element={<WarehouseManagement />} />

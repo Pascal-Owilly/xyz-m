@@ -99,10 +99,10 @@ const Supplier = () => {
         const checkUser = async () => {
           const role = await checkUserRole();
     
-          if (role !== 'superuser' && role !== 'admin' && role !== 'Breeder') {
-            navigate('/unauthorized'); // Redirect unauthorized users to the home page
-            return;
-          }
+          // if (role !== 'superuser' && role !== 'admin' && role !== 'Breeder') {
+          //   navigate('/unauthorized'); // Redirect unauthorized users to the home page
+          //   return;
+          // }
           console('user role from the breeder dash', role)
           setUserRole(role);
         };
@@ -160,9 +160,6 @@ const Supplier = () => {
         <Col xs={6} md={6}>
          
         </Col>
-
-
-
 
         {/* Goat supplies status */}
         <Col xs={12} md={6} lg={4}>

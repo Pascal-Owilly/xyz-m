@@ -82,10 +82,10 @@ const HomeContent = () => {
     if (userRole === 'No role') {
       return (
         <div>
-          <p className='text-center mx-auto' style={{width:'60%'}}>
+          <p className='text-center mx-auto text-white' style={{width:'60%'}}>
             You currently have no role. Please be patient as we assign you a role.
             If you feel there's an issue with your session, please contact us{' '}
-            <a href="/contact">here</a>.
+            <a className='bg-success text-white mx-2' href="/contact">here</a>
           </p>
         </div>
       );
@@ -105,7 +105,6 @@ const HomeContent = () => {
 
     // You can add an else block or handle other cases if needed
   };
-
 
 // Login
 const [flashMessage, setFlashMessage] = useState(null); // Initialize with null

@@ -41,7 +41,6 @@ const getColorClass = (breed) => {
   }
 };
 
-
   useEffect(() => {
     const fetchInventoryData = async () => {
       try {
