@@ -29,6 +29,7 @@ import FormSubmissionSuccess from './pages/forms/FormSubmissionSuccess';
 // import SuperuserRoute from './pages/auth/SuperuserRole'; // Import the HOC
 import Unauthorized from './pages/auth/Unauthorised';
 import Inventory from './pages/inventory/Inventory';
+import BankTeller from './pages/BankTeller';
 
 const App = () => {
   return (
@@ -65,6 +66,8 @@ const App = () => {
             {/* Inventory */}
             <Route path="/inventory-dashboard" element={<InventoryManagement />} />
             <Route path="/warehouse-dashboard" element={<WarehouseManagement />} />
+            <Route path="/bank_teller_dashboard" element={<BankTeller />} />
+
             {/* Breaders */}
             <Route path="/breaders" element={<BreaderData />} />
             <Route path="/breader-info/:breaderId" element={<BreaderInfo />} />

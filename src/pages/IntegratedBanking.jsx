@@ -11,7 +11,7 @@ const InventoryTransactionCard = ({ title, icon, amount, percentage }) => {
             <div className="col-8">
               <h2 className="d-flex align-items-center mb-0">
                 {amount}
-              </h2>
+                </h2>
             </div>
             <div className="col-4 text-right">
               <span>{percentage}% <i className="fa fa-arrow-up"></i></span>
