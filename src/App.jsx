@@ -78,7 +78,7 @@ const App = () => {
             <Route path="/mpesa-payment-response" element={<MpesaResponse />} />
 
             {/* Inventory */}
-
+ 
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/warehouse" element={<WarehouseManagement />} />
 

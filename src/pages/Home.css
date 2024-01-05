@@ -41,7 +41,7 @@
 
 @media (max-width: 767px) {
   .left-side-bar-container .left-side-bar {
-    display: block;
+    display: none;
   }
 }
 

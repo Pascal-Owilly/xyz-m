@@ -310,6 +310,8 @@ const logout = async () => {
                             <li>
                               <a href="warehouse">Warehouse Dashboard </a>
                             </li>
+                                            <li><a href="bank_teller_dashboard">Bank Teller Dashboard</a></li>
+
                             <li><a href="integrated_banking"> Customer Care </a></li>
               {/* <li><a href="employee_dashboard">Employee Dashboard</a></li> */}
             <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>

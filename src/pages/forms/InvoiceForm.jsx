@@ -269,8 +269,10 @@ useEffect(() => {
         market: '',
         head_of_family: '',
         vaccinated: false,
+        bank_account_number: 0,
         phone_number: '',
         price: null,
+        id_number: 0,
         country: '',
         breed: '',
         breeder: null,
@@ -437,6 +439,21 @@ const confirmSubmission = async () => {
               </td>
             </tr>
             <tr>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>National ID No: </th>
+              <td style={{ border: '1px solid #999999', padding: '5px' }}>
+                <input
+                  type="id_number"
+                  name="id_number"
+                  value={formData.id_number}
+                  onChange={handleInputChange}
+                  className='form-control'
+                  placeholder='Your National Id No'
+                />
+              <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.id_number}</div>
+
+              </td>
+            </tr>
+            <tr>
               <th style={{ border: '1px solid #999999', padding: '5px' }}>Total Weight</th>
               <td style={{ border: '1px solid #999999', padding: '5px' }}>
                 <input
@@ -493,6 +510,21 @@ const confirmSubmission = async () => {
                   placeholder='+254712345678'
                 />
               <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.phone_number}</div>
+
+              </td>
+            </tr>
+            <tr>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>Email</th>
+              <td style={{ border: '1px solid #999999', padding: '5px' }}>
+                <input
+                  type="text"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className='form-control'
+                  placeholder='exampe@gmail.com'
+                />
+              <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.email}</div>
 
               </td>
             </tr>
