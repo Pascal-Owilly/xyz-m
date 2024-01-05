@@ -581,12 +581,7 @@ const WarehouseDashboard = () => {
   ))}
 </select>
 
-
-
-
-
 </div>
-
 
 </div>
   <button type="submit" className="btn btn-success">Generate Invoice</button>

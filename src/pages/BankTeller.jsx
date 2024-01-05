@@ -34,7 +34,7 @@ const InventoryTransactionCard = () => {
   };
 
   return (
-    <div className='main-container'>
+    <div className='main-container' style={{minHeight:'85vh'}}>
 
       <h4>Bank Teller Dashboard</h4>
       <Container>

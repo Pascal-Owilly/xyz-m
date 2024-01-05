@@ -6,6 +6,9 @@ import { BASE_URL } from './auth/config';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { checkUserRole } from './auth/CheckUserRoleUtils';
+import { Link } from 'react-router-dom';
+
+
 
 const styles = {
   invoiceContainer: {
@@ -196,24 +199,41 @@ const baseUrl = BASE_URL;
     }));
   };
 
-  return (
+    const [showLiveDeals, setShowLiveDeals] = useState(false);
+    const [showFinancedDeals, setShowFinancedDeals] = useState(false);
+  
+    const handleLiveDealsClick = () => {
+      setShowLiveDeals(true);
+    };
+  
+    const handleFinancedDealsClick = () => {
+      setShowFinancedDeals(true);
+    };
+  
+    const handleBackClick = () => {
+      setShowLiveDeals(false);
+      setShowFinancedDeals(false);
+    };
+  
 
-    <Container fluid className='main-container' style={{ height: 'auto', backgroundColor: '#ddd' }}>
-      <Row>
-      <h3 className='mb-3'>Manage Your Invoices and Transactions</h3>
+  return (
+    <div className='main-container'>
+      <h4 className='text-left'>Manage Your Invoices and Transactions</h4>
+
+ 
+    <Container fluid className='' style={{ height: 'auto', backgroundColor: '#ddd' }}>
+    <h2>h</h2>
+      {/* <Row>
 
     <Col lg={{ span: 3, offset: 9 }} className='text-right'>
-      <div style={{ marginBottom: '25px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width:'auto' }}>
-        <p className='text-center mt-1'>{`${Greetings()} `} </p>
-        <span style={{ textTransform: 'capitalize' }}></span>
-
-      </div>
+     
     </Col>
-  </Row>
+  </Row> */}
 
   <Row>
+    <Col md={1}></Col>
     
-<Col lg={8} style={styles.invoiceContainer}>
+<Col lg={5} style={styles.invoiceContainer}>
   {/* {loading ? (
             <div className="text-center mt-5">
               Loading invoices...
@@ -221,9 +241,9 @@ const baseUrl = BASE_URL;
           ) : (
             <> */}
   {invoiceData.length === 0 ? (
-    <div className="text-center mt-5">
+    <div className="text-center ">
       <HiExclamation size={40} color='#ccc' />
-      <p className="mt-3">No invoices yet !</p>
+      <p className="">No invoices yet !</p>
     </div>
   ) : (
     <>
@@ -233,74 +253,79 @@ const baseUrl = BASE_URL;
             {expandedInvoices[invoice.invoiceNumber] ? 'Hide Invoice' : 'Show Invoice'} - {invoice.invoiceNumber}
           </Button>
           {expandedInvoices[invoice.invoiceNumber] && (
-            <Table borderless>
-<tbody>
+           
+            <>
+           <Table responsive>
+  <tbody>
+    <tr>
+      <td><strong>Invoice Number:</strong></td>
+      <td style={{ textTransform: 'uppercase' }}>{invoice.invoiceNumber}</td>
+      <td><strong>Date:</strong></td>
+      <td>{invoice.date}</td>
+    </tr>
+    <tr>
+      <td><strong>Due Date:</strong></td>
+      <td>{invoice.dueDate}</td>
+    </tr>
+    <tr>
+      <td colSpan="2"></td>
+    </tr>
+    {/* Bill To */}
+    <tr>
+      <td colSpan="4">
+        <h5>Bill To:</h5>
+        <p>{invoice.billTo.name}</p>
+        <p>{invoice.billTo.address}</p>
+        <p>Email: {invoice.billTo.email}</p>
+        <p>Phone: {invoice.billTo.phone}</p>
+        <hr />
+      </td>
+    </tr>
+    {/* Ship To */}
+    <tr>
+      <td colSpan="4">
+        <h5>Ship To:</h5>
+        <p>{invoice.shipTo}</p>
+        <hr />
+      </td>
+    </tr>
+    {/* Items */}
+    <tr>
+      <td colSpan="4">
+        <h5>Items:</h5>
+        <Table responsive>
+          <thead>
             <tr>
-              <td><strong>Invoice Number:</strong></td>
-              <td style={{ textTransform: 'uppercase' }}>{invoice.invoiceNumber}</td>
-              <td><strong>Date:</strong></td>
-              <td>{invoice.date}</td>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Quantity</th>
+              <th>Sale Type</th>
+              <th>Unit Price</th>
+              <th>Total Price</th>
             </tr>
-            <tr>
-              <td><strong>Due Date:</strong></td>
-              <td>{invoice.dueDate}</td>
-              <td colSpan="2"></td>
-            </tr>
-            <tr>
-              <td colSpan="2"></td>
-              <td colSpan="2"></td>
-            </tr>
-            {/* Bill To */}
-            <tr>
-              <td colSpan="4">
-                <h5>Bill To:</h5>
-                <p>{invoice.billTo.name}</p>
-                <p>{invoice.billTo.address}</p>
-                <p>Email: {invoice.billTo.email}</p>
-                <p>Phone: {invoice.billTo.phone}</p>
+          </thead>
+          <tbody>
+            {invoice.items.map((item, itemIndex) => (
+              <tr key={itemIndex}>
+                <td>{item.title}</td>
+                <td>{item.description}</td>
+                <td>{item.quantity} pc</td>
+                <td>{item.saleType}</td>
+                <td>$ {item.unitPrice}</td>
+                <td>$ {item.quantity * item.unitPrice}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </td>
+    </tr>
+  </tbody>
+</Table>
+
+               
+            
                 <hr />
-              </td>
-            </tr>
-            {/* Ship To */}
-            <tr>
-              <td colSpan="4">
-                <h5>Ship To:</h5>
-                <p>{invoice.shipTo}</p>
-                <hr />
-              </td>
-            </tr>
-            {/* Items */}
-            <tr>
-              <td colSpan="4">
-                <h5>Items:</h5>
-                <Table>
-                  <thead>
-                    <tr>
-                      <th>Title</th>
-                      <th>Description</th>
-                      <th>Quantity</th>
-                      <th>Sale Type</th>
-                      <th>Unit Price</th>
-                      <th>Total Price</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {invoice.items.map((item, itemIndex) => (
-                      <tr key={itemIndex}>
-                        <td>{item.title}</td>
-                        <td>{item.description}</td>
-                        <td>{item.quantity} pc</td>
-                        <td>{item.saleType}</td>
-                        <td>$ {item.unitPrice}</td>
-                        <td>$ {item.quantity * item.unitPrice}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-                <hr />
-              </td>
-            </tr>
-          </tbody>            </Table>
+          </>
           )}
         </Container>
       ))}
@@ -320,43 +345,60 @@ const baseUrl = BASE_URL;
   )} */}
 
 </Col>
-
                 {/* Column 4 (Placeholder) */}
-                <Col lg={4}>
+                <Col lg={5} className='mt-2'>
       <div style={{ padding: '' }}>
         <Card>
           <Card.Body>
             {/* Notifications */}
-            <div className='mb-4' style={{ borderRadius: '50%', position: 'relative', float: 'right', top: 0, backgroundColor: 'lightblue', padding: '10px', width: '40px', height: '40px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
+            <div className='' style={{ borderRadius: '50%', position: 'relative', float: 'right', top: 0, backgroundColor: 'lightblue', padding: '10px', width: '40px', height: '40px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
               <HiBell size={20} color='white' />
             </div>
 
-            {/* Purchase Issuance */}
-            <Card.Text>
-              <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '100%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                <HiCube className='mr-2' /> Initiate Purchase
-              </button>
-            </Card.Text>
-
             {/* Cataloging live deals */}
             <Card.Text>
-              <button style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '100%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                <HiExclamation className='mr-2' /> Catalog Live Deals
-              </button>
-            </Card.Text>
-
-            {/* Management of deals at different stages */}
-            <Card.Text>
-              <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '100%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                <HiCube className='mr-2' /> Manage Deals
-              </button>
+              {showLiveDeals ? (
+                <div>
+                  {/* Content for displaying live deals */}
+                  <h4>Live Deals</h4>
+                  <hr />
+                  <p>Here are some live deals currently available:</p>
+                  <ul>
+                    <li>Deal 1: Product A at $100</li>
+                    <li>Deal 2: Product B at $150</li>
+                    <li>Deal 3: Product C at $80</li>
+                  </ul>
+                  <hr />
+                  <Button variant="secondary" className='btn-sm' onClick={handleBackClick}>Back</Button>
+                </div>
+              ) : (
+                <Button style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '100%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }} onClick={handleLiveDealsClick}>
+                  <HiExclamation className='mr-2' /> Catalog Live Deals
+                </Button>
+              )}
             </Card.Text>
 
             {/* Tracking financed and paid-off deals */}
             <Card.Text>
-              <button style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', marginBottom: '10px', padding: '15px', width: '100%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                <HiChartBar className='mr-2' /> Track Financed Deals
-              </button>
+              {showFinancedDeals ? (
+                <div>
+                  {/* Content for tracking financed deals */}
+                  <h4>Track Financed Deals</h4>
+                  <hr />
+                  <p>Here is your overview of financed deals:</p>
+                  <ul>
+                    <li>Deal 1: Financing amount $5000</li>
+                    <li>Deal 2: Financing amount $8000</li>
+                    <li>Deal 3: Financing amount $6000</li>
+                  </ul>
+                  <hr />
+                  <Button variant="secondary" className='btn-sm'  onClick={handleBackClick}>Back</Button>
+                </div>
+              ) : (
+                <Button style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', marginBottom: '10px', padding: '15px', width: '100%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }} onClick={handleFinancedDealsClick}>
+                  <HiChartBar className='mr-2' /> Track Financed Deals
+                </Button>
+              )}
             </Card.Text>
           </Card.Body>
         </Card>
@@ -364,6 +406,7 @@ const baseUrl = BASE_URL;
     </Col>
       </Row>
     </Container>
+    </div>
     
   );
 };

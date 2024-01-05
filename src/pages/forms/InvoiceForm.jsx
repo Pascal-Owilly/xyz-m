@@ -13,6 +13,8 @@ const InvoiceForms = () => {
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [profile, setProfile] = useState([]);
   const [errors, setErrors] = useState({}); // Initialize errors state
+  const [confirmationCode, setConfirmationCode] = useState('');
+  const [showConfirmationCode, setShowConfirmationCode] = useState(null)
 
   // confirm breed supply
  
@@ -23,7 +25,6 @@ const InvoiceForms = () => {
 
   // NEW
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [confirmationCode, setConfirmationCode] = useState('');
   const [isFormSubmitSuccessful, setIsFormSubmitSuccessful] = useState(false);
 
   // END
@@ -243,8 +244,9 @@ useEffect(() => {
         `${baseUrl}/api/breader-trade/`,
         {
           ...formData,
-          breeder: user?.id,  // Update with the correct field name
-          user: user?.i,
+          breeder: user?.id,
+          user: user?.id,
+          confirmation_code: confirmationCode, // Include the confirmation code
         },
         {
           headers: {
@@ -275,9 +277,11 @@ useEffect(() => {
         id_number: 0,
         country: '',
         breed: '',
+        confirmation_code: 0,
         breeder: null,
         abattoir: null,
         user: null,
+
       });
   
       // confirm supply
@@ -358,40 +362,33 @@ const confirmSubmission = async () => {
     <div className='main-container' >
 
        {/* React Bootstrap Modal for confirmation */}
-       {isFormSubmitSuccessful ? (
-  <div>
-    {/* React Bootstrap Modal for confirmation */}
-    <Modal style={modalStyle} show={showConfirmationModal} onHide={() => setShowConfirmationModal(false)}>
-      <Modal.Header closeButton>
-        <Modal.Title>Enter the confirmation code:</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <p>Enter the confirmation code:</p>
-        <input
-          type="text"
-          style={{
-            width: '100%',
-            padding: '.4rem',
-            borderRadius: '30px',
-            border: 'none',
-            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)',
-          }}
-          value={confirmationCode}
-          onChange={(e) => setConfirmationCode(e.target.value)}
-          className='bg-light text-dark mx-auto'
-        />
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="primary" onClick={confirmSubmission}>
-          Confirm
-        </Button>
-        <Button className='btn-sm' variant="secondary" onClick={() => setShowConfirmationModal(false)}>
-            Cancel
-          </Button>
-      </Modal.Footer>
-    </Modal>
-  </div>
-) : null}
+       {showConfirmationCode && (
+        <div>
+          <p>Enter the confirmation code:</p>
+          <input
+            type="text"
+            style={{
+              width: '100%',
+              padding: '.4rem',
+              borderRadius: '30px',
+              border: 'none',
+              boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)',
+            }}
+            value={confirmationCode}
+            onChange={(e) => setConfirmationCode(e.target.value)}
+            className='bg-light text-dark mx-auto'
+          />
+          <button
+            type="button"
+            className='btn btn-primary mt-3'
+            style={{ width: '200px', marginLeft: 'auto', display: 'block' }}
+            onClick={handleConfirmationCodeSubmit}
+          >
+            Confirm
+          </button>
+        </div>
+      )}
+
 
       {/* end confirm */}
       <div className='container' style={{height:'auto'}}>
@@ -540,6 +537,22 @@ const confirmSubmission = async () => {
                   placeholder='1234567890123'
                 />
               <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.bank_account_number}</div>
+
+              </td>
+            </tr>
+
+            <tr>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>Confirmation Code</th>
+              <td style={{ border: '1px solid #999999', padding: '5px' }}>
+                <input
+                  type="text"
+                  name="confirmation_code"
+                  value={formData.confirmation_code}
+                  onChange={handleInputChange}
+                  className='form-control'
+                  placeholder='Enter code'
+                />
+              <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.confirmation_code}</div>
 
               </td>
             </tr>

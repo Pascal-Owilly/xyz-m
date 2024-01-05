@@ -140,7 +140,7 @@ const Supplier = () => {
 
     return (
         <>
-            <div className='main-container' style={{ minHeight: '85vh' }}>
+            <div className='main-container container' style={{ minHeight: '85vh' }}>
 
       <Row className=''>
       <h2 className=''>Breeder Dashboard</h2> <br />

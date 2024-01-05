@@ -340,65 +340,49 @@ const Home = () => {
 
   return (
     <>
-      <div className='main-container'>
-        <h2> Slaughterhouse Dashboard</h2>
-        
-        <div>
-          {/* User Profile */}
-          <UserProfile user={user} />
+     <div className='main-container'>
+  <h2> Slaughterhouse Dashboard</h2>
 
-           {/* Display Submit Messages at the top */}
-           {/* <Message message={submitMessage} /> */}
-          {/* <Message message={cutSubmitMessage} /> */}
-{/* Submit Messages */}
-<SubmitMessage message={submitMessage} onVisibilityChange={handleFormVisibility} />
-          <SubmitMessage message={cutSubmitMessage} onVisibilityChange={handleCutFormVisibility} />
+  <div className="container">
+    {/* User Profile */}
+    <UserProfile user={user} />
 
+    {/* Submit Messages */}
+    <SubmitMessage message={submitMessage} onVisibilityChange={handleFormVisibility} />
+    <SubmitMessage message={cutSubmitMessage} onVisibilityChange={handleCutFormVisibility} />
 
-          {/* Slaughter Form */}
-          <SlaughterForm
-              showForm={showForm}
-              onSubmit={handleSubmit}
-              submitMessage={submitMessage}
-              onVisibilityChange={handleFormVisibility}
-              breed={breed}
-              handleInputChange={handleInputChange}
-              quantity={quantity}
-              setQuantity={setQuantity}  // Pass the setQuantity function
-            />
+    {/* Slaughter Form */}
+    <SlaughterForm
+      showForm={showForm}
+      onSubmit={handleSubmit}
+      submitMessage={submitMessage}
+      onVisibilityChange={handleFormVisibility}
+      breed={breed}
+      handleInputChange={handleInputChange}
+      quantity={quantity}
+      setQuantity={setQuantity} // Pass the setQuantity function
+    />
 
+    {/* Breed Cut Form */}
+    <BreedCutForm
+      showCutForm={showCutForm}
+      onSubmit={handleCutSubmit}
+      cutData={cutData}
+      onChange={handleCutInputChange}
+      submitMessage={cutSubmitMessage}
+      onVisibilityChange={handleCutFormVisibility}
+    />
 
-
-
-          {/* Breed Cut Form */}
-          <BreedCutForm
-            showCutForm={showCutForm}
-            onSubmit={handleCutSubmit}
-            cutData={cutData}
-            onChange={handleCutInputChange}
-            submitMessage={cutSubmitMessage}
-            onVisibilityChange={handleCutFormVisibility}
-          />
-
-          
-          <div className="mb-3 d-flex justify-content-end">
-            <div className="icon-box">
-              <HiBell size={20} color='white' />
-            </div>
-          </div>
-
-          <Row>
-            {/* Carcass Tracking */}
-            <Col md={6} className="mb-3">
-              <div className="card">
-                <div className="card-body">
-                  <HiCurrencyDollar className='mr-2' /> Carcass Tracking weighing and segregating export/non-export parts
-                </div>
-              </div>
-            </Col>
-          </Row>
-        </div>
+    <div className="mb-3 ">
+      <div className="icon-box">
+        <HiBell size={20} color='white' />
       </div>
+    </div>
+
+
+  </div>
+</div>
+
     </>
   );
 };

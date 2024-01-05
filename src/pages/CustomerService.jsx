@@ -65,7 +65,10 @@ const CustomerServiceDashboard = () => {
 
   return (
     <div className='main-container container' style={{ minHeight: '85vh' }}>
-      <h4 className='mb-4'>Customer Service Dashboard</h4>
+
+        <h4 className='text-primary'>XYZ Customer Transaction management Service</h4>
+        <hr />
+      <h5 className='mb-4'>Payments & Updates</h5>
       <Card>
         <Card.Body>
           <Table striped bordered hover>
@@ -89,7 +92,7 @@ const CustomerServiceDashboard = () => {
                         <option value="disbursed" selected={payment.status === 'disbursed'}>Disbursed</option>
                         <option value="paid" selected={payment.status === 'paid'}>Paid</option>
                       </select>
-                      <Button variant='success text-light' className='btn-sm m-auto' style={{width:'30%', color:'rgb(0, 27, 49)', fontSize:'14px'}} onClick={() => handleUpdateStatus(payment.payments_id, payment.status)}>
+                      <Button variant='success text-light' className='btn-sm m-auto' style={{width:'30%', color:'rgb(0, 27, 49)', fontSize:'12px'}} onClick={() => handleUpdateStatus(payment.payments_id, payment.status)}>
                         Update Status
                       </Button>
                       <Button variant='info' className='btn-sm m-auto ms-2' style={{width:'30%', fontSize:'14px'}} onClick={() => handleViewDetails(payment)}>
