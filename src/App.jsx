@@ -30,7 +30,7 @@ import FormSubmissionSuccess from './pages/forms/FormSubmissionSuccess';
 import Unauthorized from './pages/auth/Unauthorised';
 import Inventory from './pages/inventory/Inventory';
 import BankTeller from './pages/BankTeller';
-
+import CustomerService from './pages/CustomerService'; 
 const App = () => {
   return (
     <Router>
@@ -67,6 +67,7 @@ const App = () => {
             <Route path="/inventory-dashboard" element={<InventoryManagement />} />
             <Route path="/warehouse-dashboard" element={<WarehouseManagement />} />
             <Route path="/bank_teller_dashboard" element={<BankTeller />} />
+            <Route path="/customer_service_dashboard" element={<CustomerService />} />
 
             {/* Breaders */}
             <Route path="/breaders" element={<BreaderData />} />

@@ -35,6 +35,8 @@ const InventoryTransactionCard = () => {
 
   return (
     <div className='main-container'>
+
+      <h4>Bank Teller Dashboard</h4>
       <Container>
         <Row>
           <Col md={10}>
