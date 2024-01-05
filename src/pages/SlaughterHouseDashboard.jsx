@@ -378,8 +378,6 @@ const Home = () => {
         <HiBell size={20} color='white' />
       </div>
     </div>
-
-
   </div>
 </div>
 

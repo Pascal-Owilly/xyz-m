@@ -222,7 +222,7 @@ const baseUrl = BASE_URL;
 
  
     <Container fluid className='' style={{ height: 'auto', backgroundColor: '#ddd' }}>
-    <h2>h</h2>
+    <h5 className='text-primary mt-3 p-1'>Buyer Dashboard</h5>
       {/* <Row>
 
     <Col lg={{ span: 3, offset: 9 }} className='text-right'>
