@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { FaTruck } from 'react-icons/fa';
 import axios from 'axios';
-import { BASE_URL } from './auth/config';
+import { BASE_URL } from '../auth/config';
 
 const ExportHandling = () => {
   const baseUrl = BASE_URL;
@@ -162,7 +162,7 @@ const ExportHandling = () => {
   );
 
   return (
-    <section className="main-container container-fluid">
+    <section className="main-container container-fluid" style={{minHeight:'85vh'}}>
       <div>
         {orders.map(renderOrderDetails)}
         <h6 className='mb-3 mt-3'>Logistics Statuses</h6>
@@ -196,9 +196,16 @@ const ExportHandling = () => {
                   <span>{`Order #${status.invoice} - ${status.status}`}</span>
                   <button
                     className="btn btn-warning btn-sm"
-                    onClick={() => handleUpdateStatus(status.id, 'ordered')}
+                    onClick={() => handleUpdateStatus(status.id, 'arrived')}
                   >
-                    Update Status
+                    Arrived
+                  </button>
+                  <button
+                    className="btn btn-info btn-sm"
+                    onClick={() => handleUpdateStatus(status.id, 'received')}
+                    style={{width:'200px'}}
+                  >
+                    Received
                   </button>
                 </li>
               ))}

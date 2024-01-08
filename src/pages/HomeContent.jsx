@@ -85,7 +85,7 @@ const HomeContent = () => {
           <p className='text-center mx-auto text-white' style={{width:'60%'}}>
             You currently have no role. Please be patient as we assign you a role.
             If you feel there's an issue with your session, please contact us{' '}
-            <a className='bg-success text-white mx-2' href="/contact">here</a>
+            {/* <a className='bg-success text-white mx-2' href="/contact">here</a> */}
           </p>
         </div>
       );
@@ -94,10 +94,10 @@ const HomeContent = () => {
 
       return (
         <div>
-          <p className='text-center mx-auto' style={{width:'60%'}}>
+          <p className='text-center mx-auto text-white' style={{width:'60%'}}>
             You currently have no role. Please be patient as we assign you a role.
             If you feel there's an issue with your session, please contact us{' '}
-            <a href="/contact">here</a>.
+            {/* <a href="/contact">here</a>. */}
           </p>
         </div>
       );
@@ -252,7 +252,10 @@ const [flashMessage, setFlashMessage] = useState(null); // Initialize with null
 // hero
 const containerStyle = {
   minHeight: '100vh',
-  background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://mdbcdn.b-cdn.net/img/new/slides/041.webp')`,
+  // background: `linear-gradient(rgba(0, 0, 255, 0.2), rgba(0, 0, 255, 0.3)), url('https://t3.ftcdn.net/jpg/01/88/97/18/240_F_188971803_QKE19x6zl3UWQlWvJ6vqufoRPgaFixCy.jpg')`,
+  // backgroundImage: `linear-gradient(rgba(0, 0, 255, 0.5), rgba(0, 0, 255, 0.5)), url(${sidebarimg})`, // Replace with your image variable
+
+  backgroundRepeat:'no-repeat',
   backgroundSize: 'cover',
 };  
 
@@ -261,18 +264,19 @@ const containerStyle = {
       <div className="main-container" style={{ minHeight: '100vh'}}>
 
       <Container className='p-4' fluid style={containerStyle}>
+
            <Row>
               <Col md={12}>
               {userRole && (
           <div style={{ textAlign: 'right', marginTop: '' }}>
-            <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#f8f8f8' }}>{`Welcome, ${username}!`}  <br />
-            <span className='mx-3' style={{ fontSize: '14px', color: '#f8f8f8' }}>Role: {userRole}</span>
+            <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#666666' }}>{`Welcome, ${username}!`}  <br />
+            <span className='mx-3' style={{ fontSize: '14px', color: '#666666' }}>Role: {userRole}</span>
             
             </span>
           
           </div>
         )}
-                    {renderRoleNotification()}
+                {renderRoleNotification()}
 
               </Col>
 
@@ -282,12 +286,12 @@ const containerStyle = {
     }}>
       <div className="mask" style={{ }}>
         <div className="mt-5 h-100">
-          <div className="text-white">
-            <h1 className="mb-3" style={{color:'#f8f8f8', textAlign:'center'}}>
+          <div className="text-info">
+            <h2 className="mb-3 text-secondary" style={{color:'', textAlign:'center'}}>
             Supply breeds to XYZ abattoir and get paid seamlessly
 
-            </h1>
-            <a className="btn btn-outline-light btn-lg" href="/register" role="button">Register Now!</a>
+            </h2>
+            <a className="btn btn-outline-primary btn-lg" href="/register" role="button">Register Now!</a>
           </div>
         </div>
       </div>

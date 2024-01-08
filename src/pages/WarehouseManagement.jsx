@@ -307,6 +307,7 @@ const WarehouseDashboard = () => {
     sale_type: null,
     quantity: null,
     unit_price: null,
+
     buyer: null, // Set initial value to null
     total_price: null,
   });
@@ -380,6 +381,8 @@ const WarehouseDashboard = () => {
       part_name: invoiceData.part_name,
       sale_type: invoiceData.sale_type,
       quantity: invoiceData.quantity,
+
+      
       unit_price: invoiceData.unit_price,
       buyer: {
         id: selectedBuyer && selectedBuyer.id ? selectedBuyer.id : null,
@@ -433,6 +436,7 @@ const WarehouseDashboard = () => {
       sale_type: null,
       quantity: null,
       unit_price: null,
+
       total_price: null,
     });
     setSelectedBuyer(null);
@@ -560,6 +564,9 @@ const WarehouseDashboard = () => {
       style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
     />
   </div>
+
+ 
+  
   <div className="mb-3">
   <div className="">
   <label className="form-label">Buyer:</label>

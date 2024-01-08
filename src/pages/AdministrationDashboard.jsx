@@ -20,6 +20,7 @@ const Admin = () => {
   const [totalSuppliers, setTotalSuppliers] = useState(0);
   const [profile, setProfile] = useState([]);
   const [user, setUser] = useState(null);
+  const [remainingBreeds, setRemainingBreeds] = useState([]);
 
   const refreshAccessToken = async () => {
     try {
@@ -103,8 +104,66 @@ const Admin = () => {
   };
 
   useEffect(() => {
-    // ... your other useEffect logic
-  }, [baseUrl, accessToken]);
+    const calculateRemainingBreeds = () => {
+      // Assuming supplyVsDemandData is an array of objects with breed, total_bred, and total_slaughtered properties
+      const remainingBreedsData = supplyVsDemandData.map((item) => {
+        const remainingCount = Math.max(0, item.total_bred - item.total_slaughtered);
+        return {
+          breed: item.breed,
+          remainingCount,
+        };
+      });
+
+      setRemainingBreeds(remainingBreedsData);
+    };
+
+    calculateRemainingBreeds();
+  }, [supplyVsDemandData]);
+
+  const remainingBreedsChartData = {
+    options: {
+      chart: {
+        type: 'radialBar',
+        background: 'transparent', // Set background to transparent
+      },
+      plotOptions: {
+        radialBar: {
+          hollow: {
+            size: '70%',
+          },
+          dataLabels: {
+            name: {
+              fontSize: '16px',
+            },
+            value: {
+              fontSize: '30px',
+            },
+          },
+        },
+      },
+      labels: remainingBreeds.map((item) => item.breed),
+    },
+    series: remainingBreeds.map((item) => item.remainingCount),
+  };
+
+   // New state for breed supply status
+   const [breedSupplyStatus, setBreedSupplyStatus] = useState('');
+   
+   useEffect(() => {
+    const calculateBreedSupplyStatus = () => {
+      const totalRemaining = remainingBreeds.reduce((acc, item) => acc + item.remainingCount, 0);
+
+      if (totalRemaining > 0) {
+        setBreedSupplyStatus(`You have a total of ${totalRemaining} breeds in the yard.`);
+      } else if (totalRemaining < 0) {
+        setBreedSupplyStatus(`Heads up, you are completely out of breeds.`);
+      } else {
+        setBreedSupplyStatus(`The inventory level seems fine.`);
+      }
+    };
+
+    calculateBreedSupplyStatus();
+  }, [remainingBreeds]);
 
   const circularBarChartData = {
     options: {
@@ -162,13 +221,12 @@ const Admin = () => {
         },
       },
       stroke: {
-        dashArray: 4,
+        dashArray: 1,
       },
     },
-    series: [supplyVsDemandData.map((item) => item.supply_frequency)],
-    labels: ['Supply Frequency'],
+   
   };
-
+  
 
   useEffect(() => {
     const checkUser = async () => {
@@ -218,6 +276,7 @@ const Admin = () => {
       .catch(error => console.error('Error fetching breaders count:', error));
   }, []);
 
+  
 
   return (
     <>
@@ -236,7 +295,7 @@ const Admin = () => {
                   color: '#fff',
                   backgroundColor:'rgb(0, 27, 49)',
                   position: 'absolute',
-                  top: '11vh',
+                  top: '14vh',
                   right: 10,
                 }}
               >
@@ -317,23 +376,43 @@ const Admin = () => {
 
            </div>
           </div>
-          <div className='container-fluid'>
+          <div className='container-fluid mt-3'>
             <div className='row'>
               <div className='col-md-8'>
               <div className="chart-container">
+                <div className='card p-2'
+                style={{background:'#fff', borderRadius:'10px', boxShadow:'0 0 28px rgba(0,0,0,.08)'}}
+                >
                   <h4 className='mt-4' style={{ color: '#001f33', opacity: 0.5 }}>Breed Supply vs Demand</h4>
                   <ReactApexChart options={chartData.options} series={chartData.series} type="bar" height={350} />
                 </div>
+                  
+                </div>
               </div>
               <div className='col-md-4'>
-              <h4 className='mt-4 text-center' style={{ color: '#001f33', opacity: 0.5 }}>Supply Frequency</h4>
 
-              <ReactApexChart options={circularBarChartData.options} series={circularBarChartData.series} type="radialBar" height={350} />
-
+              <div className='card p-2 mt-1'
+                style={{background:'rgb()', borderRadius:'10px', boxShadow:'0 0 28px rgba(0,0,0,.08)'}}
+                >
+                  <h6 className='mx-2  text-primary' style={{ color: '' }}>Total left in the yard by category </h6>
+                  <hr />
+                  <ReactApexChart options={remainingBreedsChartData.options} series={remainingBreedsChartData.series} type="donut" height={350} />
+                </div>
+                <div className="card p-2 mt-3 mx-2"
+                  style={{
+                    background: '#fff',
+                    borderRadius: '5px', // Adjust the border radius as needed
+                    boxShadow: '0px 4px 10px rgba(255, 255, 255, .9)', // Adjust the shadow as needed
+                    color: '#ffffff',
+                    border:'none'
+                    // Set text color to white
+                  }}
+                          >
+          <h6 className='mx-2'>{breedSupplyStatus}</h6>
+        </div>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </>

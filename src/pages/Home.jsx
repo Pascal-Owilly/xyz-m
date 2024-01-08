@@ -14,6 +14,7 @@ import { jwtDecode } from 'jwt-decode';
 import { checkUserRole } from './auth/CheckUserRoleUtils'; // Update the path accordingly
 import defaultImg from './../../images/default.png'
 import { Link } from 'react-router-dom';
+import sidebarimg from '../../images/goat_1.jpg';
 
 const Home = () => {
 const navigate =useNavigate()
@@ -315,6 +316,9 @@ const logout = async () => {
                                             <li><a href="customer_service_dashboard">Customer Care </a></li>
               {/* <li><a href="employee_dashboard">Employee Dashboard</a></li> */}
             <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
+            <li><a href="dispatch_and_shipping">Dispatch & Shipping </a></li>
+            <li><a href="arrival">Arrival & Reception </a></li>
+
 
               </>
             );
@@ -333,10 +337,11 @@ const logout = async () => {
           case 'warehouse_personnel':
           return (
             <>
-
               <li><a href="warehouse">Warehouse Dashboard</a></li>
               <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
               <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
+              <li><a href="dispatch_and_shipping">Dispatch & Shipping </a></li>
+              <li><a href="arrival">Arrival & Reception </a></li>
 
             </>
           );
@@ -378,9 +383,9 @@ const logout = async () => {
 	return(
 
 		<>
-      <div className="page-container" style={{ backgroundColor: backgroundColor, color: textColor }}>
+      <div className="page-container" style={{ backgroundColor: backgroundColor, color: '#999999' }}>
 
-	  <div className="header" style={{ width: isLeftSidebarVisible ? 'calc(100% - 279px)' : '100%', backgroundColor: backgroundColor, color: textColor }}>
+	  <div className="header" style={{ width: isLeftSidebarVisible ? 'calc(100% - 279px)' : '100%', backgroundColor: 'transparent', color: '#666666', zIndex: 999 }}>
         <div className="header-left" onClick={handleLeftSidebarToggle}>
           <div className="menu-icon bi bi-list"></div>
           <div className="search-toggle-icon bi bi-search" data-toggle="header_searc"></div>
@@ -585,7 +590,9 @@ const logout = async () => {
       </div>
 		<div className="github-link">
 			<a href="/" target="_blank"
-				><img src="vendors/images/github.svg" alt=""
+				>
+          <img className='m-2 mx-3 rounded-circe' src="https://t3.ftcdn.net/jpg/01/88/97/18/240_F_188971803_QKE19x6zl3UWQlWvJ6vqufoRPgaFixCy.jpg" alt=""
+        style={{width:'80px', borderRadius:'100%'}}
 			/></a>
 		</div>
 	</div>    
@@ -650,16 +657,17 @@ const logout = async () => {
 		{isLeftSidebarVisible && (
 
 <div className="left-side-bar"
-style={{
-	position: 'fixed',
-	top: 0,
-	left: 0,
-	minHeight: '200vh',
-	width: isLeftSidebarVisible ? '279px' : '0',
-	// overflowX: 'hidden',
-	// overflowY: 'scroll',
-	transition: 'left 0.3s ease',
-	backgroundColor: backgroundColor,
+  style={{
+    position: '',
+    top: 0,
+    left: 0,
+    minHeight: '200vh',
+    width: isLeftSidebarVisible ? '279px' : '0',
+    transition: 'left 0.3s ease',
+    backgroundImage: `linear-gradient(rgba(0, 0, 255, 0.5), rgba(0, 0, 255, 0.5)), url(${sidebarimg})`, // Replace with your image variable
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    // overflow:'scroll',
   }}
 >
 	

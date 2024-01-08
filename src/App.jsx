@@ -31,6 +31,13 @@ import Unauthorized from './pages/auth/Unauthorised';
 import Inventory from './pages/inventory/Inventory';
 import BankTeller from './pages/BankTeller';
 import CustomerService from './pages/CustomerService'; 
+
+// Export handling
+
+import DispatchAndShipping from './pages/export_handling/DispatchAndShipping';
+import Arrival from './pages/export_handling/Arrival';
+
+
 const App = () => {
   return (
     <Router>
@@ -82,6 +89,11 @@ const App = () => {
  
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/warehouse" element={<WarehouseManagement />} />
+
+            {/* Export handling */}
+            <Route path="/dispatch_and_shipping" element={<DispatchAndShipping />} />
+            <Route path="/arrival" element={<Arrival />} />
+
 
           </Routes>
         </div>

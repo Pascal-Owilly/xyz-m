@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { BASE_URL } from './config';
-import defaultIng from '../../../images/default.png';
+import defaultIng from '../../../images/profile-pic.webp';
 import { checkUserRole } from './CheckUserRoleUtils'; 
 import { useNavigate } from 'react-router-dom';
 const Profile = () => {
@@ -81,47 +81,52 @@ const Profile = () => {
 
   return (
     <div className='' style={{
-      background: 'linear-gradient(to right, #4caf50, #2196f3)', // Green to Blue gradient
+      background: 'rgb(248, 250, 251)', 
       color: '#111',
       padding: '5px',
       minHeight: '100vh',
-      
     }}>
     <div className='main-container'>
     <div 
     
   >
-    <div className='container-fluid'>
+    <div className='container'>
+      
+
+    <hr />
+
       <div className='row'>
-      <div className='col-md-4 d-flex justify-content-center align-items-center' style={{ marginTop: '10vh', borderRadius: '15px', height:'10vh' }}>
-      <img src={defaultIng} className='img img-rounded' style={{ marginTop: '7vh', borderRadius: '100%' }} alt="Profile" />
+  
+      <div className='col-md-4'>
+     
+
+      <img src={defaultIng} className='img img-rounded' style={{ width:'100%' }} alt="Profile" />
     </div>
-        <div className='col-md-8'>
+
+    <div className='col-md-8'>
         {userProfile && userProfile.user ? (
       <div
         style={{
           maxWidth: '600px',
           margin: '0 auto',
-          background: 'transparent',
+          background: '#fff',
           borderRadius: '8px',
           padding: '5px',
           boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-          marginTop:'10vh'
+          // marginTop:'10vh'
 
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div style={{ display: '', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               {/* Profile Name */}
-              <h1 style={{ textTransform: 'capitalize', fontSize: '24px', margin: 0 }}>
-                {userProfile.user.username}'s Profile
-              </h1>
+   
               {/* Role */}
-              <h2 style={{ fontSize: '18px', marginRight: '2rem', fontWeight: 'bold', color: 'black' }}>
+              <h2 style={{ fontSize: '18px', marginRight: '', fontWeight: 'bold', color: 'black' }}>
   Role: {userProfile.user.role ? userProfile.user.role.charAt(0).toUpperCase() + userProfile.user.role.slice(1) : 'No Role'}
 </h2>            </div>
         <table style={{ borderCollapse: 'collapse', width: '100%' }}>
           <tbody>
-            <tr>
+            <tr style={{}}>
               <td style={{ padding: '10px', textAlign: 'left' }}>Email:</td>
               <td style={{ padding: '10px', textAlign: 'left' }}>{userProfile.user.email}</td>
             </tr>
@@ -156,11 +161,11 @@ const Profile = () => {
       <p>Loading...</p>
     )}
         </div>
+    </div>
       </div>
     </div>
    
   </div> 
-  </div>
   </div>
    );
 };

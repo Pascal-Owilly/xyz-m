@@ -68,7 +68,7 @@ const CustomerServiceDashboard = () => {
 
         <h4 className='text-primary'>XYZ Customer Transaction management Service</h4>
         <hr />
-      <h5 className='mb-4'>Payments & Updates</h5>
+      <h5 className='mb-4'>Payment Information & Updates</h5>
       <Card>
         <Card.Body>
           <Table striped bordered hover>

@@ -41,8 +41,8 @@ const SALE_CHOICES = [
 const UserProfile = ({ user }) => (
   <Col lg={{ span: 3, offset: 9 }} className='text-right'>
   <div style={{ marginBottom: '25px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width:'auto' }}>
-    <p className='text-center mt-1'>{`${Greetings()} `} </p>
-    <span style={{ textTransform: 'capitalize' }}></span>
+    {/* <p className='text-center mt-1'></p> */}
+    <span style={{ textTransform: 'capitalize' }}>{`${Greetings()} `} </span>
 
   </div>
 </Col>
@@ -63,16 +63,21 @@ const Message = ({ type, text }) => {
 const SlaughterForm = ({ showForm, onSubmit, submitMessage, onVisibilityChange, breed, handleInputChange, quantity, setQuantity }) => (
   showForm && (
     <div className="row mb-4">
-      <div className="col-md-6">
+      <div className="col-md-12">
         <div className="card">
           <div className="card-body">
-          <h3 className="mb-3">Breed Slaughter Form</h3>
+          <h5 className="mb-3 text-success">Breed Slaughter Form</h5>
 
             <form onSubmit={onSubmit}>
               <label htmlFor="breedSelect" className="form-label">Select Breed:</label>
               <select
-                  style={{ background: '#001f33', padding: '0.2rem', borderRadius: '30px' }}
-                  id="breedSelect"
+style={{
+  background: 'white',
+  color: '#999999', // Secondary text color
+  padding: '0.2rem',
+  borderRadius: '30px',
+  width:'100%'
+}}                  id="breedSelect"
                   name="breed"
                   value={breed.selectedAnimal}
                   onChange={(e) => handleInputChange(e)}  // Use the handleInputChange function
@@ -109,32 +114,43 @@ const SlaughterForm = ({ showForm, onSubmit, submitMessage, onVisibilityChange, 
 
 const BreedCutForm = ({ showCutForm, onSubmit, cutData, onChange, submitMessage, onVisibilityChange }) => (
   showCutForm && (
-    <div className="col-md-6">
+    <div className="col-md-12">
       <div className="card">
         <div className="card-body">
           <form onSubmit={onSubmit}>
-            <h3 className="mb-3">Breed Parts Form</h3>
+            <h5 className="text-success mb-3">Breed Parts Form</h5>
             <p>
               <label htmlFor="breedCutSelect" className="form-label">Select Breed:</label>
               <select
-                style={{ background: '#001f33', padding: '0.2rem', borderRadius: '30px' }}
-                id="breedCutSelect"
-                name="breed"
-                value={cutData.breed}
-                onChange={onChange}
-                className='form-select mb-3 mx-2'
-              >
-                {['goats', 'sheep', 'cows', 'pigs'].map((animal) => (
-                  <option key={animal} value={animal}>
-                    {animal.charAt(0).toUpperCase() + animal.slice(1)}
-                  </option>
-                ))}
-              </select>
+                        style={{
+                          background: 'white',
+                          color: '#999999', // Secondary text color
+                          padding: '0.2rem',
+                          borderRadius: '30px',
+                          width:'100%'
+                        }}
+                        id="breedCutSelect"
+                        name="breed"
+                        value={cutData.breed}
+                        onChange={onChange}
+                        className='form-select mb-3 mx-2'
+                      >
+                        {['goats', 'sheep', 'cows', 'pigs'].map((animal) => (
+                          <option key={animal} value={animal}>
+                            {animal.charAt(0).toUpperCase() + animal.slice(1)}
+                          </option>
+                        ))}
+                      </select>
             </p>
             <label htmlFor="partNameSelect" className="form-label">Select Part Name:</label>
             <select
-              style={{ background: '#001f33', padding: '0.2rem', borderRadius: '30px' }}
-              id="partNameSelect"
+style={{
+  background: 'white',
+  color: '#999999', // Secondary text color
+  padding: '0.2rem',
+  borderRadius: '30px',
+  width:'100%'
+}}              id="partNameSelect"
               name="partName"
               value={cutData.partName}
               onChange={onChange}
@@ -150,8 +166,13 @@ const BreedCutForm = ({ showCutForm, onSubmit, cutData, onChange, submitMessage,
             <p>
               <label htmlFor="saleTypeSelect" className="form-label">Select Sale Type:</label>
               <select
-                style={{ background: '#001f33', padding: '0.2rem', borderRadius: '30px' }}
-                id="saleTypeSelect"
+style={{
+  background: 'white',
+  color: '#999999', // Secondary text color
+  padding: '0.2rem',
+  borderRadius: '30px',
+  width:'100%'
+}}                id="saleTypeSelect"
                 name="saleType"
                 value={cutData.saleType}
                 onChange={onChange}
@@ -167,14 +188,20 @@ const BreedCutForm = ({ showCutForm, onSubmit, cutData, onChange, submitMessage,
             </p>
             <label htmlFor="quantityInputCut" className="form-label">Enter quantity of breed parts:</label>
             <input
-              id="quantityInputCut"
-              type="number"
-              name="quantity"
-              value={cutData.quantity}
-              onChange={onChange}
-              className="form-control mb-3"
-              required
-            />
+                        id="quantityInputCut"
+                        type="number"
+                        name="quantity"
+                        value={cutData.quantity}
+                        onChange={onChange}
+                        className="form-control mb-3"
+                        required
+                        style={{
+                          background: 'white',
+                          color: '#6c757d', // Secondary text color
+                          borderRadius: '30px',
+                          padding: '0.2rem',
+                        }}
+                      />
             <button type="submit" className="btn btn-success">Submit Breed Cut</button>
           </form>
         </div>
@@ -255,9 +282,47 @@ const Home = () => {
     });
   };
 
+  const getTotalBredQuantity = async (selectedBreed) => {
+    try {
+      // Make a request to get the total bred quantity for the selected breed
+      const response = await axios.get(
+        `${baseUrl}/api/breeder_totals/`,  // Use the correct endpoint
+        {
+          params: { breed: selectedBreed.toLowerCase() },
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        }
+      );
+  
+      // Find the total bred quantity for the selected breed
+      const totalBredEntry = response.data.find(entry => entry.breed.toLowerCase() === selectedBreed.toLowerCase());
+  
+      // If found, return the total bred quantity; otherwise, default to 0
+      return totalBredEntry ? totalBredEntry.total_breed_supply : 0;
+    } catch (error) {
+      console.error('Error fetching total bred quantity:', error);
+      return 0;  // Default to 0 if there's an error
+    }
+  };
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Get the total bred quantity for the selected breed
+    const breedTotalBred = await getTotalBredQuantity(breed.selectedAnimal);
+  
+    console.log('Breed Total Bred:', breedTotalBred);
+    console.log('Entered Quantity:', parseInt(quantity, 10));
+  
+    // Check if slaughtered quantity is more than total bred
+    if (parseInt(quantity, 10) > breedTotalBred) {
+      // Alert the user or handle the error as needed
+      alert(`Slaughtered quantity (${parseInt(quantity, 10)}) is greater than total bred quantity (${breedTotalBred}).`);
+      return;
+    }
+  
     try {
       // Make a POST request to the endpoint
       const response = await axios.post(
@@ -272,23 +337,24 @@ const Home = () => {
           },
         }
       );
-
+  
       console.log('Post response:', response.data);
-
+  
       // Show success message and hide the form
       setSubmitMessage({ type: 'success', text: 'Slaughter form submitted successfully!' });
       setShowForm(false);
-
+  
       // Clear the form fields after successful submission
       setBreed({ ...breed, selectedAnimal: '' });
       setQuantity('');
     } catch (error) {
       console.error('Error submitting form:', error);
-
+  
       // Show failure message
       setSubmitMessage({ type: 'error', text: 'Failed to submit form. Please refresh the page and try again' });
     }
   };
+  
 
   const handleCutInputChange = (e) => {
     setCutData({
@@ -337,11 +403,12 @@ const Home = () => {
       setCutSubmitMessage({ type: 'error', text: 'Failed to submit Breed parts Form. Please refresh the page and try again.' });
     }
   };
+  
 
   return (
     <>
      <div className='main-container'>
-  <h2> Slaughterhouse Dashboard</h2>
+  <h3 className='text-primary'> Slaughterhouse Dashboard</h3>
 
   <div className="container">
     {/* User Profile */}
@@ -352,32 +419,40 @@ const Home = () => {
     <SubmitMessage message={cutSubmitMessage} onVisibilityChange={handleCutFormVisibility} />
 
     {/* Slaughter Form */}
-    <SlaughterForm
-      showForm={showForm}
-      onSubmit={handleSubmit}
-      submitMessage={submitMessage}
-      onVisibilityChange={handleFormVisibility}
-      breed={breed}
-      handleInputChange={handleInputChange}
-      quantity={quantity}
-      setQuantity={setQuantity} // Pass the setQuantity function
-    />
+    <Row>
+            {/* Slaughter Form */}
+            <Col md={6}>
+              <SlaughterForm
+                showForm={showForm}
+                onSubmit={handleSubmit}
+                submitMessage={submitMessage}
+                onVisibilityChange={handleFormVisibility}
+                breed={breed}
+                handleInputChange={handleInputChange}
+                quantity={quantity}
+                setQuantity={setQuantity} // Pass the setQuantity function
+              />
+            </Col>
 
-    {/* Breed Cut Form */}
-    <BreedCutForm
-      showCutForm={showCutForm}
-      onSubmit={handleCutSubmit}
-      cutData={cutData}
-      onChange={handleCutInputChange}
-      submitMessage={cutSubmitMessage}
-      onVisibilityChange={handleCutFormVisibility}
-    />
+            {/* Breed Cut Form */}
+            <Col md={6}>
+              <BreedCutForm
+                showCutForm={showCutForm}
+                onSubmit={handleCutSubmit}
+                cutData={cutData}
+                onChange={handleCutInputChange}
+                submitMessage={cutSubmitMessage}
+                onVisibilityChange={handleCutFormVisibility}
+              />
+            </Col>
+          </Row>
 
-    <div className="mb-3 ">
+
+    {/* <div className="mb-3 ">
       <div className="icon-box">
         <HiBell size={20} color='white' />
       </div>
-    </div>
+    </div> */}
   </div>
 </div>
 

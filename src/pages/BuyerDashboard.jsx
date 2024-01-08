@@ -9,7 +9,6 @@ import { checkUserRole } from './auth/CheckUserRoleUtils';
 import { Link } from 'react-router-dom';
 
 
-
 const styles = {
   invoiceContainer: {
     // backgroundColor: '#f5f5f5',
@@ -72,7 +71,6 @@ const baseUrl = BASE_URL;
   // paination logic
   const itemsPerPage = 4; // Number of items to display per page
   const [currentPage, setCurrentPage] = useState(1);
-
 
   const refreshAccessToken = async () => {
     try {
@@ -170,10 +168,10 @@ const baseUrl = BASE_URL;
       billTo: {
         name: invoice.buyer ? invoice.buyer.username : '', // Check if buyer is not null or undefined
         address: '123 Main Street, City, State, ZIP',
-        email: 'john.doe@example.com',
-        phone: '(123) 456-7890',
+        // email: 'john.doe@example.com',
+        // phone: '(123) 456-7890',
       },
-      shipTo: 'Same as Bill To',
+      // shipTo: 'Same as Bill To',
       items: [
         { title: invoice.breed, saleType: invoice.sale_type, quantity: invoice.quantity, unitPrice: invoice.unit_price  },
       ],
@@ -218,7 +216,7 @@ const baseUrl = BASE_URL;
 
   return (
     <div className='main-container'>
-      <h4 className='text-left'>Manage Your Invoices and Transactions</h4>
+      <h4 className='text-left'>Monitor Shipment for your ordered products</h4>
 
  
     <Container fluid className='' style={{ height: 'auto', backgroundColor: '#ddd' }}>

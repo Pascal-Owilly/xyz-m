@@ -190,10 +190,11 @@ useEffect(() => {
      const errors = {};
 
      // Validate phone number format
-     const phoneNumberRegex = /^\+\d{1,3}\d{9}$/;
-     if (!formData.phone_number || !phoneNumberRegex.test(formData.phone_number)) {
-       errors.phone_number = 'Please enter a valid phone number in the format +254123456789.';
-     }
+const phoneNumberRegex = /^\+\d{12}$/;
+if (!formData.phone_number || !phoneNumberRegex.test(formData.phone_number)) {
+  errors.phone_number = 'Please enter a valid phone number in the format +2547112345678.';
+}
+
 
      // Validate breeds supplied
   if (!formData.breeds_supplied || formData.breeds_supplied <= 0) {
@@ -387,7 +388,7 @@ useEffect(() => {
                   value={formData.phone_number}
                   onChange={handleInputChange}
                   className='form-control'
-                  placeholder='+254712345678'
+                  placeholder=' eg. +254712345678'
                 />
               <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.phone_number}</div>
 
@@ -402,7 +403,7 @@ useEffect(() => {
                   value={formData.email}
                   onChange={handleInputChange}
                   className='form-control'
-                  placeholder='Enter email address'
+                  placeholder='eg. john@example.com'
 
                 />
                 <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.email}</div>

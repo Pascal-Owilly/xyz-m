@@ -24,7 +24,11 @@
  .menu-dashboards li>a:before{content:"\eb1d";font-family:dropways}.sidebar-menu.icon-list-style-4 .menu-dashboardsli>a:before{content:"\edd2";font-family:dropways}.sidebar-menu.icon-list-style-5 .menu-dashboards li>a:before{content:"\ee07";font-family:dropways}.sidebar-menu.icon-list-style-6 .menu-dashboards li>a:before{content:"\ee36";}
 .menu-dashboards li>a:before{-webkit-transition:all .3s ease-in-out;transition:all .3s ease-in-out}
 .menu-dashboards li a{display:block;padding:14px 15px 14px 60px;font-size:14px;color:#fff;font-weight:750;border-radius:8px;position:relative;font-family:'Inter',sans-serif}
-.menu-dashboards li a{color:#999999;background-color:#fff}
+.menu-dashboards li a{color:#fff;}
+.menu-dashboards li a:hover{background-color: rgb(255, 255, 255, 0.5);
+          color: black;
+}
+
 .menu-dashboards li a.active{
     color:#999999;background-color:#142127
 }

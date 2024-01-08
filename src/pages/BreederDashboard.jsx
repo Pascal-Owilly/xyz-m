@@ -9,6 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import SuppliedBreedsSingleUser from './breaders/SuppliedBreedsSingleUser';
 import { useSupplies } from '../SuppliesContext';
 import { checkUserRole } from './auth/CheckUserRoleUtils'; 
+import { Link } from 'react-router-dom'; // Import Link for navigation
+
 
 const Supplier = () => {
 
@@ -78,8 +80,8 @@ const Supplier = () => {
                 },
               });
         
-              const userProfile = response.data;
-              setProfile(userProfile);
+              const userProfile = response.data.user; // Access the user information correctly
+              setUser(userProfile);
             }
           } catch (error) {
             // Check if the error indicates an expired access token
@@ -91,9 +93,9 @@ const Supplier = () => {
             }
           }
         };
-     
-         fetchUserData();
+                 fetchUserData();
        }, [accessToken]);
+       
 
        useEffect(() => {
         const checkUser = async () => {
@@ -103,117 +105,117 @@ const Supplier = () => {
           //   navigate('/unauthorized'); // Redirect unauthorized users to the home page
           //   return;
           // }
-          console('user role from the breeder dash', role)
+          console.log('user role from the breeder dash', role)
           setUserRole(role);
         };
     
         checkUser();
       }, [navigate]);
      
-       const handleBreadSuppliesStatus = async () => {
-         try {
-           const response = await axios.get(`${baseUrl}/api/breader-trade/${user.pk}`, {
-             headers: {
-               Authorization: `Bearer ${accessToken}`,
-             },
-           });
-       
-           // Use the context function to update global state
-           setSuppliesData(response.data);
-       
-           navigate('/supplied-breeds');
-         } catch (error) {
-           console.error('Error fetching supplies data:', error);
-         }
-       };
-     
-       // Use useEffect to navigate after suppliesData is updated
-       useEffect(() => {
-         if (localSuppliesData) {
-           // Navigate to the supplies page
-           navigate('/supplied-breeds');
-         }
-       }, [localSuppliesData, navigate]);
+      const handleBreadSuppliesStatus = async () => {
+        try {
+          const response = await axios.get(`${baseUrl}/api/breader-trade/${user.id}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+      
+          console.log('Response Data:', response.data); // Log the entire response data
+      
+          // Set supplies data directly to local state
+          setLocalSuppliesData(response.data);
+        } catch (error) {
+          console.error('Error fetching supplies data:', error);
+        }
+      };
+      
+    
+      useEffect(() => {
+        // Use useEffect to navigate after suppliesData is updated
+        if (localSuppliesData) {
+          // Navigate to the supplies page
+          navigate('/supplied-breeds');
+        }
+      }, [localSuppliesData, navigate]);
+    
 
-       
-   
-
-    return (
-        <>
-            <div className='main-container container' style={{ minHeight: '85vh' }}>
-
-      <Row className=''>
+  return (
+    <Row className='main-container' style={{ textAlign: 'left', marginBottom: '20px', minHeight: '85vh' }}>
       <h2 className=''>Breeder Dashboard</h2> <br />
 
       <Col lg={{ span: 3, offset: 9 }} className='text-right'>
-      <div style={{ marginBottom: '25px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width:'auto' }}>
-        <p className='text-center mt-1'>{`${Greetings()} `} </p>
-        <span style={{ textTransform: 'capitalize' }}></span>
+        <div style={{ marginBottom: '25px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width: 'auto' }}>
+          <p className='text-center mt-1'>{`${Greetings()} `} </p>
+          <span style={{ textTransform: 'capitalize' }}></span>
+        </div>
+      </Col>
 
-      </div>
-    </Col>
-            {/* Notifications */}
-            <Col className='mt-2' xs={6} md={6}>
-            {/* <FaBell size={20} color='white' /> */}
-        </Col>
-        {/* Flash message */}
-        <Col xs={6} md={6}>
-         
-        </Col>
+      {/* Notifications */}
+      <Col className='mt-2' xs={6} md={6}>
+        {/* <FaBell size={20} color='white' /> */}
+      </Col>
+      {/* Flash message */}
+      <Col xs={6} md={6}></Col>
 
-        {/* Goat supplies status */}
-        <Col xs={12} md={6} lg={4}>
-          <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-            <Card.Body>
-              <FaBox size={40} className='mb-3' />
-              <Card.Title>Supply to XYZ Abattoir</Card.Title>
-              <Card.Text>Click below to supply goats to XYZ Abattoir and manage your transactions.</Card.Text>
-              <a href='/breeder_invoices' className='btn btn-primary'>Go to Invoices</a>
-            </Card.Body>
-          </Card>
-        </Col>
+      {/* Goat supplies status */}
+      <Col xs={12} md={6} lg={4}>
+        <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+          <Card.Body>
+            <FaBox size={40} className='mb-3' />
+            <Card.Title>Supply to XYZ Abattoir</Card.Title>
+            <Card.Text>Click below to supply goats to XYZ Abattoir and manage your transactions.</Card.Text>
+            <a href='/breeder_invoices' className='btn btn-primary'>
+              Go to Invoices
+            </a>
+          </Card.Body>
+        </Card>
+      </Col>
 
-        {/* Bread supplies status */}
-        <Col xs={12} md={6} lg={4}>
-          <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }} onClick={handleBreadSuppliesStatus}>
-            <Card.Body>
-              <FaBox size={40} className='mb-3' />
-              <Card.Title>Bread Supplies Status</Card.Title>
-              <Card.Text>Check the status of your bread supplies and manage orders efficiently.</Card.Text>
-              <a href='#' className='btn btn-primary'>View Status</a>
-            </Card.Body>
-          </Card>
-        </Col>
+      {/* Bread supplies status */}
+      <Col xs={12} md={6} lg={4}>
+        <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }} onClick={handleBreadSuppliesStatus}>
+          <Card.Body>
+            <FaBox size={40} className='mb-3' />
+            <Card.Title>Bread Supplies Status</Card.Title>
+            <Card.Text>Check the status of your bread supplies and manage orders efficiently.</Card.Text>
+            <button onClick={handleBreadSuppliesStatus} className='btn btn-primary'>
+              View Status
+            </button>
+          </Card.Body>
+        </Card>
+      </Col>
 
-        {/* Track Payments */}
-        <Col xs={12} md={6} lg={4}>
-          <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-            <Card.Body>
-              <FaMoneyBillWave size={40} className='mb-3' />
-              <Card.Title>Track Payments</Card.Title>
-              <Card.Text>Monitor your payment transactions and keep track of your earnings.</Card.Text>
-              <a href='#' className='btn btn-primary'>View Payments</a>
-            </Card.Body>
-          </Card>
-        </Col>
-
-        {/* Pending actions alerts */}
-        <Col xs={12} md={6} lg={4}>
-          <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-            <Card.Body>
-              <FaExclamation size={40} className='mb-3' />
-              <Card.Title>Pending Actions Alerts</Card.Title>
-              <Card.Text>Stay informed about pending actions and take necessary steps promptly.</Card.Text>
-              <a href='#' className='btn btn-primary'>Check Alerts</a>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </div>
-            {localSuppliesData && <SuppliedBreedsSingleUser suppliesData={localSuppliesData} />}
-
-        </>
-    );
-}
+      {/* Track Payments */}
+      <Col xs={12} md={6} lg={4}>
+        <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+          <Card.Body>
+            <FaMoneyBillWave size={40} className='mb-3' />
+            <Card.Title>Track Payments</Card.Title>
+            <Card.Text>Monitor your payment transactions and keep track of your earnings.</Card.Text>
+            <a href='#' className='btn btn-primary'>
+              View Payments
+            </a>
+          </Card.Body>
+        </Card>
+      </Col>
+      {localSuppliesData && (
+  <Col xs={12} md={6} lg={4}>
+    <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+      <Card.Body>
+        <h4>Additional Data</h4>
+        <p>Abattoir: {localSuppliesData.abattoir}</p>
+        <p>Breed: {localSuppliesData.breed}</p>
+        <p>Community: {localSuppliesData.breeder_community}</p>
+        <p>Number Supplied: {localSuppliesData.breeds_supplied}</p>
+        <p>Breed Weight: {localSuppliesData.goat_weight} kg</p>
+        <p>Vaccinated: {localSuppliesData.vaccinated ? 'Yes' : 'No'}</p>
+        {/* Add more lines to display other data */}
+      </Card.Body>
+    </Card>
+  </Col>
+)}
+    </Row>
+  );
+};
 
 export default Supplier;
