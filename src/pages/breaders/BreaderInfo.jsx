@@ -4,181 +4,132 @@ import { BASE_URL } from '../auth/config';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import './Breader.css';
-import { Modal } from 'react-bootstrap';
 import { FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const BreaderInfo = () => {
+  const navigate = useNavigate();
+  const baseUrl = BASE_URL;
+  const { breaderId } = useParams();
+  const [breaderData, setBreaderData] = useState({});
+  const [loading, setLoading] = useState(false); // Initialize loading state
+  const accessToken = Cookies.get('accessToken');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState([]);
 
-const navigate = useNavigate()
-const baseUrl = BASE_URL;
-const { breaderId } = useParams();
-const [breaderData, setBreaderData] = useState({});
-const [loading, setLoading] = useState(true);
-const accessToken = Cookies.get('accessToken');
-const [isModalOpen, setIsModalOpen] = useState(false);
-const [user, setUser] = useState(null); // Initialize with null or an empty object
-const [profile, setProfile] = useState([]);
-
-
-const refreshAccessToken = async () => {
-  try {
-    console.log('fetching token refresh ... ')
-
-    const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
-
-    const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
-      refresh: refreshToken,
-    });
-
-    const newAccessToken = response.data.access;
-    // Update the stored access token
-    Cookies.set('accessToken', newAccessToken);
-    // Optional: You can also update the user data using the new access token
-    await fetchUserData();
-  } catch (error) {
-    console.error('Error refreshing access token:', error);
-    // Handle the error, e.g., redirect to login page
-  }
-};
-
-
-const fetchUserData = async () => {
-  try {
-    const accessToken = Cookies.get('accessToken');
-
-    if (accessToken) {
-      const response = await axios.get(`${baseUrl}/auth/user/`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+  const refreshAccessToken = async () => {
+    try {
+      const refreshToken = Cookies.get('refreshToken');
+      const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+        refresh: refreshToken,
       });
-
-      const userProfile = response.data;
-      setProfile(userProfile);
-    setUser(userProfile.user); 
-
+      const newAccessToken = response.data.access;
+      Cookies.set('accessToken', newAccessToken);
+      await fetchUserData();
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
     }
-  } catch (error) {
-    // Check if the error indicates an expired access token
-    if (error.response && error.response.status === 401) {
-      // Attempt to refresh the access token
-      await refreshAccessToken();
-    } else {
-      console.error('Error fetching user data:', error);
-    }
-  }
-};
+  };
 
-useEffect(() => {
-  if (accessToken && baseUrl) {
-    fetchUserData();
-  }
-}, [accessToken, baseUrl]);
-
-
-const openModal = () => {
-  setIsModalOpen(true);
-};
-
-
-
-useEffect(() => {
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(`${baseUrl}/auth/user/`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      const userData = response.data;
-      setUser(userData);
+      const accessToken = Cookies.get('accessToken');
+      if (accessToken) {
+        const response = await axios.get(`${baseUrl}/auth/user/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        const userProfile = response.data;
+        setProfile(userProfile);
+        setUser(userProfile.user);
+      }
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      if (error.response && error.response.status === 401) {
+        await refreshAccessToken();
+      } else {
+        console.error('Error fetching user data:', error);
+      }
     }
   };
 
-  fetchUserData();
-}, [accessToken]);
+  useEffect(() => {
+    if (accessToken && baseUrl) {
+      fetchUserData();
+    }
+  }, [accessToken, baseUrl]);
 
-
-const handlePaypalPayment = () => {
-  // Implement PayPal payment logic
-};
-
-const handleEquityPayment = () => {
-  // Implement Equity Bank payment logic
-};
-
-const handleCooperativePayment = () => {
-  // Implement Cooperative Bank payment logic
-};
-
-const handleKCBPayment = () => {
-  // Implement KCB Bank payment logic
-};
-
-const handleIMPayment = () => {
-  // Implement I & M Bank payment logic
-};
-
-useEffect(() => {
-  const fetchData = async () => {
-     try {
-        const response = await axios.get(`${baseUrl}/api/breader-trade/${breaderId}/`, {
-           headers: {
-              Authorization: `Bearer ${accessToken}`,
-           },
-        });
-
-        setBreaderData(response.data);
-        console.log('info', response.data.breeder_market)
-     } catch (error) {
-        console.error('Error fetching data:', error);
-     } finally {
-        setLoading(false);
-     }
+  const openModal = () => {
+    setIsModalOpen(true);
   };
 
-  if (breaderId) {
-     fetchData();
-  }
-}, [accessToken, breaderId]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/api/breader-trade/${breaderId}/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setBreaderData(response.data);
+        console.log('info', response.data.breeder_market);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    if (breaderId) {
+      fetchData();
+    }
+  }, [accessToken, breaderId]);
+
+  const handleMakePayment = async () => {
+    try {
+      setLoading(true); // Set loading to true when initiating payment
+
+      // Replace 'your-api-endpoint' with the actual API endpoint for payment initiation
+      // const response = await axios.get(`${baseUrl}/api/abattoir-payments-to-breeder/${breaderData.id}/`, {
+
+      const response = await axios.post(`${baseUrl}/api/abattoir-payments-to-breeder/${breaderData.id}/process_payment_and_notify_breeder/`, {
+      });
+
+      if (response.status === 200) {
+        // Payment successful
+        console.log('Payment successful');
+        navigate('/breeder-payment')
+
+        // You can perform any additional actions here
+      } else {
+        // Payment failed
+        alert('Payment failed');
+        // You can display an error message or perform any other actions
+      }
+
+    } catch (error) {
+      console.error('Error initiating payment:', error.response.statusText);
+      alert('You need to stage payment for this breeder before initiating payment ')
+    } finally {
+      setLoading(false); // Set loading back to false after payment attempt
+    }
+  };
 
   return (
     <div className='main-container'>
-      <div className='container-fluid' style={{minHeight:'72vh'}}>
-        <div className='row mt-2'>
-          <div className="col-md-12">
-            <div className='d-flex justify-content-between align-items-center mb-4'>
-              <h2>Payment status &nbsp;
-                <span className='' style={{float: 'right', backgroundColor: breaderData.isPaid ? 'green' : 'blue', color:'white', padding:'5px', borderRadius:'30px', fontSize:'11px', fontWeight:'800', width:'auto' }}>
-                 <span className='mx-2'>
-                 {breaderData.is_paid ? 'Paid': 'Pending'}
-                 </span>
-                 </span>
-                 </h2>
-                 <button
-  className='mb-2'
-  style={{ backgroundColor: 'goldenrod', borderRadius: '30px', fontSize:'14px' }}
-  onClick={() => {
-    if (breaderData && breaderData.breeder_head_of_family) {
-      navigate('/breeder-payment', { state: { breaderData } });
-    } else {
-      // Handle the case where breaderData or breeder_head_of_family is null
-      console.error('Error: breaderData or breeder_head_of_family is null');
-    }
-  }}
->
-  Make Payment to {breaderData.breeder_head_of_family}'s family
-</button>
-
-
-              </div>
-              <div className="table-responsive">
-                <table className="table table-striped">
-                  <thead className="thead-dark">
+      <div className='container-fluid' style={{ minHeight: '72vh' }}>
+        <button
+          className='mb-2'
+          style={{ backgroundColor: 'goldenrod', borderRadius: '30px', fontSize: '14px' }}
+          onClick={handleMakePayment}
+          disabled={breaderData.is_paid || loading} // Disable the button if is_paid or loading is true
+        >
+          {loading ? 'Initiating Payment...' : `Make Payment to ${breaderData.breeder_head_of_family}'s family`}
+        </button>
+        <div className="table-responsive">
+          <table className="table table-striped">
+          <thead className="thead-dark">
                     <tr>
                       <th>Bread Name</th>
                       <th>Number Supplied</th>
@@ -205,13 +156,10 @@ useEffect(() => {
                       <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.vaccinated ? 'Yes' : 'No'}</td>
                       <td style={{ border: '1px dotted black', padding: '15px', textTransform:'capitalize'}}>{breaderData.breeder_head_of_family}</td>
                     </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+                  </tbody>          </table>
         </div>
       </div>
+    </div>
   );
 };
 

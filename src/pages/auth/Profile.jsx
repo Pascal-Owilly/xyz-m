@@ -102,7 +102,6 @@ const Profile = () => {
 
       <img src={defaultIng} className='img img-rounded' style={{ width:'100%' }} alt="Profile" />
     </div>
-
     <div className='col-md-8'>
         {userProfile && userProfile.user ? (
       <div
@@ -119,13 +118,17 @@ const Profile = () => {
       >
         <div style={{ display: '', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               {/* Profile Name */}
-   
+
               {/* Role */}
               <h2 style={{ fontSize: '18px', marginRight: '', fontWeight: 'bold', color: 'black' }}>
   Role: {userProfile.user.role ? userProfile.user.role.charAt(0).toUpperCase() + userProfile.user.role.slice(1) : 'No Role'}
 </h2>            </div>
         <table style={{ borderCollapse: 'collapse', width: '100%' }}>
           <tbody>
+            <tr style={{}}>
+              <td style={{ padding: '10px', textAlign: 'left' }}>Username:</td>
+              <td style={{ padding: '10px', textAlign: 'left' }}>{userProfile.user.username}</td>
+            </tr>
             <tr style={{}}>
               <td style={{ padding: '10px', textAlign: 'left' }}>Email:</td>
               <td style={{ padding: '10px', textAlign: 'left' }}>{userProfile.user.email}</td>

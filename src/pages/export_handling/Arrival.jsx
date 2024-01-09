@@ -14,6 +14,8 @@ const ExportHandling = () => {
   const [shipmentProgressData, setShipmentProgressData] = useState([]);
   const [arrivedOrdersData, setArrivedOrdersData] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [updateMessage, setUpdateMessage] = useState(null);
+  const [disabledButtons, setDisabledButtons] = useState([]); // Add this line for disabled buttons
 
   const getStatusIndex = (status) => ['Order Placed', 'Processing', 'Shipped', 'Arrived', 'Received'].indexOf(status);
 
@@ -68,7 +70,7 @@ const ExportHandling = () => {
         <>
           {map}
           <Marker position={coordinates}>
-            <Popup>{`Order #${order} - Current Location`}</Popup>
+            <Popup>{`Order No: ${order} - Current Location`}</Popup>
           </Marker>
         </>
       );
@@ -76,14 +78,30 @@ const ExportHandling = () => {
   };
 
   const handleUpdateStatus = (statusId, newStatus) => {
-    axios.patch(`${baseUrl}/api/logistics-status/${statusId}/`, { status: newStatus })
-      .then(response => {
-        console.log('Logistics status updated:', response.data);
-      })
-      .catch(error => {
-        console.error('Error updating logistics status:', error);
-      });
+    // Check if the button is already disabled
+    if (!disabledButtons.includes(statusId)) {
+      // Display a confirmation popup
+      const confirmed = window.confirm(`Are you sure you want to update the status to ${newStatus}?`);
+      
+      if (!confirmed) {
+        return; // Do nothing if not confirmed
+      }
+  
+      // Disable the button to prevent multiple clicks
+      setDisabledButtons(prevButtons => [...prevButtons, statusId]);
+  
+      axios.patch(`${baseUrl}/api/logistics-status/${statusId}/`, { status: newStatus })
+        .then(response => {
+          console.log('Logistics status updated:', response.data);
+          setUpdateMessage(`Order No: ${response.data.invoice_number} updated successfully to ${newStatus}`);
+        })
+        .catch(error => {
+          console.error('Error updating logistics status:', error);
+          setUpdateMessage('Error updating order status. Please try again.');
+        });
+    }
   };
+  
 
   const handleUpdateLogisticsStatus = (statusId, newStatus) => {
     axios.patch(`${baseUrl}/api/logistics-status/${statusId}/`, { status: newStatus })
@@ -164,6 +182,8 @@ const ExportHandling = () => {
   return (
     <section className="main-container container-fluid" style={{minHeight:'85vh'}}>
       <div>
+      {updateMessage && <div className="alert alert-success">{updateMessage}</div>}
+
         {orders.map(renderOrderDetails)}
         <h6 className='mb-3 mt-3'>Logistics Statuses</h6>
         <div className="card mb-4" style={{ maxWidth: '100%', margin: 'auto' }}>
@@ -193,7 +213,7 @@ const ExportHandling = () => {
                   className="list-group-item d-flex justify-content-between align-items-center"
                   style={{ backgroundColor: 'white', opacity: 0.7 }}
                 >
-                  <span>{`Order #${status.invoice} - ${status.status}`}</span>
+                  <span>{`${status.invoice_number}`}</span>
                   <button
                     className="btn btn-warning btn-sm"
                     onClick={() => handleUpdateStatus(status.id, 'arrived')}

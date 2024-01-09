@@ -15,6 +15,7 @@ import { checkUserRole } from './auth/CheckUserRoleUtils'; // Update the path ac
 import defaultImg from './../../images/default.png'
 import { Link } from 'react-router-dom';
 import sidebarimg from '../../images/goat_1.jpg';
+import { FaSignInAlt, FaUserPlus } from 'react-icons/fa'; // Import icons from react-icons library
 
 const Home = () => {
 const navigate =useNavigate()
@@ -283,12 +284,12 @@ const logout = async () => {
                 <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
                 <li><a href="bank_teller_dashboard">Bank Teller Dashboard</a></li>
 
-                <li>
+                {/* <li>
                   <a href="inventory-dashboard">Inventory Dashboard </a>
                 </li>
                 <li>
                   <a href="warehouse">Warehouse Dashboard </a>
-                </li>
+                </li> */}
                 <li><a href="customer_service_dashboard">Customer Care </a></li>
             {/* <li><a href="employee_dashboard">Employee Dashboard</a></li> */}
           <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
@@ -305,12 +306,12 @@ const logout = async () => {
                 <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
                 <li><a href="slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
                            
-                            <li>
+                            {/* <li>
                               <a href="inventory-dashboard">Inventory Dashboard </a>
                             </li>
                             <li>
                               <a href="warehouse">Warehouse Dashboard </a>
-                            </li>
+                            </li> */}
                                             <li><a href="bank_teller_dashboard">Bank Teller Dashboard</a></li>
 
                                             <li><a href="customer_service_dashboard">Customer Care </a></li>
@@ -385,32 +386,10 @@ const logout = async () => {
 		<>
       <div className="page-container" style={{ backgroundColor: backgroundColor, color: '#999999' }}>
 
-	  <div className="header" style={{ width: isLeftSidebarVisible ? 'calc(100% - 279px)' : '100%', backgroundColor: 'transparent', color: '#666666', zIndex: 999 }}>
+	  <div className="header" style={{ width: isLeftSidebarVisible ? 'calc(100% - 279px)' : '100%', backgroundColor: '#fff', color: '#666666', zIndex: 999 }}>
         <div className="header-left" onClick={handleLeftSidebarToggle}>
           <div className="menu-icon bi bi-list"></div>
-          <div className="search-toggle-icon bi bi-search" data-toggle="header_searc"></div>
-          <div className="header-search">
-            {/* <form>
-              <div className="form-group mb-0"> 
-                <i className="dw dw-search2 search-icon"></i>
-                <input
-                  type="text"
-                  className="form-control search-input"
-                  placeholder="Search Here"
-                />
-                <div className="dropdown">
-                  <a
-                    className="dropdown-toggle no-arrow"
-                    href="#"
-                    role="button"
-                    data-toggle="dropdown"
-                  >
-                    <button className="btn btn-primary">Search</button>
-                  </a>
-                </div>
-              </div>
-            </form> */}
-          </div>
+         
         </div>
 
         <div className="header-right">
@@ -439,71 +418,7 @@ const logout = async () => {
           transition: 'right 0.3s ease',
         }}
       ></div>
-				<div className="user-notification" >
-					<div className="dropdown text-white" >
-					<span
-						className={`dropdown-toggle no-arrow ${isNotificationPanelVisible ? 'active' : ''}`}
-						data-toggle="dropdown"
-						onClick={toggleNotificationPanel}
-						>
-						<i className="icon-copy dw dw-notification text-white" style={{cursor:'pointer'}}></i>
-						<span className="badge notification-active "></span>
-					</span>
-
-					{isNotificationPanelVisible && (
-
-					<div className='notification-panel bg-light'
-					style={{
-						position: 'fixed',
-						top: '75px',
-						right: isRightSidebarVisible ? '-300px' : '0', 
-						width: '300px',
-						height: '100%',
-						backgroundColor: '',
-						boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-						transition: 'right 0.3s ease',
-					  }}
-					>
-						<div className="dropdown-men dropdown-menu-right p-3" style={{fontSize:'14px'}}> 
-							<div className="notification-lis mx-h-350 customscrol">
-								<ul>
-								<h5 className='mt-2 mb-2' style={{color:'#999999'}}>Notifications for you</h5>
-
-									<li style={{color:'#999999'}}>
-										<a href="#">
-											<p>
-												Message: "A new supply order has been placed. Please review and confirm the details.											</p>
-										</a>
-									</li>
-									<li style={{color:'#999999'}}>
-										<a href="#">
-											<p>
-												Message: "The latest goat supply shipment has been dispatched. Estimated arrival time is 12/11/2023."
-											</p>
-										</a>
-									</li>
-									<li style={{color:'#999999'}}>
-										<a href="#">
-											<p>
-												Message: "Inventory levels are running low for certain goat products. Consider placing a new supply order.
-											</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<p>
-												Message: "A supplier has reported a quality issue with a recent goat supply. Please investigate and take necessary actions.
-											</p>
-										</a>
-									</li>
-									
-								</ul>
-							</div>
-						</div>
-						</div>
-						)}
-					</div>	
-				</div>
+	
 
 	 <div className="user-info-dropdown"
 	 
@@ -569,32 +484,38 @@ const logout = async () => {
           {!isLoggedIn && (
             <>
               <div className="d-flex">
-                <div>
-                  <a href="/login">
-                    <button className="mx-2 btn-outline-secondary btn-sm mt-3 text-white">
-                      Login
-                    </button>
-                  </a>
-                </div>
-                <div>
-                  <a href="/register">
-                    <button className="mx-2 mt-3 btn-outline-secondary btn-sm text-white">
-                      SignUp
-                    </button>
-                  </a>
-                </div>
-              </div>
+  <div>
+    <a href="/login">
+      <button className="mx-2 btn-secondary btn-sm mt-3 text-dark" style={{ background: 'white', border: '1px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '5px' }}>
+        <FaSignInAlt className="mr-2" /> Login
+      </button>
+    </a>
+  </div>
+  <div>
+  <a href="/register">
+    <button className="mx-2 mt-3 btn-outline-secondary btn-sm text-white" style={{ background: '#28a745', border: '1px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '5px' }}>
+      <FaUserPlus className="mr-2" /> SignUp
+    </button>
+  </a>
+</div>
+</div>
             </>
           )}
         </div>
       </div>
-		<div className="github-link">
-			<a href="/" target="_blank"
-				>
-          <img className='m-2 mx-3 rounded-circe' src="https://t3.ftcdn.net/jpg/01/88/97/18/240_F_188971803_QKE19x6zl3UWQlWvJ6vqufoRPgaFixCy.jpg" alt=""
-        style={{width:'80px', borderRadius:'100%'}}
-			/></a>
-		</div>
+      <div className="Logo mx-2" style={{ 
+  color: 'blue', 
+  fontWeight: 'bold', 
+  fontFamily: 'cursive', // You can adjust the font-family as per your preference
+  margin: '10px', 
+  letterSpacing: '2px', // Adjust the letter spacing for a playful effect
+  textTransform: 'uppercase' // Convert text to uppercase for a bold look
+}}>
+  <a href="/" target="_blank">
+    L<span style={{ marginLeft: '5px' }}>o</span>g<span style={{ marginLeft: '5px' }}>o</span>
+  </a>
+</div>
+
 	</div>    
     </div>
 	<div className="right-sidebar p-3" style={{

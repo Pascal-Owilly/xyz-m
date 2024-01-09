@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import { FaTruck } from 'react-icons/fa';
 import axios from 'axios';
 import { BASE_URL } from './auth/config';
+import { Button } from 'react-bootstrap';
 
 const ExportHandling = () => {
   const baseUrl = BASE_URL;
@@ -14,13 +15,34 @@ const ExportHandling = () => {
   const [shipmentProgressData, setShipmentProgressData] = useState([]);
   const [arrivedOrdersData, setArrivedOrdersData] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Ordered':
+        return 'btn-primary';
+      case 'Dispatched':
+        return 'btn-secondary';
+      case 'Shipped':
+        return 'btn-info';
+      case 'Arrival':
+        return 'btn-warning';
+      case 'Received':
+        return 'btn-success';
+      default:
+        return 'btn-light';
+    }
+  };
+  
 
-  const getStatusIndex = (status) => ['Order Placed', 'Processing', 'Shipped', 'Arrived', 'Received'].indexOf(status);
+  const getStatusIndex = (status) => ['ordered', 'dispatched', 'shipped', 'arrived', 'received'].indexOf(status);
 
   useEffect(() => {
     axios.get(`${baseUrl}/api/logistics-status/`)
       .then(response => {
         setLogisticsStatuses(response.data);
+
+        console.log('response', response)
       })
       .catch(error => {
         console.error('Error fetching logistics statuses:', error);
@@ -59,7 +81,7 @@ const ExportHandling = () => {
         </MapContainer>
       );
     }
-    
+
   }, [map]);
 
   const updateOrderLocation = (order, coordinates) => {
@@ -75,71 +97,13 @@ const ExportHandling = () => {
     }
   };
 
-  const handleUpdateStatus = (statusId, newStatus) => {
-    axios.patch(`${baseUrl}/api/logistics-status/${statusId}/`, { status: newStatus })
-      .then(response => {
-        console.log('Logistics status updated:', response.data);
-      })
-      .catch(error => {
-        console.error('Error updating logistics status:', error);
-      });
-  };
-
-  const handleUpdateLogisticsStatus = (statusId, newStatus) => {
-    axios.patch(`${baseUrl}/api/logistics-status/${statusId}/`, { status: newStatus })
-      .then(response => {
-        console.log('Logistics status updated:', response.data);
-      })
-      .catch(error => {
-        console.error('Error updating logistics status:', error);
-      });
-  };
-
-  const handleUpdateOrderStatus = (orderId, newStatus) => {
-    axios.patch(`${baseUrl}/api/order/${orderId}/`, { status: newStatus })
-      .then(response => {
-        console.log('Order status updated:', response.data);
-      })
-      .catch(error => {
-        console.error('Error updating order status:', error);
-      });
-  };
-
-  const handleUpdateShipmentProgress = (shipmentId, newStatus) => {
-    axios.patch(`${baseUrl}/api/shipment-progress/${shipmentId}/`, { status: newStatus })
-      .then(response => {
-        console.log('Shipment progress updated:', response.data);
-      })
-      .catch(error => {
-        console.error('Error updating shipment progress:', error);
-      });
-  };
-
-  const handleUpdateArrivedOrder = (arrivedOrderId) => {
-    axios.patch(`${baseUrl}/api/arrived-order/${arrivedOrderId}/`, {})
-      .then(response => {
-        console.log('Arrived order updated:', response.data);
-      })
-      .catch(error => {
-        console.error('Error updating arrived order:', error);
-      });
-  };
-
-  const handleOrderButtonClick = (orderId, newStatus) => {
-    handleUpdateOrderStatus(orderId, newStatus);
-
-    const updatedShipmentProgress = shipmentProgressData.map((status, index) => {
-      if (index === getStatusIndex(newStatus)) {
-        return newStatus;
-      }
-      return status;
-    });
-
-    setShipmentProgressData(updatedShipmentProgress);
+  const calculatePercentage = (status) => {
+    const index = getStatusIndex(status);
+    return (index + 1) * (100 / 5);
   };
 
   const renderOrderDetails = (order) => (
-    <div key={order.id}>
+    <div key={order.id} className="order-details">
       <h6 className='mb-3'>Order #{order.id} - {order.status}</h6>
       <button
         className="btn btn-info btn-sm mr-2"
@@ -147,22 +111,24 @@ const ExportHandling = () => {
       >
         <FaTruck /> Track Location
       </button>
-
-      {['Processing', 'Shipped', 'Arrived', 'Received'].map((status) => (
-        <button
-          key={status}
-          className={`btn btn-success btn-sm mr-2`}
-          onClick={() => handleOrderButtonClick(order.id, status)}
-          disabled={order.status === status}
-        >
-          {status}
-        </button>
-      ))}
+  
+      {logisticsStatuses
+        .filter((status) => status.invoice === order.id)
+        .map((status) => (
+          <button
+            key={status.id}
+            className={`btn ${getStatusColor(status.status)} btn-sm mr-2`}
+            disabled
+          >
+            {status.status}
+          </button>
+        ))}
+      <ProgressBar now={calculatePercentage(order.status)} label={`${order.status} - ${calculatePercentage(order.status)}%`} />
     </div>
   );
 
   return (
-    <section className="main-container container-fluid">
+    <section className="main-container container-fluid" style={{minHeight:'85vh'}}>
       <div>
         {orders.map(renderOrderDetails)}
         <h6 className='mb-3 mt-3'>Logistics Statuses</h6>
@@ -191,15 +157,27 @@ const ExportHandling = () => {
                 <li
                   key={status.id}
                   className="list-group-item d-flex justify-content-between align-items-center"
-                  style={{ backgroundColor: 'white', opacity: 0.7 }}
+                  style={{
+                    backgroundColor: 'white',
+                    opacity: 0.7,
+                    borderBottom: '1px solid #ddd', // Add a border for separation
+                    padding: '10px', // Add padding for better spacing
+                  }}
                 >
-                  <span>{`Order #${status.invoice} - ${status.status}`}</span>
-                  <button
-                    className="btn btn-warning btn-sm"
-                    onClick={() => handleUpdateStatus(status.id, 'ordered')}
-                  >
-                    Update Status
-                  </button>
+                  <div>
+                    {/* <span style={{ fontWeight: 'bold' }}>{`Invoice #${status.invoice_number}`}</span> */}
+                    <br />
+                    Invoice No: <span style={{fontWeight:'bold'}} className='text-dark'>{` ${status.invoice_number}`}</span>
+                  </div>
+                  <div>
+                    <button
+                    style={{fontSize:'14px', textTransform:'capitalize', letterSpacing:'2px', background:'blue', color:'white'}}
+                      className={'btn btn-sm'} // Assign color based on status
+                      disabled
+                    >
+                      {status.status}
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>

@@ -451,13 +451,14 @@ const WarehouseDashboard = () => {
       <h2 className=' '>The XYZ Warehouse</h2>
 
 <div className='row'>
+  
 
-    <Col lg={{ span: 3, offset: 9 }} className='text-right'>
-      <div style={{ marginBottom: '25px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width:'auto' }}>
-      <p className='text-center' style={{ fontSize: '16px', fontWeight: 'bold', color: '#2E8B57' }}>{`${Greetings()}, `}{` ${username}!`} </p>
+    {/* <Col lg={{ span: 3, offset: 9 }} className='text-right'>
+      <div style={{ marginBottom: '', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width:'' }}>
+      <span className='text-center' style={{ fontSize: '16px', fontWeight: 'bold', color: '#2E8B57' }}>{`${Greetings()}, `}{` ${username}!`} </span>
         <span style={{ textTransform: 'capitalize' }}></span>
       </div>
-    </Col>
+    </Col> */}
     {/* <Col lg={{ span: 3, offset: 0 }} className='text-left'>
       <a href='/register-buyer'>
       <button className='' style={{ fontSize: '16px', fontWeight: 'bold', color: '#2E8B57' }}>Register buyer </button>
@@ -480,11 +481,11 @@ const WarehouseDashboard = () => {
   e.preventDefault();
   handleGenerateInvoice();
 }} style={{transition:'1s'}}>
-  <div className="" style={{transition:'1s'}}>
+  <div className="mt-3" style={{transition:'1s'}}>
     <label className="form-label">Breed:</label>
     <select
-      style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
-      className="form-select"
+      style={{ background: 'linear-gradient(45deg, #fff, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
+      className="form-select text-dark"
       name="breed"
       value={invoiceData.breed}
       onChange={handleInvoiceInputChange}
@@ -499,36 +500,36 @@ const WarehouseDashboard = () => {
     </select>
   </div>
 
-  <div className="">
+  <div className="mt-3">
               <label className="form-label">Part:</label><p></p>
               <select
-      style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
-      className="form-select"
+      style={{ background: 'linear-gradient(45deg, #fff, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
+      className="form-select text-dark"
                 name="part_name"
                 value={invoiceData.part_name}
                 onChange={handleInvoiceInputChange}
                 required
               >
                 <option className='mx-1' value="">Select part</option>
-                <option className='mx-1 text-dark' value="ribs">Ribs</option>
-                <option className='mx-1 text-dark' value="thighs">Thighs</option>
-                <option className='mx-1 text-dark' value="loin">Loin</option>
-                <option className='mx-1 text-dark' value="thighs">Thighs</option>
-                <option className='mx-1 text-dark' value="shoulder">Shoulder</option>
-                <option className='mx-1 text-dark' value="shanks">Shanks</option>
-                <option className='mx-1 text-dark' value="organ_meat">Organ Meat</option>
-                <option className='mx-1 text-dark' value="intestines">Intestines</option>
-                <option className='mx-1 text-dark' value="tripe">Tripe</option>
-                <option className='mx-1 text-dark' value="sweetbreads">sweetbreads</option>
+                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="ribs">Ribs</option>
+                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="thighs">Thighs</option>
+                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="loin">Loin</option>
+                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="thighs">Thighs</option>
+                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="shoulder">Shoulder</option>
+                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="shanks">Shanks</option>
+                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="organ_meat">Organ Meat</option>
+                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="intestines">Intestines</option>
+                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="tripe">Tripe</option>
+                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="sweetbreads">sweetbreads</option>
               </select>
             </div>
 
-  <div className="">
+  <div className="mt-3">
               <label className="form-label">Sale Type:</label>
               <p></p>
               <select
-      style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
-      className="form-select"
+      style={{ background: 'linear-gradient(45deg, #fff, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
+      className="form-select text-dark"
                 name="sale_type"
                 value={invoiceData.sale_type}
                 onChange={handleInvoiceInputChange}
@@ -540,45 +541,45 @@ const WarehouseDashboard = () => {
                 <option className='text-dark' value="local_cut">Local Sale Cut</option>
               </select>
             </div>  
-  <div className="">
-    <label className="form-labe">Quantity:</label>
+  <div className="mt-3">
+    <label className="form-label">Quantity:</label>
     <input
       type="number"
-      className="form-control"
+      className="form-control text-dark"
       name="quantity"
       value={invoiceData.quantity}
       onChange={handleInvoiceInputChange}
       required
-      style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white' }}
-    />
+      style={{ background: 'linear-gradient(45deg, #fff, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
+         />
   </div>
-  <div className="">
+  <div className="mt-3">
     <label className="form-labe">Unit Price:</label>
     <input
       type="number"
-      className="form-control"
+      className="form-control text-dark"
       name="unit_price"
       value={invoiceData.unit_price}
       onChange={handleInvoiceInputChange}
       required
-      style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
-    />
+      style={{ background: 'linear-gradient(45deg, #fff, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
+          />
   </div>
 
  
   
-  <div className="mb-3">
+  <div className="mb-3 mt-3">
   <div className="">
   <label className="form-label">Buyer:</label>
-
+<br />
   <select
-  className="form-select"
+  className="form-select text-dark"
   name="buyer"
   value={selectedBuyer ? selectedBuyer.id : ''}
   onChange={(e) => handleBuyerChange(e.target.value)}
   required
-  style={{ background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
->
+  style={{ background: 'linear-gradient(45deg, #fff, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
+  >
   <option value="" style={{ color: 'green', background: 'linear-gradient(45deg, green, rgb(249, 250, 251))' }}>Select a buyer</option>
   {buyers.map((buyer) => (
     <option key={buyer.id} value={buyer.id} style={{ color: 'blue', background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding:'1rem', width:'100%' }}>

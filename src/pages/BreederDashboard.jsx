@@ -161,7 +161,7 @@ const Supplier = () => {
       <Col xs={12} md={6} lg={4}>
         <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
           <Card.Body>
-            <FaBox size={40} className='mb-3' />
+            <FaBox size={40} className='mb-3 text-success' />
             <Card.Title>Supply to XYZ Abattoir</Card.Title>
             <Card.Text>Click below to supply goats to XYZ Abattoir and manage your transactions.</Card.Text>
             <a href='/breeder_invoices' className='btn btn-primary'>
@@ -175,7 +175,7 @@ const Supplier = () => {
       <Col xs={12} md={6} lg={4}>
         <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }} onClick={handleBreadSuppliesStatus}>
           <Card.Body>
-            <FaBox size={40} className='mb-3' />
+            <FaBox size={40} className='mb-3 text-success' />
             <Card.Title>Bread Supplies Status</Card.Title>
             <Card.Text>Check the status of your bread supplies and manage orders efficiently.</Card.Text>
             <button onClick={handleBreadSuppliesStatus} className='btn btn-primary'>
@@ -189,7 +189,7 @@ const Supplier = () => {
       <Col xs={12} md={6} lg={4}>
         <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
           <Card.Body>
-            <FaMoneyBillWave size={40} className='mb-3' />
+            <FaMoneyBillWave size={40} className='mb-3 text-success' />
             <Card.Title>Track Payments</Card.Title>
             <Card.Text>Monitor your payment transactions and keep track of your earnings.</Card.Text>
             <a href='#' className='btn btn-primary'>

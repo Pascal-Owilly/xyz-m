@@ -158,7 +158,7 @@ const Admin = () => {
       } else if (totalRemaining < 0) {
         setBreedSupplyStatus(`Heads up, you are completely out of breeds.`);
       } else {
-        setBreedSupplyStatus(`The inventory level seems fine.`);
+        setBreedSupplyStatus(`The inventory level seems empty.`);
       }
     };
 
@@ -304,23 +304,25 @@ const Admin = () => {
             </a>
             <div className="row">
 
-            <div className="col-lg-3 col-md-6 mb-3">
-  <a href='/warehouse'>
-    <div className="card-box height-100-p widget-style3 custom-card">
+            <div className="col-lg-3 col-md-12 mb-3">
+  <a href='/inventory-dashboard'>
+    <div className="card-box height-100-p widget-style3">
       <div className="d-flex flex-wrap">
         <div className="widget-data">
-          <div className="weight-700 font-20 text-dark">Send invoice</div>
-          <div className="font-14 text-secondary weight-500">Buyers</div>
+          <div className="weight-700 font-20 text-dark">Inventory</div>
+          <div className="font-14 text-secondary weight-500">Information</div>
         </div>
         <div className="widget-icon" style={{background:'rgb(0, 27, 49)'}}>
           <div className="icon" data-color="#09cc06">
-            <FaFileInvoice /> {/* Use the FaFileInvoice icon */}
+            <FaArchive /> {/* Use the FaArchive icon */}
           </div>
         </div>
       </div>
     </div>
   </a>
 </div>
+
+           
 
 <div className="col-lg-3 col-md-6 mb-3">
   <a href='/breaders'>
@@ -356,17 +358,19 @@ const Admin = () => {
   </div>
 </div>
 
-<div className="col-lg-3 col-md-12 mb-3">
-  <a href='/inventory-dashboard'>
-    <div className="card-box height-100-p widget-style3">
+
+
+<div className="col-lg-3 col-md-6 mb-3">
+  <a href='/warehouse'>
+    <div className="card-box height-100-p widget-style3 custom-card">
       <div className="d-flex flex-wrap">
         <div className="widget-data">
-          <div className="weight-700 font-20 text-dark">Inventory</div>
-          <div className="font-14 text-secondary weight-500">Information</div>
+          <div className="weight-700 font-20 text-dark">Send invoice</div>
+          <div className="font-14 text-secondary weight-500">Buyers</div>
         </div>
         <div className="widget-icon" style={{background:'rgb(0, 27, 49)'}}>
           <div className="icon" data-color="#09cc06">
-            <FaArchive /> {/* Use the FaArchive icon */}
+            <FaFileInvoice /> {/* Use the FaFileInvoice icon */}
           </div>
         </div>
       </div>

@@ -11,7 +11,7 @@ const CustomerServiceDashboard = () => {
 
   useEffect(() => {
     // Fetch payments from the new endpoint
-    axios.get(`${baseUrl}/api/payments-list/`)
+    axios.get(`${baseUrl}/api/abattoir-payments/`)
       .then(response => {
         console.log('Fetched payments:', response.data);
         setPayments(response.data);
@@ -27,7 +27,7 @@ const CustomerServiceDashboard = () => {
     }
 
     // Update the payment status
-    axios.put(`${baseUrl}/api/payments-list/${paymentId}/`, { status: newStatus })
+    axios.put(`${baseUrl}/api/abattoir-payments/${paymentId}/`, { status: newStatus })
       .then(response => {
         // Update the local state with the updated payment
         setPayments(payments.map(payment => (payment.payments_id === paymentId ? response.data : payment)));

@@ -7,7 +7,8 @@ import { FaCheckCircle, FaMoneyBill, FaShieldAlt, FaUsers, FaCogs } from "react-
 import { checkUserRole } from "./auth/CheckUserRoleUtils";
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import AuthService from './auth/AuthService'
-import backgroundSvg from '../../images/background.svg';
+import backgroundSvg from '../../images/home2.png';
+import { FaUserPlus } from 'react-icons/fa'; // Import FaUserPlus icon from react-icons library
 
 const HomeContent = () => {
   const baseUrl = BASE_URL;
@@ -82,7 +83,7 @@ const HomeContent = () => {
     if (userRole === 'No role') {
       return (
         <div>
-          <p className='text-center mx-auto text-white' style={{width:'60%'}}>
+          <p className='text-center mx-auto text-dark' style={{width:'60%'}}>
             You currently have no role. Please be patient as we assign you a role.
             If you feel there's an issue with your session, please contact us{' '}
             {/* <a className='bg-success text-white mx-2' href="/contact">here</a> */}
@@ -94,7 +95,7 @@ const HomeContent = () => {
 
       return (
         <div>
-          <p className='text-center mx-auto text-white' style={{width:'60%'}}>
+          <p className='text-center mx-auto text-dark' style={{width:'60%'}}>
             You currently have no role. Please be patient as we assign you a role.
             If you feel there's an issue with your session, please contact us{' '}
             {/* <a href="/contact">here</a>. */}
@@ -250,134 +251,53 @@ const [flashMessage, setFlashMessage] = useState(null); // Initialize with null
 // End Login
 
 // hero
-const containerStyle = {
-  minHeight: '100vh',
-  // background: `linear-gradient(rgba(0, 0, 255, 0.2), rgba(0, 0, 255, 0.3)), url('https://t3.ftcdn.net/jpg/01/88/97/18/240_F_188971803_QKE19x6zl3UWQlWvJ6vqufoRPgaFixCy.jpg')`,
-  // backgroundImage: `linear-gradient(rgba(0, 0, 255, 0.5), rgba(0, 0, 255, 0.5)), url(${sidebarimg})`, // Replace with your image variable
-
-  backgroundRepeat:'no-repeat',
-  backgroundSize: 'cover',
-};  
 
   return (
     <>
-      <div className="main-container" style={{ minHeight: '100vh'}}>
+      <div className="main-container" style={{ minHeight: '85vh'}}>
 
-      <Container className='p-4' fluid style={containerStyle}>
-
-           <Row>
-              <Col md={12}>
-              {userRole && (
-          <div style={{ textAlign: 'right', marginTop: '' }}>
-            <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#666666' }}>{`Welcome, ${username}!`}  <br />
+     <Container className='' fluid style={{}}>
+  <Row>
+    <Col md={12}>
+      {userRole && (
+        <div style={{ textAlign: 'right', marginTop: 'px' }}>
+          <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#666666' }}>{`Welcome, ${username}!`} <br />
             <span className='mx-3' style={{ fontSize: '14px', color: '#666666' }}>Role: {userRole}</span>
-            
-            </span>
-          
-          </div>
-        )}
-                {renderRoleNotification()}
+          </span>
+        </div>
+      )}
+      {renderRoleNotification()}
+    </Col>
 
-              </Col>
 
-              <Col md={8}>
-              <div className="text-center bg-image rounded-3" style={{ 
-      height: '400px'
-    }}>
-      <div className="mask" style={{ }}>
-        <div className="mt-5 h-100">
-          <div className="text-info">
-            <h2 className="mb-3 text-secondary" style={{color:'', textAlign:'center'}}>
-            Supply breeds to XYZ abattoir and get paid seamlessly
-
-            </h2>
-            <a className="btn btn-outline-primary btn-lg" href="/register" role="button">Register Now!</a>
+    <Col md={8}>
+      <div className="text-center p-5 bg-image rounded-3" style={{ height: '400px' }}>
+        <div className="mask">
+          <div className="mt- h-100">
+            <div className="text-info">
+              <h2 className="mb- text-secondary" style={{ color: 'blue', textAlign: 'center' }}>
+                Supply breeds to XYZ abattoir and get paid seamlessly
+              </h2>
+              <a className="btn mt-3 btn-outline-primary btn-lg" href="/register" role="button">
+  <FaUserPlus className="mr-2" /> Register Now!
+</a>            </div>
           </div>
         </div>
       </div>
-    </div>
-  </Col>
-              {!isLoggedIn && (
+    </Col>
 
-
-              <Col md={4}>
-                
-                <div className='' style={{ width: '100%', backgroundColor: 'transparent',right:0 }}>
-        <div className='row m-auto' style={{ height: 'auto', backgroundColor: '', alignItems: 'center', justifyContent: 'center' }}>
-            <form className='what-card-btn-login p-4 mt-3 mb-3 bg-white' onSubmit={handleLoginSubmit}
-            style={{  
-            width: '100%',
-            borderRadius: '0',
-            margin: 'auto',
-            transition: 'top 0.3s ease-in-out',
-            boxShadow: '0px 24px 36px -19px rgba(0, 0, 0, 0.09)'
-              }}>
-              <h4 className='text-secondary'> Breeder Login</h4>
-              <hr style={{ color: '#d9d9d9' }} />
-              <div className="form-group" style={{ color: '#d9d9d9', fontSize: '18px' }}>
-                <label className="mt-1 text-secondary" htmlFor="username">Username</label>
-                <input
-                  type="text"
-                  style={{ background: '#d9d9d9' }}
-                  className="form-control"
-                  id="username"
-                  name="username"
-                  value={loginData.username}
-                  placeholder="Enter username"
-                  onChange={handleLoginChange}
-                />
-              </div>
-
-              <div className="form-group" style={{ color: '#d9d9d9', fontSize: '18px' }}>
-                <label className="mt-1 text-secondary" htmlFor="password">Password</label>
-                <input
-                  type="password"
-                  style={{ background: '#d9d9d9' }}
-                  placeholder="Enter password"
-                  className="form-control"
-                  id="password"
-                  name="password"
-                  value={loginData.password}
-                  onChange={handleLoginChange}
-                />
-                {errorMessages.invalidCredentials && (
-                  <p style={{ color: 'red', fontSize:'12px'}}>{errorMessages.invalidCredentials}</p>
-                )}
-              </div>
-
-              <button
-                  type='submit'
-                  className='btn btn-sm btn-outline-primary text-secondary mt-1'
-                  style={{ background: '#fff', width:'100%' }}
-                >
-                Login
-              </button>
-
-              <hr />
-              {flashMessage && (
-      <div className="flash-message text-danger" style={{backgroundColor:'transparent',  fontWeight:'normal'}}>
-        {flashMessage.message}
-        <hr />
-      </div>
-      
-    )}
-
-              <p className='mb-2 text-secondary'>
-                Don't have an account? <Link to='/register'>Signup</Link>
-              </p>
-              <p className='mb-2 text-secondary'>
-                <Link to='/password_reset'>Forgot your password?</Link>
-              </p>
-            </form>
+    {/* {!isLoggedIn && ( */}
+      <Col md={4}>
+        <div className='p-5' style={{ width: '100%', backgroundColor: 'transparent', right: 0 }}>
+          <div className='row m-auto bg-' style={{ height: 'auto', backgroundColor: '', alignItems: 'center', justifyContent: 'center' }}>
+            <img src={backgroundSvg} />
           </div>
-          </div>
-          <>
+        </div>
+      </Col>
+    {/* )} */}
+  </Row>
+</Container>
 
-    </>
-                </Col>
-                            )}
-            </Row>
-          </Container>
         
       </div>
     </>
