@@ -6,6 +6,7 @@ import { FaTruck } from 'react-icons/fa';
 import axios from 'axios';
 import { BASE_URL } from './auth/config';
 import { Button } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 
 const ExportHandling = () => {
   const baseUrl = BASE_URL;
@@ -32,6 +33,19 @@ const ExportHandling = () => {
       default:
         return 'btn-light';
     }
+  };
+
+  const cardStyle = {
+    fontSize: '14px',
+    textTransform: 'capitalize',
+    letterSpacing: '2px',
+    color: 'white',
+    backgroundColor: 'green',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Add box shadow
+    border: '1px solid',
+    borderImage: 'green', // Add gradient border
+    borderRadius: '', // Adjust border radius as needed
+    padding:'0.6rem'
   };
   
 
@@ -105,28 +119,33 @@ const ExportHandling = () => {
   const renderOrderDetails = (order) => (
     <div key={order.id} className="order-details">
       <h6 className='mb-3'>Order #{order.id} - {order.status}</h6>
-      <button
-        className="btn btn-info btn-sm mr-2"
-        onClick={() => updateOrderLocation(order.id, order.location)}
-      >
-        <FaTruck /> Track Location
-      </button>
+  
+      <Card className={`card ${getStatusColor(order.status)} mr-2`} disabled>
+        <Card.Body>
+          <Card.Title>{order.status}</Card.Title>
+          <Card.Text>
+            <FaTruck /> Track Location
+          </Card.Text>
+        </Card.Body>
+      </Card>
   
       {logisticsStatuses
         .filter((status) => status.invoice === order.id)
         .map((status) => (
-          <button
+          <Card
             key={status.id}
-            className={`btn ${getStatusColor(status.status)} btn-sm mr-2`}
+            className={`card ${getStatusColor(status.status)} mr-2`}
             disabled
           >
-            {status.status}
-          </button>
+            <Card.Body>
+              {status.status}
+            </Card.Body>
+          </Card>
         ))}
       <ProgressBar now={calculatePercentage(order.status)} label={`${order.status} - ${calculatePercentage(order.status)}%`} />
     </div>
   );
-
+  
   return (
     <section className="main-container container-fluid" style={{minHeight:'85vh'}}>
       <div>
@@ -170,13 +189,9 @@ const ExportHandling = () => {
                     Invoice No: <span style={{fontWeight:'bold'}} className='text-dark'>{` ${status.invoice_number}`}</span>
                   </div>
                   <div>
-                    <button
-                    style={{fontSize:'14px', textTransform:'capitalize', letterSpacing:'2px', background:'blue', color:'white'}}
-                      className={'btn btn-sm'} // Assign color based on status
-                      disabled
-                    >
-                      {status.status}
-                    </button>
+                   <Card style={cardStyle} className={'card'} disabled>
+                   {status.status}
+    </Card>
                   </div>
                 </li>
               ))}

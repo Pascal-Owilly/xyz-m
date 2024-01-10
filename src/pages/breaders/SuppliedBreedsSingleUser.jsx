@@ -6,36 +6,24 @@ import { BASE_URL } from '../auth/config';
 const SuppliedBreedsSingleUser = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [localSuppliesData, setLocalSuppliesData] = useState(null);
-  const [user, setUser] = useState({ id: 123 }); // Replace with actual user data
+  const [user, setUser] = useState({  }); // Replace with actual user data
   const [accessToken, setAccessToken] = useState('accessToken'); // Replace with actual access token
 
   const baseUrl = BASE_URL; // Replace with your actual base URL
 
-  const fetchUserSupplies = async () => {
-    try {
-      if (!user || !user.id || !accessToken) {
-        console.error('User, user id, or access token is undefined');
-        return;
-      }
+  useEffect(() => {
+    fetchUserData(); // Fetch user data first to get the updated access token
+    fetchUserSupplies();
+    setShowDetails(true);
 
-      const response = await axios.get(`${baseUrl}/api/breader-trade/${user.id}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
 
-      console.log('Response Data:', response.data);
+  }, [accessToken]);
 
-      setLocalSuppliesData(response.data);
-    } catch (error) {
-      console.error('Error fetching supplies data:', error);
-    }
-  };
 
   const refreshAccessToken = async () => {
     try {
       console.log('fetching token refresh ... ');
-  
+
       const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
   
       const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
@@ -43,6 +31,7 @@ const SuppliedBreedsSingleUser = () => {
       });
   
       const newAccessToken = response.data.access;
+
       setAccessToken(newAccessToken);
   
       // Fetch user data using the new access token
@@ -75,6 +64,27 @@ const SuppliedBreedsSingleUser = () => {
       } else {
         console.error('Error fetching user data:', error);
       }
+    }
+  };
+
+  const fetchUserSupplies = async () => {
+    try {
+      if (!user || !user.id || !accessToken) {
+        console.error('User, user id, or access token is undefined');
+        return;
+      }
+      
+      const response = await axios.get(`${baseUrl}/api/breader-trade/${user.id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      console.log('Response Data:', response.data);
+
+      setLocalSuppliesData(response.data);
+    } catch (error) {
+      console.error('Error fetching supplies data:', error);
     }
   };
 

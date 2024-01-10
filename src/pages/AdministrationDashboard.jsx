@@ -285,10 +285,11 @@ const Admin = () => {
           <div className="container-fluid" style={{ minHeight: '10vh' }}>
           <h2 className="" style={{ marginBottom: '6vh', color: 'rgb(0, 27, 49)' }}>
               SCM Admin{' '}
+             
             </h2>
             <a href='/register-buyer'>
               <button
-                className=''
+                className='mb-2'
                 style={{
                   fontSize: '14px',
                   fontWeight: 'bold',

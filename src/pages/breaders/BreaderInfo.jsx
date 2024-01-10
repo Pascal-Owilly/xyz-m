@@ -88,37 +88,48 @@ const BreaderInfo = () => {
 
   const handleMakePayment = async () => {
     try {
-      setLoading(true); // Set loading to true when initiating payment
-
-      // Replace 'your-api-endpoint' with the actual API endpoint for payment initiation
-      // const response = await axios.get(`${baseUrl}/api/abattoir-payments-to-breeder/${breaderData.id}/`, {
-
+      setLoading(true);
+  
       const response = await axios.post(`${baseUrl}/api/abattoir-payments-to-breeder/${breaderData.id}/process_payment_and_notify_breeder/`, {
+        // Additional data if needed
       });
-
+  
       if (response.status === 200) {
-        // Payment successful
         console.log('Payment successful');
-        navigate('/breeder-payment')
-
-        // You can perform any additional actions here
+        navigate('/breeder-payment');
+        // Additional actions for a successful payment
       } else {
         // Payment failed
         alert('Payment failed');
-        // You can display an error message or perform any other actions
+        // Additional actions for a failed payment
       }
-
+  
     } catch (error) {
-      console.error('Error initiating payment:', error.response.statusText);
-      alert('You need to stage payment for this breeder before initiating payment ')
+      console.error('Error initiating payment:', error);
+  
+      if (error.response) {
+        // The request was made, but the server responded with a status code that falls out of the range of 2xx
+        alert(`Error: ${error.message}`);
+      } else if (error.request) {
+        // The request was made but no response was received
+        alert('Network error. Please check your internet connection and try again.');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        alert('An unexpected error occurred. Please try again later.');
+      }
+  
     } finally {
-      setLoading(false); // Set loading back to false after payment attempt
+      setLoading(false);
     }
   };
+  
 
   return (
     <div className='main-container'>
+
       <div className='container-fluid' style={{ minHeight: '72vh' }}>
+        <div className='buttons'>
+        <button className='btn btn-sm btn-primary' style={{ float: 'right', marginRight: '10px', borderRadius: '5px' }}>Super Admin</button>
         <button
           className='mb-2'
           style={{ backgroundColor: 'goldenrod', borderRadius: '30px', fontSize: '14px' }}
@@ -127,6 +138,8 @@ const BreaderInfo = () => {
         >
           {loading ? 'Initiating Payment...' : `Make Payment to ${breaderData.breeder_head_of_family}'s family`}
         </button>
+        </div>
+     
         <div className="table-responsive">
           <table className="table table-striped">
           <thead className="thead-dark">

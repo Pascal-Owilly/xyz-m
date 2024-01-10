@@ -37,6 +37,8 @@ import CustomerService from './pages/CustomerService';
 import DispatchAndShipping from './pages/export_handling/DispatchAndShipping';
 import Arrival from './pages/export_handling/Arrival';
 
+import TrackInvoice from './pages/TrackInvoice';
+
 
 const App = () => {
   return (
@@ -66,6 +68,7 @@ const App = () => {
             <Route path="/export_handling_dashboard" element={<ExportHandlingDashboard />} />
             {/* iNVOICE FORMS */}
             <Route path="/breeder_invoices" element={<InvoiceForms />} />
+            <Route path="/track-invoice/:invoiceNumber" element={<TrackInvoice />} />
 
             {/* Payments */}
             <Route path="/breeder-payment" element={<BreederPayment />} />
