@@ -7,7 +7,9 @@ import { FaCheckCircle, FaMoneyBill, FaShieldAlt, FaUsers, FaCogs } from "react-
 import { checkUserRole } from "./auth/CheckUserRoleUtils";
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import AuthService from './auth/AuthService'
-import backgroundSvg from '../../images/home2.png';
+// import backgroundSvg from '../../images/goat_1.jpg';
+import backgroundSvg from '../../images/ngombe.jpg';
+
 import { FaUserPlus } from 'react-icons/fa'; // Import FaUserPlus icon from react-icons library
 
 const HomeContent = () => {
@@ -83,9 +85,8 @@ const HomeContent = () => {
     if (userRole === 'No role') {
       return (
         <div>
-          <p className='text-center mx-auto text-dark' style={{width:'60%'}}>
-            You currently have no role. Please be patient as we assign you a role.
-            If you feel there's an issue with your session, please contact us{' '}
+          <p className='text-center mx-auto text-dark' style={{width:'100%'}}>
+            You currently have no role. Please be patient as we give you one.
             {/* <a className='bg-success text-white mx-2' href="/contact">here</a> */}
           </p>
         </div>
@@ -97,7 +98,6 @@ const HomeContent = () => {
         <div>
           <p className='text-center mx-auto text-dark' style={{width:'60%'}}>
             You currently have no role. Please be patient as we assign you a role.
-            If you feel there's an issue with your session, please contact us{' '}
             {/* <a href="/contact">here</a>. */}
           </p>
         </div>
@@ -256,47 +256,35 @@ const [flashMessage, setFlashMessage] = useState(null); // Initialize with null
     <>
       <div className="main-container" style={{ minHeight: '85vh'}}>
 
-     <Container className='' fluid style={{}}>
-  <Row>
-    <Col md={12}>
-      {userRole && (
+    {/* <Col md={12}> */}
+     
+    {/* </Col> */}
+    <div className="d-sm-flex align-items-center justify-content-between w-100" style={{ height: 'auto' }}>
+
+      <div className="col-md-4 mx-auto mb-4 mb-sm-0 headline">
+
+        <span className="text-secondary text-uppercase">
+        {renderRoleNotification()}
+
+        {userRole && (
         <div style={{ textAlign: 'right', marginTop: 'px' }}>
-          <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#666666' }}>{`Welcome, ${username}!`} <br />
+          <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#666666' }}>{`Hi, ${username}!`} <br />
             <span className='mx-3' style={{ fontSize: '14px', color: '#666666' }}>Role: {userRole}</span>
           </span>
         </div>
       )}
-      {renderRoleNotification()}
-    </Col>
 
 
-    <Col md={8}>
-      <div className="text-center p-5 bg-image rounded-3" style={{ height: '400px' }}>
-        <div className="mask">
-          <div className="mt- h-100">
-            <div className="text-info">
-              <h2 className="mb- text-secondary" style={{ color: 'blue', textAlign: 'center' }}>
-                Supply breeds to XYZ abattoir and get paid seamlessly
-              </h2>
-              <a className="btn mt-3 btn-outline-primary btn-lg" href="/register" role="button">
-  <FaUserPlus className="mr-2" /> Register Now!
-</a>            </div>
-          </div>
-        </div>
+        </span>
+        <h1 className="display-4 my-4 font-weight-bold">Managing <span style={{ color: '#9B5DE5' }}>Breed supplies</span></h1>
+        <a href="register" className="btn px-5 py-3 text-white mt-3 mt-sm-0" style={{ borderRadius: '30px', backgroundColor: '#9B5DE5' }}>Get Started</a>
       </div>
-    </Col>
+      {/* in mobile remove the clippath */}
+      {/* <div className="col-md-8 h-100 clipped" style={{ minHeight: '350px', backgroundImage: 'url(https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2850&q=80)', backgroundPosition: 'center', backgroundSize: 'cover' }}> */}
+      <div className="col-md-8 h-100 clipped" style={{ minHeight: '500px', backgroundImage: `url(${backgroundSvg})`, backgroundPosition: 'center', backgroundSize: 'cover' }}>
 
-    {/* {!isLoggedIn && ( */}
-      <Col md={4}>
-        <div className='p-5' style={{ width: '100%', backgroundColor: 'transparent', right: 0 }}>
-          <div className='row m-auto bg-' style={{ height: 'auto', backgroundColor: '', alignItems: 'center', justifyContent: 'center' }}>
-            <img src={backgroundSvg} />
-          </div>
-        </div>
-      </Col>
-    {/* )} */}
-  </Row>
-</Container>
+      </div>
+    </div>
 
         
       </div>
