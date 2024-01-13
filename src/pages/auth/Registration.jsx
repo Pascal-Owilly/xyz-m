@@ -13,6 +13,7 @@ const SignUpForm = () => {
     username: '',
     email: '',
     password: '',
+    confirm_password: '',
     first_name: '',
     last_name: '',
     id_number: null,
@@ -31,61 +32,70 @@ const SignUpForm = () => {
   };
 
   const signUp = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+    e.preventDefault();
+    setLoading(true);
 
-  // Perform client-side validation
-  const validationErrors = {};
-  if (!registrationData.username) {
-    validationErrors.username = ['Username is required.'];
-  }
-  if (!registrationData.email) {
-    validationErrors.email = ['Email is required.'];
-  } else if (!/\S+@\S+\.\S+/.test(registrationData.email)) {
-    validationErrors.email = ['Invalid email format.'];
-  }
-  // Add more validations for other fields as needed
-
-  // If there are validation errors, update the state and return without making the API call
-  if (Object.keys(validationErrors).length > 0) {
-    setErrorMessages(validationErrors);
-    return;
-  }
-
-  try {
-    // Clear previous error messages on successful validation
-    setErrorMessages({});
+    // Perform client-side validation
+    const validationErrors = {};
+    if (!registrationData.username) {
+      validationErrors.username = ['Username is required.'];
+    }
+    if (!registrationData.email) {
+      validationErrors.email = ['Email is required.'];
+    } else if (!/\S+@\S+\.\S+/.test(registrationData.email)) {
+      validationErrors.email = ['Invalid email format.'];
+    }
+    if (!registrationData.password) {
+      validationErrors.password = ['Password is required.'];
+    }
+    if (registrationData.password !== registrationData.confirm_password) {
+      validationErrors.confirm_password = ['Passwords do not match.'];
+    }
     
-    // Make the API call
-    const url = new URL('api/register/', baseUrl);
-    const response = await axios.post(url.toString(), registrationData);
-  
-    // Handle successful sign-up here, e.g., navigate to login page
-    navigate('/login');
-  } catch (error) {
-    console.error('Error during sign-up:', error);
-    setLoading(false);
 
-    if (error.response) {
-      console.error('Response status:', error.response.status);
-      console.error('Response data:', error.response.data);
-  
-      // Update state with server validation errors if available
-      if (error.response.data && error.response.data.email) {
-        setErrorMessages({ email: error.response.data.email[0] });
-      } else if (error.response.data && error.response.data.username) {
-        setErrorMessages({ username: error.response.data.username[0] });
-      } else if (error.response.data && error.response.data.id_number) {
-        setErrorMessages({ id_number: error.response.data.id_number[0] });
-      } else if (error.response.data && error.response.data.detail) {
-        setErrorMessages({ generic: error.response.data.detail });
-      } else {
-        setErrorMessages({ generic: 'An error occurred during sign-up. Please try again.' });
+    // Updated validation for the 'market' field
+    if (!registrationData.market) {
+      validationErrors.market = ['Market is required.'];
+    }
+
+    // Add more validations for other fields as needed
+
+    // If there are validation errors, update the state and return without making the API call
+    if (Object.keys(validationErrors).length > 0) {
+      setErrorMessages(validationErrors);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Clear previous error messages on successful validation
+      setErrorMessages({});
+      
+      // Make the API call
+      const url = new URL('api/register/', baseUrl);
+      const response = await axios.post(url.toString(), registrationData);
+    
+      // Handle successful sign-up here, e.g., navigate to login page
+      navigate('/login');
+    } catch (error) {
+      console.error('Error during sign-up:', error);
+      setLoading(false);
+
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', error.response.data);
+
+        // Update state with server validation errors if available
+        const serverErrors = error.response.data;
+
+        if (serverErrors) {
+          setErrorMessages(serverErrors);
+        } else {
+          setErrorMessages({ generic: 'An error occurred during sign-up. Please try again.' });
+        }
       }
     }
-  }
-  
-};
+  };
 
   return (
     <div className='main-container'>
@@ -288,6 +298,27 @@ const SignUpForm = () => {
           )}
           {errorMessages.passwords && (
             <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.passwords}</p>
+          )}
+        </div>
+
+        <div className='form-group col-md-4'>
+          <label htmlFor='password' className='text-secondary'>
+           Confirm Password
+          </label>
+          <input
+            type='password'
+            className='form-control mb-1'
+            id='confirm_password'
+            name='confirm_password'
+            value={registrationData.confirm_password}
+            onChange={handleRegistrationChange}
+            required
+          />
+          {errorMessages.confirm_password && (
+            <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.confirm_password[0]}</p>
+          )}
+          {errorMessages.confirm_password && (
+            <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.confirm_password}</p>
           )}
         </div>
         {/* Add more form groups for other fields if needed */}

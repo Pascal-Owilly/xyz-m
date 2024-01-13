@@ -14,8 +14,6 @@ import { Link } from 'react-router-dom'; // Import Link for navigation
 
 const Supplier = () => {
 
-
-
   const Greetings = () => {
     const currentTime = new Date();
     const currentHour = currentTime.getHours();

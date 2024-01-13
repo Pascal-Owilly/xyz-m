@@ -117,6 +117,28 @@ const authService = {
       return 'anonymous'; // Handle errors gracefully, assume anonymous role
     }
   },
+
+  requestPasswordReset: async (email) => {
+    try {
+      const response = await axios.post(`${baseUrl}/api/password-reset/`, { email });
+      return response.data;
+    } catch (error) {
+      throw error; // Handle errors in the component
+    }
+  },
+
+  confirmPasswordReset: async (newPassword, resetToken) => {
+    try {
+      const response = await axios.post(`${baseUrl}/api/password-reset/confirm/${uidb64}/${token}/`, {
+        new_password: newPassword,
+        reset_token: resetToken,
+      });
+      return response.data;
+    } catch (error) {
+      throw error; // Handle errors in the component
+    }
+  },
+
   
 
 };

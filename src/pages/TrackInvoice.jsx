@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ProgressBar } from 'react-bootstrap';
-import { FaShoppingCart, FaTruck, FaShippingFast, FaMapMarkerAlt, FaCheck } from 'react-icons/fa';
+import { ProgressBar, Card } from 'react-bootstrap';
+import {
+  FaShoppingCart,
+  FaTruck,
+  FaShippingFast,
+  FaMapMarkerAlt,
+  FaCheck,
+} from 'react-icons/fa';
 import axios from 'axios';
 import { BASE_URL } from './auth/config';
 
@@ -9,23 +15,20 @@ const TrackInvoice = () => {
   const { invoiceNumber } = useParams();
   const baseUrl = BASE_URL;
 
-  const [trackingStatuses, setTrackingStatuses] = useState([]);
-  const [currentStatus, setCurrentStatus] = useState('');
-  
+  const [trackingStatus, setTrackingStatus] = useState(null);
+
   useEffect(() => {
-    axios.get(`${baseUrl}/api/logistics-status/`)
+    axios.get(`${baseUrl}/api/logistics-status/${invoiceNumber}`)
       .then(response => {
-        console.log('Logistics Statuses:', response.data);
-        setTrackingStatuses(response.data);
-        // Find and set the current status
-        const current = response.data.find(status => status.status.toLowerCase() === 'received');
-        setCurrentStatus(current ? current.status : '');
+        console.log('Logistics Status:', response.data);
+        const current = response.data; // Assuming the response directly contains the status
+        setTrackingStatus(current || null);
         console.log('Current Status:', current ? current.status : 'Not found');
       })
       .catch(error => {
-        console.error('Error fetching logistics statuses:', error);
+        console.error('Error fetching logistics status for invoice', invoiceNumber, ':', error);
       });
-  }, [baseUrl]);
+  }, [baseUrl, invoiceNumber]);
 
   const getStatusIcon = (status) => {
     switch (status.toLowerCase()) {
@@ -36,7 +39,7 @@ const TrackInvoice = () => {
       case 'shipped':
         return <FaShippingFast />;
       case 'arrival':
-        return <FaMapMarkerAlt />;
+        return <FaMapMarkerAlt />; // Use FaMapMarkerAlt for the 'arrival' status
       case 'received':
         return <FaCheck />;
       default:
@@ -53,9 +56,9 @@ const TrackInvoice = () => {
       case 'shipped':
         return 'dark';
       case 'arrival':
-        return 'success';
+        return 'warning'; // Use 'warning' for the 'arrival' status
       case 'received':
-        return 'info';
+        return 'success'; // Use 'success' for the 'received' status
       default:
         return 'light';
     }
@@ -64,29 +67,61 @@ const TrackInvoice = () => {
   return (
     <div className='main-container' style={{ minHeight: '85vh' }}>
       <h4 className='mb-4'>Tracking Invoice #{invoiceNumber}</h4>
-      <ProgressBar className='mb-4'>
-        {trackingStatuses.map((status, index) => (
+      <Card className='p-2'>
+        <Card.Title>
+          Invoice stages from order to delivery
+        </Card.Title>
+        <Card.Body className="d-flex justify-content-between align-items-center">
+          {['ordered', 'dispatched', 'shipped', 'arrival', 'received'].map((stage, index) => (
+            <div key={index} className="d-flex flex-column align-items-center">
+              <div
+                className={`text-success mb-1 mx-5 `}
+                style={{ borderRadius: '10px', fontSize: '20px' }}
+              >
+                {getStatusIcon(stage)}
+              </div>
+              <span>{stage.charAt(0).toUpperCase() + stage.slice(1)}</span>
+            </div>
+          ))}
+        </Card.Body>
+      </Card>
+
+      {trackingStatus && (
+        <>
           <ProgressBar
-            key={index}
-            variant={status.status.toLowerCase() === currentStatus.toLowerCase() ? 'info' : 'light'}
-            now={index * (100 / (trackingStatuses.length - 1))}
-            label={`${status.status}`}
+            variant={getStatusColor(trackingStatus.status)}
+            now={100}
+            label={`${trackingStatus.status}`}
             style={{
               fontWeight: 'bold',
               padding: '0.5rem',
-              backgroundColor: getStatusColor(status.status),
+              backgroundColor: getStatusColor(trackingStatus.status),
+              borderRadius: '10px',
             }}
           />
-        ))}
-      </ProgressBar>
-      <div className='d-flex justify-content-between'>
-        {trackingStatuses.map((status, index) => (
-          <div key={index} className='text-center'>
-            <span style={{ fontSize: '30px', color: 'green' }}>{getStatusIcon(status.status)}</span>
-            <p className='mt-2' style={{ fontWeight: 'bold', padding: '0.5rem' }}>{status.status}</p>
+
+          <div className='d-flex justify-content-center mt-4'>
+            <Card style={{ width: '18rem' }} className='text-center'>
+              <Card.Body>
+                <span
+                  style={{
+                    fontSize: '40px',
+                    color: getStatusColor(trackingStatus.status),
+                  }}
+                >
+                  {getStatusIcon(trackingStatus.status)}
+                </span>
+                <Card.Title className='mt-2' style={{ fontWeight: 'bold', color: getStatusColor(trackingStatus.status), textTransform: 'capitalize' }}>
+                  {trackingStatus.status}
+                </Card.Title>
+                <Card.Text>
+                  Your order is currently {trackingStatus.status.toLowerCase()}.
+                </Card.Text>
+              </Card.Body>
+            </Card>
           </div>
-        ))}
-      </div>
+        </>
+      )}
     </div>
   );
 };
