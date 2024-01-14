@@ -123,13 +123,15 @@ const BreaderInfo = () => {
     }
   };
   
-
   return (
     <div className='main-container'>
-
+        <a href = 'http://127.0.0.1:8000/admin/transaction/abattoirpaymenttobreader/'>
+      <button className='btn btn-sm btn-primary' style={{ float: 'right', marginRight: '10px', borderRadius: '5px' }}>Super Admin</button>
+      </a>
       <div className='container-fluid' style={{ minHeight: '72vh' }}>
+
+      <hr />
         <div className='buttons'>
-        <button className='btn btn-sm btn-primary' style={{ float: 'right', marginRight: '10px', borderRadius: '5px' }}>Super Admin</button>
         <button
           className='mb-2'
           style={{ backgroundColor: 'goldenrod', borderRadius: '30px', fontSize: '14px' }}
