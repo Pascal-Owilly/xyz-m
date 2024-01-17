@@ -4,17 +4,23 @@ import { useParams } from 'react-router-dom';
 import { Card, Table, Button } from 'react-bootstrap';
 import axios from 'axios';
 import { BASE_URL } from './auth/config';
+import Cookies from 'js-cookie';
 
 const InvoiceDetails = () => {
   const { invoiceNumber } = useParams();
   const [invoiceDetails, setInvoiceDetails] = useState({});
   const [loading, setLoading] = useState(true);
+  const accessToken = Cookies.get('accessToken');
 
   useEffect(() => {
     const fetchInvoiceDetails = async () => {
       try {
         // Fetch detailed invoice information based on the invoice number
-        const response = await axios.get(`${BASE_URL}/api/generate-invoice/${invoiceNumber}`);
+        const response = await axios.get(`${BASE_URL}/api/generate-invoice/${invoiceNumber}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
         setInvoiceDetails(response.data);
         setLoading(false);
         console.log('Invoice response data', response.data)
@@ -24,7 +30,7 @@ const InvoiceDetails = () => {
       }
     };
 
-    fetchInvoiceDetails();
+    fetchInvoiceDetails();  
   }, [invoiceNumber]);
 
   return (
@@ -35,7 +41,7 @@ const InvoiceDetails = () => {
       ) : (
         <Card>
           <Card.Body>
-            <Card.Title>Invoice Number: {invoiceDetails.invoice_id}</Card.Title>
+            <Card.Title>Invoice Number: {invoiceDetails.invoice_number}</Card.Title>
             <Table striped bordered hover>
               <thead>
                 <tr>
