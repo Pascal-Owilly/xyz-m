@@ -165,62 +165,29 @@ const baseUrl = BASE_URL;
     <div className='main-container' style={{ minHeight: '85vh' }}>
       <h4>Create Purchase Order</h4>
 
-      <Card>
-        <Card.Body>
-          <Form>
-            <Form.Group controlId="formStatus">
-              <Form.Label>Status</Form.Label>
-              <Form.Control
-                as="select"
-                name="status"
-                value={purchaseOrderFormData.status}
-                onChange={handlePurchaseOrderFormChange}
-              >
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="declined">Declined</option>
-              </Form.Control>
-            </Form.Group>
-
-            <Form.Group controlId="formVendorNotification">
-              <Form.Label>Vendor Notification</Form.Label>
-              <Form.Control
-                type="text"
-                name="vendor_notification"
-                value={purchaseOrderFormData.vendor_notification}
-                onChange={handlePurchaseOrderFormChange}
+      <Card style={{ maxWidth: '400px', margin: 'auto', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+  <Card.Body style={{ padding: '20px' }}>
+    <Form style={{ marginBottom: '20px' }}>
+      {/* ... Existing Form Groups ... */}
+      
+      <div style={{ maxHeight: '200px', overflowY: 'scroll', marginBottom: '20px' }}>
+        <h2>Items List</h2>
+        <ul style={{ listStyleType: 'none', padding: '0' }}>
+          {items.map(item => (
+            <li key={item.id} style={{ marginBottom: '10px' }}>
+              <input
+                type="checkbox"
+                checked={selectedItems.includes(item.id)}
+                onChange={() => handleItemCheckboxChange(item.id)}
+                style={{ marginRight: '10px' }}
               />
-            </Form.Group>
+              {`Product ${item.product} - Quantity: ${item.quantity}`}
+            </li>
+          ))}
+        </ul>
+      </div>
 
-            <Form.Group controlId="formItems">
-              <Form.Label>Items</Form.Label>
-              {products.map((product) => (
-                <Form.Check
-                  key={product.id}
-                  type="checkbox"
-                  id={`checkbox-${product.id}`}
-                  label={product.name}
-                  value={product.id}
-                  onChange={handleItemCheckboxChange}
-                />
-              ))}
-            </Form.Group>
-            <div>
-    <h2>Items List</h2>
-    <ul>
-      {items.map(item => (
-        <li key={item.id}>
-          <input
-            type="checkbox"
-            checked={selectedItems.includes(item.id)}
-            onChange={() => handleItemCheckboxChange(item.id)}
-          />
-          {`Product ${item.product} - Quantity: ${item.quantity}`}
-        </li>
-      ))}
-    </ul>
-
-    <Form.Group as={Row} controlId="formBuyer">
+      <Form.Group as={Row} controlId="formBuyer">
   <Form.Label column sm="2">
     Buyer
   </Form.Label>
@@ -234,13 +201,13 @@ const baseUrl = BASE_URL;
   </Col>
 </Form.Group>
 
-    <Button variant="primary" type="button" onClick={handleCreatePurchaseOrder}>
-      Create Purchase Order
-    </Button>
-  </div>
-          </Form>
-        </Card.Body>
-      </Card>
+      <Button variant="primary" type="button" onClick={handleCreatePurchaseOrder}>
+        Create Purchase Order
+      </Button>
+    </Form>
+  </Card.Body>
+</Card>
+
     </div>
   );
 };

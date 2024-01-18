@@ -38,7 +38,7 @@ import DispatchAndShipping from './pages/export_handling/DispatchAndShipping';
 import Arrival from './pages/export_handling/Arrival';
 
 import TrackInvoice from './pages/TrackInvoice';
-
+import Buyer from './pages/buyers/Buyer';
 
 const App = () => {
   return (
@@ -61,6 +61,8 @@ const App = () => {
             <Route path="/unauthorized" element={<Unauthorized />} />
 
             <Route path="/buyer_dashboard" element={<BuyerDashboard />} />
+            <Route path="/buyer" element={<Buyer />} />
+
             <Route path="/supplier_dashboard" element={<BreederDashboard />} />
             <Route path="/slaughterhouse-dashboard" element={<SlaughterhouseDashboard />} />
             <Route path="/employee_dashboard" element={<EmployeeDashboard />} />

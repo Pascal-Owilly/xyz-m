@@ -281,7 +281,7 @@ const logout = async () => {
                 Buyer Dashboard
               </a></li>
                 <li><a href="slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
-                <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
+                <li><a href="buyer">Buyer Dashboard</a></li>
                 <li><a href="bank_teller_dashboard">Bank Teller Dashboard</a></li>
 
                 {/* <li>
