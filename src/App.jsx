@@ -60,8 +60,8 @@ const App = () => {
             <Route path="/admin_dashboard" element={<AdministrationDashboard />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
 
-            <Route path="/buyer_dashboard" element={<BuyerDashboard />} />
-            <Route path="/buyer" element={<Buyer />} />
+            <Route path="/invoice_tracking" element={<BuyerDashboard />} />
+            <Route path="/buyer_dashboard" element={<Buyer />} />
 
             <Route path="/supplier_dashboard" element={<BreederDashboard />} />
             <Route path="/slaughterhouse-dashboard" element={<SlaughterhouseDashboard />} />

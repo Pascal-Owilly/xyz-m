@@ -1,27 +1,75 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Form, Button,Row , Col} from 'react-bootstrap';
+import { Container, Row, Col, Table, Button, Pagination } from 'react-bootstrap';
+import { HiBell, HiCube, HiExclamation, HiCurrencyDollar, HiChartBar } from 'react-icons/hi';
 import axios from 'axios';
 import { BASE_URL } from './auth/config';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import { checkUserRole } from './auth/CheckUserRoleUtils';
 
-const PurchaseOrderForm = () => {
-  const navigate = useNavigate();
-  const accessToken = Cookies.get('accessToken');
+const styles = {
+  invoiceContainer: {
+    // backgroundColor: '#f5f5f5',
+    padding: '20px',
+    minHeight: '80vh',
+  },
+  invoiceItems: {
+    backgroundColor: '#ffffff',
+    borderRadius: '8px',
+    padding: '20px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    height: '100%',
+    overflow: 'hidden', // Hide content overflow during transition
+    transition: 'height 0.3s ease-in-out', // Transition height property
+  },
+  tableCell: {
+    border: 'none',
+  },
+  invoiceList: {
+    listStyle: 'none',
+    padding: 0,
+  },
+  listItem: {
+    marginBottom: '10px',
+  },
+};
+
+const BuyerInvoice = () => {
+
+  const Greetings = () => {
+    const currentTime = new Date();
+    const currentHour = currentTime.getHours();
+    let greeting;
+  
+    if (currentHour < 5) {
+      greeting = 'Good night';
+    } else if (currentHour < 12) {
+      greeting = 'Good morning';
+    } else if (currentHour < 18) {
+      greeting = 'Good afternoon';
+    } else {
+      greeting = 'Good evening';
+    }
+  
+    return greeting;
+  };  
+
+  // Sample invoice data
 const baseUrl = BASE_URL;
-  const [products, setProducts] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [username, setUsername] = useState('');
-  const [profile, setProfile] = useState(null);
 
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [items,setItems] = useState([])
-  const [purchaseOrderFormData, setPurchaseOrderFormData] = useState({
-    status: 'pending',
-    vendor_notification: '',
-    buyer: currentUser ? currentUser.id : null, // Set the buyer field when initializing
-    items: [],
-  });
+  const role = checkUserRole()
+  const [profile, setProfile] = useState([]);
+      const accessToken = Cookies.get('accessToken');
+      const [user, setUser] = useState({});
+      const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate()
+  const [invoiceData, setInvoiceData] = useState([]);
+
+  // paination logic
+  const itemsPerPage = 4; // Number of items to display per page
+  const [currentPage, setCurrentPage] = useState(1);
+
 
   const refreshAccessToken = async () => {
     try {
@@ -44,172 +92,230 @@ const baseUrl = BASE_URL;
     }
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const accessToken = Cookies.get('accessToken');
-  
-        if (accessToken) {
-          const response = await axios.get(`${baseUrl}/auth/user/`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
-  
-          const userProfile = response.data;
-          setProfile(userProfile);
-          setUsername(userProfile.user.first_name + " " + userProfile.user.last_name);
-          setCurrentUser(userProfile.user); // Update the currentUser state
-        }
-      } catch (error) {
-        // Check if the error indicates an expired access token
-        if (error.response && error.response.status === 401) {
-          // Attempt to refresh the access token
-          await refreshAccessToken();
-        } else {
-          console.error('Error fetching user data:', error);
-        }
-      }
-    };
-  
-    fetchUserData();
-  }, [baseUrl]);
-
-  
-  useEffect(() => {
-    // Fetch items when the component mounts
-    const fetchItems = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/api/items/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setItems(response.data);
-        console.log('Items:', response.data); // Add this line
-      } catch (error) {
-        console.error('Error fetching items:', error);
-      }
-    };
-  
-    fetchItems();
-  }, [accessToken]);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/api/products/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setProducts(response.data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
-
-    fetchProducts();
-  }, [accessToken]);
-
-  const handlePurchaseOrderFormChange = (e) => {
-    setPurchaseOrderFormData({
-      ...purchaseOrderFormData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleItemCheckboxChange = (itemId) => {
-    // Toggle the selection of the item
-    setSelectedItems((prevSelectedItems) => {
-      if (prevSelectedItems.includes(itemId)) {
-        return prevSelectedItems.filter((id) => id !== itemId);
-      } else {
-        return [...prevSelectedItems, itemId];
-      }
-    });
-  };
-
-  const handleCreatePurchaseOrder = async () => {
+  const fetchUserData = async () => {
     try {
-      const selectedItemsData = items.filter(item => selectedItems.includes(item.id));
+      const accessToken = Cookies.get('accessToken');
   
-      // Log buyer information
-      console.log('Buyer Info:', {
-        buyerId: currentUser ? currentUser.id : null,
-        buyerUsername: currentUser ? currentUser.username : null,
-      });
+      if (accessToken) {
+        const response = await axios.get(`${baseUrl}/auth/user/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
   
-      const response = await axios.post(`${BASE_URL}/api/purchase-orders/`, {
-        ...purchaseOrderFormData,
-        buyer: currentUser ? currentUser.id : null,
-        items: selectedItems,
-      }, {
+        const userProfile = response.data;
+        setProfile(userProfile);
+      }
+    } catch (error) {
+      // Check if the error indicates an expired access token
+      if (error.response && error.response.status === 401) {
+        // Attempt to refresh the access token
+        await refreshAccessToken();
+      } else {
+        console.error('Error fetching user data:', error);
+      }
+    }
+  };
+
+  const fetchInvoiceData = async () => {
+    try {
+      const accessToken = Cookies.get('accessToken');
+
+      // Fetch user data to get the user's ID
+      const userResponse = await axios.get(`${baseUrl}/auth/user/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-  
-      console.log('Purchase Order created:', response.data);
-  
-      // Redirect or show a success message
-      navigate('/purchase-orders/' + response.data.id); // Adjust the route based on your setup
+
+      const userId = userResponse.data.id;
+
+      // Fetch invoices related to the logged-in user
+      const response = await axios.get(`${baseUrl}/api/generate-invoice/?buyer=${userId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      setInvoiceData(response.data);
+      console.log('buyer response', response.data);
     } catch (error) {
-      console.error('Error creating purchase order:', error);
+      // Handle errors
+      console.error('Error fetching invoice data:', error);
     }
   };
-  
-  
+
+  // Fetch invoice data when the component mounts
+  useEffect(() => {
+    fetchInvoiceData();
+  }, []);
+
+  const invoices = invoiceData.map((invoice) => ({
+      invoiceNumber: invoice.invoice_number,
+      date: invoice.invoice_date,
+      dueDate: invoice.invoice_date,
+      billTo: {
+        name: invoice.buyer ? invoice.buyer.first_name : '', // Check if buyer is not null or undefined
+        address: '123 Main Street, City, State, ZIP',
+        email: 'john.doe@example.com',
+        phone: '(123) 456-7890',
+      },
+      shipTo: 'Same as Bill To',
+      items: [
+        { title: invoice.breed, description: 'Goat meat from Africa', saleType: invoice.sale_type, quantity: invoice.quantity, unitPrice: invoice.unit_price  },
+      ],
+      taxRate: 0.08,
+  }));
+
+  // Pagination
+  const totalPages = Math.ceil(invoices.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentInvoices = invoices.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+
+  // State to manage expanded/minimized state of invoices
+  const [expandedInvoices, setExpandedInvoices] = useState({});
+
+  const toggleInvoice = (invoiceNumber) => {
+    setExpandedInvoices((prevExpanded) => ({
+      ...prevExpanded,
+      [invoiceNumber]: !prevExpanded[invoiceNumber],
+    }));
+  };
 
   return (
-    <div className='main-container' style={{ minHeight: '85vh' }}>
-      <h4>Create Purchase Order</h4>
 
-      <Card style={{ maxWidth: '400px', margin: 'auto', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-  <Card.Body style={{ padding: '20px' }}>
-    <Form style={{ marginBottom: '20px' }}>
-      {/* ... Existing Form Groups ... */}
-      
-      <div style={{ maxHeight: '200px', overflowY: 'scroll', marginBottom: '20px' }}>
-        <h2>Items List</h2>
-        <ul style={{ listStyleType: 'none', padding: '0' }}>
-          {items.map(item => (
-            <li key={item.id} style={{ marginBottom: '10px' }}>
-              <input
-                type="checkbox"
-                checked={selectedItems.includes(item.id)}
-                onChange={() => handleItemCheckboxChange(item.id)}
-                style={{ marginRight: '10px' }}
-              />
-              {`Product ${item.product} - Quantity: ${item.quantity}`}
-            </li>
-          ))}
-        </ul>
+    <Container fluid className='main-container' style={{ height: 'auto', backgroundColor: '#ddd' }}>
+      <Row>
+    <Col lg={{ span: 3, offset: 9 }} className='text-right'>
+      <div style={{ marginBottom: '25px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width:'auto' }}>
+        <p className='text-center mt-1'>{`${Greetings()} `} </p>
+        <span style={{ textTransform: 'capitalize' }}></span>
+
       </div>
+    </Col>
+  </Row>
 
-      <Form.Group as={Row} controlId="formBuyer">
-  <Form.Label column sm="2">
-    Buyer
-  </Form.Label>
-  <Col sm="10">
-    <Form.Control
-      type="text"
-      name="buyer"
-      value={currentUser ? currentUser.username : ''}
-      disabled
-    />
-  </Col>
-</Form.Group>
-
-      <Button variant="primary" type="button" onClick={handleCreatePurchaseOrder}>
-        Create Purchase Order
-      </Button>
-    </Form>
-  </Card.Body>
-</Card>
-
+  <Row>
+    
+<Col lg={8} style={styles.invoiceContainer}>
+  <h3 className='mb-3'>Invoice Tracking</h3>
+  {/* {loading ? (
+            <div className="text-center mt-5">
+              Loading invoices...
+            </div>
+          ) : (
+            <> */}
+  {invoiceData.length === 0 ? (
+    <div className="text-center mt-5">
+      <HiExclamation size={40} color='#ccc' />
+      <p className="mt-3">No invoices yet !</p>
     </div>
+  ) : (
+    <>
+      {currentInvoices.map((invoice, index) => (
+        <Container key={index} style={{ ...styles.invoiceItems, height: expandedInvoices ? 'auto' : '100%', marginBottom: '20px' }}>
+          <Button variant="link" onClick={() => toggleInvoice(invoice.invoiceNumber)}>
+            {expandedInvoices[invoice.invoiceNumber] ? 'Hide Invoice' : 'Show Invoice'} - {invoice.invoiceNumber}
+          </Button>
+          {expandedInvoices[invoice.invoiceNumber] && (
+            <Table borderless>
+<tbody>
+            <tr>
+              <td><strong>Invoice Number:</strong></td>
+              <td style={{ textTransform: 'uppercase' }}>{invoice.invoiceNumber}</td>
+              <td><strong>Date:</strong></td>
+              <td>{invoice.date}</td>
+            </tr>
+            <tr>
+              <td><strong>Due Date:</strong></td>
+              <td>{invoice.dueDate}</td>
+              <td colSpan="2"></td>
+            </tr>
+            <tr>
+              <td colSpan="2"></td>
+              <td colSpan="2"></td>
+            </tr>
+            {/* Bill To */}
+            <tr>
+              <td colSpan="4">
+                <h5>Bill To:</h5>
+                <p>{invoice.billTo.name}</p>
+                <p>{invoice.billTo.address}</p>
+                <p>Email: {invoice.billTo.email}</p>
+                <p>Phone: {invoice.billTo.phone}</p>
+                <hr />
+              </td>
+            </tr>
+            {/* Ship To */}
+            <tr>
+              <td colSpan="4">
+                <h5>Ship To:</h5>
+                <p>{invoice.shipTo}</p>
+                <hr />
+              </td>
+            </tr>
+            {/* Items */}
+            <tr>
+              <td colSpan="4">
+                <h5>Items:</h5>
+                <Table>
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Description</th>
+                      <th>Quantity</th>
+                      <th>Sale Type</th>
+                      <th>Unit Price</th>
+                      <th>Total Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {invoice.items.map((item, itemIndex) => (
+                      <tr key={itemIndex}>
+                        <td>{item.title}</td>
+                        <td>{item.description}</td>
+                        <td>{item.quantity} pc</td>
+                        <td>{item.saleType}</td>
+                        <td>$ {item.unitPrice}</td>
+                        <td>$ {item.quantity * item.unitPrice}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+                <hr />
+              </td>
+            </tr>
+          </tbody>            </Table>
+          )}
+        </Container>
+      ))}
+      {/* Pagination */}
+      <div className="d-flex justify-content-center mt-3">
+        <Pagination>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <Pagination.Item key={page} active={page === currentPage} onClick={() => paginate(page)}>
+              {page}
+            </Pagination.Item>
+          ))}
+        </Pagination>
+      </div>
+    </>
+  )}
+  {/* </>
+  )} */}
+
+</Col>
+
+
+                {/* Column 4 (Placeholder) */}
+                     </Row>
+    </Container>
+    
   );
 };
 
-export default PurchaseOrderForm;
+export default BuyerInvoice;

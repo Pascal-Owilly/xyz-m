@@ -41,6 +41,12 @@
   color: #888;
 }
 
+.active-buyer-button {
+  background-color: green;
+  color: white; /* Optionally set text color to white for better contrast */
+}
+
+
 
 
 

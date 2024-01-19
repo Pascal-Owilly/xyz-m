@@ -6,142 +6,156 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const Buyer = () => {
-    const Greetings = () => {
-        const currentTime = new Date();
-        const currentHour = currentTime.getHours();
-        let greeting;
-      
-        if (currentHour < 5) {
-          greeting = 'Good night';
-        } else if (currentHour < 12) {
-          greeting = 'Good morning';
-        } else if (currentHour < 18) {
-          greeting = 'Good afternoon';
-        } else {
-          greeting = 'Good evening';
+const BuyerDash = () => {
+  const Greetings = () => {
+    const currentTime = new Date();
+    const currentHour = currentTime.getHours();
+    let greeting;
+
+    if (currentHour < 5) {
+      greeting = 'Good night';
+    } else if (currentHour < 12) {
+      greeting = 'Good morning';
+    } else if (currentHour < 18) {
+      greeting = 'Good afternoon';
+    } else {
+      greeting = 'Good evening';
+    }
+
+    return greeting;
+  };
+
+  const baseUrl = BASE_URL;
+  const navigate = useNavigate()
+  const [profile, setProfile] = useState([]);
+  const authToken = Cookies.get('authToken');
+  const [user, setUser] = useState({});
+  const [buyerInvoices, setBuyerInvoices] = useState([]);
+  const accessToken = Cookies.get('accessToken');
+
+  const refreshAccessToken = async () => {
+    try {
+      console.log('Fetching token refresh...');
+  
+      const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
+  
+      const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+        refresh: refreshToken,
+      });
+  
+      const newAccessToken = response.data.access;
+      // Update the stored access token
+      Cookies.set('accessToken', newAccessToken);
+      // Optional: You can also update the user data using the new access token
+      await fetchUserData(newAccessToken);
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
+      // Handle the error, e.g., redirect to the login page
+    }
+  };
+  
+  const fetchUserData = async (accessToken) => {
+    try {
+      // if (!accessToken) {
+      //   navigate('/buyer');
+      //   return;
+      // }
+  
+      const response = await axios.get(`${baseUrl}/auth/buyers/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+  
+      const userProfile = response.data;
+      setProfile(userProfile);
+      console.log(userProfile)
+    } catch (error) {
+      // Check if the error indicates an expired access token
+      if (error.response && error.response.status === 401) {
+        // Attempt to refresh the access token
+        await refreshAccessToken();
+      } else {
+        console.error('Error fetching user data:', error);
+      }
+    }
+  };
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await fetchUserData(authToken);
+
+        // If user data is available, extract the user ID and check if they are a buyer
+        if (profile.id) {
+          const response = await axios.get(`${baseUrl}/auth/user/`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+
+          const userData = response.data;
+          console.log('user date', userData)
+          if (userData.is_buyer) {
+            // If the user is a buyer, fetch and set buyer invoices
+            const buyerInvoicesResponse = await axios.get(`${baseUrl}/api/buyers/${userData.id}/invoices/`, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            });
+
+            setBuyerInvoices(buyerInvoicesResponse.data);
+            console.log(buyerInvoicesResponse.data)
+          } else {
+            // If the user is not a buyer, you can handle it here (e.g., display a message)
+            console.log('User is not a buyer');
+          }
         }
-      
-        return greeting;
-      };  
-        
-          const baseUrl = BASE_URL;
-          const navigate = useNavigate()
-          const [profile, setProfile] = useState([]);
-          const authToken = Cookies.get('authToken');
-          const [user, setUser] = useState({});
-          const [localSuppliesData, setLocalSuppliesData] = useState(null);
-          const [buyerInvoices, setBuyerInvoices] = useState([]);
+      } catch (error) {
+        console.error('Error fetching initial data:', error);
+      }
+    };
 
-          useEffect(() => {
-             const fetchUserData = async () => {
-               try {
-                const headers = {
-                    Authorization: `Token ${authToken}`,
-                    'Content-Type': 'application/json',
-                  };
-                const [buyer, invoiceGenerate, slaughteredData, partTotalsCount, breedSales, breedCut] = await Promise.all([
-                    axios.get(`${baseUrl}/api/buyers/`, { headers }),
-                    axios.get(`${baseUrl}/api/generate-invoice/`, { headers }),
-                    
-                  ]);
-                 const response = await axios.get(`${baseUrl}/auth/user/`, {
-                   headers: {
-                     Authorization: `Token ${authToken}`,
-                   },
-                 });
-                 console.log('Buyers', buyer)
-                 console.log('invoice', invoiceGenerate)
+    fetchData();
+  }, [authToken, baseUrl, profile.id, accessToken]);
 
-                 const userData = response.data;
-                 setUser(userData);
-               } catch (error) {
-                 console.error('Error fetching user data:', error);
-               }
-             };
+  return (
+    <>
+      <div className='main-container' style={{minHeight:'85vh'}}>
+        {/* Navbar */}
+        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+          <h5 className='mx-2'>Buyer Dashboard</h5>
+          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav ml-auto">
+              
+              <li className="nav-item">
+                <Link className="nav-link" to="/">Letter of credit</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/invoice_tracking">Invoice tracking</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/">Banking transactions</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/">Paid off deals</Link>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+
+        <div>
+          
+
          
-             fetchUserData();
-           }, [authToken]);
-
-           useEffect(() => {
-            const fetchBuyerInvoices = async () => {
-              try {
-                const response = await axios.get(`${baseUrl}/api/buyer/${buyerId}`, {
-                  headers: {
-                    Authorization: `Token ${authToken}`,
-                  },
-                });
-                setBuyerInvoices(response.data);
-              } catch (error) {
-                console.error('Error fetching buyer invoices:', error);
-              }
-            };
-        
-            // Replace 'buyerId' with the actual buyer ID you want to fetch invoices for
-            const buyerId = 1; // Replace with the actual buyer ID
-            fetchBuyerInvoices();
-          }, [authToken, baseUrl]);
-        
-         
-        
-    return (
-        <>
-            <div className='main-container'>
-                <h2 className=''>Buyer Dashboard</h2>
-
-                <div>
-                    {/* Flash message */}
-                    <div style={{ marginBottom: '40px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width:'200px', float:'right' }}>
-                      <p className='text-center'>
-                        {`${Greetings()}, `}
-                        <span style={{ textTransform: 'capitalize' }}>{user.username}!</span>
-                      </p>
-                    </div>
-
-                    <div>
-        <hr />
-
-        <ul>
-          {buyerInvoices.map((invoice) => (
-            <li key={invoice.id}>
-              Invoice #{invoice.id} - Total Price: ${invoice.total_price}
-            </li>
-          ))}
-        </ul>
+        </div>
       </div>
-
-                    {/* Notifications */}
-                    <div style={{ borderRadius: '50%', position: 'relative', float: 'right', top: 0, backgroundColor: 'lightblue', padding: '10px', width: '40px', height: '40px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-                        <HiBell size={20} color='white' />
-                    </div>
-
-                    {/* Purchase Issuance */}
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiCube className='mr-2' /> LC Issued
-                    </button>
-
-                    {/* Banking Transactions */}
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiCurrencyDollar className='mr-2' /> Banking Transactions
-                    </button>
-
-                    {/* Cataloging live deals */}
-                    <button style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiExclamation className='mr-2' /> Cataloging live deals
-                    </button>
-
-                    <button className='mx-1' style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', display: 'inline-block', marginBottom: '10px', padding: '15px', width: '48%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiCube className='mr-2' /> Invoice tracking
-                    </button>
-
-                    {/* Tracking financed and paid-off deals */}
-                    <button style={{ backgroundColor: 'white', color: '#333', textAlign: 'left', marginBottom: '10px', padding: '15px', width: '100%', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                        <HiChartBar className='mr-2' /> Tracking financed and paid-off deals
-                    </button>
-                </div>
-            </div>
-        </>
-    );
+    </>
+  );
 }
 
-export default Buyer;
+export default BuyerDash;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BASE_URL } from './auth/config';
 import { Card, Button, Table } from 'react-bootstrap';
-
+import { Link } from 'react-router-dom';
 const CustomerServiceDashboard = () => {
   const [payments, setPayments] = useState([]);
   const [selectedPayment, setSelectedPayment] = useState(null);
@@ -64,9 +64,34 @@ const CustomerServiceDashboard = () => {
   };
 
   return (
-    <div className='main-container container' style={{ minHeight: '85vh' }}>
+    <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
 
-        <h4 className='text-primary'>XYZ Customer Transaction management Service</h4>
+
+         {/* Navbar */}
+        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+          <h5 className='mx-2'>Customer Service</h5>
+          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav ml-auto">
+              
+              <li className="nav-item">
+                <Link className="nav-link" to="/">Letter of credit</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/">Invoice tracking</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/">Banking transactions</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/">Paid off deals</Link>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
         <hr />
       <h5 className='mb-4'>Payment Information & Updates</h5>
       <Card>
