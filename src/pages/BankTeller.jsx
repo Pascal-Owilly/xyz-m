@@ -1,6 +1,6 @@
 // Import necessary dependencies
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Card, Container, Form, Button, ProgressBar } from 'react-bootstrap';
+import { Row, Col, Card, Container, Form, Button, ProgressBar, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { FaTruck } from 'react-icons/fa'; // Assuming you're using react-icons for the truck icon
 import { BASE_URL } from './auth/config';
 import Cookies from 'js-cookie';
@@ -28,6 +28,10 @@ const BankDashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [logisticsStatuses, setLogisticsStatuses] = useState([]);
   const [orders, setOrders] = useState([]);
+
+  const [lcUploadSuccess, setLcUploadSuccess] = useState(false);
+  const [lcUploadMessage, setLcUploadMessage] = useState('');
+
 
   // Status tracking
 
@@ -194,25 +198,29 @@ const BankDashboard = () => {
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            'X-User-ID': userProfile?.user?.id, // Assuming user ID is part of your user profile
-            'X-User-Email': userProfile?.user?.email, // Assuming user email is part of your user profile
+            'X-User-ID': userProfile?.user?.id,
+            'X-User-Email': userProfile?.user?.email,
           },
         }
       );
   
       console.log('upload response', response);
-      if (!response.ok) {
-        const data = response.data;
-        setLcUploadError(data.error || 'Error uploading letter of credit document');
-      } else {
-        setLcUploadError(null);
+      if (response.status === 201) {
+        setLcUploadSuccess(true);
+        setLcUploadMessage('Letter of credit document uploaded successfully');
         // Optionally, you can perform additional actions upon successful upload
+      } else {
+        const data = response.data;
+        setLcUploadSuccess(false);
+        setLcUploadMessage(data.error || 'Error uploading letter of credit document');
       }
     } catch (error) {
       console.error('Error uploading letter of credit document:', error);
-      setLcUploadError('Error uploading letter of credit document');
+      setLcUploadSuccess(false);
+      setLcUploadMessage('Error uploading letter of credit document');
     }
   };
+  
   
   const handleButtonClick = (section) => {
     setActiveSection(section);
@@ -223,29 +231,24 @@ const BankDashboard = () => {
   return (
    <div className='main-container ' style={{ minHeight: '85vh', backgroundColor: '#f0f8ff' }}>
 
-  {/* Navbar */}
-  <nav className="navbar navbar-expand-lg navbar-dark bg-success">
-  <Link  className="navbar-brand">Bank Dashboard</Link>
-  <button
-    className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span className="navbar-toggler-icon"></span>
-  </button>
-  <div className="collapse navbar-collapse" id="navbarNav">
-    <ul className="navbar-nav ml-auto">
-      <li onClick={() => handleButtonClick('BreederPayments')}
-        className={`mr-2 nav-item ${activeSection === 'BreederPayments' ? 'active-buyer-button' : ''}`}
-      >
-        <Link className="nav-link" style={{ color: '#fff' }}>Breeder Payments</Link>
-      </li>
-      <li onClick={() => handleButtonClick('LetterOfCredit')} className="nav-item">
-        <Link className="nav-link" style={{ color: '#fff' }}>Letter of credit</Link>
-      </li>
-      <li onClick={() => handleButtonClick('InvoiceTracking')} className="nav-item">
-        <Link className="nav-link" style={{ color: '#fff' }}>Invoice tracking</Link>
-      </li>
-    </ul>
-  </div>
-</nav>
+ {/* Navbar */}
+ <Navbar bg="success" expand="lg" variant="dark">
+        <Navbar.Brand >Bank Dashboard</Navbar.Brand>
+        <Navbar.Toggle aria-controls="navbarNav" />
+        <Navbar.Collapse id="navbarNav">
+          <Nav className="ml-auto">
+            <Nav.Link  onClick={() => handleButtonClick('BreederPayments')} className={`mr-2 text-white ${activeSection === 'BreederPayments' ? 'active-buyer-button' : ''}`}>
+              Breeder Payments
+            </Nav.Link>
+            <Nav.Link className='text-white' onClick={() => handleButtonClick('LetterOfCredit')}>
+              Letter of Credit
+            </Nav.Link>
+            <Nav.Link className='text-white' onClick={() => handleButtonClick('InvoiceTracking')}>
+              Invoice Tracking
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
 
         <Container>
         {activeSection === 'BreederPayments' && (
@@ -316,39 +319,53 @@ const BankDashboard = () => {
             </Col>
           </Row>
         )}
-        {activeSection === 'LetterOfCredit' && (
-          <Row>
-            <Col md={10}>
-              <Col>
-              <h5 className="text-success mb-4">Upload Letter of Credit Document</h5>
-                <Form>
-                  <Form.Group controlId="userInfo">
-                    <Form.Label className="text-primary"></Form.Label>
-                    {/* {userProfile && userProfile.user && (
-                    <Form.Control
-                      type="hidden"
-                      readOnly
-                      value={`${userProfile.user.first_name} ${userProfile.user.last_name} `}
-                    />
-                  )} */}
+       {activeSection === 'LetterOfCredit' && (
+  <Row>
+    <Col md={10}>
+      <Col className="bg-light p-4 rounded shadow">
+      {lcUploadSuccess ? (
+  <div>
+    <h4 className="text-success mb-4">Letter of Credit Document Uploaded Successfully</h4>
+    <p className="text-success">
+      We will get back to you once the review is complete.
+      <br />
+      Thank you for your submission.
+    </p>
+    <Button variant="secondary btn-sm" onClick={() => setActiveSection('BreederPayments')} className="mt-3">
+      Back 
+    </Button>
+  </div>
+) : (
+  <div>
+    <h4 className="text-success mb-4">Upload Letter of Credit Document</h4>
+    <Form>
+      <Form.Group controlId="lcDocument">
+        <Form.Label className="text-primary">Choose the Letter of Credit Document</Form.Label>
+        <Form.Control
+          type="file"
+          onChange={(e) => setLcDocument(e.target.files[0])}
+        />
+      </Form.Group>
+      <Button variant="primary btn-sm mt-3" onClick={handleLcUpload} style={{ width: '30%', fontSize:'15px' }}>
+        Upload
+      </Button>
+    </Form>
+    {lcUploadMessage && (
+      <div>
+        <p className={lcUploadSuccess ? "text-success mt-3" : "text-danger mt-3"}>{lcUploadMessage}</p>
+        <Button variant="secondary" onClick={() => setActiveSection('BreederPayments')} className="mt-3">
+          Back to Breeder Payments
+        </Button>
+      </div>
+    )}
+  </div>
+)}
 
-  </Form.Group>
-  <Form.Group controlId="lcDocument">
-    <Form.Label className="text-primary">Letter of Credit Document</Form.Label>
-    <Form.Control
-      type="file"
-      onChange={(e) => setLcDocument(e.target.files[0])}
-    />
-  </Form.Group>
-  <Button variant="primary"    onClick={handleLcUpload} style={{width:'200px'}}>
-    Upload 
-  </Button>
-</Form>
+      </Col>
+    </Col>
+  </Row>
+)}
 
-              </Col>
-            </Col>
-          </Row>
-        )}
 
         {activeSection === 'InvoiceTracking' && (
   <>
@@ -389,12 +406,26 @@ const BankDashboard = () => {
               <div>
                 {/* <span style={{ fontWeight: 'bold' }}>{`Invoice #${status.invoice_number}`}</span> */}
                 <br />
-                Invoice No: <span style={{fontWeight:'bold'}} className='text-dark'>{` ${status.invoice_number}`}</span>
-              </div>
+                <p  style={{ margin: '10px 0', fontSize: '18px' }}>
+  Invoice No: <span className='text-success' style={{ fontWeight: 'normal', color: '#007bff', fontWeight:'bold' }}>{` #${status.invoice_number}`}</span>
+</p>              </div>
               <div>
-                <Card style={{width:'170px', height:'40px', textAlign:'center', display:'flex', alignItems:'center', justifyContent:'center', backgroundColor:'blue', borderRadius:'30px', textTransform:'capitalize'}} className={'card text-light'} disabled>
-                  {status.status}
-                </Card>
+              <Card style={{
+  width: '170px',
+  height: '40px',
+  textAlign: 'center',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: 'linear-gradient(to right, #4e73df, #224abe)', // Adjust gradient colors
+  borderRadius: '0', // Removed border radius
+  textTransform: 'capitalize',
+  boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', // Added box shadow for a floating effect
+  color: '#fff', // Adjusted text color
+}} className={'card text-light'} disabled>
+  {status.status}
+</Card>
+
               </div>
             </li>
           ))}

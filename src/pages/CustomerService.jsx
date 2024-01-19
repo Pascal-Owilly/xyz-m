@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BASE_URL } from './auth/config';
-import { Card, Button, Table } from 'react-bootstrap';
+import { Row, Col, Card, Container, Form, Table, Button, ProgressBar, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 const CustomerServiceDashboard = () => {
   const [payments, setPayments] = useState([]);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const baseUrl = BASE_URL;
+
+  const [activeSection, setActiveSection] = useState('BreederPayments');
 
   useEffect(() => {
     // Fetch payments from the new endpoint
@@ -67,31 +69,24 @@ const CustomerServiceDashboard = () => {
     <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
 
 
-         {/* Navbar */}
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-          <h5 className='mx-2'>Customer Service</h5>
-          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ml-auto">
-              
-              <li className="nav-item">
-                <Link className="nav-link" to="/">Letter of credit</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/">Invoice tracking</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/">Banking transactions</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/">Paid off deals</Link>
-              </li>
-            </ul>
-          </div>
-        </nav>
-
+        {/* Navbar */}
+ <Navbar bg="primary" expand="lg" variant="dark">
+        <Navbar.Brand ><span style={{fontWeight:'bold'}}>Customer Service</span></Navbar.Brand>
+        <Navbar.Toggle aria-controls="navbarNav" />
+        <Navbar.Collapse id="navbarNav">
+          <Nav className="ml-auto">
+            <Nav.Link  onClick={() => handleButtonClick('BreederPayments')} className={`mr-2 text-white ${activeSection === 'BreederPayments' ? 'active-buyer-button' : ''}`}>
+              Breeder Payments
+            </Nav.Link>
+            <Nav.Link className='text-white' onClick={() => handleButtonClick('LetterOfCredit')}>
+              Letter of Credit
+            </Nav.Link>
+            <Nav.Link className='text-white' onClick={() => handleButtonClick('InvoiceTracking')}>
+              Invoice Tracking
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
         <hr />
       <h5 className='mb-4'>Payment Information & Updates</h5>
       <Card>
