@@ -86,7 +86,7 @@ const HomeContent = () => {
       return (
         <div>
           <p className='text-center mx-auto text-dark' style={{width:'100%'}}>
-            You currently have no role. Please be patient as we give you one.
+            You currently have no role. Please be patient as we assign you one.
             {/* <a className='bg-success text-white mx-2' href="/contact">here</a> */}
           </p>
         </div>
@@ -96,8 +96,8 @@ const HomeContent = () => {
 
       return (
         <div>
-          <p className='text-center mx-auto text-dark' style={{width:'60%'}}>
-            You currently have no role. Please be patient as we assign you a role.
+          <p className='text-center mx-auto text-dark' style={{width:''}}>
+            You currently have no role. Please be patient as we assign you one. 
             {/* <a href="/contact">here</a>. */}
           </p>
         </div>

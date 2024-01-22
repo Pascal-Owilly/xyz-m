@@ -216,12 +216,12 @@ const ExportHandling = () => {
                   className="list-group-item d-flex justify-content-between align-items-center"
                   style={{ backgroundColor: 'white', opacity: 0.7 }}
                 >
-<span style={{ textTransform: 'capitalize', color: '#333', fontSize: '16px' }}>
-  Order No: {status.invoice_number} - Current Status: 
-  <span style={{ fontWeight: 'bold', marginLeft: '5px', color: 'blue' }}>
-    {status.status}
-  </span>
-</span>
+                      <span style={{ textTransform: 'capitalize', color: '#333', fontSize: '16px' }}>
+                        Order No: {status.invoice_number} - Current Status: 
+                        <span style={{ fontWeight: 'bold', marginLeft: '5px', color: 'blue' }}>
+                          {status.status}
+                        </span>
+                      </span>
                   <button
                     className="btn btn-warning btn-sm m-2  "
                     onClick={() => handleUpdateStatus(status.id, 'dispatched')}

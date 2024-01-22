@@ -407,24 +407,24 @@ const BankDashboard = () => {
                 {/* <span style={{ fontWeight: 'bold' }}>{`Invoice #${status.invoice_number}`}</span> */}
                 <br />
                 <p  style={{ margin: '10px 0', fontSize: '18px' }}>
-  Invoice No: <span className='text-success' style={{ fontWeight: 'normal', color: '#007bff', fontWeight:'bold' }}>{` #${status.invoice_number}`}</span>
-</p>              </div>
-              <div>
-              <Card style={{
-  width: '170px',
-  height: '40px',
-  textAlign: 'center',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  background: 'linear-gradient(to right, #4e73df, #224abe)', // Adjust gradient colors
-  borderRadius: '0', // Removed border radius
-  textTransform: 'capitalize',
-  boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', // Added box shadow for a floating effect
-  color: '#fff', // Adjusted text color
-}} className={'card text-light'} disabled>
-  {status.status}
-</Card>
+                    Invoice No: <span className='text-dark' style={{ fontWeight: 'normal', color: '#007bff', fontWeight:'bold' }}>{` #${status.invoice_number}`}</span>
+                  </p>              </div>
+                                <div>
+                                <Card style={{
+                    width: '170px',
+                    height: '40px',
+                    textAlign: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'linear-gradient(to right, #4e73df, #224abe)', // Adjust gradient colors
+                    borderRadius: '0', // Removed border radius
+                    textTransform: 'capitalize',
+                    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', // Added box shadow for a floating effect
+                    color: '#fff', // Adjusted text color
+                  }} className={'card text-light'} disabled>
+                    {status.status}
+                  </Card>
 
               </div>
             </li>
