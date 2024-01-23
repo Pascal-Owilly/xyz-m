@@ -411,6 +411,21 @@ if (!formData.phone_number || !phoneNumberRegex.test(formData.phone_number)) {
               </td>
             </tr>
             <tr>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>National ID No</th>
+              <td style={{ border: '1px solid #999999', padding: '5px' }}>
+                <input
+                  type="text"
+                  name="id_number"
+                  value={formData.id_number}
+                  onChange={handleInputChange}
+                  className='form-control'
+                  placeholder='Enter Id Number'
+                />
+              <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.id_number}</div>
+
+              </td>
+            </tr>
+            <tr>
               <th style={{ border: '1px solid #999999', padding: '5px' }}>Account No</th>
               <td style={{ border: '1px solid #999999', padding: '5px' }}>
                 <input

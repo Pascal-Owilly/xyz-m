@@ -216,14 +216,12 @@ useEffect(() => {
           >
             LCs List
           </Nav.Link>
-          <Nav.Link
-            className={`text-white ${activeSection === 'InvoiceTracking' ? 'active-buyer-button' : ''}`}
-            onClick={() => handleButtonClick('InvoiceTracking')}
-          >
-            <well>
-            Invoice Tracking
-            </well>
-          </Nav.Link>
+          <a className='d-flex align-items-center justify-content-center' href='/export_handling_dashboard'>
+  <Nav className='text-white mx-3'>
+    Invoice Tracking
+  </Nav>
+</a>
+
         </Nav>
       </Navbar.Collapse>
     </Navbar>
@@ -248,12 +246,13 @@ useEffect(() => {
                   <h5 className='mb-4 mx-3 mt-2'>Payment Information & Updates</h5>
 
  <Card.Body>
-   <Table striped bordered hover>
+   <Table striped bordered hover responsive>
      <thead>
        <tr>
          <th>Payment Code</th>
          <th>Status</th>
-         <th>Action</th>
+         <th></th>
+
          {/* Add more columns as needed */}
        </tr>
      </thead>
@@ -264,15 +263,8 @@ useEffect(() => {
            <td>{payment.status}</td>
            <td>
              <div className='d-flex align-items-center'>
-               <select className='form-select me-3 p-1' style={{borderRadius:'30px', background:'rgb(247, 248, 251)', color:'black', border:'none'}} onChange={(e) => handleUpdateStatus(payment.payments_id, e.target.value)}>
-                 <option value="payment_initiated" selected={payment.status === 'payment_initiated'}>Sent to Bank</option>
-                 <option value="disbursed" selected={payment.status === 'disbursed'}>Disbursed</option>
-                 <option value="paid" selected={payment.status === 'paid'}>Paid</option>
-               </select>
-               <Button variant='success text-light' className='btn-sm m-auto' style={{width:'30%', color:'rgb(0, 27, 49)', fontSize:'12px'}} onClick={() => handleUpdateStatus(payment.payments_id, payment.status)}>
-                 Update Status
-               </Button>
-               <Button variant='info' className='btn-sm m-auto ms-2' style={{width:'30%', fontSize:'14px'}} onClick={() => handleViewDetails(payment)}>
+               
+               <Button variant='info' className='btn-sm m-auto ms-2' style={{width:'100%', fontSize:'14px'}} onClick={() => handleViewDetails(payment)}>
                  {showDetails ? 'Hide Details' : 'View Details'}
                </Button>
              </div>

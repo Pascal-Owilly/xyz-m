@@ -3,7 +3,7 @@ import { HiBell, HiCube, HiCurrencyDollar } from 'react-icons/hi';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { BASE_URL } from './auth/config';
-import { Container, Row, Col, Table, Button, Pagination, Card } from 'react-bootstrap';
+import { Container, Row, Col, Pagination, Card, Form, Table, Button,  Navbar, Nav } from 'react-bootstrap';
 
 const Greetings = () => {
   const currentTime = new Date();
@@ -20,6 +20,8 @@ const Greetings = () => {
 
   return greeting;
 };
+
+
 
 const PART_CHOICES = [
   ['ribs', 'Ribs'],
@@ -40,11 +42,7 @@ const SALE_CHOICES = [
 
 const UserProfile = ({ user }) => (
   <Col lg={{ span: 3, offset: 9 }} className='text-right'>
-  <div style={{ marginBottom: '25px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width:'auto' }}>
-    {/* <p className='text-center mt-1'></p> */}
-    <span style={{ textTransform: 'capitalize' }}>{`${Greetings()} `} </span>
-
-  </div>
+ 
 </Col>
 );
 
@@ -59,6 +57,7 @@ const Message = ({ type, text }) => {
     </div>
   );
 };
+
 
 const SlaughterForm = ({ showForm, onSubmit, submitMessage, onVisibilityChange, breed, handleInputChange, quantity, setQuantity }) => (
   showForm && (
@@ -241,6 +240,9 @@ const Home = () => {
     saleType: 'export_cut',
     quantity: null,
   });
+
+  const [activeSection, setActiveSection] = useState('BreederPayments');
+
   // ... (other state variables and functions)
 
   useEffect(() => {
@@ -407,8 +409,22 @@ const Home = () => {
 
   return (
     <>
+
+
+
      <div className='main-container'>
-  <h3 className='text-primary'> Slaughterhouse Dashboard</h3>
+
+{/* Navbar */}
+<Navbar bg="primary" expand="lg" variant="dark">
+      <Navbar.Brand>
+        <span style={{ fontWeight: '' }}>Slaughterhouse Dashboard</span>
+      </Navbar.Brand>
+
+    </Navbar>
+        <hr />
+
+        <p className='p-3'>In this dashboard, you will be recording the breeds slaughtered and the corresponding breed parts; please be cautious as the inventory will be updated based on these actions.</p>
+
 
   <div className="container">
     {/* User Profile */}

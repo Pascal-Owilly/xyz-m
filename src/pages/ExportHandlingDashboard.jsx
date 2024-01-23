@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { FaTruck } from 'react-icons/fa';
+import { FaTruck, FaShippingFast, FaCheck, FaArchive } from 'react-icons/fa';
 import axios from 'axios';
 import { BASE_URL } from './auth/config';
-import { Button } from 'react-bootstrap';
-import { Card } from 'react-bootstrap';
+import { Row, Col, Card, Container, Form, Table, Button, Navbar, Nav, NavDropdown, Pagination, Modal} from 'react-bootstrap';
 
 const ExportHandling = () => {
   const baseUrl = BASE_URL;
@@ -16,47 +15,16 @@ const ExportHandling = () => {
   const [shipmentProgressData, setShipmentProgressData] = useState([]);
   const [arrivedOrdersData, setArrivedOrdersData] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Ordered':
-        return 'btn-primary';
-      case 'Dispatched':
-        return 'btn-secondary';
-      case 'Shipped':
-        return 'btn-info';
-      case 'Arrival':
-        return 'btn-warning';
-      case 'Received':
-        return 'btn-success';
-      default:
-        return 'btn-light';
-    }
-  };
+  const [updateMessage, setUpdateMessage] = useState(null);
+  const [disabledButtons, setDisabledButtons] = useState([]);
+  const [activeSection, setActiveSection] = useState('InformationSection');
 
-  const cardStyle = {
-    fontSize: '14px',
-    textTransform: 'capitalize',
-    letterSpacing: '2px',
-    color: 'white',
-    backgroundColor: 'green',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Add box shadow
-    border: '1px solid',
-    borderImage: 'green', // Add gradient border
-    borderRadius: '', // Adjust border radius as needed
-    padding:'0.6rem'
-  };
-  
-
-  const getStatusIndex = (status) => ['ordered', 'dispatched', 'shipped', 'arrived', 'received'].indexOf(status);
+  const getStatusIndex = (status) => ['Order Placed', 'Processing', 'Shipped', 'Arrived', 'Received'].indexOf(status);
 
   useEffect(() => {
-    axios.get(`${baseUrl}/api/logistics-status/`)
+    axios.get(`${baseUrl}/api/all-logistics-statuses/`)
       .then(response => {
         setLogisticsStatuses(response.data);
-
-        console.log('response', response)
       })
       .catch(error => {
         console.error('Error fetching logistics statuses:', error);
@@ -95,7 +63,7 @@ const ExportHandling = () => {
         </MapContainer>
       );
     }
-
+    
   }, [map]);
 
   const updateOrderLocation = (order, coordinates) => {
@@ -104,103 +72,209 @@ const ExportHandling = () => {
         <>
           {map}
           <Marker position={coordinates}>
-            <Popup>{`Order #${order} - Current Location`}</Popup>
+            <Popup>{`Order No: ${order} - Current Location`}</Popup>
           </Marker>
         </>
       );
     }
   };
+  const handleUpdateStatus = (statusId, newStatus) => {
+    // Check if the button is already disabled
+    if (!disabledButtons.includes(statusId)) {
+      // Display a confirmation popup
+      const confirmed = window.confirm(`Are you sure you want to update the status to ${newStatus}?`);
+      
+      if (!confirmed) {
+        return; // Do nothing if not confirmed
+      }
+  
+      // Disable the button to prevent multiple clicks
+      setDisabledButtons(prevButtons => [...prevButtons, statusId]);
+  
+      axios.patch(`${baseUrl}/api/all-logistics-statuses/${statusId}/`, { status: newStatus })
+        .then(response => {
+          console.log('Logistics status updated:', response.data);
+          setUpdateMessage(`Order No: ${response.data.invoice_number} updated successfully to ${newStatus}`);
+        })
+        .catch(error => {
+          console.error('Error updating logistics status:', error);
+          setUpdateMessage('Error updating order status. Please try again.');
+        });
+    }
+  };
+  
 
-  const calculatePercentage = (status) => {
-    const index = getStatusIndex(status);
-    return (index + 1) * (100 / 5);
+  const handleUpdateLogisticsStatus = (statusId, newStatus) => {
+    axios.patch(`${baseUrl}/api/all-logistics-statuses/${statusId}/`, { status: newStatus })
+      .then(response => {
+        console.log('Logistics status updated:', response.data);
+      })
+      .catch(error => {
+        console.error('Error updating logistics status:', error);
+      });
+  };
+
+  const handleUpdateOrderStatus = (orderId, newStatus) => {
+    axios.patch(`${baseUrl}/api/order/${orderId}/`, { status: newStatus })
+      .then(response => {
+        console.log('Order status updated:', response.data);
+      })
+      .catch(error => {
+        console.error('Error updating order status:', error);
+      });
+  };
+
+  const handleUpdateShipmentProgress = (shipmentId, newStatus) => {
+    axios.patch(`${baseUrl}/api/shipment-progress/${shipmentId}/`, { status: newStatus })
+      .then(response => {
+        console.log('Shipment progress updated:', response.data);
+      })
+      .catch(error => {
+        console.error('Error updating shipment progress:', error);
+      });
+  };
+
+  const handleUpdateArrivedOrder = (arrivedOrderId) => {
+    axios.patch(`${baseUrl}/api/arrived-order/${arrivedOrderId}/`, {})
+      .then(response => {
+        console.log('Arrived order updated:', response.data);
+      })
+      .catch(error => {
+        console.error('Error updating arrived order:', error);
+      });
+  };
+
+  const handleOrderButtonClick = (orderId, newStatus) => {
+    handleUpdateOrderStatus(orderId, newStatus);
+
+    const updatedShipmentProgress = shipmentProgressData.map((status, index) => {
+      if (index === getStatusIndex(newStatus)) {
+        return newStatus;
+      }
+      return status;
+    });
+
+    setShipmentProgressData(updatedShipmentProgress);
   };
 
   const renderOrderDetails = (order) => (
-    <div key={order.id} className="order-details">
-      <h6 className='mb-3'>Order #{order.id} - {order.status}</h6>
-  
-      <Card className={`card ${getStatusColor(order.status)} mr-2`} disabled>
-        <Card.Body>
-          <Card.Title>{order.status}</Card.Title>
-          <Card.Text>
-            <FaTruck /> Track Location
-          </Card.Text>
-        </Card.Body>
-      </Card>
-  
-      {logisticsStatuses
-        .filter((status) => status.invoice === order.id)
-        .map((status) => (
-          <Card
-            key={status.id}
-            className={`card ${getStatusColor(status.status)} mr-2`}
-            disabled
+    <tr key={order.id}>
+      <td>{order.id}</td>
+      <td>{order.status}</td>
+      {/* Add more columns as needed */}
+      <td>
+        <button className="btn btn-info btn-sm mr-2" onClick={() => updateOrderLocation(order.id, order.location)}>
+           Track Location
+        </button>
+        {['Processing', 'Shipped', 'Arrived', 'Received'].map((status) => (
+          <button
+            key={status}
+            className={`btn btn-success btn-sm mr-2`}
+            onClick={() => handleOrderButtonClick(order.id, status)}
+            disabled={order.status === status}
           >
-            <Card.Body>
-              {status.status}
-            </Card.Body>
-          </Card>
+            {status}
+          </button>
         ))}
-      <ProgressBar now={calculatePercentage(order.status)} label={`${order.status} - ${calculatePercentage(order.status)}%`} />
-    </div>
+      </td>
+    </tr>
   );
-  
-  return (
-    <section className="main-container container-fluid" style={{minHeight:'85vh'}}>
-      <div>
-        {orders.map(renderOrderDetails)}
-        <h6 className='mb-3 mt-3'>Logistics Statuses</h6>
-        <div className="card mb-4" style={{ maxWidth: '100%', margin: 'auto' }}>
-          <div className="card-body">
-            <h5 className="card-title">Logistics Progress</h5>
-            <div className="progress" style={{ position: 'relative', padding: '' }}>
-              {shipmentProgressData.map((status, index) => (
-                <div
-                  key={index}
-                  className={`progress-bar ${getStatusIndex(status) < getStatusIndex('Received') ? 'bg-primary' : 'bg-secondary'}`}
-                  role="progressbar"
-                  style={{ width: `${(100 / 5)}%` }}
-                >
-                  {status}
-                </div>
-              ))}
 
-              <div style={{ position: 'absolute', top: 0, left: `${(getStatusIndex('Received') * (100 / 5) + (50 / 5))}%`, transform: 'translateX(-50%)' }}>
-                <div style={{ width: '15px', height: '15px', backgroundColor: '#fff', borderRadius: '50%', border: '2px solid #007bff' }}></div>
-              </div>
-            </div>
-            <h6 className='mt-3 mb-2'>Current Statuses</h6>
-            <ul className="list-group">
-              {logisticsStatuses.map((status) => (
-                <li
-                  key={status.id}
-                  className="list-group-item d-flex justify-content-between align-items-center"
-                  style={{
-                    backgroundColor: 'white',
-                    opacity: 0.7,
-                    borderBottom: '1px solid #ddd', // Add a border for separation
-                    padding: '10px', // Add padding for better spacing
-                  }}
-                >
-                  <div>
-                    {/* <span style={{ fontWeight: 'bold' }}>{`Invoice #${status.invoice_number}`}</span> */}
-                    <br />
-                    Invoice No: <span style={{fontWeight:'bold'}} className='text-dark'>{` ${status.invoice_number}`}</span>
-                  </div>
-                  <div>
-                   <Card style={cardStyle} className={'card'} disabled>
-                   {status.status}
-    </Card>
-                  </div>
-                </li>
-              ))}
-            </ul>
+  const renderLogisticsStatus = (status) => (
+  <tr key={status.id}>
+    <td>
+      <span style={{ textTransform: 'capitalize', color: '#333', fontSize: '14px', display: 'flex', alignItems: 'center', fontWeight:'bold' }}>
+         #{status.invoice_number} 
+       
+      </span>
+    </td>
+    <td className='d-flex'>
+      <span
+        style={{
+          fontWeight: '',
+          marginLeft: '5px',
+          color: 'black',
+          marginRight: '5px',
+          textTransform: 'capitalize',
+          fontWeight: 'bold',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Added box shadow
+          padding: '5px', // Adjust padding as needed
+        }}
+      >
+        {status.status}
+      </span>
+
+{status.status === 'dispatched' && (
+          <div style={{ backgroundColor: '', padding: '2px', borderRadius: '50%' }}>
+            <FaTruck  style={{ fontSize: '22px', color: 'green' }} />
+          </div>
+        )}
+        {status.status === 'shipped' && (
+          <div style={{ backgroundColor: '', padding: '10px', borderRadius: '50%' }}>
+            <FaShippingFast  style={{ fontSize: '22px', color: 'blue' }} />
+          </div>
+        )}
+        {status.status === 'arrived' && (
+          <div style={{ backgroundColor: '', padding: '2px', borderRadius: '50%' }}>
+            <FaArchive  style={{ fontSize: '22px', color: 'green' }} />
+          </div>
+        )}
+        {status.status === 'received' && (
+          <div style={{ backgroundColor: '', padding: '10px', borderRadius: '50%' }}>
+            <FaCheck  style={{ fontSize: '22px', color: 'green' }} />
+          </div>
+        )}
+    </td>
+
+  </tr>
+);
+
+const handleButtonClick = (section) => {
+  setActiveSection(section);
+};
+
+  return (
+
+    <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
+      {/* Navbar */}
+      <Navbar  bg="warning" expand="lg" variant="dark">
+      <Navbar.Brand>
+      <h6 className='text-dark'>Order Tracking and Follow-Up
+
+</h6>
+      </Navbar.Brand>
+
+    </Navbar>
+
+    <section className="" >
+    <p className='mt-4'>
+    In this segment, you'll gain visibility into all orders using their respective invoice IDs. You'll be able to view the current status of each order, allowing you to closely monitor the progress. Additionally, you can use this information to follow up with the individuals responsible for dispatch, shipping, arrival, and reception, ensuring a seamless logistics workflow.    </p>
+    <div>
+      {updateMessage && <div className="alert alert-success">{updateMessage}</div>}
+
+      <div className="card mb-4" style={{ width: '100%', margin: 'auto' }}>
+        <div className="card-body">
+          <h5 className="card-title">Logistics Progress</h5>
+          {/* Your progress bar code */}
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Order No</th>
+                  <th>Current Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {logisticsStatuses.map(renderLogisticsStatus)}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </div>
+  </section> 
+  </div>
+   );
 };
 
 export default ExportHandling;

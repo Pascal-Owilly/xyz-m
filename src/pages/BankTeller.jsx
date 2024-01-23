@@ -38,7 +38,7 @@ const BankDashboard = () => {
   const getStatusIndex = (status) => ['ordered', 'dispatched', 'shipped', 'arrived', 'received'].indexOf(status);
 
   useEffect(() => {
-    axios.get(`${baseUrl}/api/logistics-status/`)
+    axios.get(`${baseUrl}/api/all-logistics-statuses/`)
       .then(response => {
         setLogisticsStatuses(response.data);
 

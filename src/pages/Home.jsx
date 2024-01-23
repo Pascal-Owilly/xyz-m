@@ -274,15 +274,15 @@ const logout = async () => {
             <>
              <li>
              <li>
-                <a onClick={() => handleNavigation('/admin_dashboard')} style={{}}>SCM Administration</a>
+                <a href="/supplier_dashboard" style={{}}>SCM Administration</a>
               </li>                          </li>
-              <li><a href="supplier_dashboard">Breeder Dashboard</a></li>
+              <li><a href="/supplier_dashboard">Breeder Dashboard</a></li>
               <li><a href="/buyer_dashboard" onClick={handleLinkClick}>
                 Buyer Dashboard
               </a></li>
-                <li><a href="slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
-                <li><a href="buyer">Buyer Dashboard</a></li>
-                <li><a href="bank_teller_dashboard">Bank Teller Dashboard</a></li>
+                <li><a href="/slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
+                <li><a href="/buyer">Buyer Dashboard</a></li>
+                <li><a href="/bank_teller_dashboard">Bank Teller Dashboard</a></li>
 
                 {/* <li>
                   <a href="inventory-dashboard">Inventory Dashboard </a>
@@ -290,9 +290,9 @@ const logout = async () => {
                 <li>
                   <a href="warehouse">Warehouse Dashboard </a>
                 </li> */}
-                <li><a href="customer_service_dashboard">Customer Care </a></li>
+                <li><a href="/customer_service_dashboard">Customer Care </a></li>
             {/* <li><a href="employee_dashboard">Employee Dashboard</a></li> */}
-          <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
+          <li><a href="/export_handling_dashboard">Export Handling Dashboard </a></li>
 
             </>
           );
@@ -300,11 +300,11 @@ const logout = async () => {
             return (
               <>
                <li>
-                <a href="admin_dashboard">SCM Administration</a>
+                <a href="/admin_dashboard">SCM Administration</a>
                             </li>
-                <li><a href="supplier_dashboard">Breeder Dashboard</a></li>
-                <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
-                <li><a href="slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
+                <li><a href="/supplier_dashboard">Breeder Dashboard</a></li>
+                <li><a href="/buyer_dashboard">Buyer Dashboard</a></li>
+                <li><a href="/slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
                            
                             {/* <li>
                               <a href="inventory-dashboard">Inventory Dashboard </a>
@@ -312,13 +312,13 @@ const logout = async () => {
                             <li>
                               <a href="warehouse">Warehouse Dashboard </a>
                             </li> */}
-                                            <li><a href="bank_teller_dashboard">Bank Teller Dashboard</a></li>
+                                            <li><a href="/bank_teller_dashboard">Bank Teller Dashboard</a></li>
 
-                                            <li><a href="customer_service_dashboard">Customer Care </a></li>
+                                            <li><a href="/customer_service_dashboard">Customer Care </a></li>
               {/* <li><a href="employee_dashboard">Employee Dashboard</a></li> */}
-            <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
-            <li><a href="dispatch_and_shipping">Dispatch & Shipping </a></li>
-            <li><a href="arrival">Arrival & Reception </a></li>
+            <li><a href="/export_handling_dashboard">Export Handling Dashboard </a></li>
+            <li><a href="/dispatch_and_shipping">Dispatch & Shipping </a></li>
+            <li><a href="/arrival">Arrival & Reception </a></li>
 
 
               </>
@@ -332,17 +332,17 @@ const logout = async () => {
         case 'buyer':
           return (
             <>
-              <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
+              <li><a href="/buyer_dashboard">Buyer Dashboard</a></li>
             </>
           );
           case 'warehouse_personnel':
           return (
             <>
-              <li><a href="warehouse">Warehouse Dashboard</a></li>
-              <li><a href="buyer_dashboard">Buyer Dashboard</a></li>
-              <li><a href="export_handling_dashboard">Export Handling Dashboard </a></li>
-              <li><a href="dispatch_and_shipping">Dispatch & Shipping </a></li>
-              <li><a href="arrival">Arrival & Reception </a></li>
+              <li><a href="/warehouse">Warehouse Dashboard</a></li>
+              <li><a href="/buyer_dashboard">Buyer Dashboard</a></li>
+              <li><a href="/export_handling_dashboard">Export Handling Dashboard </a></li>
+              <li><a href="/dispatch_and_shipping">Dispatch & Shipping </a></li>
+              <li><a href="/arrival">Arrival & Reception </a></li>
 
             </>
           );
@@ -350,7 +350,7 @@ const logout = async () => {
             return (
               <>
 
-                <li><a href="slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
+                <li><a href="/slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
                 {/* Add more dashboards for buyer */}
               </>
             );
@@ -358,7 +358,7 @@ const logout = async () => {
               return (
                 <>
 
-                  <li><a href="supplier_dashboard">Breeder Dashboard</a></li>
+                  <li><a href="/supplier_dashboard">Breeder Dashboard</a></li>
                   {/* Add more dashboards for buyer */}
                 </>
               );
@@ -366,9 +366,9 @@ const logout = async () => {
               return (
                 <>
 
-                  <li><a href="supplier_dashboard">Breeder Dashboard</a></li>
+                  <li><a href="/supplier_dashboard">Breeder Dashboard</a></li>
                   <li>
-                     <a href="inventory-dashboard">Inventory Dashboard </a>
+                     <a href="/inventory-dashboard">Inventory Dashboard </a>
                   </li>
                   
                   {/* Add more dashboards for buyer */}

@@ -11,6 +11,8 @@ import Footer from './pages/Footer';
 import BuyerDashboard from './pages/BuyerDashboard';
 import BreederPayment from './pages/breaders/BreederPayment';
 import BreederDashboard from './pages/BreederDashboard';
+import BreederMoreInfo from './pages/breaders/BreederMoreInfo'
+
 import SlaughterhouseDashboard from './pages/SlaughterHouseDashboard';
 import InventoryManagement from './pages/InventoryManagement';
 import AdministrationDashboard from './pages/AdministrationDashboard';
@@ -31,7 +33,6 @@ import Unauthorized from './pages/auth/Unauthorised';
 import Inventory from './pages/inventory/Inventory';
 import BankTeller from './pages/BankTeller';
 import CustomerService from './pages/CustomerService'; 
-
 // Export handling
 
 import DispatchAndShipping from './pages/export_handling/DispatchAndShipping';
@@ -85,6 +86,8 @@ const App = () => {
             <Route path="/breaders" element={<BreaderData />} />
             <Route path="/breader-info/:breaderId" element={<BreaderInfo />} />
             <Route path="/supplied-breeds" element={<SuppliedBreedsSingleUser />} />
+            <Route path="/breader-more-info/:breaderId" element={<BreederMoreInfo />} />
+
             <Route path="/submission-successful" element={<FormSubmissionSuccess />} />
             {/* Payment */}
             {/* <Route path="/payment/response" element={<MpesaResponse paymentResponse={response} />} /> */}
@@ -98,7 +101,6 @@ const App = () => {
             {/* Export handling */}
             <Route path="/dispatch_and_shipping" element={<DispatchAndShipping />} />
             <Route path="/arrival" element={<Arrival />} />
-
 
           </Routes>
         </div>

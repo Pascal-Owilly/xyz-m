@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { FaTruck } from 'react-icons/fa';
+import { FaTruck, FaShippingFast, FaCheck, FaArchive} from 'react-icons/fa';
 import axios from 'axios';
 import { BASE_URL } from '../auth/config';
+import { Row, Col, Card, Container, Form, Table, Button, Navbar, Nav, NavDropdown, Pagination, Modal} from 'react-bootstrap';
 
 const ExportHandling = () => {
   const baseUrl = BASE_URL;
@@ -15,12 +16,13 @@ const ExportHandling = () => {
   const [arrivedOrdersData, setArrivedOrdersData] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [updateMessage, setUpdateMessage] = useState(null);
-  const [disabledButtons, setDisabledButtons] = useState([]); // Add this line for disabled buttons
+  const [disabledButtons, setDisabledButtons] = useState([]);
+  const [activeSection, setActiveSection] = useState('InformationSection');
 
   const getStatusIndex = (status) => ['Order Placed', 'Processing', 'Shipped', 'Arrived', 'Received'].indexOf(status);
 
   useEffect(() => {
-    axios.get(`${baseUrl}/api/logistics-status/`)
+    axios.get(`${baseUrl}/api/all-logistics-statuses/`)
       .then(response => {
         setLogisticsStatuses(response.data);
       })
@@ -76,7 +78,6 @@ const ExportHandling = () => {
       );
     }
   };
-
   const handleUpdateStatus = (statusId, newStatus) => {
     // Check if the button is already disabled
     if (!disabledButtons.includes(statusId)) {
@@ -90,21 +91,26 @@ const ExportHandling = () => {
       // Disable the button to prevent multiple clicks
       setDisabledButtons(prevButtons => [...prevButtons, statusId]);
   
-      axios.patch(`${baseUrl}/api/logistics-status/${statusId}/`, { status: newStatus })
+      axios.patch(`${baseUrl}/api/all-logistics-statuses/${statusId}/`, { status: newStatus })
         .then(response => {
           console.log('Logistics status updated:', response.data);
           setUpdateMessage(`Order No: ${response.data.invoice_number} updated successfully to ${newStatus}`);
         })
         .catch(error => {
           console.error('Error updating logistics status:', error);
-          setUpdateMessage('Error updating order status. Please try again.');
+
+        // Extract the error message from error.response.data
+        const errorMessage = error.response.data.detail || 'An error occurred while updating the status.';
+
+        // Set the error message to state if you want to display it in your component
+        setUpdateMessage(errorMessage);
         });
     }
   };
   
 
   const handleUpdateLogisticsStatus = (statusId, newStatus) => {
-    axios.patch(`${baseUrl}/api/logistics-status/${statusId}/`, { status: newStatus })
+    axios.patch(`${baseUrl}/api/all-logistics-statuses/${statusId}/`, { status: newStatus })
       .then(response => {
         console.log('Logistics status updated:', response.data);
       })
@@ -157,84 +163,132 @@ const ExportHandling = () => {
   };
 
   const renderOrderDetails = (order) => (
-    <div key={order.id}>
-      <h6 className='mb-3'>Order #{order.id} - {order.status}</h6>
-      <button
-        className="btn btn-info btn-sm mr-2"
-        onClick={() => updateOrderLocation(order.id, order.location)}
-      >
-        <FaTruck /> Track Location
-      </button>
-
-      {['Processing', 'Shipped', 'Arrived', 'Received'].map((status) => (
-        <button
-          key={status}
-          className={`btn btn-success btn-sm mr-2`}
-          onClick={() => handleOrderButtonClick(order.id, status)}
-          disabled={order.status === status}
-        >
-          {status}
+    <tr key={order.id}>
+      <td>{order.id}</td>
+      <td>{order.status}</td>
+      {/* Add more columns as needed */}
+      <td>
+        <button className="btn btn-info btn-sm mr-2" onClick={() => updateOrderLocation(order.id, order.location)}>
+           Track Location
         </button>
-      ))}
-    </div>
+        {['Processing', 'Shipped', 'Arrived', 'Received'].map((status) => (
+          <button
+            key={status}
+            className={`btn btn-success btn-sm mr-2`}
+            onClick={() => handleOrderButtonClick(order.id, status)}
+            disabled={order.status === status}
+          >
+            {status}
+          </button>
+        ))}
+      </td>
+    </tr>
   );
 
+  const renderLogisticsStatus = (status) => (
+  <tr key={status.id}>
+    <td>
+      <span style={{ textTransform: 'capitalize', color: '#333', fontSize: '14px', display: 'flex', alignItems: 'center', fontWeight:'bold' }}>
+         #{status.invoice_number} 
+       
+      </span>
+    </td>
+    <td className='d-flex'>
+<span
+  style={{
+    fontWeight: '',
+    marginLeft: '5px',
+    color: 'black',
+    marginRight: '5px',
+    textTransform: 'capitalize',
+    fontWeight: 'bold',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Added box shadow
+    padding: '5px', // Adjust padding as needed
+  }}
+>
+  {status.status}
+</span>
+
+{status.status === 'dispatched' && (
+          <div style={{ backgroundColor: '', padding: '2px', borderRadius: '50%' }}>
+            <FaTruck  style={{ fontSize: '22px', color: 'green' }} />
+          </div>
+        )}
+        {status.status === 'shipped' && (
+          <div style={{ backgroundColor: '', padding: '10px', borderRadius: '50%' }}>
+            <FaShippingFast  style={{ fontSize: '22px', color: 'blue' }} />
+          </div>
+        )}
+        {status.status === 'arrived' && (
+          <div style={{ backgroundColor: '', padding: '2px', borderRadius: '50%' }}>
+            <FaArchive  style={{ fontSize: '22px', color: 'green' }} />
+          </div>
+        )}
+        {status.status === 'received' && (
+          <div style={{ backgroundColor: '', padding: '10px', borderRadius: '50%' }}>
+            <FaCheck  style={{ fontSize: '22px', color: 'green' }} />
+          </div>
+        )}
+    </td>
+    <td >
+      <div className='d-flex'>
+      <button className="btn btn-warning btn-sm" onClick={() => handleUpdateStatus(status.id, 'arrived')}>
+        Arrived
+      </button> &nbsp;&nbsp;
+      <button className="btn btn-success btn-sm" onClick={() => handleUpdateStatus(status.id, 'received')}>
+        Received
+      </button>
+      </div>
+    </td>
+  </tr>
+);
+
+const handleButtonClick = (section) => {
+  setActiveSection(section);
+};
+
   return (
-    <section className="main-container container-fluid" style={{minHeight:'85vh'}}>
-      <div>
+
+    <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
+      {/* Navbar */}
+      <Navbar  bg="warning" expand="lg" variant="dark">
+      <Navbar.Brand>
+      <h6 className='text-dark'>Arrival & Reception Dashboard</h6>
+      </Navbar.Brand>
+
+    </Navbar>
+
+    <section className="" >
+    <p className='mt-4'>
+    In this dashboard, you will be responsible for updating logistics statuses, specifically from "Arrived" to "Received." It's essential to exercise caution, particularly when triggering the "Received" status, as this action prompts notification to the bank for payment release. Ensure accuracy and careful consideration during this process.       </p>
+
+    <div>
       {updateMessage && <div className="alert alert-success">{updateMessage}</div>}
 
-        {orders.map(renderOrderDetails)}
-        <h6 className='mb-3 mt-3'>Logistics Statuses</h6>
-        <div className="card mb-4" style={{ maxWidth: '100%', margin: 'auto' }}>
-          <div className="card-body">
-            <h5 className="card-title">Logistics Progress</h5>
-            <div className="progress" style={{ position: 'relative', padding: '' }}>
-              {shipmentProgressData.map((status, index) => (
-                <div
-                  key={index}
-                  className={`progress-bar ${getStatusIndex(status) < getStatusIndex('Received') ? 'bg-primary' : 'bg-secondary'}`}
-                  role="progressbar"
-                  style={{ width: `${(100 / 5)}%` }}
-                >
-                  {status}
-                </div>
-              ))}
-
-              <div style={{ position: 'absolute', top: 0, left: `${(getStatusIndex('Received') * (100 / 5) + (50 / 5))}%`, transform: 'translateX(-50%)' }}>
-                <div style={{ width: '15px', height: '15px', backgroundColor: '#fff', borderRadius: '50%', border: '2px solid #007bff' }}></div>
-              </div>
-            </div>
-            <h6 className='mt-3 mb-2'>Current Statuses</h6>
-            <ul className="list-group">
-              {logisticsStatuses.map((status) => (
-                <li
-                  key={status.id}
-                  className="list-group-item d-flex justify-content-between align-items-center"
-                  style={{ backgroundColor: 'white', opacity: 0.7 }}
-                >
-                  <span>{`${status.invoice_number}`}</span>
-                  <button
-                    className="btn btn-warning btn-sm"
-                    onClick={() => handleUpdateStatus(status.id, 'arrived')}
-                  >
-                    Arrived
-                  </button>
-                  <button
-                    className="btn btn-info btn-sm"
-                    onClick={() => handleUpdateStatus(status.id, 'received')}
-                    style={{width:'200px'}}
-                  >
-                    Received
-                  </button>
-                </li>
-              ))}
-            </ul>
+      <div className="card mb-4" style={{ width: '100%', margin: 'auto' }}>
+        <div className="card-body">
+          <h5 className="card-title">Logistics Progress</h5>
+          {/* Your progress bar code */}
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Order No</th>
+                  <th>Current Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {logisticsStatuses.map(renderLogisticsStatus)}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </div>
+  </section> 
+  </div>
+   );
 };
 
 export default ExportHandling;

@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { HiBell, HiCube, HiExclamation, HiCurrencyDollar, HiChartBar } from 'react-icons/hi';
 import { FaEnvelope } from 'react-icons/fa';  
+import { HiEye, HiEyeOff } from 'react-icons/hi'; // Example icons, you can choose others
+import { FaTruck, FaShippingFast, FaCheck, FaArchive } from 'react-icons/fa';
 
 const styles = {
   invoiceContainer: {
@@ -137,18 +139,20 @@ const CustomerServiceDashboard = () => {
   const invoices = invoiceData.map((invoice) => ({
     invoiceNumber: invoice.invoice_number,
     date: invoice.invoice_date,
-    dueDate: invoice.invoice_date,
+    dueDate: invoice.due_date,
     billTo: {
-      name: invoice.buyer ? invoice.buyer.first_name : '', // Check if buyer is not null or undefined
-      address: '123 Main Street, City, State, ZIP',
-      email: 'john.doe@example.com',
-      phone: '(123) 456-7890',
+      name: invoice.buyer ? invoice.buyer.buyer_first_name + " " + invoice.buyer.buyer_last_name : '', // Check if buyer is not null or undefined
+      address: invoice.buyer.address,
+      email: invoice.buyer.buyer_email,
+      phone: invoice.buyer.buyer_phone,
+      buyerCountry: invoice.buyer.buyer_country
     },
     shipTo: 'Same as Bill To',
     items: [
-      { title: invoice.breed, description: 'Goat meat from Africa', saleType: invoice.sale_type, quantity: invoice.quantity, unitPrice: invoice.unit_price  },
+      { title: invoice.breed, description: invoice.part_name, saleType: invoice.sale_type, quantity: invoice.quantity, unitPrice: invoice.unit_price  },
     ],
     taxRate: 0.08,
+    attachedLc: invoice.attached_lc_document
 }));
 
 // Pagination
@@ -203,8 +207,14 @@ const toggleInvoice = (invoiceNumber) => {
   }, [baseUrl, accessToken]);
 
   useEffect(() => {
-    axios.get(`${baseUrl}/api/logistics-status/`)
-      .then(response => {
+
+    axios.get(`${baseUrl}/api/logistics-status/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+    
+    .then(response => {
         setLogisticsStatuses(response.data);
 
         console.log('response', response)
@@ -275,6 +285,55 @@ const toggleInvoice = (invoiceNumber) => {
 
   const getStatusIndex = (status) => ['ordered', 'dispatched', 'shipped', 'arrived', 'received'].indexOf(status);
 
+  const renderLogisticsStatus = (status) => (
+    <tr key={status.id}>
+      <td>
+        <span style={{ textTransform: 'capitalize', color: '#333', fontSize: '14px', display: 'flex', alignItems: 'center', fontWeight:'bold' }}>
+           #{status.invoice_number} 
+         
+        </span>
+      </td>
+      <td className='d-flex'>
+        <span
+          style={{
+            fontWeight: '',
+            marginLeft: '5px',
+            color: 'black',
+            marginRight: '5px',
+            textTransform: 'capitalize',
+            fontWeight: 'bold',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Added box shadow
+            padding: '5px', // Adjust padding as needed
+          }}
+        >
+          {status.status}
+        </span>
+  
+  {status.status === 'dispatched' && (
+            <div style={{ backgroundColor: '', padding: '2px', borderRadius: '50%' }}>
+              <FaTruck  style={{ fontSize: '22px', color: 'green' }} />
+            </div>
+          )}
+          {status.status === 'shipped' && (
+            <div style={{ backgroundColor: '', padding: '10px', borderRadius: '50%' }}>
+              <FaShippingFast  style={{ fontSize: '22px', color: 'blue' }} />
+            </div>
+          )}
+          {status.status === 'arrived' && (
+            <div style={{ backgroundColor: '', padding: '2px', borderRadius: '50%' }}>
+              <FaArchive  style={{ fontSize: '22px', color: 'green' }} />
+            </div>
+          )}
+          {status.status === 'received' && (
+            <div style={{ backgroundColor: '', padding: '10px', borderRadius: '50%' }}>
+              <FaCheck  style={{ fontSize: '22px', color: 'green' }} />
+            </div>
+          )}
+      </td>
+  
+    </tr>
+  );
+  
 
   const renderOrderDetails = (order) => (
     <div key={order.id} className="order-details">
@@ -308,7 +367,7 @@ const toggleInvoice = (invoiceNumber) => {
 
   const renderBreederTradeTable = (breederTrade) => {
     return (
-      <Table striped bordered hover className="mt-3">
+      <Table striped responsive bordered hover className="mt-3">
         <thead>
           <tr>
             <th>Field</th>
@@ -365,7 +424,7 @@ const toggleInvoice = (invoiceNumber) => {
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="navbarNav" />
       <Navbar.Collapse id="navbarNav">
-        <Nav className="ml-auto">
+        <Nav className="ml-auto" style={{fontWeight:'500'}}>
           <Nav.Link
             onClick={() => handleButtonClick('InformationSection')}
             className={`mr-2 text-white ${activeSection === 'InformationSection' ? 'active-buyer-button' : ''}`}
@@ -450,7 +509,7 @@ const toggleInvoice = (invoiceNumber) => {
   <Card>
     <h5 className='mb-4 mx-3 mt-2'>Letter of Credits</h5>
     <Card.Body>
-      <Table striped bordered hover>
+      <Table responsive striped bordered hover>
         <thead>
           <tr>
             <th>LC Document</th>
@@ -477,17 +536,13 @@ const toggleInvoice = (invoiceNumber) => {
 )}
 
 {activeSection === 'InvoiceList' && (
- <Container>
+ <Container fluid 
+ >
 
   <Row>
   <Col lg={8} style={styles.invoiceContainer}>
   <h5 className='mb-3'>Invoices List</h5>
-  {/* {loading ? (
-            <div className="text-center mt-5">
-              Loading invoices...
-            </div>
-          ) : (
-            <> */}
+
   {invoiceData.length === 0 ? (
     <div className="text-center mt-5">
       <HiExclamation size={40} color='#ccc' />
@@ -496,28 +551,56 @@ const toggleInvoice = (invoiceNumber) => {
   ) : (
     <>
       {currentInvoices.map((invoice, index) => (
-        <Container key={index} style={{ ...styles.invoiceItems, height: expandedInvoices ? 'auto' : '100%', marginBottom: '20px' }}>
-          <Button variant="link" onClick={() => toggleInvoice(invoice.invoiceNumber)}>
-            {expandedInvoices[invoice.invoiceNumber] ? 'Hide Details' : 'Show Details'} - #{invoice.invoiceNumber}
-          </Button>
+        <Container fluid key={index} style={{ ...styles.invoiceItems, height: expandedInvoices ? 'auto' : '100%', marginBottom: '20px' }}>
+<Button
+  className='bg-success mx-0'
+  style={{ width: '100%', color: '#fff', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}
+  variant="link"
+  onClick={() => toggleInvoice(invoice.invoiceNumber)}
+>
+  <div className='row' style={{ width: '100%' }}>
+    <div className='col-md-3'>
+      <div>
+        {expandedInvoices[invoice.invoiceNumber] ? (
+          <HiEyeOff size={20} style={{ marginRight: '5px' }} />
+        ) : (
+          <HiEye size={20} style={{ marginRight: '5px' }} />
+        )}
+      </div>
+    </div>
+    <div className='col-md-6'>
+      <div>
+       INV-#{invoice.invoiceNumber}
+      </div>
+    </div>
+    <div className='col-md-3 text-light'>
+      Date issued {invoice.date} {/* Display the date to the right */}
+    </div>
+  </div>
+</Button>
           {expandedInvoices[invoice.invoiceNumber] && (
-            <Table borderless>
+            <Table borderless responsive>
 <tbody>
-            <tr>
-              <td><strong>Invoice Number:</strong></td>
-              <td style={{ textTransform: 'uppercase' }}>{invoice.invoiceNumber}</td>
-              <td><strong>Date:</strong></td>
-              <td>{invoice.date}</td>
-            </tr>
+            <br />
             <tr>
               <td><strong>Due Date:</strong></td>
               <td>{invoice.dueDate}</td>
               <td colSpan="2"></td>
             </tr>
             <tr>
-              <td colSpan="2"></td>
-              <td colSpan="2"></td>
-            </tr>
+                <td colSpan="2">Attached LC</td>
+                <td colSpan="2">
+                  {/* Check if the attached LC is a PDF file */}
+                  {invoice.attachedLc.toLowerCase().endsWith('.pdf') ? (
+                    <embed src={invoice.attachedLc} type="application/pdf" width="200" height="200" />
+                  ) : (
+                    // Handle other file types or provide a download link
+                    <a href={invoice.attachedLc} target="_blank" rel="noopener noreferrer">
+                      View Attached LC
+                    </a>
+                  )}
+                </td>
+              </tr>
             {/* Bill To */}
             <tr>
               <td colSpan="4">
@@ -527,6 +610,7 @@ const toggleInvoice = (invoiceNumber) => {
                 <p>Email: {invoice.billTo.email}</p>
                 <p>Phone: {invoice.billTo.phone}</p>
                 <hr />
+                <p>Country: {invoice.billTo.buyerCountry}</p>
               </td>
             </tr>
             {/* Ship To */}
@@ -534,14 +618,13 @@ const toggleInvoice = (invoiceNumber) => {
               <td colSpan="4">
                 <h5>Ship To:</h5>
                 <p>{invoice.shipTo}</p>
-                <hr />
               </td>
             </tr>
             {/* Items */}
             <tr>
               <td colSpan="4">
                 <h5>Items:</h5>
-                <Table>
+                <Table responsive>
                   <thead>
                     <tr>
                       <th>Title</th>
@@ -617,46 +700,24 @@ const toggleInvoice = (invoiceNumber) => {
           </div>
         </div>
         <h6 className='mt-3 mb-2'>Current Statuses</h6>
-        <ul className="list-group">
           {logisticsStatuses.map((status) => (
-            <li
-              key={status.id}
-              className="list-group-item d-flex justify-content-between align-items-center"
-              style={{
-                backgroundColor: 'white',
-                opacity: 0.7,
-                borderBottom: '1px solid #ddd', // Add a border for separation
-                padding: '10px', // Add padding for better spacing
-              }}
-            >
-              <div>
-                {/* <span style={{ fontWeight: 'bold' }}>{`Invoice #${status.invoice_number}`}</span> */}
-                <br />
-                <p  style={{ margin: '10px 0', fontSize: '18px', color:'black' }}>
-                  Invoice No: <span className='' style={{ fontWeight: 'normal', color: '#000', fontWeight:'500' }}>{` #${status.invoice_number}`}</span>
-                </p> 
-              </div>
-              <div>
-              <Card style={{
-                  width: '100px',
-                  height: '40px',
-                  textAlign: 'center',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: 'linear-gradient(to right, #4e73df, #224abe)', // Adjust gradient colors
-                  borderRadius: '0', // Removed border radius
-                  textTransform: 'capitalize',
-                  boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', // Added box shadow for a floating effect
-                  color: '#fff', // Adjusted text color
-                }} className={'card text-light'} disabled>
-                  {status.status}
-                </Card>
+           <div className="card mb-4" style={{ width: '100%', margin: 'auto' }}>
 
-              </div>
-            </li>
+             <div className="table-responsive">
+               <table className="table">
+                 <thead>
+                   <tr>
+                     <th>Order No</th>
+                     <th>Current Status</th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                   {logisticsStatuses.map(renderLogisticsStatus)}
+                 </tbody>
+               </table>
+             </div>
+         </div>
           ))}
-        </ul>
       </div>
     </div>
   </>

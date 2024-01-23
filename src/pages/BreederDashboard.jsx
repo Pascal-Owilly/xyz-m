@@ -139,24 +139,21 @@ const Supplier = () => {
 
   return (
     <Row className='main-container' style={{ textAlign: 'left', marginBottom: '20px', minHeight: '85vh' }}>
-      <h2 className=''>Breeder Dashboard</h2> <br />
-
-      <Col lg={{ span: 3, offset: 9 }} className='text-right'>
-        <div style={{ marginBottom: '25px', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width: 'auto' }}>
-          <p className='text-center mt-1'>{`${Greetings()} `} </p>
-          <span style={{ textTransform: 'capitalize' }}></span>
-        </div>
-      </Col>
+      <div className='p-3'>
+  <h5 className='mb-4 text-success mt-2'>Breeds supplies and history tracking section</h5>
+<p>Here, you can supply breeds to the abattoir and track all supply history details and payment updates. Feel free to contact us using the envelop icon.</p>
+  </div>
+     
 
       {/* Notifications */}
-      <Col className='mt-2' xs={6} md={6}>
+      <Col className='' xs={6} md={6}>
         {/* <FaBell size={20} color='white' /> */}
       </Col>
       {/* Flash message */}
       <Col xs={6} md={6}></Col>
 
       {/* Goat supplies status */}
-      <Col xs={12} md={6} lg={4}>
+      <Col xs={12} md={6} lg={6}>
         <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
           <Card.Body>
             <FaBox size={40} className='mb-3 text-success' />
@@ -170,10 +167,10 @@ const Supplier = () => {
       </Col>
 
       {/* Bread supplies status */}
-      <Col xs={12} md={6} lg={4}>
+      <Col xs={12} md={6} lg={6}>
         <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }} onClick={handleBreadSuppliesStatus}>
           <Card.Body>
-            <FaBox size={40} className='mb-3 text-success' />
+          <FaMoneyBillWave size={40} className='mb-3 text-success' />
             <Card.Title>Bread Supplies Status</Card.Title>
             <Card.Text>Check the status of your bread supplies and manage orders efficiently.</Card.Text>
             <button onClick={handleBreadSuppliesStatus} className='btn btn-primary'>
@@ -183,19 +180,7 @@ const Supplier = () => {
         </Card>
       </Col>
 
-      {/* Track Payments */}
-      <Col xs={12} md={6} lg={4}>
-        <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-          <Card.Body>
-            <FaMoneyBillWave size={40} className='mb-3 text-success' />
-            <Card.Title>Track Payments</Card.Title>
-            <Card.Text>Monitor your payment transactions and keep track of your earnings.</Card.Text>
-            <a href='#' className='btn btn-primary'>
-              View Payments
-            </a>
-          </Card.Body>
-        </Card>
-      </Col>
+      
       {localSuppliesData && (
   <Col xs={12} md={6} lg={4}>
     <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
