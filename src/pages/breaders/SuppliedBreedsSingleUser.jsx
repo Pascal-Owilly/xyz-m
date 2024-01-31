@@ -86,7 +86,7 @@ const Breader = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${baseUrl}/api/user-supplied-breeds`, {
+        const response = await fetch(`${baseUrl}/api/user-supplied-breeds/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },

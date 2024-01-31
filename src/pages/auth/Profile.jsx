@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { BASE_URL } from './config';
-import defaultIng from '../../../images/profile-pic.webp';
+import defaultIng from '../../../images/profile.webp';
 import { checkUserRole } from './CheckUserRoleUtils'; 
 import { useNavigate } from 'react-router-dom';
 const Profile = () => {
@@ -86,7 +86,11 @@ const Profile = () => {
       padding: '5px',
       minHeight: '100vh',
     }}>
-    <div className='main-container'>
+    <div className='main-container' style={{
+    width: '100%',
+    backgroundColor: 'rgb(249, 250, 251)', // Corrected syntax for rgb
+    color: 'rgb(153, 153, 153)' // Corrected syntax for rgb
+  }}>
     <div 
     
   >
@@ -100,7 +104,7 @@ const Profile = () => {
       <div className='col-md-4'>
      
 
-      <img src={defaultIng} className='img img-rounded' style={{ width:'100%' }} alt="Profile" />
+      <img src={defaultIng} className='img img-rounded'  alt="Profile" />
     </div>
     <div className='col-md-8'>
         {userProfile && userProfile.user ? (
@@ -123,23 +127,23 @@ const Profile = () => {
               <h2 style={{ fontSize: '18px', marginRight: '', fontWeight: 'bold', color: 'black' }}>
   Role: {userProfile.user.role ? userProfile.user.role.charAt(0).toUpperCase() + userProfile.user.role.slice(1) : 'No Role'}
 </h2>            </div>
-        <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+<table style={{ borderCollapse: 'collapse', width: '100%', border: '1px solid #ddd', borderRadius: '5px' }}>
           <tbody>
-            <tr style={{}}>
-              <td style={{ padding: '10px', textAlign: 'left' }}>Username:</td>
-              <td style={{ padding: '10px', textAlign: 'left' }}>{userProfile.user.username}</td>
-            </tr>
-            <tr style={{}}>
-              <td style={{ padding: '10px', textAlign: 'left' }}>Email:</td>
-              <td style={{ padding: '10px', textAlign: 'left' }}>{userProfile.user.email}</td>
-            </tr>
+          <tr style={{ backgroundColor: '#f2f2f2' }}>
+      <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Username:</td>
+      <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{userProfile.user.username}</td>
+    </tr>
+           <tr>
+      <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Email:</td>
+      <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{userProfile.user.email}</td>
+    </tr>
             <tr>
               <td style={{ padding: '10px', textAlign: 'left' }}>First Name:</td>
               <td style={{ padding: '10px', textAlign: 'left' }}>{userProfile.user.first_name}</td>
             </tr>
             <tr>
-              <td style={{ padding: '10px', textAlign: 'left' }}>Last Name:</td>
-              <td style={{ padding: '10px', textAlign: 'left' }}>{userProfile.user.last_name}</td>
+              <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Last Name:</td>
+              <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{userProfile.user.last_name}</td>
             </tr>
             <tr>
               <td style={{ padding: '10px', textAlign: 'left' }}>Market:</td>

@@ -86,7 +86,7 @@ const HomeContent = () => {
       return (
         <div>
           <p className='text-center mx-auto text-dark' style={{width:'100%'}}>
-            You currently have no role. Please be patient as we assign you one.
+            You currently have no role. Please be patient as we give you one.
             {/* <a className='bg-success text-white mx-2' href="/contact">here</a> */}
           </p>
         </div>
@@ -96,8 +96,8 @@ const HomeContent = () => {
 
       return (
         <div>
-          <p className='text-center mx-auto text-dark' style={{width:''}}>
-            You currently have no role. Please be patient as we assign you one. 
+          <p className='text-center mx-auto text-dark' style={{width:'60%'}}>
+            You currently have no role. Please be patient as we assign you a role.
             {/* <a href="/contact">here</a>. */}
           </p>
         </div>
@@ -260,31 +260,27 @@ const [flashMessage, setFlashMessage] = useState(null); // Initialize with null
      
     {/* </Col> */}
     <div className="d-sm-flex align-items-center justify-content-between w-100" style={{ height: 'auto' }}>
-
-      <div className="col-md-4 mx-auto mb-4 mb-sm-0 headline">
-
+  <div className="col-md-6 mx-auto mb-4 mb-sm-0 headline">
+    <span className="text-secondary text-uppercase">
+      {renderRoleNotification()}
+      {isLoggedIn && (
         <span className="text-secondary text-uppercase">
-        {renderRoleNotification()}
-
-        {userRole && (
-        <div style={{ textAlign: 'right', marginTop: 'px' }}>
-          <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#666666' }}>{`Hi, ${username}!`} <br />
-            <span className='mx-3' style={{ fontSize: '14px', color: '#666666' }}>Role: {userRole}</span>
-          </span>
-        </div>
-      )}
-
-
+          {renderRoleNotification()}
+          {userRole && (
+            <div style={{ textAlign: 'right', marginTop: 'px' }}>
+              <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#666666' }}>{`Hi, ${username}!`} <br />
+                <span className='mx-3' style={{ fontSize: '12px', color: '#666666' }}>Role: {userRole}</span>
+              </span>
+            </div>
+          )}
         </span>
-        <h1 className="display-4 my-4 font-weight-bold">Managing <span style={{ color: '#9B5DE5' }}>Breed supplies</span></h1>
-        <a href="register" className="btn px-5 py-3 text-white mt-3 mt-sm-0" style={{ borderRadius: '30px', backgroundColor: '#9B5DE5' }}>Get Started</a>
-      </div>
-      {/* in mobile remove the clippath */}
-      {/* <div className="col-md-8 h-100 clipped" style={{ minHeight: '350px', backgroundImage: 'url(https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2850&q=80)', backgroundPosition: 'center', backgroundSize: 'cover' }}> */}
-      <div className="col-md-8 h-100 clipped" style={{ minHeight: '500px', backgroundImage: `url(${backgroundSvg})`, backgroundPosition: 'center', backgroundSize: 'cover' }}>
-
-      </div>
-    </div>
+      )}
+    </span>
+    <h1 className=" my-4 font-weight-bold">Innovative platform for automated trading <br /> <span style={{ color: '#9B5DE5' }}>And secure funding across several portfolios</span></h1>
+    <a href="register" className="btn px-5 py-3 text-white mt-3 mt-sm-0" style={{ borderRadius: '30px', backgroundColor: '#9B5DE5' }}>Get Started</a>
+  </div>
+  <div className="col-md-6 h-100 clipped" style={{ minHeight: '500px', backgroundImage: `url(${backgroundSvg})`, backgroundPosition: 'center', backgroundSize: 'cover' }}></div>
+</div>
 
         
       </div>

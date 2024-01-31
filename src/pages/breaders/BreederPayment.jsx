@@ -16,7 +16,6 @@ const PaymentPage = () => {
   const [paymentStatus, setPaymentStatus] = useState(null);
 
   
-
   return (
     <div className='main-container' style={{minHeight:'85vh' }}>
 

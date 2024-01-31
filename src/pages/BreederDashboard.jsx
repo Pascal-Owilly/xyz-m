@@ -11,7 +11,6 @@ import { useSupplies } from '../SuppliesContext';
 import { checkUserRole } from './auth/CheckUserRoleUtils'; 
 import { Link } from 'react-router-dom'; // Import Link for navigation
 
-
 const Supplier = () => {
 
   const Greetings = () => {
@@ -112,7 +111,7 @@ const Supplier = () => {
      
       const handleBreadSuppliesStatus = async () => {
         try {
-          const response = await axios.get(`${baseUrl}/api/breader-trade/${user.id}`, {
+          const response = await axios.get(`${baseUrl}/api/breader-trade/${user.id}/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },

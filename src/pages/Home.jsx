@@ -10,16 +10,17 @@ import '../../vendors/styles/icon-font.min.css';
 import '../../vendors/styles/style.css';
 import AuthService from './auth/AuthService'; // Make sure the path is correct
 import { jwtDecode } from 'jwt-decode';
+import logo from '../../images/intellima logo.jpeg';
 
 import { checkUserRole } from './auth/CheckUserRoleUtils'; // Update the path accordingly
 import defaultImg from './../../images/default.png'
 import { Link } from 'react-router-dom';
 import sidebarimg from '../../images/goat_1.jpg';
-import { FaSignInAlt, FaUserPlus } from 'react-icons/fa'; // Import icons from react-icons library
+// import { FaSignInAlt, FaUserPlus, FaUserCog, FaHome, FaTruck, FaBoxOpen, FaMapMarkedAlt } from 'react-icons/fa'; // Import icons from react-icons library
+import { FaSignInAlt, FaUserPlus, FaUserCog, FaHome, FaTruck, FaBoxOpen, FaMapMarkedAlt } from 'react-icons/fa';
 
 const Home = () => {
 const navigate =useNavigate()
-
 
   const baseUrl = BASE_URL;
   const [profile, setProfile] = useState([]);
@@ -270,58 +271,101 @@ const logout = async () => {
     const renderDashboards = () => {
       switch (userRole) {
         case 'superuser':
-          return (
-            <>
-             <li>
-             <li>
-                <a href="/supplier_dashboard" style={{}}>SCM Administration</a>
-              </li>                          </li>
-              <li><a href="/supplier_dashboard">Breeder Dashboard</a></li>
-              <li><a href="/buyer_dashboard" onClick={handleLinkClick}>
-                Buyer Dashboard
-              </a></li>
-                <li><a href="/slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
-                <li><a href="/buyer">Buyer Dashboard</a></li>
-                <li><a href="/bank_teller_dashboard">Bank Teller Dashboard</a></li>
+      return (
+        <>
+          <li>
+            <a href="/supplier_dashboard">
+              <FaUserCog /> SCM Administration
+            </a>
+          </li>
+          <li>
+            <a href="/supplier_dashboard">
+              <FaUserCog /> Breeder Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="/buyer_dashboard" onClick={handleLinkClick}>
+              <FaHome /> Buyer Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="/slaughterhouse-dashboard">
+              <FaTruck /> Slaughterhouse Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="/buyer">
+              <FaBoxOpen /> Buyer Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="/bank_teller_dashboard">
+              <FaMapMarkedAlt /> Bank Teller Dashboard
+            </a>
+          </li>
+          {/* <li>
+            <a href="inventory-dashboard">
+              <FaIconName /> Inventory Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="warehouse">
+              <FaIconName /> Warehouse Dashboard
+            </a>
+          </li> */}
+          <li>
+            <a href="/customer_service_dashboard">
+              <FaMapMarkedAlt /> Customer Care
+            </a>
+          </li>
+          <li>
+            <a href="/export_handling_dashboard">
+              <FaMapMarkedAlt /> Export Handling Dashboard
+            </a>
+          </li>
+        </>
+      );
 
-                {/* <li>
-                  <a href="inventory-dashboard">Inventory Dashboard </a>
-                </li>
-                <li>
-                  <a href="warehouse">Warehouse Dashboard </a>
-                </li> */}
-                <li><a href="/customer_service_dashboard">Customer Care </a></li>
-            {/* <li><a href="employee_dashboard">Employee Dashboard</a></li> */}
-          <li><a href="/export_handling_dashboard">Export Handling Dashboard </a></li>
-
-            </>
-          );
           case 'admin':
             return (
               <>
-               <li>
+              <li style={{ display: 'flex', alignItems: 'center' }}>
+                <FaUserCog style={{ marginRight: '12px', color: 'white', fontSize: '20px'}} />
                 <a href="/admin_dashboard">SCM Administration</a>
-                            </li>
-                <li><a href="/supplier_dashboard">Breeder Dashboard</a></li>
-                <li><a href="/buyer_dashboard">Buyer Dashboard</a></li>
-                <li><a href="/slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
-                           
-                            {/* <li>
-                              <a href="inventory-dashboard">Inventory Dashboard </a>
-                            </li>
-                            <li>
-                              <a href="warehouse">Warehouse Dashboard </a>
-                            </li> */}
-                                            <li><a href="/bank_teller_dashboard">Bank Teller Dashboard</a></li>
-
-                                            <li><a href="/customer_service_dashboard">Customer Care </a></li>
-              {/* <li><a href="employee_dashboard">Employee Dashboard</a></li> */}
-            <li><a href="/export_handling_dashboard">Export Handling Dashboard </a></li>
-            <li><a href="/dispatch_and_shipping">Dispatch & Shipping </a></li>
-            <li><a href="/arrival">Arrival & Reception </a></li>
-
-
-              </>
+              </li>
+              <li style={{ display: 'flex', alignItems: 'center' }}>
+                <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+                <a href="/supplier_dashboard">Breeder Dashboard</a>
+              </li>
+              <li style={{ display: 'flex', alignItems: 'center' }}>
+                <FaHome style={{ marginRight: '12px', color: 'white', fontSize: '20px' }} />
+                <a href="/buyer_dashboard" onClick={handleLinkClick}>
+                  Buyer Dashboard
+                </a>
+              </li>
+              <li style={{ display: 'flex', alignItems: 'center' }}>
+                <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+                <a href="/slaughterhouse-dashboard">Slaughterhouse Dashboard</a>
+              </li>
+              <li style={{ display: 'flex', alignItems: 'center' }}>
+                <FaBoxOpen style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+                <a href="/buyer">Buyer Dashboard</a>
+              </li>
+              <li style={{ display: 'flex', alignItems: 'center' }}>
+                <FaMapMarkedAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+                <a href="/bank_teller_dashboard">Bank Teller Dashboard</a>
+              </li>
+              
+              <li style={{ display: 'flex', alignItems: 'center' }}>
+              <FaMapMarkedAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px' }} />
+                <a href="/customer_service_dashboard">Customer Care</a>
+              </li>
+              <li style={{ display: 'flex', alignItems: 'center' }}>
+                <FaMapMarkedAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+                <a href="/export_handling_dashboard">Export Handling Dashboard</a>
+              </li>
+            </>
+                          
             );
         case 'regular':
           return (
@@ -332,8 +376,13 @@ const logout = async () => {
         case 'buyer':
           return (
             <>
-              <li><a href="/buyer_dashboard">Buyer Dashboard</a></li>
-            </>
+<li style={{ display: 'flex', alignItems: 'center' }}>
+                <FaHome style={{ marginRight: '12px', color: 'white', fontSize: '20px' }} />
+                <a href="/buyer_dashboard" onClick={handleLinkClick}>
+                  Buyer Dashboard
+                </a>
+              </li>
+                          </>
           );
           case 'warehouse_personnel':
           return (
@@ -350,16 +399,20 @@ const logout = async () => {
             return (
               <>
 
-                <li><a href="/slaughterhouse-dashboard">Slaughterhouse Dashboard</a></li>
-                {/* Add more dashboards for buyer */}
+<li style={{ display: 'flex', alignItems: 'center' }}>
+                <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+                <a href="/slaughterhouse-dashboard">Slaughterhouse Dashboard</a>
+              </li>
               </>
             );
             case 'breeder':
               return (
                 <>
 
-                  <li><a href="/supplier_dashboard">Breeder Dashboard</a></li>
-                  {/* Add more dashboards for buyer */}
+<li style={{ display: 'flex', alignItems: 'center' }}>
+                <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+                <a href="/supplier_dashboard">Breeder Dashboard</a>
+              </li>
                 </>
               );
               case 'inventory_manager':
@@ -420,7 +473,7 @@ const logout = async () => {
       ></div>
 	
 
-	 <div className="user-info-dropdown"
+	 <div className="user-info-dropdown mx-5"
 	 
 	 >
         <div className="dropdown"
@@ -503,7 +556,9 @@ const logout = async () => {
           )}
         </div>
       </div>
-      <div className="Logo mx-2" style={{ 
+
+      <img src={logo} />
+      {/* <div className="Logo mx-2" style={{ 
   color: 'blue', 
   fontWeight: 'bold', 
   fontFamily: 'cursive', // You can adjust the font-family as per your preference
@@ -514,7 +569,7 @@ const logout = async () => {
   <a href="/" target="_blank">
     L<span style={{ marginLeft: '5px' }}>o</span>g<span style={{ marginLeft: '5px' }}>o</span>
   </a>
-</div>
+</div> */}
 
 	</div>    
     </div>
@@ -585,7 +640,7 @@ const logout = async () => {
     minHeight: '200vh',
     width: isLeftSidebarVisible ? '279px' : '0',
     transition: 'left 0.3s ease',
-    backgroundImage: `linear-gradient(rgba(0, 0, 255, 0.5), rgba(0, 0, 255, 0.5)), url(${sidebarimg})`, // Replace with your image variable
+    backgroundImage: `linear-gradient(rgb(75, 73, 172, 0.7), rgb(75, 73, 172, 0.7)), url(${sidebarimg})`, // Replace with your image variable
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     // overflow:'scroll',
@@ -594,8 +649,8 @@ const logout = async () => {
 	
   <div className="brand-logo">
   <span className='mtext' style={{ color: '#999999', fontSize: '18px' }}>
-	<a href='/' style={{ color: '#fff', fontSize: '18px', fontWeight:'bold' }}>
-      XYZ Management
+	<a href='/' style={{ color: '#fff', fontSize: '18px', fontWeight:'' }}>
+      Intellima SCM
 	  </a>
     </span>
     <div className="close-sidebar" data-toggle="left-sidebar-close"
@@ -612,8 +667,8 @@ const logout = async () => {
 <a href='/'>
         <li className="dropdown">
 		<span href="" className="dropdown-toggle" style={{color:'#fff', fontWeight: 800}}>
-   <span className="micon bi bi-house" style={{color:'#fff', fontWeight: 800}}></span>
-   <span className="mtext" style={{color:'#fff', fontWeight: 800}}>Home</span>
+   <span className="micon bi bi-house" style={{color:'#fff', fontWeight: 400}}></span>
+   <span className="mtext" style={{color:'#fff', fontWeight: 500, letterSpacing:'2px'}}>Home</span>
 </span>
 
 {isDashboardsVisible && (

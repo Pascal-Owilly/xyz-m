@@ -287,7 +287,7 @@ const Admin = () => {
               SCM Admin{' '}
              
             </h2>
-            <a href='/register-buyer'>
+            <a href='/register'>
               <button
                 className='mb-2'
                 style={{
@@ -409,7 +409,8 @@ const Admin = () => {
                     borderRadius: '5px', // Adjust the border radius as needed
                     boxShadow: '0px 4px 10px rgba(255, 255, 255, .9)', // Adjust the shadow as needed
                     color: '#ffffff',
-                    border:'none'
+                    border:'none',
+                    height:'170px'
                     // Set text color to white
                   }}
                           >

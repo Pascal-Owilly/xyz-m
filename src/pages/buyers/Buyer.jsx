@@ -410,11 +410,9 @@ const toggleInvoice = (invoiceNumber) => {
     }
   };
   
-  
-
+ 
   return (
     <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
-
 
         {/* Navbar */}
         <Navbar bg="primary" expand="lg" variant="dark">

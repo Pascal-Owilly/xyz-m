@@ -123,7 +123,7 @@ const LoginTest = () => {
                 navigate('/inventory');
                 break;
                 case 'Slaughterhouse Manager':
-                  navigate('/inventory');
+                  navigate('/slaughterhouse-dashboard');
                   break;
 
         // Add more cases for other roles if needed

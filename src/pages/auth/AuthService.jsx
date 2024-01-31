@@ -123,7 +123,7 @@ const authService = {
       const response = await axios.post(`${baseUrl}/api/password-reset/`, { email });
       return response.data;
     } catch (error) {
-      throw error; // Handle errors in the component
+      throw error; 
     }
   },
 
@@ -138,8 +138,6 @@ const authService = {
       throw error; // Handle errors in the component
     }
   },
-
-  
 
 };
 

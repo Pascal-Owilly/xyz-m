@@ -86,7 +86,7 @@ const Breader = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${baseUrl}/api/breader-trade`, {
+        const response = await fetch(`${baseUrl}/api/breader-trade/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
