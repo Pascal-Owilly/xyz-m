@@ -40,6 +40,8 @@ import Arrival from './pages/export_handling/Arrival';
 
 import TrackInvoice from './pages/TrackInvoice';
 import Buyer from './pages/buyers/Buyer';
+import Sellers from './pages/seller_mng/Sellers';
+import Quotation from './pages/seller_mng/Quotation';
 
 const App = () => {
   return (
@@ -60,6 +62,11 @@ const App = () => {
             {/* Dashboards */}
             <Route path="/admin_dashboard" element={<AdministrationDashboard />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
+
+            {/* Sellers */}
+            <Route path="/sellers" element={<Sellers />} />
+            <Route path="/quotation" element={<Quotation />} />
+
 
             <Route path="/invoice_tracking" element={<BuyerDashboard />} />
             <Route path="/buyer_dashboard" element={<Buyer />} />

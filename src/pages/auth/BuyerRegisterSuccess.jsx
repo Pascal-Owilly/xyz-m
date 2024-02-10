@@ -4,11 +4,15 @@ import { Link } from 'react-router-dom';
 const InvoiceSuccessMessage = () => {
   return (
     <div style={styles.container}>
-      <h1 style={styles.successMessage}>Buyer register success!</h1>
-      <Link to="/warehouse" style={styles.dashboardLink}>
-        Return to Your Dashboard
-      </Link>
-    </div>
+    <h1 style={styles.successMessage}>Buyer register success!</h1>
+    <p style={styles.infoMessage}>
+      To complete buyer address details, please click the link below:
+    </p>
+    <Link to="https://api.intellima.tech/admin/invoice_generator/buyer/add/" style={styles.dashboardLink}>
+Complet buyer registration
+    </Link>
+  </div>
+  
   );
 };
 

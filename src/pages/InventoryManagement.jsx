@@ -107,20 +107,20 @@ const getColorClass = (breed) => {
 
   return (
     <div className='main-container'>
-    <div className='container' style={{ minHeight: '75vh' }}>
-      <div className='row'>
+    <div className='container-fluid' style={{ minHeight: '75vh' }}>
+      <div className='row' >
         <div className='col-md-12'>
-          <Card className="weather-card" style={{ background: 'transparent' }}>
+          <Card className="" style={{ background: 'white' }}>
             <Card.Body>
 
-              <Card.Title className=' mb-3' style={{ color: '#A9A9A9', fontSize: '1rem', marginBottom: '1rem' }}>Inventory Information</Card.Title>
-              <h2 style={{ fontSize: '1.5rem', color: '#3498db', fontWeight: 'bold' }}>
-                Total Breeds in the Yard: <span style={{ color: 'green' }}>{inventoryData.totalBreeds}</span>
-              </h2>
+              <Card.Title className=' mb-3 text-success' style={{ color: '#A9A9A9', fontSize: '1rem', marginBottom: '1rem' }}>Inventory Information</Card.Title>
+              <h4 className=' mb-3 text-secondary' style={{ fontSize: '', color: '#3498db', fontWeight: 'bold' }}>
+                Total number of raw materials: <span style={{ color: 'green' }}>{inventoryData.totalBreeds}</span>
+              </h4>
               <hr />
               <Row>
               <Col md={12}>
-  <h4 className='mb-2' style={{ fontSize: '1.5rem' }}>Total By Categories</h4>
+  <h4 className='mb-2 text-secondary' style={{ fontSize: '1.2rem' }}>Total By Category</h4>
   <Row>
     {Object.entries(inventoryData.breedTotals).map(([breed, total]) => {
       const percentage = (total / overallTotal) * 100;
@@ -163,7 +163,7 @@ const getColorClass = (breed) => {
               </Row>
               <Col className='mb-2' md={12}>
                 <hr />
-                <h4 className='mb-4 ' style={{ fontSize: '1.5rem' }}>Breed Parts in Warehouse</h4>
+                <h4 className='mb-4 text-secondary' style={{ fontSize: '1.2rem' }}>Finished Products available for export</h4>
               </Col>
               <Row>
                 {Object.entries(inventoryData.breedPartsInWarehouse).map(([breed, parts]) => (
@@ -172,7 +172,6 @@ const getColorClass = (breed) => {
                       <Card.Header style={{ fontSize: '1.3rem', fontWeight: 'bold' }}>{capitalizeFirstLetter(breed)}</Card.Header>
                       <Card.Body>
                         <ul>
-                        <li className='mb-2' style={{ fontSize: '1.2rem', fontFamily:'verdana', fontWeight:'bold' }}>Export Parts:</li>
                           {Object.entries(parts)
                             .filter(([partName, details]) => details.some(part => part.saleType === 'export_cut'))
                             .map(([partName, details]) => (
@@ -180,8 +179,27 @@ const getColorClass = (breed) => {
                                 {capitalizeFirstLetter(partName)}: {details.reduce((acc, part) => part.saleType === 'export_cut' ? acc + part.quantity : acc, 0)}
                               </li>
                             ))}
-                            <hr />
-                          <li className='mb-2'  style={{ fontSize: '1.2rem', fontFamily:'verdana', fontWeight:'bold' }}>Local Sale Parts:</li>
+                           
+                        </ul>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+              <Row>
+
+              <Col className='mb-2' md={12}>
+                <hr />
+                <h4 className='mb-4 text-secondary' style={{ fontSize: '1.2rem' }}>Finished Products available for local sales</h4>
+                </Col>
+
+                {Object.entries(inventoryData.breedPartsInWarehouse).map(([breed, parts]) => (
+                  <Col key={breed} md={3}>
+                    <Card style={{ marginBottom: '1.5rem' }}>
+                      <Card.Header style={{ fontSize: '1.3rem', fontWeight: 'bold' }}>{capitalizeFirstLetter(breed)}</Card.Header>
+                      <Card.Body>
+                        <ul>
+                        
                           {Object.entries(parts)
                             .filter(([partName, details]) => details.some(part => part.saleType === 'local_sale'))
                             .map(([partName, details]) => (
@@ -194,6 +212,7 @@ const getColorClass = (breed) => {
                     </Card>
                   </Col>
                 ))}
+
               </Row>
             </Card.Body>
           </Card>

@@ -39,6 +39,10 @@ const Supplier = () => {
       const accessToken = Cookies.get('accessToken');
       const [user, setUser] = useState({});
       const [localSuppliesData, setLocalSuppliesData] = useState(null);
+
+      const [emptyHistoryMessageVisible, setEmptyHistoryMessageVisible] = useState(false);
+
+
       const [userRole, setUserRole] = useState('')
       useEffect(() => {
         const refreshAccessToken = async () => {
@@ -111,13 +115,21 @@ const Supplier = () => {
      
       const handleBreadSuppliesStatus = async () => {
         try {
-          const response = await axios.get(`${baseUrl}/api/breader-trade/${user.id}/`, {
+          const response = await axios.get(`${baseUrl}/api/breader-trade/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
           });
       
-          console.log('Response Data:', response.data); // Log the entire response data
+          console.log('Response Data:', response.data);
+      
+          // Check if the supply history is empty
+          if (response.data.length === 0) {
+            // Show the empty history message
+            setEmptyHistoryMessageVisible(true);
+            // Do not proceed further
+            return;
+          }
       
           // Set supplies data directly to local state
           setLocalSuppliesData(response.data);
@@ -134,6 +146,7 @@ const Supplier = () => {
           navigate('/supplied-breeds');
         }
       }, [localSuppliesData, navigate]);
+    
     
 
   return (
@@ -167,10 +180,10 @@ const Supplier = () => {
 
       {/* Bread supplies status */}
       <Col xs={12} md={6} lg={6}>
-        <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }} onClick={handleBreadSuppliesStatus}>
+        <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
           <Card.Body>
-          <FaMoneyBillWave size={40} className='mb-3 text-success' />
-            <Card.Title>Bread Supplies Status</Card.Title>
+            <FaMoneyBillWave size={40} className='mb-3 text-success' />
+            <Card.Title>Breed Supply History</Card.Title>
             <Card.Text>Check the status of your bread supplies and manage orders efficiently.</Card.Text>
             <button onClick={handleBreadSuppliesStatus} className='btn btn-primary'>
               View Status
@@ -178,6 +191,13 @@ const Supplier = () => {
           </Card.Body>
         </Card>
       </Col>
+
+      {/* Empty history message */}
+      {emptyHistoryMessageVisible && (
+        <div className="alert alert-warning mt-2" role="alert">
+          Your breed supply history is empty.
+        </div>
+      )}
 
       
       {localSuppliesData && (

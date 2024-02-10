@@ -1,0 +1,37 @@
+
+Inventory Overview: Provide a summary view of the current inventory levels for both raw materials and finished products. This could include total quantities on hand, units reserved for orders, and available quantities for sale.
+
+Raw Materials Management:
+
+Inventory Tracking: Allow sellers to track the quantities of raw materials available in stock.
+Reorder Alerts: Implement notifications or alerts to inform sellers when raw material quantities fall below a certain threshold, indicating the need to reorder.
+Supplier Management: Enable sellers to manage their list of suppliers for raw materials, including contact information and ordering history.
+Finished Products Management:
+
+Inventory Tracking: Track the quantities of finished products available in stock.
+Product Details: Display detailed information about each finished product, including product name, SKU, description, and pricing.
+Sales History: Provide a history of sales for each finished product, including order dates, quantities sold, and revenue generated.
+Inventory Transactions:
+
+Receipts: Allow sellers to record receipts of raw materials into inventory, indicating the quantity received and the date.
+Usage: Enable sellers to log the usage of raw materials in production activities, deducting the quantities used from inventory.
+Adjustments: Allow manual adjustments to inventory levels for situations such as spoilage, damage, or discrepancies.
+Inventory Reports:
+
+Inventory Turnover: Provide insights into inventory turnover rates to optimize stock levels and reduce carrying costs.
+Stock Aging: Display the age of inventory to identify obsolete or slow-moving items that may require clearance or special promotions.
+Forecasting: Use historical data and trends to forecast future inventory needs and make informed purchasing decisions.
+
+Purchase Orders - confirmed, rejected
+Payments - completed, pending
+inventory - Inventory Reports
+        Inventory Turnover: Provide insights into inventory turnover rates to optimize stock levels and reduce carrying costs.
+Stock Aging: Display the age of inventory to identify obsolete or slow-moving items that may require clearance or special promotions.
+Forecasting: Use historical data and trends to forecast future inventory needs and make informed purchasing decisions.()
+, Inventory Transactions(
+    Receipts: Allow sellers to record receipts of raw materials into inventory, indicating the quantity received and the date.
+    Usage: Enable sellers to log the usage of raw materials in production activities, deducting the quantities used from inventory.
+Adjustments: Allow manual adjustments to inventory levels for situations such as spoilage, damage, or discrepancies.
+), raw materials, finished products
+Reporting Analytics - negotiations, POs,confirmedPurchaseOrders, pendingPayments, inventory, production Status(logistics) - Delayed-Completed-In Progress:--Pending:-canceled, raw materials, finished products
+

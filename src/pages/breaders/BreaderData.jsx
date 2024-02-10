@@ -4,6 +4,7 @@ import { BASE_URL } from '../auth/config';
 import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import { HiBell, HiCube, HiExclamation, HiCurrencyDollar, HiChartBar } from 'react-icons/hi';
 
 
 // timestamp
@@ -118,37 +119,41 @@ const Breader = () => {
 
   return (
     <div className="main-container" style={{minHeight:'80vh'}}>
+
+{(!currentItems || currentItems.length === 0) ? (
+    <div className="text-center mt-5">
+      <HiExclamation size={40} color='#ccc' />
+      <p className="mt-3">Hello, you dont have any products yet !</p>
+    </div>
+  ) : (
+    <>
       {breaderData && (
         <div>
-          <h2 className='mb-4'>Breed supplies</h2>
+          <h5 className='mb-4 text-secondary'>List of supplied products </h5>
           <div className="row">
-          {currentItems && currentItems.map((breader) => (
-            
-  <div key={breader.id} className="col-lg-3 mb-4">
-    <Link
-      to={`/breader-info/${breader.id}`}
-      style={{ textDecoration: 'none', color: 'inherit' }}
-    >
-      <div className="card" style={{ borderRadius: '10px' }}>
-        <div className="card-body">
-          <h5 className="card-title">{breader.breeder_community} Community</h5>
-          <div className="card-text">
-          <strong>Breader:</strong> {breader.breeder_first_name} {breader.breeder_last_name} <br />  <strong>supplied </strong> {formatTimestamp(breader.created_at)}
-
-          </div>
-          <div className="card-text">
-            <strong>Market:</strong> {breader.breeder_market}
-          </div>
-          <p className="card-text" style={{ float: 'right', backgroundColor: breader.isPaid ? 'green' : 'blue', color: 'white', padding: '5px', borderRadius: '30px', fontSize: '11px', fontWeight: '800', width: 'auto' }}>
-            <span className='mx'> {breader.isPaid ? 'Paid' : 'Payment Pending'}</span>
-          </p>
-        </div>
-      </div>
-    </Link>
-  </div>
-))}
-
-
+            {currentItems && currentItems.map((breader) => (
+              <div key={breader.id} className="col-lg-3 mb-4">
+                <Link
+                  to={`/breader-info/${breader.id}`}
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  <div className="card" style={{ borderRadius: '10px' }}>
+                    <div className="card-body">
+                      <h5 className="card-title">{breader.breed}</h5>
+                      <div className="card-text">
+                        <strong>Trader:</strong> {breader.breeder_first_name} {breader.breeder_last_name} <br />  <strong>supplied </strong> {formatTimestamp(breader.created_at)}
+                      </div>
+                      <div className="card-text">
+                        <strong>Market:</strong> {breader.breeder_market}
+                      </div>
+                      <p className="card-text" style={{ float: 'right', backgroundColor: breader.isPaid ? 'green' : 'blue', color: 'white', padding: '5px', borderRadius: '30px', fontSize: '11px', fontWeight: '800', width: 'auto' }}>
+                        <span className='mx'> {breader.isPaid ? 'Paid' : 'Payment Pending'}</span>
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            ))}
           </div>
           {totalPages > 1 && (
             <div className="pagination">
@@ -165,7 +170,10 @@ const Breader = () => {
           )}
         </div>
       )}
-    </div>
+    </>
+  )}
+</div>
+
   );
 };
 

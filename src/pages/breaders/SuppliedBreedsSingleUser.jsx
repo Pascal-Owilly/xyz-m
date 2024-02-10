@@ -86,7 +86,9 @@ const Breader = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${baseUrl}/api/user-supplied-breeds/`, {
+        // const response = await fetch(`${baseUrl}/api/user-supplied-breeds/`, {
+          const response = await fetch(`${baseUrl}/api/breader-trade-id/`, {
+
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -125,7 +127,7 @@ const Breader = () => {
           {currentItems && currentItems.map((breader) => (
   <div key={breader.id} className="col-lg-12 mb-2">
 
-      <div className="card bg-success text-white" style={{ borderRadius: '10px' }}>
+      <div className="card  text-secondary" style={{ borderRadius: '10px', backgroundColor:'#fff' }}>
         <div className="card-body" style={{textTransform:'capitalize'}}>
           <h5 className="card-title"></h5>
           <div className="row">

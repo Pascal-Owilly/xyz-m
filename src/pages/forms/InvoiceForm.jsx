@@ -189,11 +189,12 @@ useEffect(() => {
      // Initialize errors object
      const errors = {};
 
-     // Validate phone number format
-const phoneNumberRegex = /^\+\d{12}$/;
-if (!formData.phone_number || !phoneNumberRegex.test(formData.phone_number)) {
-  errors.phone_number = 'Please enter a valid phone number in the format +2547112345678.';
+// Validate phone number format
+const phoneNumberRegex = /^\+(\d{1,4})\d{8,}$/;
+if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || /^\+\d{12}$/.test(formData.phone_number))) {
+  errors.phone_number = 'Please enter a valid phone number. Use the format +2547112345678 or include a valid country code.';
 }
+
 
 
      // Validate breeds supplied
@@ -262,7 +263,18 @@ if (!formData.phone_number || !phoneNumberRegex.test(formData.phone_number)) {
         user: null,
       });
     } catch (error) {
-      console.error('Error submitting invoice form:', error.response.data);
+      if (error.response && error.response.status === 500) {
+        const backendErrors = error.response.data;
+        if (backendErrors && backendErrors.phone_number) {
+          // Handle phone number validation error
+          const phoneError = backendErrors.phone_number[0].string;
+          setErrors({ phone_number: phoneError });
+        } else {
+          console.error('Error in creating BreaderTrade:', backendErrors);
+        }
+      } else {
+        console.error('Error submitting invoice form:', error.response.data);
+      }
     }
   };
 

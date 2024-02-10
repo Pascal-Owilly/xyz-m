@@ -85,19 +85,20 @@ const HomeContent = () => {
     if (userRole === 'No role') {
       return (
         <div>
-          <p className='text-center mx-auto text-dark' style={{width:'100%'}}>
+          <p className='text-left mx-auto text-dark' style={{width:'100%'}}>
             You currently have no role. Please be patient as we give you one.
             {/* <a className='bg-success text-white mx-2' href="/contact">here</a> */}
           </p>
         </div>
       );
     }
+
     if (userRole === 'no_role') {
 
       return (
         <div>
-          <p className='text-center mx-auto text-dark' style={{width:'60%'}}>
-            You currently have no role. Please be patient as we assign you a role.
+          <p className='text-capitalize mx-auto text-dark' style={{width:'60%'}}>
+            You currently have no role. Please be patient as we assign you one.
             {/* <a href="/contact">here</a>. */}
           </p>
         </div>
@@ -262,7 +263,6 @@ const [flashMessage, setFlashMessage] = useState(null); // Initialize with null
     <div className="d-sm-flex align-items-center justify-content-between w-100" style={{ height: 'auto' }}>
   <div className="col-md-6 mx-auto mb-4 mb-sm-0 headline">
     <span className="text-secondary text-uppercase">
-      {renderRoleNotification()}
       {isLoggedIn && (
         <span className="text-secondary text-uppercase">
           {renderRoleNotification()}
@@ -276,7 +276,7 @@ const [flashMessage, setFlashMessage] = useState(null); // Initialize with null
         </span>
       )}
     </span>
-    <h1 className=" my-4 font-weight-bold">Innovative platform for automated trading <br /> <span style={{ color: '#9B5DE5' }}>And secure funding across several portfolios</span></h1>
+    <h1 className="my-4 font-weight-bold">Innovative platform for automated supply chains <br /> <span className=' my-4' style={{ color: '#9B5DE5', fontSize:'' }}>Across several portfolios</span></h1>
     <a href="register" className="btn px-5 py-3 text-white mt-3 mt-sm-0" style={{ borderRadius: '30px', backgroundColor: '#9B5DE5' }}>Get Started</a>
   </div>
   <div className="col-md-6 h-100 clipped" style={{ minHeight: '500px', backgroundImage: `url(${backgroundSvg})`, backgroundPosition: 'center', backgroundSize: 'cover' }}></div>

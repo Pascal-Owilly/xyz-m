@@ -228,18 +228,18 @@ const Admin = () => {
   };
   
 
-  useEffect(() => {
-    const checkUser = async () => {
-      const role = await checkUserRole();
-      setUserRole(role);
+  // useEffect(() => {
+  //   const checkUser = async () => {
+  //     const role = await checkUserRole();
+  //     setUserRole(role);
   
-      if (role !== 'superuser' && role !== 'admin') {
-        navigate('/unauthorized');
-      }
-    };
+  //     if (role !== 'superuser' && role !== 'admin') {
+  //       navigate('/unauthorized');
+  //     }
+  //   };
   
-    checkUser();
-  }, [navigate]);
+  //   checkUser();
+  // }, [navigate]);
   
   useEffect(() => {
     const fetchData = async () => {
@@ -287,7 +287,7 @@ const Admin = () => {
               SCM Admin{' '}
              
             </h2>
-            <a href='/register'>
+            <a href='/register-buyer'>
               <button
                 className='mb-2'
                 style={{
@@ -344,11 +344,13 @@ const Admin = () => {
 </div>
 
 <div className="col-lg-3 col-md-6 mb-3">
+<a href='https://api.intellima.tech/admin/logistics/logisticsstatus/add/'>
+
   <div className="card-box height-100-p widget-style3">
     <div className="d-flex flex-wrap">
       <div className="widget-data">
-        <div className="weight-700 font-20 text-dark">Earnings</div>
-        <div className="font-14 text-secondary weight-500">Kes 5,000,000</div>
+        <div className="weight-700 font-20 text-dark">Logistics</div>
+        <div className="font-14 text-secondary weight-500">Manage Status</div>
       </div>
       <div className="widget-icon" style={{background:'rgb(0, 27, 49)'}}>
         <div className="icon" data-color="#09cc06">
@@ -357,12 +359,13 @@ const Admin = () => {
       </div>
     </div>
   </div>
+  </a>
 </div>
 
 
 
 <div className="col-lg-3 col-md-6 mb-3">
-  <a href='/warehouse'>
+  <a href='https://api.intellima.tech/admin/invoice_generator/invoice/add/'>
     <div className="card-box height-100-p widget-style3 custom-card">
       <div className="d-flex flex-wrap">
         <div className="widget-data">

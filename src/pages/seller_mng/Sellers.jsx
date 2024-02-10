@@ -1,0 +1,1291 @@
+// Import necessary dependencies
+import React, { useState, useEffect } from 'react';
+import { Row, Col, Card, Container, Form, Button, ProgressBar, Navbar, Nav, NavDropdown, NavLink, FormGroup, FormLabel, InputGroup } from 'react-bootstrap';
+import { FaTruck } from 'react-icons/fa'; // Assuming you're using react-icons for the truck icon
+import { BASE_URL } from '../auth/config';
+import Cookies from 'js-cookie';
+import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
+import './Seller.css';
+
+import { FaFileInvoice, FaList, FaMoneyBillAlt, FaWarehouse, FaArchive } from 'react-icons/fa'; // Import the desired icons
+import { checkUserRole } from '../auth/CheckUserRoleUtils'; 
+import ReactApexChart from 'react-apexcharts';
+
+const BankDashboard = ({ orderId }) => {
+
+  // ADMIN DASHBOARD
+  const baseUrl = BASE_URL;
+
+  const [userRole, setUserRole] = useState('');
+  const [breadersCount, setBreadersCount] = useState(0);
+  const [supplyVsDemandData, setSupplyVsDemandData] = useState([]);
+  const [totalBuyers, setTotalBuyers] = useState(0);
+  const [totalSuppliers, setTotalSuppliers] = useState(0);
+  const [user, setUser] = useState(null);
+  const [remainingBreeds, setRemainingBreeds] = useState([]);
+  const [buyers, setBuyers] = useState([]);
+
+    // admin vars
+    const [activeSection, setActiveSection] = useState('Negotiations');
+
+    const [paymentCode, setPaymentCode] = useState('');
+    const [paymentData, setPaymentData] = useState(null);
+    const [error, setError] = useState(null);
+    const accessToken = Cookies.get('accessToken');
+  
+    const [selectedBreeder, setSelectedBreeder] = useState('');
+    const [showForm, setShowForm] = useState(false);
+  
+    // LC
+    const [lcId, setLcId] = useState(null);
+    const [lcDocument, setLcDocument] = useState(null);
+    const [lcUploadError, setLcUploadError] = useState(null);
+    const [profile, setProfile] = useState(null)
+    const [userProfile, setUserProfile] = useState(null);
+    const [arrivedOrdersData, setArrivedOrdersData] = useState([]);
+    const [shipmentProgressData, setShipmentProgressData] = useState([]);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [logisticsStatuses, setLogisticsStatuses] = useState([]);
+    const [orders, setOrders] = useState([]);
+  
+    const [lcUploadSuccess, setLcUploadSuccess] = useState(false);
+    const [lcUploadMessage, setLcUploadMessage] = useState('');
+    // end admin vrs
+
+  const refreshAccessToken = async () => {
+    try {
+      console.log('fetching token refresh ... ')
+
+      const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
+  
+      const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+        refresh: refreshToken,
+      });
+  
+      const newAccessToken = response.data.access;
+      // Update the stored access token
+      Cookies.set('accessToken', newAccessToken);
+      // Optional: You can also update the user data using the new access token
+      await fetchUserData();
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
+      // Handle the error, e.g., redirect to login page
+    }
+  };
+  
+
+  const fetchUserData = async () => {
+    try {
+      const accessToken = Cookies.get('accessToken');
+  
+      if (accessToken) {
+        const response = await axios.get(`${baseUrl}/auth/user/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+  
+        const userProfile = response.data;
+        setProfile(userProfile);
+      }
+    } catch (error) {
+      // Check if the error indicates an expired access token
+      if (error.response && error.response.status === 401) {
+        // Attempt to refresh the access token
+        await refreshAccessToken();
+      } else {
+        console.error('Error fetching user data:', error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/api/supply-vs-demand/`);
+        setSupplyVsDemandData(response.data.supply_vs_demand_data);
+      } catch (error) {
+        console.error('Error fetching supply vs demand data:', error);
+      }
+    };
+
+    fetchData();
+  }, [baseUrl]);  
+
+  
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch the access token from wherever it is stored (e.g., localStorage)
+        const accessToken = Cookies.get('accessToken');
+  
+        // Include the access token in the request headers
+        const config = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+  
+        // Make the GET request with the access token included in the headers
+        const response = await axios.get(`${baseUrl}/api/send-quotation/`, config);
+        console.error('Quotation created successfully');
+      } catch (error) {
+        console.error('Error fetching creating quotation:', error);
+      }
+    };
+  
+    fetchData();
+  }, [baseUrl]);
+  
+
+  const chartData = {
+    options: {
+      chart: {
+        type: 'bar',
+      },
+      xaxis: {
+        categories: supplyVsDemandData.map(item => item.breed),
+      },
+    },
+    series: [
+      {
+        name: 'Total Bred',
+        data: supplyVsDemandData.map(item => item.total_bred),
+      },
+      {
+        name: 'Total Slaughtered',
+        data: supplyVsDemandData.map(item => item.total_slaughtered),
+      },
+    ],
+  };
+
+  useEffect(() => {
+    const calculateRemainingBreeds = () => {
+      // Assuming supplyVsDemandData is an array of objects with breed, total_bred, and total_slaughtered properties
+      const remainingBreedsData = supplyVsDemandData.map((item) => {
+        const remainingCount = Math.max(0, item.total_bred - item.total_slaughtered);
+        return {
+          breed: item.breed,
+          remainingCount,
+        };
+      });
+
+      setRemainingBreeds(remainingBreedsData);
+    };
+
+    calculateRemainingBreeds();
+  }, [supplyVsDemandData]);
+
+  const remainingBreedsChartData = {
+    options: {
+      chart: {
+        type: 'radialBar',
+        background: 'transparent', // Set background to transparent
+      },
+      plotOptions: {
+        radialBar: {
+          hollow: {
+            size: '70%',
+          },
+          dataLabels: {
+            name: {
+              fontSize: '16px',
+            },
+            value: {
+              fontSize: '30px',
+            },
+          },
+        },
+      },
+      labels: remainingBreeds.map((item) => item.breed),
+    },
+    series: remainingBreeds.map((item) => item.remainingCount),
+  };
+
+   // New state for breed supply status
+   const [breedSupplyStatus, setBreedSupplyStatus] = useState('');
+   
+   useEffect(() => {
+    const calculateBreedSupplyStatus = () => {
+      const totalRemaining = remainingBreeds.reduce((acc, item) => acc + item.remainingCount, 0);
+
+      if (totalRemaining > 0) {
+        setBreedSupplyStatus(`You have a total of ${totalRemaining} raw materials in the store.`);
+      } else if (totalRemaining < 0) {
+        setBreedSupplyStatus(`Heads up, you are completely out of breeds.`);
+      } else {
+        setBreedSupplyStatus(`The inventory level seems empty.`);
+      }
+    };
+
+    calculateBreedSupplyStatus();
+  }, [remainingBreeds]);
+
+  const circularBarChartData = {
+    options: {
+      chart: {
+        type: 'radialBar',
+      },
+      plotOptions: {
+        radialBar: {
+          startAngle: -135,
+          endAngle: 80,
+          hollow: {
+            margin: 0,
+            size: '30%',
+            background: 'lightgreen',
+          },
+          track: {
+            background: 'lightblue',
+            strokeWidth: '20%',
+            margin: 0, // margin is in pixels
+            dropShadow: {
+              enabled: false,
+              top: 2,
+              left: 0,
+              color: '#999',
+              opacity: 1,
+              blur: 2,
+            },
+          },
+          dataLabels: {
+            name: {
+              offsetY: -10,
+              show: true,
+              color: '#888',
+              fontSize: '17px',
+            },
+            value: {
+              color: '#111',
+              fontSize: '36px',
+              show: true,
+            },
+          },
+        },
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shade: 'dark',
+          type: 'horizontal',
+          shadeIntensity: 0.5,
+          gradientToColors: ['#FFD700'],
+          inverseColors: true,
+          opacityFrom: 1,
+          opacityTo: 1,
+          stops: [0, 100],
+        },
+      },
+      stroke: {
+        dashArray: 1,
+      },
+    },
+   
+  };
+  
+
+  // useEffect(() => {
+  //   const checkUser = async () => {
+  //     const role = await checkUserRole();
+  //     setUserRole(role);
+  
+  //     if (role !== 'superuser' && role !== 'admin') {
+  //       navigate('/unauthorized');
+  //     }
+  //   };
+  
+  //   checkUser();
+  // }, [navigate]);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${baseUrl}/api/breader-count/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        const data = await response.json();
+        setBreadersCount(data.breader_count);
+        console.log('breeder count', data)
+      } catch (error) {
+        console.error('Error fetching breaders count:', error);
+      }
+    };
+
+    fetchData();
+  }, [baseUrl, accessToken]);
+
+  
+  useEffect(() => {
+    // Fetch data from Django API endpoint
+    fetch(`${baseUrl}/api/breader-count/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        setBreadersCount(data.breader_count);
+
+      })
+      .catch(error => console.error('Error fetching breaders count:', error));
+  }, []);
+
+
+  // END ADMIN
+
+
+  // START PO
+  const [formData, setFormData] = useState({
+    seller: '',
+    po_number: '',
+    date: '',
+    trader_name: '',
+    buyer_address: '',
+    buyer_contact: '',
+    seller_address: '',
+    seller_contact: '',
+    shipping_address: '',
+    confirmed: false,
+    product_description: '',
+    quantity: '',
+    unit_price: '',
+    tax: '',
+    total_amount: '',
+    payment_terms: '',
+    delivery_terms: '',
+    reference_numbers: '',
+    special_instructions: '',
+    attachments: null,
+    authorized_signature: '',
+    signature_date: ''
+});
+
+useEffect(() => {
+  // Fetch data if editing existing purchase order
+  const fetchData = async () => {
+      try {
+          const response = await axios.get(`${baseUrl}/api/purchase-orders/${orderId}/`);
+          setFormData(response.data);
+      } catch (error) {
+          console.error('Error fetching data:', error);
+      }
+  };
+
+  // Fetch data only if orderId is provided
+  if (orderId) {
+      fetchData();
+  }
+}, [orderId]);
+
+const handleChange = (e) => {
+  const { name, value, type, checked, files } = e.target;
+  const val = type === 'checkbox' ? checked : type === 'file' ? files[0] : value;
+  setFormData(prevState => ({
+      ...prevState,
+      [name]: val
+  }));
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+      if (orderId) {
+          await axios.put(`${baseUrl}/api/purchase-orders/${orderId}/`, formData);
+      } else {
+          await axios.post(`${baseUrl}/api/purchase-orders/`, formData);
+      }
+      console.log('Form submitted successfully!');
+  } catch (error) {
+      console.error('Error submitting form:', error);
+  }
+};
+  // END PO
+
+  
+
+
+  // Status tracking
+
+  const getStatusIndex = (status) => ['ordered', 'dispatched', 'shipped', 'arrived', 'received'].indexOf(status);
+
+  useEffect(() => {
+    axios.get(`${baseUrl}/api/all-logistics-statuses/`)
+      .then(response => {
+        setLogisticsStatuses(response.data);
+
+        console.log('response', response)
+      })
+      .catch(error => {
+        console.error('Error fetching logistics statuses:', error);
+      });
+
+    axios.get(`${baseUrl}/api/order/`)
+      .then(response => {
+        setOrders(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching orders:', error);
+      });
+
+    axios.get(`${baseUrl}/api/shipment-progress/`)
+      .then(response => {
+        setShipmentProgressData(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching shipment progress data:', error);
+      });
+
+    axios.get(`${baseUrl}/api/arrived-order/`)
+      .then(response => {
+        setArrivedOrdersData(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching arrived orders data:', error);
+      });
+  }, [baseUrl]);
+
+  const renderOrderDetails = (order) => (
+    <div key={order.id} className="order-details">
+      <h6 className='mb-3'>Order #{order.id} - {order.status}</h6>
+  
+      <Card className={`card ${getStatusColor(order.status)} mr-2`} disabled>
+        <Card.Body>
+          <Card.Title>{order.status}</Card.Title>
+          <Card.Text>
+            <FaTruck /> Track Location
+          </Card.Text>
+        </Card.Body>
+      </Card>
+  
+      {logisticsStatuses
+        .filter((status) => status.invoice === order.id)
+        .map((status) => (
+          <Card
+            key={status.id}
+            className={`card ${getStatusColor(status.status)} mr-2`}
+            disabled
+          >
+            <Card.Body>
+              {status.status}
+            </Card.Body>
+          </Card>
+        ))}
+      <ProgressBar now={calculatePercentage(order.status)} label={`${order.status} - ${calculatePercentage(order.status)}%`} />
+    </div>
+  );
+
+  const handleNavLinkClick = (section) => {
+    setActiveSection(section);
+  };
+
+  const handleSearch = async () => {
+    try {
+      const response = await fetch(`${baseUrl}/api/abattoir-payments-to-breeders/search-payment-by-code/search_payment_by_code/?payment_code=${paymentCode}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setPaymentData(data);
+        setError(null);
+      } else {
+        setPaymentData(null);
+        setError(data.error || 'Invaid payment code');
+      }
+    } catch (error) {
+      console.error('Error searching for payment data:', error);
+      setPaymentData(null);
+      setError('Error searching for payment data');
+    }
+  };
+
+  const formatPaymentInitiationDate = (dateString) => {
+    const options = { day: '2-digit', month: '2-digit', year: '2-digit' };
+    const formattedDate = new Date(dateString).toLocaleDateString(undefined, options);
+    return formattedDate;
+  };
+
+
+  useEffect(() => {
+    // Fetch user data when component mounts
+    const fetchUserData = async () => {
+      try {
+        const accessToken = Cookies.get('accessToken');
+        if(!accessToken){
+          navigate('/')
+        }
+        if (accessToken) {
+          const response = await axios.get(`${baseUrl}/auth/user/`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+    
+          const userProfile = response.data;
+          setProfile(userProfile);
+        }
+      } catch (error) {
+        // Check if the error indicates an expired access token
+        if (error.response && error.response.status === 401) {
+          // Attempt to refresh the access token
+          await refreshAccessToken();
+        } else {
+          console.error('Error fetching user data:', error);
+        }
+      }
+    };
+
+    fetchUserData(); // Call the function to fetch user data
+  }, []); // Empty dependency array to run the effect only once when the component mounts
+
+
+
+  const handleLcUpload = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('lc_document', lcDocument);
+  
+      const response = await axios.post(
+        `${baseUrl}/api/letter_of_credits/`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'X-User-ID': userProfile?.user?.id,
+            'X-User-Email': userProfile?.user?.email,
+          },
+        }
+      );
+  
+      console.log('upload response', response);
+      if (response.status === 201) {
+        setLcUploadSuccess(true);
+        setLcUploadMessage('Letter of credit document uploaded successfully');
+        // Optionally, you can perform additional actions upon successful upload
+      } else {
+        const data = response.data;
+        setLcUploadSuccess(false);
+        setLcUploadMessage(data.error || 'Error uploading letter of credit document');
+      }
+    } catch (error) {
+      console.error('Error uploading letter of credit document:', error);
+      setLcUploadSuccess(false);
+      setLcUploadMessage('Error uploading letter of credit document');
+    }
+  };
+  
+  
+  const handleButtonClick = (section) => {
+    setActiveSection(section);
+  };
+
+  const breeders = ['Breeder1', 'Breeder2', 'Breeder3']; // Add your list of breeders here
+  const handleBreederClick = () => {
+    setShowForm(true);
+  };
+
+  const handleBreederSelect = (breeder) => {
+    setSelectedBreeder(breeder);
+  };
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+
+    // Your form submission logic here
+
+    // Reset form state
+    setShowForm(false);
+    setSelectedBreeder('');
+  };
+
+  const [isClicked, setIsClicked] = useState(false);
+
+  const navBackground = {
+    backgroundColor: isClicked ? 'white' : 'transparent',
+    color: isClicked ? 'black' : 'white',
+  };
+
+  const handleClick = () => {
+    setIsClicked(!isClicked);
+  };
+
+  // CSS
+  const formContainer = {
+    backgroundColor: '#f9f9f9',
+    padding: '20px',
+    borderRadius: '5px',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+};
+
+
+const [activeTab, setActiveTab] = useState('Home');
+const handleTabClick = (tabId) => {
+  setActiveTab(tabId);
+};
+
+// LC
+const [lcFormData, setLcFormData] = useState({
+  paymentType: 'at_sight',
+  shipmentPeriod: 'immediate',
+  documentsRequired: 'bill_of_lading',
+  referenceType: 'order_number',
+  approvalStatus: 'pending',
+  trackingStatus: 'in_transit',
+  seller: '',
+  breeder: '',
+  bank: '',
+  lcNumber: '',
+  date: '',
+  beneficiaryName: '',
+  beneficiaryAddress: '',
+  issuingBankName: '',
+  issuingBankAddress: '',
+  advisingBankName: '',
+  advisingBankAddress: '',
+  amount: '',
+  expiryDate: '',
+  specialConditions: '',
+  paymentAtSight: false,
+  deferredPayment: false,
+  paymentTerms: '',
+  referenceNumbers: '',
+  authorizedSignatureIssuingBank: '',
+  authorizedSignatureAdvisingBank: '',
+  signatureDate: '',
+});
+
+const handleLcChange = (e) => {
+  const { name, value, type, checked } = e.target;
+  setFormData((prevData) => ({
+    ...prevData,
+    [name]: type === 'checkbox' ? checked : value,
+  }));
+};
+
+const handleLcSubmit = (e) => {
+  e.preventDefault();
+  // Handle form submission here, you can send formData to your backend
+  console.log(formData);
+};
+
+// END LC
+
+const formStyles = {
+  backgroundColor: 'rgb(249, 250, 251)',
+  color: '#666666',
+  fontSize: '15px',
+  width: '95.33% ', // Make the form occupy one-third of the container width
+  margin: '0 auto', // Center the form horizontally
+  padding: '20px', // Add padding to the form
+};
+
+  return (
+   <div className='main-container ' style={{ minHeight: '85vh', backgroundColor: '' }}>
+
+<div >
+<ul className="nav nav-tabs bg-success text-light" id="myTab" role="tablist" style={{fontSize:'15px'}}>
+<li className="nav-item">
+          <a className={`nav-link ${activeTab === 'Home' ? 'active' : ''}`} id="home-tab" onClick={() => handleTabClick('Home')} role="tab" aria-controls="Home" aria-selected={activeTab === 'Home'}>Dashboard</a>
+        </li>
+        
+        <li className="nav-item">
+        </li>
+        <li className="nav-item">
+          <a className={`nav-link ${activeTab === 'Inventory' ? 'active' : ''}`} id="home-tab" onClick={() => handleTabClick('Inventory')} role="tab" aria-controls="Inventory" aria-selected={activeTab === 'Inventory'}>Forecast information</a>
+        </li>
+       
+        <li className="nav-item">
+          <a className={`nav-link ${activeTab === 'Send LPO' ? 'active' : ''}`} id="profile-tab" onClick={() => handleTabClick('Send LPO')} role="tab" aria-controls="Send LPO" aria-selected={activeTab === 'Send LPO'}>Purchase orders</a>
+        </li>
+        
+        <li className="nav-item">
+          <a className={`nav-link ${activeTab === 'Open LC' ? 'active' : ''}`} id="contact-tab" onClick={() => handleTabClick('Open LC')} role="tab" aria-controls="Open LC" aria-selected={activeTab === 'Open LC'}>Letters of credit</a>
+        </li>
+        
+      </ul>
+
+      
+      <div className="tab-content mt-3 mb-3" id="myTabContent">
+      <div className={`tab-pane fade ${activeTab === 'Home' ? 'show active' : ''}`} id="Home" role="tabpanel" aria-labelledby="profile-tab">
+        <h5 style={{color:'#999999'}}> <i className='dw dw-settings text-primary' style={{fontSize:'20px'}}></i> Manage Supply Chains</h5>
+      <hr />
+      <a href='/quotation'>
+      <input className={`mb-3 ${activeTab === 'Home' ? 'active' : ''}`} id="home-tab" onClick={() => handleTabClick('Home')} role="tab" aria-controls="Home" aria-selected={activeTab === 'Home'} type='button' style={{fontSize:'12px', padding:'5px', fontWeight:'500', border:'none'}} value='Send quotation to buyer' />&nbsp;&nbsp;
+      </a>
+      <a href='/register-buyer'>
+
+      <input type='button' className='mb-3 bg-primary' style={{fontSize:'12px', padding:'5px', fontWeight:'500', border:'none'}} value='Received proforma invoices' />&nbsp;&nbsp;
+</a>
+<input type='button' className='mb-3 bg-secondary' style={{fontSize:'12px', padding:'5px', fontWeight:'500', border:'none'}} value='Send LC to bank' />&nbsp;&nbsp;
+
+      <input className={`mb-3 ${activeTab === 'Home' ? 'active' : ''}`} id="home-tab" onClick={() => handleTabClick('Home')} role="tab" aria-controls="Home" aria-selected={activeTab === 'Home'} type='button' style={{fontSize:'12px', padding:'5px', fontWeight:'500', border:'none'}} value='Purchase orders sent to traders' />&nbsp;&nbsp;
+
+
+      {/* DASHBOARD */}
+      <div className="">
+          <div className="container-fluid" style={{ minHeight: '' }}>
+         
+           
+            <div className="row">
+
+            <div className="col-lg-3 col-md-12 ">
+  <a href='/inventory-dashboard'>
+    <div className="card-box height-100-p widget-style3">
+      <div className="d-flex flex-wrap">
+        <div className="widget-data">
+          <div className="weight-600 font-18 text-dark">Inventory</div>
+          <div className="font-14 text-secondary weight-500">Information</div>
+        </div>
+        <div className="widget-icon bg-success" style={{background:'rgb()'}}>
+          <div className="icon" data-color="">
+            <FaArchive /> {/* Use the FaArchive icon */}
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+</div>
+
+           
+
+<div className="col-lg-3 col-md-6 ">
+  <a href='/breaders'>
+    <div className="card-box height-100-p widget-style3 custom-card">
+      <div className="d-flex flex-wrap">
+        <div className="widget-data">
+          <div className="weight-600 font-18 text-dark">Local Traders</div>
+          <div className="font-14 text-secondary weight-500">List</div>
+        </div>
+        <div className="widget-icon bg-success" style={{background:'rgb(0, 27, 49)'}}>
+          <div className="icon" data-color="#09cc06">
+            <FaList /> {/* Use the FaList icon */}
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+</div>
+
+
+<div className="col-lg-3 col-md-6 ">
+<a href='https://api.intellima.tech/admin/logistics/logisticsstatus/add/'>
+
+  <div className="card-box height-100-p widget-style3">
+    <div className="d-flex flex-wrap">
+      <div className="widget-data">
+        <div className="weight-600 font-18 text-dark">Logistics</div>
+        <div className="font-14 text-secondary weight-500">Manage Status</div>
+      </div>
+      <div className="widget-icon bg-success" style={{background:'rgb(0, 27, 49)'}}>
+        <div className="icon" data-color="#09cc06">
+          <FaMoneyBillAlt /> {/* Use the FaMoneyBillAlt icon */}
+        </div>
+      </div>
+    </div>
+  </div>
+  </a>
+</div>
+
+
+
+<div className="col-lg-3 col-md-6 ">
+  <a href='https://api.intellima.tech/admin/invoice_generator/invoice/add/'>
+    <div className="card-box height-100-p widget-style3 custom-card">
+      <div className="d-flex flex-wrap">
+        <div className="widget-data">
+          <div className="weight-600 font-18 text-dark">Send invoice</div>
+          <div className="font-14 text-secondary weight-500">Buyers</div>
+        </div>
+        <div className="widget-icon bg-success" style={{background:'rgb(0, 27, 49)'}}>
+          <div className="icon" data-color="#09cc06">
+            <FaFileInvoice /> {/* Use the FaFileInvoice icon */}
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+</div>
+
+           </div>
+          </div>
+          <div className='container-fluid mt-3'>
+            <div className='row'>
+              <div className='col-md-8'>
+              <div className="chart-container">
+                <div className='card p-2'
+                style={{background:'#fff', borderRadius:'10px', boxShadow:'0 0 28px rgba(0,0,0,.08)'}}
+                >
+                  <h4 className='mt-3' style={{ color: '#001f33', opacity: 0.5 }}>Product Supply vs Demand</h4>
+                  <ReactApexChart options={chartData.options} series={chartData.series} type="bar" height={350} />
+                </div>
+                  
+                </div>
+              </div>
+              <div className='col-md-4'>
+
+              <div className='card p-2 mt-1'
+                style={{background:'rgb()', borderRadius:'10px', boxShadow:'0 0 28px rgba(0,0,0,.08)'}}
+                >
+                  <h6 className='mx-2 p-2  text-success' style={{ color: '' }}>Total number of finished products by category </h6>
+                  <hr />
+                  <ReactApexChart options={remainingBreedsChartData.options} series={remainingBreedsChartData.series} type="donut" height={350} />
+                </div>
+                <div className="card p-3 mt-3 mx-2"
+                  style={{
+                    background: '#fff',
+                    borderRadius: '5px', // Adjust the border radius as needed
+                    boxShadow: '0px 4px 10px rgba(255, 255, 255, .9)', // Adjust the shadow as needed
+                    color: '#ffffff',
+                    border:'none',
+                    height:'130px'
+                    // Set text color to white
+                  }}
+                          >
+          <h6 className='mx-2'>{breedSupplyStatus}</h6>
+        </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      {/* END DASHBOARD */}
+
+</div>
+
+<div className={`tab-pane fade ${activeTab === 'Inventory' ? 'show active' : ''}`} id="Inventory" role="tabpanel" aria-labelledby="profile-tab">
+
+      <div className="d-flex flex-wrap">
+  <div className="card text-white bg-primary mb-3 mx-2" style={{ maxWidth: "18rem" }}>
+    <div className="card-header">Raw Materials</div>
+    <div className="card-body">
+      <p className="card-title text-white">Quantities of raw materials available in stock</p>
+      <h2 className="card-text text-light text-right" style={{fontWeight:'bold', fontSize:'20px'}}>500 cows</h2>
+      <p className="card-text text-light text-right"><em>Need to reorder</em></p>
+    </div>
+  </div>
+  <div className="card text-white bg-secondary mb-3 mx-2" style={{ maxWidth: "18rem" }}>
+    <div className="card-header">Finished products</div>
+    <div className="card-body">
+      <p className="card-title text-white">Quantities of finished products available in stock</p>
+<h2 className="card-text text-light text-right" style={{fontWeight:'bold', fontSize:'20px'}}>7698 Kgs beef</h2>
+      <p className="card-text text-light text-right"><em>No Need to reorder</em></p>    </div>
+  </div>
+  <div className="card text-white bg-success mb-3 mx-2" style={{ maxWidth: "18rem" }}>
+    <div className="card-header">Sales History</div>
+    <div className="card-body">
+      <p className="card-title text-white">Total Number of buyers reached</p>
+      <h2 className="card-text text-light text-right" style={{fontWeight:'bold', fontSize:'20px'}}>50 buyers</h2>
+    </div>
+  </div>
+  <div className="card text-white bg-danger mb-3 mx-2" style={{ maxWidth: "18rem" }}>
+    <div className="card-header">Traders reached</div>
+    <div className="card-body">
+      <p className="card-title text-white">Total number of traders reached</p>
+      <h2 className="card-text text-light text-right" style={{fontWeight:'bold', fontSize:'20px'}}>121 suppliers</h2>
+    </div>
+  </div>
+  <div className="card text-dark bg-warning mb-3 mx-2" style={{ maxWidth: "18rem" }}>
+    <div className="card-header">Receipts</div>
+    <div className="card-body">
+      <p className="card-title">Receipts of raw materials into inventory</p>
+      <h2 className="card-text text-light text-right" style={{fontWeight:'bold', fontSize:'20px'}}>4500 goats received</h2>
+    </div>
+  </div>
+  <div className="card text-dark bg-info mb-3 mx-2" style={{ maxWidth: "18rem" }}>
+    <div className="card-header">Inventory Turnover</div>
+    <div className="card-body">
+      <p className="card-title text-white">Optimize stock levels and reduce carrying costs</p>
+      <h2 className="card-text text-white">Inventory turnover rates <span className='text-primary'>13%</span></h2>
+    </div>
+  </div>
+</div>
+
+</div>
+
+  <div className={`tab-pane fade ${activeTab === 'Open LC' ? 'show active' : ''}`} id="Send LPO" role="tabpanel" aria-labelledby="profile-tab">
+        <Row>
+    <Col md={10}>
+      <Col className="bg-light p-4 rounded shadow">
+      {lcUploadSuccess ? (
+  <div>
+    <h4 className="text-success mb-4">Letter of Credit Document Uploaded Successfully</h4>
+    <p className="text-success">
+      We will get back to you once the review is complete.
+      <br />
+      Thank you for your submission.
+    </p>
+    <Button variant="secondary btn-sm" onClick={() => setActiveSection('Negotiations')} className="mt-3">
+      Back 
+    </Button>
+  </div>
+) : (
+  <div>
+    <h5 className="text-success mb-4">Create Letter of Credit Document</h5>
+    <form onSubmit={handleSubmit} style={formStyles}>
+      <label className='bt-light' style={{display:'block'}}>
+        Payment Type:
+        <select name="paymentType" value={lcFormData.paymentType} onChange={handleChange}>
+          <option value="at_sight">Payment at Sight</option>
+          <option value="deferred_payment">Deferred Payment</option>
+        </select>
+      </label>
+      <label>
+        Shipment Period:
+        <select name="shipmentPeriod" value={lcFormData.shipmentPeriod} onChange={handleChange}>
+          <option value="immediate">Immediate</option>
+          <option value="within_30_days">Within 30 Days</option>
+          <option value="within_60_days">Within 60 Days</option>
+        </select>
+      </label>
+      <label>
+        Documents Required:
+        <select name="documentsRequired" value={lcFormData.documentsRequired} onChange={handleChange}>
+          <option value="invoice">Invoice</option>
+          <option value="packing_list">Packing List</option>
+          <option value="bill_of_lading">Bill of Lading</option>
+        </select>
+      </label>
+      <label>
+        Reference Type:
+        <select name="referenceType" value={lcFormData.referenceType} onChange={handleChange}>
+          <option value="order_number">Order Number</option>
+          <option value="contract_number">Contract Number</option>
+          <option value="other">Other</option>
+        </select>
+      </label>
+      <label>
+        Approval Status:
+        <select name="approvalStatus" value={lcFormData.approvalStatus} onChange={handleChange}>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </label>
+      <label>
+        Tracking Status:
+        <select name="trackingStatus" value={lcFormData.trackingStatus} onChange={handleChange}>
+          <option value="in_transit">In Transit</option>
+          <option value="delivered">Delivered</option>
+          <option value="delayed">Delayed</option>
+        </select>
+      </label>
+      <label>
+  Seller:
+  <input type="text" name="seller" value={lcFormData.seller} onChange={handleChange} />
+</label>
+<label>
+  Breeder:
+  <input type="text" name="breeder" value={lcFormData.breeder} onChange={handleChange} />
+</label>
+<label>
+  Bank:
+  <input type="text" name="bank" value={lcFormData.bank} onChange={handleChange} />
+</label>
+<label>
+  LC Number:
+  <input type="text" name="lcNumber" value={lcFormData.lcNumber} onChange={handleChange} />
+</label>
+<label>
+  Date:
+  <input type="date" name="date" value={lcFormData.date} onChange={handleChange} />
+</label>
+<label>
+  Beneficiary Name:
+  <input type="text" name="beneficiaryName" value={lcFormData.beneficiaryName} onChange={handleChange} />
+</label>
+<label>
+  Beneficiary Address:
+  <textarea name="beneficiaryAddress" value={lcFormData.beneficiaryAddress} onChange={handleChange}></textarea>
+</label>
+<label>
+  Issuing Bank Name:
+  <input type="text" name="issuingBankName" value={lcFormData.issuingBankName} onChange={handleChange} />
+</label>
+<label>
+  Issuing Bank Address:
+  <textarea name="issuingBankAddress" value={lcFormData.issuingBankAddress} onChange={handleChange}></textarea>
+</label>
+<label>
+  Advising Bank Name:
+  <input type="text" name="advisingBankName" value={lcFormData.advisingBankName} onChange={handleChange} />
+</label>
+<label>
+  Advising Bank Address:
+  <textarea name="advisingBankAddress" value={lcFormData.advisingBankAddress} onChange={handleChange}></textarea>
+</label>
+<label>
+  Amount:
+  <input type="text" name="amount" value={lcFormData.amount} onChange={handleChange} />
+</label>
+<label>
+  Expiry Date:
+  <input type="date" name="expiryDate" value={lcFormData.expiryDate} onChange={handleChange} />
+</label>
+<label>
+  Special Conditions:
+  <textarea name="specialConditions" value={lcFormData.specialConditions} onChange={handleChange}></textarea>
+</label>
+<label>
+  Payment at Sight:
+  <input type="checkbox" name="paymentAtSight" checked={lcFormData.paymentAtSight} onChange={handleChange} />
+</label>
+<label>
+  Deferred Payment:
+  <input type="checkbox" name="deferredPayment" checked={lcFormData.deferredPayment} onChange={handleChange} />
+</label>
+<label>
+  Payment Terms:
+  <input type="text" name="paymentTerms" value={lcFormData.payment_terms} onChange={handleChange} />
+</label>
+<label>
+  Reference Numbers:
+  <input type="text" name="referenceNumbers" value={lcFormData.referenceNumbers} onChange={handleChange} />
+</label>
+<label>
+  Authorized Signature Issuing Bank:
+  <input type="text" name="authorizedSignatureIssuingBank" value={lcFormData.authorizedSignatureIssuingBank} onChange={handleChange} />
+</label>
+<label>
+  Authorized Signature Advising Bank:
+  <input type="text" name="authorizedSignatureAdvisingBank" value={lcFormData.authorizedSignatureAdvisingBank} onChange={handleChange} />
+</label>
+<label>
+  Signature Date:
+  <input type="date" name="signatureDate" value={lcFormData.signatureDate} onChange={handleChange} />
+</label>
+      <button type="submit">Submit</button>
+    </form>
+    {lcUploadMessage && (
+      <div>
+        <p className={lcUploadSuccess ? "text-success mt-3" : "text-danger mt-3"}>{lcUploadMessage}</p>
+        <Button variant="secondary" onClick={() => setActiveSection('BreederPayments')} className="mt-3">
+          Back to Breeder Payments
+        </Button>
+      </div>
+    )}
+  </div>
+)}
+  </Col>
+    </Col>
+  </Row>
+        </div>
+        <div className={`tab-pane fade ${activeTab === 'Send LPO' ? 'show active' : ''}`} id="Open LC" role="tabpanel" aria-labelledby="contact-tab">
+        <div className='card '></div>
+<Form className='p-4 m-3' style={{background:'#F9FAFB', color:'#666666', fontSize:'14px', border:'none'}} onSubmit={handleSubmit} >
+  {/* Header Information */}
+  <Row >
+    <Col md={3}>
+      <Form.Group controlId="seller">
+        <Form.Label>Seller:</Form.Label>
+        <Form.Control type="text" name="seller" value={formData.seller} onChange={handleChange} />
+      </Form.Group>
+    </Col>
+    <Col md={3}>
+      <Form.Group controlId="po_number">
+        <Form.Label>Purchase Order Number:</Form.Label>
+        <Form.Control type="text" name="po_number" value={formData.po_number} onChange={handleChange} />
+      </Form.Group>
+    </Col>
+    <Col md={3}>
+      <Form.Group controlId="date">
+        <Form.Label>Date:</Form.Label>
+        <Form.Control type="date" name="date" value={formData.date} onChange={handleChange} />
+      </Form.Group>
+    </Col>
+    <Col md={3}>
+      <Form.Group controlId="trader_name">
+        <Form.Label>Trader Name:</Form.Label>
+        <Form.Control type="text" name="trader_name" value={formData.trader_name} onChange={handleChange} />
+      </Form.Group>
+    </Col>
+  </Row>
+
+  <Row>
+  <Col md={3}>
+      <Form.Group controlId="buyer_address">
+        <Form.Label>Buyer Address:</Form.Label>
+        <Form.Control type="text" rows={3} name="buyer_address" value={formData.buyer_address} onChange={handleChange} />
+      </Form.Group>
+    </Col>
+    <Col md={3}>
+      <Form.Group controlId="buyer_contact">
+        <Form.Label>Buyer Contact:</Form.Label>
+        <Form.Control type="text" name="buyer_contact" value={formData.buyer_contact} onChange={handleChange} />
+      </Form.Group>
+    </Col>
+    <Col md={3}>
+      <Form.Group controlId="seller_address">
+        <Form.Label>Seller Address:</Form.Label>
+        <Form.Control type="text" rows={3} name="seller_address" value={formData.seller_address} onChange={handleChange} />
+      </Form.Group>
+    </Col>
+    <Col md={3}>
+      <Form.Group controlId="seller_contact">
+        <Form.Label>Seller Contact:</Form.Label>
+        <Form.Control type="text" name="seller_contact" value={formData.seller_contact} onChange={handleChange} />
+      </Form.Group>
+    </Col>
+  </Row>
+
+  <Row>
+    <Col md={3}>
+      <Form.Group controlId="shipping_address">
+        <Form.Label>Shipping Address:</Form.Label>
+        <Form.Control type="text" rows={3} name="shipping_address" value={formData.shipping_address} onChange={handleChange} />
+      </Form.Group>
+    </Col>
+    <Col md={3}>
+  <Form.Group controlId="confirmed">
+    <Form.Check 
+      type="checkbox" 
+      label="Confirmed" 
+      checked={formData.confirmed} 
+      onChange={(e) => setFormData({ ...formData, confirmed: e.target.checked })} 
+    />
+  </Form.Group>
+</Col>
+
+        <Col md={3}>
+      <Form.Group controlId="product_description">
+        <Form.Label>Description:</Form.Label>
+        <Form.Control type="text" rows={3} name="product_description" value={formData.product_description} onChange={handleChange} />
+      </Form.Group>
+    </Col>
+    <Col md={3}>
+        <Form.Group controlId="quantity">
+        <Form.Label>Quantity:</Form.Label>
+        <Form.Control type="number" name="quantity" value={formData.quantity} onChange={handleChange} />
+      </Form.Group>
+      
+          </Col>
+            </Row>
+    <Row>
+    <Col md={3}>
+    <Form.Group controlId="unit_price">
+        <Form.Label>Unit Price:</Form.Label>
+        <Form.Control type="number" name="unit_price" value={formData.unit_price} onChange={handleChange} />
+      </Form.Group>
+    </Col>
+  <Col md={3}>
+        <Form.Group controlId="total_amount">
+        <Form.Label>Total amount:</Form.Label>
+        <Form.Control type="number" name="total_amount" value={formData.total_amount} onChange={handleChange} />
+      </Form.Group>
+      
+          </Col>
+        <Col md={3}>
+        <Form.Group controlId="tax">
+        <Form.Label>Tax rate:</Form.Label>
+        <Form.Control type="number" name="tax" value={formData.tax} onChange={handleChange} />
+      </Form.Group>
+      
+          </Col>
+    <Col md={3}>
+    <Form.Group controlId="payment_terms">
+        <Form.Label>Payment terms:</Form.Label>
+          <Form.Control 
+            type="text" 
+            name="payment_terms" // Ensure the name attribute matches the corresponding key in formData
+            value={formData.payment_terms} 
+            onChange={handleChange} 
+          />
+</Form.Group>
+
+    </Col>
+    <Col md={3}>
+         <Form.Group controlId="special_instructions">
+        <Form.Label>Special instructions:</Form.Label>
+        <Form.Control type="text" name="special_instructions" value={formData.special_instructions} onChange={handleChange} />
+      </Form.Group>
+    </Col>
+            </Row>
+
+    <Row>
+    <Col md={3}>
+      <Form.Group controlId="delivery_terms">
+              <Form.Label>Delivery Terms:</Form.Label>
+
+        <Form.Control type="text" rows={3} name="delivery_terms" value={formData.delivery_terms} onChange={handleChange} />
+      </Form.Group>
+    </Col>
+    <Col md={3}>
+     <Form.Group controlId="reference_numbers">
+        <Form.Label>Reference number:</Form.Label>
+        <Form.Control type="text" name="reference_numbers" value={formData.reference_numbers} onChange={handleChange} />
+      </Form.Group>
+    </Col>
+        
+  
+  </Row>
+      <Row>
+   
+            </Row>
+
+    <Row>
+    <Col md={3}>
+    <Form.Group controlId="authorized_signature">
+        <Form.Label>Authorized Signature:</Form.Label>
+        <Form.Control type="text" name="authorized_signature" value={formData.authorized_signature} onChange={handleChange} />
+      </Form.Group>
+    </Col>
+
+    <Col md={3}>
+        <Form.Group controlId="signature_date">
+        <Form.Label>Signature date:</Form.Label>
+        <Form.Control type="date" name="signature_date" value={formData.signature_date} onChange={handleChange} />
+      </Form.Group>
+      </Col>
+  
+  </Row>
+
+<hr />
+  <Button variant="primary" type="submit">Create purchase order</Button>
+</Form>
+
+        </div>
+        <div className={`tab-pane fade ${activeTab === 'Traders' ? 'show active' : ''}`} id="Traders" role="tabpanel" aria-labelledby="home-tab">
+        <Row>
+          <Col md={12}>
+            <Col>
+              <Card.Body>
+                <button className="text-success mb-4" onClick={handleBreederClick}>Add trader</button>
+
+                {showForm && (
+                  <Form onSubmit={handleFormSubmit}>
+                    <Form.Group controlId="breederDropdown">
+                      <Form.Control as="select" onChange={(e) => handleBreederSelect(e.target.value)}>
+                        <option value="">Select Breeder</option>
+                        {breeders.map((breeder) => (
+                          <option key={breeder} value={breeder}>
+                            {breeder}
+                          </option>
+                        ))}
+                      </Form.Control>
+                    </Form.Group>
+                    <button type="submit">Submit</button>
+                  </Form>
+                )}
+                {error && <p className="text-danger">{error}</p>}
+              </Card.Body>
+            </Col>
+          </Col>
+        </Row>
+        </div>
+      </div>
+</div>
+
+
+
+  <Container>
+    <Row>
+      
+    </Row>
+  </Container>
+</div>
+
+  );
+};
+
+export default BankDashboard;

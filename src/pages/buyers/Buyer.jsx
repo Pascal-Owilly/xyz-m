@@ -409,6 +409,64 @@ const toggleInvoice = (invoiceNumber) => {
       return <a href={documentUrl} target="_blank" rel="noopener noreferrer">View Document</a>;
     }
   };
+
+  // Quotation
+
+  const [quotations, setQuotations] = useState([]);
+  const [confirmedQuotation, setConfirmedQuotation] = useState(null);
+
+  useEffect(() => {
+    // Fetch quotations from the server
+    const fetchQuotations = async () => {
+      try {
+        const accessToken = Cookies.get('accessToken');
+        const response = await axios.get(`${baseUrl}/api/send-quotation/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setQuotations(response.data);
+      } catch (error) {
+        console.error('Error fetching quotations:', error);
+      }
+    };
+
+    fetchQuotations();
+  }, [baseUrl]);
+
+  const handleConfirmation = async (quotationId) => {
+    try {
+      const accessToken = Cookies.get('accessToken');
+      const response = await axios.put(
+        `${baseUrl}/api/send-quotation/${quotationId}/`, 
+        {
+          confirm: true,
+          // Include other required fields here
+          buyer:  quotations.find(q => q.id === quotationId).buyer,
+          seller:  quotations.find(q => q.id === quotationId).seller,
+
+          product: quotations.find(q => q.id === quotationId).product,
+          message:  quotations.find(q => q.id === quotationId).message,
+          quantity: quotations.find(q => q.id === quotationId).quantity,
+          unit_price: quotations.find(q => q.id === quotationId).unit_price,
+          // Add more fields as necessary
+        },
+      
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      setConfirmedQuotation(quotationId);
+      // Optionally, you can show a success message or perform other actions upon successful confirmation
+    } catch (error) {
+      console.error('Error confirming quotation:', error);
+      // Optionally, you can show an error message or handle the error in other ways
+    }
+  };
+
+  
+
   
  
   return (
@@ -430,16 +488,18 @@ const toggleInvoice = (invoiceNumber) => {
             Info
           </Nav.Link>
           <Nav.Link
-            className={`text-white ${activeSection === 'LetterOfCredit' ? 'active-buyer-button' : ''}`}
-            onClick={() => handleButtonClick('LetterOfCredit')}
+            className={`text-white ${activeSection === 'InvoiceList' ? 'active-buyer-button' : ''}`}
+            onClick={() => handleButtonClick('InvoiceList')}
           >
-            LCs List
+            Received Quotations
           </Nav.Link>
+
+          
           <Nav.Link
             className={`text-white ${activeSection === 'InvoiceList' ? 'active-buyer-button' : ''}`}
             onClick={() => handleButtonClick('InvoiceList')}
           >
-            Received Invoices
+            Send purchase orders
           </Nav.Link>
           <Nav.Link
             className={`text-white ${activeSection === 'InvoiceTracking' ? 'active-buyer-button' : ''}`}
@@ -499,6 +559,36 @@ const toggleInvoice = (invoiceNumber) => {
 {activeSection === 'InformationSection' && (
   <div>
   <h5 className='mb-4 text-success mt-2'>Information section</h5>
+
+  <div className="quotation-list-container">
+  <h1 className="quotation-list-header">Quotation List</h1>
+  <div className="quotation-list-body">
+    {quotations.map((quotation) => (
+      <div key={quotation.id} className="quotation-item">
+        <h2 className="quotation-item-title">Quotation #{quotation.id}</h2>
+        <p className="quotation-item-detail">Buyer: {quotation.buyer}</p>
+        <p className="quotation-item-detail">Seller: {quotation.seller}</p>
+        <p className="quotation-item-detail">Product: {quotation.product}</p>
+        <p className="quotation-item-detail">Unit Price: {quotation.unit_price}</p>
+        <p className="quotation-item-detail">Quantity: {quotation.quantity}</p>
+        <p className="quotation-item-detail">Message: {quotation.message}</p>
+        <p className="quotation-item-detail">Status: {confirmedQuotation === quotation.id ? 'Confirmed' : 'Pending'}</p>
+        {!confirmedQuotation && (
+          <div className="quotation-item-action">
+            <input type="checkbox" id={`confirmCheckbox_${quotation.id}`} />
+            <label htmlFor={`confirmCheckbox_${quotation.id}`}>Confirm Quotation</label>
+            <button onClick={() => handleConfirmation(quotation.id)}>Confirm</button>
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+  <div className="quotation-list-footer">
+    <p className="quotation-list-signature">Thank you for choosing us.</p>
+  </div>
+</div>
+
+
 <p>Here, you can seamlessly access and track all logistics details and updates. Explore the associated invoice list for your received LCs, effortlessly track invoices based on their ID, and feel free to send any inquiries our way using the message icon. Your convenience is our priority</p>
   </div>
 )}

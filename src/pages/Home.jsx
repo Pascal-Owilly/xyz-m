@@ -17,7 +17,7 @@ import defaultImg from './../../images/default.png'
 import { Link } from 'react-router-dom';
 import sidebarimg from '../../images/goat_1.jpg';
 // import { FaSignInAlt, FaUserPlus, FaUserCog, FaHome, FaTruck, FaBoxOpen, FaMapMarkedAlt } from 'react-icons/fa'; // Import icons from react-icons library
-import { FaSignInAlt, FaUserPlus, FaUserCog, FaHome, FaTruck, FaBoxOpen, FaMapMarkedAlt } from 'react-icons/fa';
+import { FaSignInAlt, FaUserPlus, FaUserCog, FaHome, FaTruck, FaBoxOpen, FaMapMarkedAlt, FaShippingFast, FaArchive } from 'react-icons/fa';
 
 const Home = () => {
 const navigate =useNavigate()
@@ -206,6 +206,7 @@ const logout = async () => {
     await axios.post(`${baseUrl}/api/logout/`);
     Cookies.remove('accessToken', { sameSite: 'None', secure: true });
     Cookies.remove('refreshToken');
+    navigate('/')
     Cookies.remove('user')
     window.location.reload();
     setIsRightSidebarVisible(false);
@@ -293,32 +294,29 @@ const logout = async () => {
               <FaTruck /> Slaughterhouse Dashboard
             </a>
           </li>
-          <li>
-            <a href="/buyer">
-              <FaBoxOpen /> Buyer Dashboard
-            </a>
-          </li>
+          
           <li>
             <a href="/bank_teller_dashboard">
               <FaMapMarkedAlt /> Bank Teller Dashboard
             </a>
           </li>
-          {/* <li>
+          <li>
             <a href="inventory-dashboard">
-              <FaIconName /> Inventory Dashboard
+            <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+               Inventory Dashboard
             </a>
           </li>
           <li>
             <a href="warehouse">
               <FaIconName /> Warehouse Dashboard
             </a>
-          </li> */}
+          </li>
           <li>
             <a href="/customer_service_dashboard">
               <FaMapMarkedAlt /> Customer Care
             </a>
           </li>
-          <li>
+          <li>s
             <a href="/export_handling_dashboard">
               <FaMapMarkedAlt /> Export Handling Dashboard
             </a>
@@ -329,10 +327,18 @@ const logout = async () => {
           case 'admin':
             return (
               <>
+                            <hr />
+
               <li style={{ display: 'flex', alignItems: 'center' }}>
                 <FaUserCog style={{ marginRight: '12px', color: 'white', fontSize: '20px'}} />
                 <a href="/admin_dashboard">SCM Administration</a>
               </li>
+
+              <li style={{ display: 'flex', alignItems: 'center' }}>
+                <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+                <a href="/sellers">Sellers </a>
+              </li>
+              
               <li style={{ display: 'flex', alignItems: 'center' }}>
                 <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
                 <a href="/supplier_dashboard">Breeder Dashboard</a>
@@ -347,10 +353,7 @@ const logout = async () => {
                 <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
                 <a href="/slaughterhouse-dashboard">Slaughterhouse Dashboard</a>
               </li>
-              <li style={{ display: 'flex', alignItems: 'center' }}>
-                <FaBoxOpen style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                <a href="/buyer">Buyer Dashboard</a>
-              </li>
+             
               <li style={{ display: 'flex', alignItems: 'center' }}>
                 <FaMapMarkedAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
                 <a href="/bank_teller_dashboard">Bank Teller Dashboard</a>
@@ -364,6 +367,29 @@ const logout = async () => {
                 <FaMapMarkedAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
                 <a href="/export_handling_dashboard">Export Handling Dashboard</a>
               </li>
+
+              <li>
+                <a href="inventory-dashboard">
+                <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+                  Inventory Dashboard
+                </a>
+              </li>
+              <li>
+                <a href="warehouse">
+                  <FaMapMarkedAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+
+                   Warehouse Dashboard
+                </a>
+          </li>
+               
+
+              <li style={{ display: 'flex', alignItems: 'center' }}>
+              <FaShippingFast style={{ marginRight: '12px', color: 'white', fontSize: '20px'}} />
+                <a href="/dispatch_and_shipping">Dispatch & Shipping </a></li>
+              <li style={{ display: 'flex', alignItems: 'center' }}>
+              <FaArchive style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+                <a href="/arrival">Arrival & Reception </a></li>
+
             </>
                           
             );
@@ -421,6 +447,7 @@ const logout = async () => {
 
                   <li><a href="/supplier_dashboard">Breeder Dashboard</a></li>
                   <li>
+                  
                      <a href="/inventory-dashboard">Inventory Dashboard </a>
                   </li>
                   
@@ -445,19 +472,9 @@ const logout = async () => {
          
         </div>
 
-        <div className="header-right">
-		<div className="dashboard-setting user-notification">
-        <div className="dropdown">
-          <span
-            className="dropdown-toggle no-arrow"
-            data-toggle="right-sidebar"
-            onClick={handleRightSidebarToggle}
-          >
-            <i className="dw dw-settings2 text-white" style={{cursor:'pointer'}}></i>
-          </span>
-        </div>
-      </div>
 
+        <div className="header-right">
+       
 	  <div
         className="right-sidebar"
         style={{
@@ -471,9 +488,24 @@ const logout = async () => {
           transition: 'right 0.3s ease',
         }}
       ></div>
+
+{isLoggedIn && (
+
+<div className="dashboard-setting user-notification">
+    <div className="dropdown">
+      <span
+        className="dropdown-toggle no-arrow"
+        data-toggle="right-sidebar"
+        onClick={handleRightSidebarToggle}
+      >
+        <i className="dw dw-notification text-dark" style={{cursor:'pointer'}}></i>
+      </span>
+    </div>
+  </div>
+    )}
 	
 
-	 <div className="user-info-dropdown mx-5"
+	 <div className="user-info-dropdown mx-3"
 	 
 	 >
         <div className="dropdown"
@@ -558,77 +590,10 @@ const logout = async () => {
       </div>
 
       <img src={logo} />
-      {/* <div className="Logo mx-2" style={{ 
-  color: 'blue', 
-  fontWeight: 'bold', 
-  fontFamily: 'cursive', // You can adjust the font-family as per your preference
-  margin: '10px', 
-  letterSpacing: '2px', // Adjust the letter spacing for a playful effect
-  textTransform: 'uppercase' // Convert text to uppercase for a bold look
-}}>
-  <a href="/" target="_blank">
-    L<span style={{ marginLeft: '5px' }}>o</span>g<span style={{ marginLeft: '5px' }}>o</span>
-  </a>
-</div> */}
-
+     
 	</div>    
     </div>
-	<div className="right-sidebar p-3" style={{
-          position: 'fixed',
-          top: 0,
-          right: isRightSidebarVisible ? '0' : '-300px',
-          width: '300px',
-          height: '100%',
-        //   backgroundColor: '#343A40', 
-          boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', 
-          transition: 'right 0.3s ease',
-          zIndex: 1000, 
-		  overflow:'hidden',
-        }}>
-			<div className="sidebar-title">
-				<h3 className="weight-60 font-16 text-blue">
-					Page Settings
-					<span className="btn-block font-weight-400 font-12"
-						>User interface</span
-					>
-				</h3>
-				<div className="close-sidebar" data-toggle="right-sidebar-close text-white " onClick={handleCloseSidebar}
->
-					<i className="icon-copy ion-close-round"></i>
-				</div>
-			</div>
-			<div className="right-sidebar-bod customscrol">
-				<div className="right-sidebar-bod-conten">
-					
-
-					<h4 className="weight-600 font-18 pb-10">Navigation Background</h4>
-					<div className="sidebar-btn-group pb-30 mb-10">
-					<button
-                className={`btn btn-outline-primary header-white ${
-                  backgroundColor === '#001f33' ? 'active' : ''
-                }`}
-                onClick={() => handleBackgroundColorChange('#111')}
-              >
-                White 
-              </button>
-              <button
-                className={`btn btn-outline-primary header-dark ${
-                  backgroundColor === '#001f33' ? 'active' : ''
-                }`}
-                onClick={() => handleBackgroundColorChange('#343A40')}
-              >
-                Dark 
-              </button>
-					</div>
-
-					<div className="reset-options pt-30 text-center">
-					<button className="btn btn-danger" id="reset-settings" onClick={handleResetSettings}>
-							Reset to default settings
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
+	
 
 		{isLeftSidebarVisible && (
 
@@ -672,11 +637,11 @@ const logout = async () => {
 </span>
 
 {isDashboardsVisible && (
+  <ul className="menu-dashboards" style={{ maxHeight: '500px', transition: 'max-height 0.3s ease', overflowY: 'auto', scrollbarWidth: 'thin', scrollbarColor: 'transparent transparent' }}>
+    {renderDashboards()}
+  </ul>
+)}
 
-<ul className="menu-dashboards" style={{ maxHeight: isDashboardsVisible ? '500px' : '0', overflow: 'hidden', transition: 'max-height 0.3s ease'}}>
-          {renderDashboards()}
-        </ul>
-      )}
         </li>
         </a>
 
@@ -688,6 +653,49 @@ const logout = async () => {
   </div>
 </div>
 )}
+
+<div className="right-sidebar p-3" style={{
+          position: 'fixed',
+          top: 0,
+          right: isRightSidebarVisible ? '0' : '-300px',
+          width: '300px',
+          height: '100%',
+        //   backgroundColor: '#343A40', 
+          boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', 
+          transition: 'right 0.3s ease',
+          zIndex: 1000, 
+		  overflow:'hidden',
+        }}>
+			<div className="sidebar-title">
+				<h3 className="weight-60 font-16 text-blue">
+					Notifications
+					<span className="btn-block font-weight-400 font-12"
+						>Your notifications will appear here
+            </span>
+					
+				</h3>
+				<div className="close-sidebar" data-toggle="right-sidebar-close text-white " onClick={handleCloseSidebar}
+>
+					<i className="icon-copy ion-close-round"></i>
+				</div>
+			</div>
+			<div className="right-sidebar-bod customscrol">
+				<div className="right-sidebar-bod-conten">
+					
+
+					<h4 className="weight-600 font-18 pb-10"></h4>
+					<div className="sidebar-btn-group pb-30 mb-10">
+					
+					</div>
+
+					<div className="reset-options pt-30 text-center">
+					{/* <button className="btn btn-danger" id="reset-settings" onClick={handleResetSettings}>
+							Contact Us
+						</button> */}
+					</div>
+				</div>
+			</div>
+		</div>
 
   <div className="mobile-menu-overlay"></div>
 

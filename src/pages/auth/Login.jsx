@@ -105,7 +105,7 @@ const LoginTest = () => {
           navigate('/admin_dashboard');
           break;
         case 'admin':
-          navigate('/admin_dashboard');
+          navigate('/sellers');
           break;
           case 'admin':
             navigate('/admin_dashboard');

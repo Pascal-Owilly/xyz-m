@@ -16,6 +16,7 @@ const SignUpForm = () => {
     confirm_password: '',
     first_name: '',
     last_name: '',
+    phone_number: null,
     id_number: null,
     market: '',
     community: '',
@@ -35,38 +36,45 @@ const SignUpForm = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Perform client-side validation
-    const validationErrors = {};
-    if (!registrationData.username) {
-      validationErrors.username = ['Username is required.'];
-    }
-    if (!registrationData.email) {
-      validationErrors.email = ['Email is required.'];
-    } else if (!/\S+@\S+\.\S+/.test(registrationData.email)) {
-      validationErrors.email = ['Invalid email format.'];
-    }
-    if (!registrationData.password) {
-      validationErrors.password = ['Password is required.'];
-    }
-    if (registrationData.password !== registrationData.confirm_password) {
-      validationErrors.confirm_password = ['Passwords do not match.'];
-    }
-    
-
-    // Updated validation for the 'market' field
-    if (!registrationData.market) {
-      validationErrors.market = ['Market is required.'];
-    }
-
-    // Add more validations for other fields as needed
-
-    // If there are validation errors, update the state and return without making the API call
-    if (Object.keys(validationErrors).length > 0) {
-      setErrorMessages(validationErrors);
-      setLoading(false);
-      return;
-    }
-
+     // Perform client-side validation
+     const validationErrors = {};
+     if (!registrationData.username) {
+       validationErrors.username = ['Username is required.'];
+     }
+     if (!registrationData.email) {
+       validationErrors.email = ['Email is required.'];
+     } else if (!/\S+@\S+\.\S+/.test(registrationData.email)) {
+       validationErrors.email = ['Invalid email format.'];
+     }
+     if (!registrationData.password) {
+       validationErrors.password = ['Password is required.'];
+     }
+     if (registrationData.password !== registrationData.confirm_password) {
+       validationErrors.confirm_password = ['Passwords do not match.'];
+     }
+ 
+     // Updated validation for the 'market' field
+    //  if (!registrationData.market) {
+    //    validationErrors.market = ['Market is required.'];
+    //  }
+ 
+     // If there are validation errors, update the state and return without making the API call
+     if (Object.keys(validationErrors).length > 0) {
+       setErrorMessages(validationErrors);
+       setLoading(false);
+       return;
+     }
+ 
+     // Remove optional fields before making the API call
+     const requestData = {
+       username: registrationData.username,
+       email: registrationData.email,
+       password: registrationData.password,
+       confirm_password: registrationData.confirm_password,
+       first_name: registrationData.first_name,
+       last_name: registrationData.last_name,
+     };
+ 
     try {
       // Clear previous error messages on successful validation
       setErrorMessages({});
@@ -200,10 +208,27 @@ const SignUpForm = () => {
             name='id_number'
             value={registrationData.id_number}
             onChange={handleRegistrationChange}
-            required
+            
           />
           {errorMessages.id_number && (
             <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.id_number}</p>
+          )}
+        </div>
+        <div className='form-group col-md-4'>
+          <label htmlFor='phone_number' className='text-secondary'>
+            Phone Number
+          </label>
+          <input
+            type='phone_number'
+            className='form-control mb-1'
+            id='phone_number'
+            name='phone_number'
+            value={registrationData.phone_number}
+            onChange={handleRegistrationChange}
+            
+          />
+          {errorMessages.phone_number && (
+            <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.phone_number}</p>
           )}
         </div>
         <div className='form-group col-md-4'>
@@ -217,10 +242,10 @@ const SignUpForm = () => {
             name='community'
             value={registrationData.community}
             onChange={handleRegistrationChange}
-            required
+            
           />
           {errorMessages.generic && (
-            <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.generic}</p>
+            <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.community}</p>
           )}
         </div>
       </div>
@@ -237,10 +262,10 @@ const SignUpForm = () => {
             name='market'
             value={registrationData.market}
             onChange={handleRegistrationChange}
-            required
+            
           />
-          {errorMessages.market && (
-            <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.market[0]}</p>
+           {errorMessages.generic && (
+            <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.market}</p>
           )}
         </div>
         <div className='form-group col-md-4'>
@@ -254,10 +279,10 @@ const SignUpForm = () => {
             name='head_of_family'
             value={registrationData.head_of_family}
             onChange={handleRegistrationChange}
-            required
+            
           />
-          {errorMessages.head_of_family && (
-            <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.head_of_family[0]}</p>
+           {errorMessages.generic && (
+            <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.head_of_family}</p>
           )}
         </div>
         <div className='form-group col-md-4'>
@@ -271,10 +296,10 @@ const SignUpForm = () => {
             name='county'
             value={registrationData.county}
             onChange={handleRegistrationChange}
-            required
+            
           />
-          {errorMessages.county && (
-            <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.county[0]}</p>
+           {errorMessages.generic && (
+            <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.county}</p>
           )}
         </div>
       </div>
