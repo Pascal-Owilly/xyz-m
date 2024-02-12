@@ -55,81 +55,8 @@ const Message = ({ type, text }) => {
   );
 };
 
-const SlaughterForm = ({ showForm, onSubmit, submitMessage, onVisibilityChange, breed, handleInputChange, quantity, setQuantity, tag_number, weight }) => (
-  showForm && (
-    <div className="row mb-4">
-      <div className="col-md-12">
-        <div className="card" style={{ height:'500px' }}>
-          <div className="card-body" >
-          <h5 className="mb-3" style={{ color: '#001b40' }} >Raw materials form</h5>
 
-            <form onSubmit={onSubmit}>
-              <label htmlFor="breedSelect" className="form-label text-secondary">Enter product name</label>
-              <input
-                style={{
-                  background: 'white',
-                  color: '#999999', // Secondary text color
-                  padding: '0.2rem',
-                  borderRadius: '30px',
-                  width:'100%',
-                  border: '1px solid #ced4da', // Add border style
-                  outline: 'none', // Remove default outline
-                }}
-                id="breedSelect"
-                name="breed"
-                value={breed.selectedAnimal}
-                onChange={(e) => handleInputChange(e)}  // Use the handleInputChange function
-                className='form-select mb-3 mx-2'
-                placeholder="Select Breed" // Add placeholder text
 
-              />
-
-              <p>
-                <label htmlFor="quantityInput" className="form-label">Enter quantity of raw materials taken from the inventory:</label>
-                <input
-                  id="quantityInput"
-                  type="number"
-                  value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
-                  className="form-control mb-3"
-                  required
-                  placeholder='Enter quantity'
-
-                />
-              </p>
-              <p>
-                <label htmlFor="tag_number" className="form-label">Enter tag number:</label>
-                <input
-                  id="tag_number"
-                  type="text"
-                  value={tag_number}
-                  onChange={(e) => setTagNumber(e.target.value)}
-                  className="form-control mb-3"
-                  placeholder='Tag number'
-                  required
-                />
-              </p>
-              <p>
-                <label htmlFor="weight" className="form-label">Enter weight:</label>
-                <input
-                  id="weight"
-                  type="text"
-                  value={weight}
-                  onChange={(e) => setWeight(e.target.value)}
-                  className="form-control mb-3"
-                  placeholder='Enter weight'
-
-                  required
-                />
-              </p>
-              <button type="submit" className="btn" style={{background:'#001b40', color:'white'}}>Submit</button>
-            </form>
-          </div>
-        </div>  
-      </div>
-    </div>
-  )
-);
 
 const BreedCutForm = ({ showCutForm, onSubmit, cutData, onChange, submitMessage, onVisibilityChange }) => (
   showCutForm && (
@@ -246,6 +173,8 @@ const Home = () => {
   const [showForm, setShowForm] = useState(true);
   const [cutSubmitMessage, setCutSubmitMessage] = useState(null);
   const [showCutForm, setShowCutForm] = useState(true);
+  const [selectedBreeds, setSelectedBreeds] = useState([]);
+
   const [breed, setBreed] = useState({
     breed: 'goats',
     animalOptions: ['Goats', 'Sheep', 'Cows'],
@@ -271,19 +200,55 @@ const Home = () => {
     fetchUserData();
   }, []);
 
-  const fetchUserData = async () => {
+  const refreshAccessToken = async () => {
     try {
-      const response = await axios.get(`${baseUrl}/authentication/user/`, {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
+      console.log('fetching token refresh ... ')
+
+      const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
+  
+      const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+        refresh: refreshToken,
       });
-      const userData = response.data;
-      setUser(userData);
+  
+      const newAccessToken = response.data.access;
+      // Update the stored access token
+      Cookies.set('accessToken', newAccessToken);
+      // Optional: You can also update the user data using the new access token
+      await fetchUserData();
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error('Error refreshing access token:', error);
+      // Handle the error, e.g., redirect to login page
     }
   };
+  
+
+  const fetchUserData = async () => {
+    try {
+      const accessToken = Cookies.get('accessToken');
+      if(!accessToken){
+        navigate('/')
+      }
+      if (accessToken) {
+        const response = await axios.get(`${baseUrl}/auth/user/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+  
+        const userProfile = response.data;
+        setProfile(userProfile);
+      }
+    } catch (error) {
+      // Check if the error indicates an expired access token
+      if (error.response && error.response.status === 401) {
+        // Attempt to refresh the access token
+        await refreshAccessToken();
+      } else {
+        console.error('Error fetching user data:', error);
+      }
+    }
+  };
+  
 
   const handleFormVisibility = () => {
     setShowForm(!showForm);
@@ -295,10 +260,22 @@ const Home = () => {
     setCutSubmitMessage(null);
   };
 
-  const handleInputChange = (e) => {
-    setBreed({
-      ...breed,
-      selectedAnimal: e.target.value,
+// Modify the handleInputChange function to handle changes in multiple breed selections
+const handleInputChange = (e) => {
+  const { value } = e.target;
+  setSelectedBreeds((prevSelectedBreeds) => {
+    if (prevSelectedBreeds.includes(value)) {
+      return prevSelectedBreeds.filter((breed) => breed !== value);
+    } else {
+      return [...prevSelectedBreeds, value];
+    }
+  });
+};
+
+  const handleCutInputChange = (e) => {
+    setCutData({
+      ...cutData,
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -327,61 +304,41 @@ const Home = () => {
   };
   
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    // Get the total bred quantity for the selected breed
-    const breedTotalBred = await getTotalBredQuantity(breed.selectedAnimal);
-  
-    console.log('Breed Total Bred:', breedTotalBred);
-    console.log('Entered Quantity:', parseInt(quantity, 10));
-  
-    // Check if slaughtered quantity is more than total bred
-    if (parseInt(quantity, 10) > breedTotalBred) {
-      // Alert the user or handle the error as needed
-      alert(`Slaughtered quantity (${parseInt(quantity, 10)}) is greater than total bred quantity (${breedTotalBred}).`);
-      return;
-    }
-  
-    try {
-      // Make a POST request to the endpoint
-      const response = await axios.post(
-        `${baseUrl}/api/slaughtered-list/`,
-        {
-          breed: breed.selectedAnimal.toLowerCase(),
-          quantity: parseInt(quantity, 10),
+  // Update the form submission logic to handle multiple selected breeds
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await axios.post(
+      `${baseUrl}/api/slaughtered-list/`,
+      {
+        breeds: selectedBreeds, // Pass the selected breeds array
+        quantity: parseInt(quantity, 10),
+      },
+      {
+        headers: {
+          Authorization: `Token ${authToken}`,
         },
-        {
-          headers: {
-            Authorization: `Token ${authToken}`,
-          },
-        }
-      );
-  
-      console.log('Post response:', response.data);
-  
-      // Show success message and hide the form
-      setSubmitMessage({ type: 'success', text: 'Slaughter form submitted successfully!' });
-      setShowForm(false);
-  
-      // Clear the form fields after successful submission
-      setBreed({ ...breed, selectedAnimal: '' });
-      setQuantity('');
-    } catch (error) {
-      console.error('Error submitting form:', error);
-  
-      // Show failure message
-      setSubmitMessage({ type: 'error', text: 'Failed to submit form. Please refresh the page and try again' });
-    }
-  };
+      }
+    );
+
+    console.log('Post response:', response.data);
+
+    setSubmitMessage({ type: 'success', text: 'Slaughter form submitted successfully!' });
+    setShowForm(false);
+
+    // Clear the form fields after successful submission
+    setSelectedBreeds([]); // Clear the selected breeds array
+    setQuantity('');
+  } catch (error) {
+    console.error('Error submitting form:', error);
+
+    setSubmitMessage({ type: 'error', text: 'Failed to submit form. Please refresh the page and try again' });
+  }
+};
   
 
-  const handleCutInputChange = (e) => {
-    setCutData({
-      ...cutData,
-      [e.target.name]: e.target.value,
-    });
-  };
+
 
   const handleCutSubmit = async (e) => {
     e.preventDefault();
@@ -423,6 +380,58 @@ const Home = () => {
       setCutSubmitMessage({ type: 'error', text: 'Failed to submit Breed parts Form. Please refresh the page and try again.' });
     }
   };
+
+  const SlaughterForm = ({ showForm, onSubmit, submitMessage, onVisibilityChange, breedsData, handleInputChange, selectedBreeds }) => (
+    showForm && (
+      <div className="row mb-4">
+        <div className="col-md-12">
+          <div className="card" style={{ height: '500px' }}>
+            <div className="card-body">
+              <h5 className="mb-3" style={{ color: '#001b40' }}>Raw materials form</h5>
+              {breedsData && breedsData.map((breed, index) => (
+                <div key={index} className="mb-4">
+                  <h6>{breed.name}</h6>
+                  <div className="mb-3">
+                    <label htmlFor={`quantity_${index}`} className="form-label">Select Quantity for {breed.name}:</label>
+                    <input
+                      id={`quantity_${index}`}
+                      type="number"
+                      name={`quantity_${index}`}
+                      value={breed.quantity}
+                      onChange={(e) => handleInputChange(index, e.target.value)}
+                      className="form-control mb-3"
+                      placeholder={`Enter quantity for ${breed.name}`}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor={`animal_${index}`} className="form-label">Select Animals for {breed.name}:</label>
+                    <select
+                      id={`animal_${index}`}
+                      name={`animal_${index}`}
+                      value={selectedBreeds[index]}
+                      onChange={(e) => handleInputChange(index, e.target.value)}
+                      className='form-select mb-3'
+                      multiple
+                    >
+                      {breed.animals.map((animal, animalIndex) => (
+                        <option key={animalIndex} value={animal.id}>
+                          {animal.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              ))}
+              <button type="submit" className="btn" style={{ background: '#001b40', color: 'white' }}>Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  );
+  
+  
   
 
   return (

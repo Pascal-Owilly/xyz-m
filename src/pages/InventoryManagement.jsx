@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../pages/auth/config';
 import Cookies from 'js-cookie';
-import { Card, Row, Col } from 'react-bootstrap';
+import { Card, Row, Col, Modal, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 const InventoryPage = () => {
@@ -24,7 +24,22 @@ const InventoryPage = () => {
         return 'cyan'; // Default color
     }
   };
-  
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const breedsPerPage = 4;
+
+  // Function to handle opening modal and setting selected data
+  const handleCardClick = (breed) => {
+    // Retrieve the details of the clicked breed from inventoryData
+    const breedDetails = inventoryData.breedTotals[breed];
+    
+    // Log the details to the console
+    console.log('Breed Details:', breedDetails);
+    
+    // Show the modal if needed
+    setShowModal(true);
+  };
+
   const [inventoryData, setInventoryData] = useState({
     totalBreeds: 0,
     totalSlaughtered: 0,
@@ -51,6 +66,13 @@ const InventoryPage = () => {
           axios.get(`${baseUrl}/api/inventory-breed-sales/`, { headers }),
           axios.get(`${baseUrl}/api/breed-cut/`, { headers }),
         ]);
+
+        console.log('breederTradeResponse:', breederTradeResponse);
+        console.log('breederTotalsResponse:', breederTotalsResponse);
+        console.log('slaughteredDataResponse:', slaughteredDataResponse);
+        console.log('partTotalsCountResponse:', partTotalsCountResponse);
+        console.log('breedSalesResponse:', breedSalesResponse);
+        console.log('breedCutResponse:', breedCutResponse);
 
         const breedTotalsMap = breederTotalsResponse.data.reduce((acc, item) => {
           const breed = item.breed.toLowerCase();
@@ -92,71 +114,91 @@ const InventoryPage = () => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
+  // Logic for displaying breeds
+  const indexOfLastBreed = currentPage * breedsPerPage;
+  const indexOfFirstBreed = indexOfLastBreed - breedsPerPage;
+  const currentBreeds = Object.entries(inventoryData.breedTotals).slice(indexOfFirstBreed, indexOfLastBreed);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
-    <div className='main-container'>
-      <div className='container-fluid' style={{ minHeight: '75vh' }}>
+    <div className='main-container container-fluid'>
+      <div className='container-fluid' style={{ minHeight: '75vh', color:'#666666' }}>
         <div className='row'>
-          <div className='col-md-12'>
-            <Card className='' style={{ background: 'white' }}>
-              <Card.Body>
-                <Card.Title className='mb-3' style={{ color: '#001b40', fontSize: '1rem', marginBottom: '1rem' }}>Inventory Information</Card.Title>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h4 className='mb-3 text-secondary' style={{ fontSize: '', color: '#3498db', fontWeight: 'bold' }}>
-                    Total number of raw materials: <span style={{ color: '#001b40' }}>{inventoryData.totalBreeds}</span>
-                  </h4>
-                  <a href="/inventory-record-forms" className='mx-5' style={{ color: '#3498db', textDecoration: 'none', display: 'flex', alignItems: 'center', fontSize: '18px' }}>
-                    Record forms <i className="dw dw-edit" style={{ marginLeft: '5px' }}></i>
-                  </a>
-                </div>
-                <hr />
-                <Row>
-                  <Col md={12}>
-                    <h4 className='mb-2 text-secondary' style={{ fontSize: '1.2rem' }}>Total By Category</h4>
-                    <Row>
-                      {Object.entries(inventoryData.breedTotals).map(([breed, total]) => {
-                        const percentage = (total / inventoryData.totalBreeds) * 100;
-                        return (
-                          <Col key={breed} xl={3} lg={6} style={{ marginBottom: '1.5rem', color:'#666666' }}>
-                            <div style={{ color:'#666666', height:'200px' }} className={`card l-bg-${getColorClass(breed)}`}>
-                              <div className="card-statistic-3 p-4">
-                                <div className="card-icon card-icon-large"><i className="fas fa-shopping-cart"></i></div>
-                                <div className="mb-4">
-                                  <h5 style={{ marginBottom: '1.5rem', color:'#666666' }} className="card-title mb-0">{capitalizeFirstLetter(breed)}</h5>
-                                </div>
-                                <div className="row align-items-center mb-2 d-flex">
-                                  <div className="col-8">
-                                    <h2 style={{ marginBottom: '1.5rem', color:'#666666' }} className="d-flex align-items-center mb-0">
-                                      {total}
-                                    </h2>
-                                  </div>
-                                  <div className="col-4 text-right">
-                                    <span>{percentage.toFixed(2)}% <i className="fa fa-arrow-up"></i></span>
-                                  </div>
-                                </div>
-                                <div className="progress mt-1" data-height="8" style={{ height: '8px' }}>
-                                  <div className={`progress-bar l-bg-${getColorClass(breed)}`} role="progressbar" data-width={percentage + "%"} aria-valuenow={percentage} aria-valuemin="0" aria-valuemax="100" style={{ width: percentage + "%", background:'#001b40' }}></div>
-                                </div>
-                              </div>
-                            </div>
-                          </Col>
-                        );
-                      })}
-                    </Row>
-                  </Col>
-                  <Col md={6}>
-                    <ul>
-                      {/* Additional information */}
-                    </ul>
-                  </Col>
-                </Row>
-                <hr />
-                <Row>
-                  {/* Additional rows for finished products */}
-                </Row>
-              </Card.Body>
-            </Card>
+        <div className='col-md-4 card p-3' style={{ minHeight: '75vh' }}>
+          <ul className='list-unstyled'>
+            <li className='mb-2 text-secondary' style={{ fontSize: '.8rem', color:'#001b40' }}>Total By Category</li>
+            <ul className="list-unstyled">
+              {currentBreeds.map(([breed, total]) => {
+                const percentage = (total / inventoryData.totalBreeds) * 100;
+                return (
+                  <li key={breed} className="mb-4">
+                    <div className={` l-bg-${getColorClass(breed)}`} onClick={() => handleCardClick(breed)}>
+                      <div className="car-statistic-3 ">
+                        <div className="card-icon card-icon-large">
+                          <i className="fas fa-shopping-cart"></i>
+                        </div>
+                        <div className="mb-">
+                        </div>
+                        <div className="row align-items-center d-fle">
+                          <div className="col-4">
+                            <p className=" mb-0" style={{backgroundColor:'', color:'#666666', fontSize:'12px', fontWeight:'bold'}}>{capitalizeFirstLetter(breed)}</p>
+                          </div>
+                          <div className="col-3">
+                            <span className="mb-0" style={{backgroundColor:'', color:'#666666', fontSize:'12px'}}>{total}</span>
+                          </div>
+                          <div className="col-3">
+                            <span className="mb-0" style={{backgroundColor:'', color:'#666666', fontSize:'12px'}}>{percentage.toFixed(2)}%</span>
+                          </div>
+                        </div>
+                        <div className="row align-items-center mb-2 d-flex">
+                          <div className="col-4">
+                          </div>
+                        </div>
+                        <div className="progress " data-height="4" style={{  background:'', height:'8px'}}>
+                          <div className={`progress-bar l-bg-${getColorClass(breed)}`} role="progressbar" style={{ width: percentage + "%", background:'#00142b', height:'8px' }} aria-valuenow={percentage} aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </ul>
+          <ul>
+            {/* Additional information */}
+          </ul>
+          <ul>
+            {/* Additional rows for finished products */}
+          </ul>
+          {/* Pagination */}
+          <nav>
+            <ul className="pagination justify-content-center">
+              <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => paginate(currentPage - 1)}>Previous</button>
+              </li>
+              <li className="page-item">
+                <span className="page-link">{currentPage}</span>
+              </li>
+              <li className={`page-item ${currentBreeds.length < breedsPerPage ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => paginate(currentPage + 1)}>Next</button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <div className='col-md-2'>
+            <div className='card' style={{minHeight:'75vh'}}>
+
+            </div>
+          </div>
+          <div className='col-md-6'>
+            <div className='card' style={{minHeight:'75vh'}}>
+
+            </div>
           </div>
         </div>
+
       </div>
     </div>
   );
