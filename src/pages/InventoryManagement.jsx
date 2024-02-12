@@ -4,6 +4,7 @@ import { BASE_URL } from '../pages/auth/config';
 import Cookies from 'js-cookie';
 import { Card, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import SlaughterHouse from './SlaughterHouseDashboard';
 
 const InventoryPage = () => {
   const navigate = useNavigate();
@@ -106,11 +107,17 @@ const getColorClass = (breed) => {
   };
 
   return (
+    
     <div className='main-container'>
+
     <div className='container-fluid' style={{ minHeight: '75vh' }}>
       <div className='row' >
-        <div className='col-md-12'>
+      <div className='' style={{ width: '100%' }}>
+      <SlaughterHouse />
+
           <Card className="" style={{ background: 'white' }}>
+          
+
             <Card.Body>
 
               <Card.Title className=' mb-3 text-success' style={{ color: '#A9A9A9', fontSize: '1rem', marginBottom: '1rem' }}>Inventory Information</Card.Title>

@@ -329,10 +329,10 @@ const logout = async () => {
               <>
                             <hr />
 
-              <li style={{ display: 'flex', alignItems: 'center' }}>
+              {/* <li style={{ display: 'flex', alignItems: 'center' }}>
                 <FaUserCog style={{ marginRight: '12px', color: 'white', fontSize: '20px'}} />
                 <a href="/admin_dashboard">SCM Administration</a>
-              </li>
+              </li> */}
 
               <li style={{ display: 'flex', alignItems: 'center' }}>
                 <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
@@ -341,54 +341,52 @@ const logout = async () => {
               
               <li style={{ display: 'flex', alignItems: 'center' }}>
                 <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                <a href="/supplier_dashboard">Breeder Dashboard</a>
+                <a href="/supplier_dashboard">Supplier </a>
               </li>
               <li style={{ display: 'flex', alignItems: 'center' }}>
                 <FaHome style={{ marginRight: '12px', color: 'white', fontSize: '20px' }} />
                 <a href="/buyer_dashboard" onClick={handleLinkClick}>
-                  Buyer Dashboard
+                  Buyer 
                 </a>
               </li>
-              <li style={{ display: 'flex', alignItems: 'center' }}>
+              {/* <li style={{ display: 'flex', alignItems: 'center' }}>
                 <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                <a href="/slaughterhouse-dashboard">Slaughterhouse Dashboard</a>
-              </li>
+                <a href="/slaughterhouse-dashboard">Slaughterhouse</a>
+              </li> */}
              
               <li style={{ display: 'flex', alignItems: 'center' }}>
                 <FaMapMarkedAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                <a href="/bank_teller_dashboard">Bank Teller Dashboard</a>
+                <a href="/bank_teller_dashboard">Bank </a>
               </li>
               
-              <li style={{ display: 'flex', alignItems: 'center' }}>
+              {/* <li style={{ display: 'flex', alignItems: 'center' }}>
               <FaMapMarkedAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px' }} />
                 <a href="/customer_service_dashboard">Customer Care</a>
-              </li>
-              <li style={{ display: 'flex', alignItems: 'center' }}>
+              </li> */}
+              {/* <li style={{ display: 'flex', alignItems: 'center' }}>
                 <FaMapMarkedAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                <a href="/export_handling_dashboard">Export Handling Dashboard</a>
-              </li>
+                <a href="/export_handling_dashboard">Export Management</a>
+              </li> */}
 
               <li>
                 <a href="inventory-dashboard">
                 <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                  Inventory Dashboard
+                  Inventory Management
                 </a>
               </li>
-              <li>
+              {/* <li>
                 <a href="warehouse">
                   <FaMapMarkedAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
 
-                   Warehouse Dashboard
+                   Warehouse
                 </a>
-          </li>
+          </li> */}
                
 
               <li style={{ display: 'flex', alignItems: 'center' }}>
               <FaShippingFast style={{ marginRight: '12px', color: 'white', fontSize: '20px'}} />
-                <a href="/dispatch_and_shipping">Dispatch & Shipping </a></li>
-              <li style={{ display: 'flex', alignItems: 'center' }}>
-              <FaArchive style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                <a href="/arrival">Arrival & Reception </a></li>
+                <a href="/dispatch_and_shipping">Export Management </a></li>
+         
 
             </>
                           

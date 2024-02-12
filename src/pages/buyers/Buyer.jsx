@@ -8,6 +8,8 @@ import { HiBell, HiCube, HiExclamation, HiCurrencyDollar, HiChartBar } from 'rea
 import { FaEnvelope } from 'react-icons/fa';  
 import { HiEye, HiEyeOff } from 'react-icons/hi'; // Example icons, you can choose others
 import { FaTruck, FaShippingFast, FaCheck, FaArchive } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import PurchaseOrders from '../seller_mng/PurchaseOrdersSeller';
 
 const styles = {
   invoiceContainer: {
@@ -36,8 +38,8 @@ const styles = {
   },
 };
 
-
 const CustomerServiceDashboard = () => {
+  const navigate = useNavigate()
   const [payments, setPayments] = useState([]);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
@@ -55,14 +57,36 @@ const CustomerServiceDashboard = () => {
   const accessToken = Cookies.get('accessToken');
   const [userName, setUserName] = useState(''); // New state variable to store the user's name
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [quotationsPerPage] = useState(5); // Number of quotations per page
+  // Quotation
+
+  const [quotations, setQuotations] = useState([]);
+  const [confirmedQuotation, setConfirmedQuotation] = useState(null);
+
+  // Pagination
+ const indexOfLastQuotation = currentPage * quotationsPerPage;
+ const indexOfFirstQuotation = indexOfLastQuotation - quotationsPerPage;
+ const currentQuotations = quotations.slice(indexOfFirstQuotation, indexOfLastQuotation);
+
+ const [confirming, setConfirming] = useState(false);
+ const [confirmingId, setConfirmingId] = useState(null);
+
+ const isConfirming = (quotationId) => confirmingId === quotationId;
+
+ const handleConfirm = (quotationId) => {
+   setConfirmingId(quotationId);
+   handleConfirmation(quotationId);
+ };
 
   // invoiceslist
   const [loading, setLoading] = useState(true);
   const [invoiceData, setInvoiceData] = useState([]);
 
   // paination logic
-  const itemsPerPage = 4; // Number of items to display per page
-  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 7; // Number of items to display per page
+ 
 
   // contact form
   const [showModal, setShowModal] = useState(false);
@@ -410,10 +434,6 @@ const toggleInvoice = (invoiceNumber) => {
     }
   };
 
-  // Quotation
-
-  const [quotations, setQuotations] = useState([]);
-  const [confirmedQuotation, setConfirmedQuotation] = useState(null);
 
   useEffect(() => {
     // Fetch quotations from the server
@@ -444,31 +464,28 @@ const toggleInvoice = (invoiceNumber) => {
           // Include other required fields here
           buyer:  quotations.find(q => q.id === quotationId).buyer,
           seller:  quotations.find(q => q.id === quotationId).seller,
-
+  
           product: quotations.find(q => q.id === quotationId).product,
           message:  quotations.find(q => q.id === quotationId).message,
           quantity: quotations.find(q => q.id === quotationId).quantity,
           unit_price: quotations.find(q => q.id === quotationId).unit_price,
-          // Add more fields as necessary
         },
-      
+     
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      setConfirmedQuotation(quotationId);
+      setConfirmedQuotation(quotationId); // Update the confirmedQuotation state with the ID of the confirmed 
+      navigate('/purchase-order');
+
       // Optionally, you can show a success message or perform other actions upon successful confirmation
     } catch (error) {
       console.error('Error confirming quotation:', error);
       // Optionally, you can show an error message or handle the error in other ways
     }
   };
-
-  
-
-  
- 
+   
   return (
     <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
 
@@ -494,7 +511,6 @@ const toggleInvoice = (invoiceNumber) => {
             Received Quotations
           </Nav.Link>
 
-          
           <Nav.Link
             className={`text-white ${activeSection === 'InvoiceList' ? 'active-buyer-button' : ''}`}
             onClick={() => handleButtonClick('InvoiceList')}
@@ -555,43 +571,70 @@ const toggleInvoice = (invoiceNumber) => {
           </Card.Body>
         </Card>
       )}
-
 {activeSection === 'InformationSection' && (
   <div>
-  <h5 className='mb-4 text-success mt-2'>Information section</h5>
+  <h5 className='mb-4' style={{ fontSize: '1.5rem' }}></h5>
 
-  <div className="quotation-list-container">
-  <h1 className="quotation-list-header">Quotation List</h1>
-  <div className="quotation-list-body">
-    {quotations.map((quotation) => (
-      <div key={quotation.id} className="quotation-item">
-        <h2 className="quotation-item-title">Quotation #{quotation.id}</h2>
-        <p className="quotation-item-detail">Buyer: {quotation.buyer}</p>
-        <p className="quotation-item-detail">Seller: {quotation.seller}</p>
-        <p className="quotation-item-detail">Product: {quotation.product}</p>
-        <p className="quotation-item-detail">Unit Price: {quotation.unit_price}</p>
-        <p className="quotation-item-detail">Quantity: {quotation.quantity}</p>
-        <p className="quotation-item-detail">Message: {quotation.message}</p>
-        <p className="quotation-item-detail">Status: {confirmedQuotation === quotation.id ? 'Confirmed' : 'Pending'}</p>
-        {!confirmedQuotation && (
-          <div className="quotation-item-action">
-            <input type="checkbox" id={`confirmCheckbox_${quotation.id}`} />
-            <label htmlFor={`confirmCheckbox_${quotation.id}`}>Confirm Quotation</label>
-            <button onClick={() => handleConfirmation(quotation.id)}>Confirm</button>
-          </div>
-        )}
-      </div>
-    ))}
-  </div>
-  <div className="quotation-list-footer">
-    <p className="quotation-list-signature">Thank you for choosing us.</p>
+  <div className="quotation-list-container" style={{ background: 'white', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', borderRadius: '10px', padding: '20px', color: '#999999', fontSize: '13px' }}>
+    <h1 className="quotation-list-header text-secondary" style={{ fontSize: '1.8rem', marginBottom: '20px' }}>Quotation List</h1>
+    <table className="table">
+      <thead>
+        <tr>
+          <th className='text-secondary'>Quotation Number</th>
+          <th className='text-secondary'>Buyer</th>
+          <th className='text-secondary'>Seller</th>
+          <th className='text-secondary'>Product</th>
+          <th className='text-secondary'>Unit Price</th>
+          <th className='text-secondary'>Quantity</th>
+          <th className='text-secondary'>Message</th>
+          <th className='text-secondary'>Status</th>
+          <th className='text-secondary'>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {quotations.slice().reverse().map((quotation) => (
+          <tr key={quotation.id}>
+            <td className='text-secondary'>{quotation.id}</td>
+            <td className='text-secondary'>{quotation.buyer}</td>
+            <td className='text-secondary'>{quotation.seller}</td>
+            <td className='text-secondary'>{quotation.product}</td>
+            <td className='text-secondary'>{quotation.unit_price}</td>
+            <td className='text-secondary'>{quotation.quantity}</td>
+            <td className='text-secondary'>{quotation.message}</td>
+            <td className='text-secondary'>{confirmedQuotation === quotation.id ? 'Confirmed' : 'Pending'}</td>
+            <td className='text-secondary'>
+              {confirmedQuotation !== quotation.id && (
+                <button
+                  onClick={() => handleConfirm(quotation.id)}
+                  disabled={isConfirming(quotation.id)}
+                  style={{
+                    fontSize: '13px',
+                    padding: '5px 10px',
+                    borderRadius: '5px',
+                    background: isConfirming(quotation.id) ? '#999999' : '#007bff',
+                    color: 'white',
+                    border: 'none',
+                    cursor: isConfirming(quotation.id) ? 'not-allowed' : 'pointer'
+                  }}>
+                  {isConfirming(quotation.id) ? 'Confirming...' : 'Confirm'}
+                </button>
+              )}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <Pagination>
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <Pagination.Item key={page} active={page === currentPage} onClick={() => paginate(page)}>
+          {page}
+        </Pagination.Item>
+      ))}
+    </Pagination>
   </div>
 </div>
-
-
-<p>Here, you can seamlessly access and track all logistics details and updates. Explore the associated invoice list for your received LCs, effortlessly track invoices based on their ID, and feel free to send any inquiries our way using the message icon. Your convenience is our priority</p>
-  </div>
 )}
+
 
 {activeSection === 'LetterOfCredit' && (
   <Card>
@@ -612,12 +655,17 @@ const toggleInvoice = (invoiceNumber) => {
             <tr key={letterOfCredit.id}>
               <td>{renderDocumentPreview(letterOfCredit.lc_document, `LC Document for ${letterOfCredit.buyer.username}`)}</td>
               <td>#{letterOfCredit.id}</td>
-              <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td>
+              <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td><Pagination
+                    itemsPerPage={quotationsPerPage}
+                    totalItems={quotations.length}
+                    paginate={paginate}
+                />
               <td style={{textTransform:'capitalize'}}>{letterOfCredit.status}</td>
               {/* Add more columns as needed */}
             </tr>
           ))}
         </tbody>
+       
       </Table>
     </Card.Body>
   </Card>
@@ -739,8 +787,12 @@ const toggleInvoice = (invoiceNumber) => {
                 <hr />
               </td>
             </tr>
-          </tbody>            </Table>
+          </tbody> 
+          
+          
+                     </Table>
           )}
+          
         </Container>
       ))}
       {/* Pagination */}

@@ -415,7 +415,7 @@ const Home = () => {
 {/* Navbar */}
 <Navbar bg="primary" expand="lg" variant="dark">
       <Navbar.Brand>
-        <span style={{ fontWeight: '' }}>Slaughterhouse Dashboard</span>
+        <span style={{ fontWeight: '' }}>Inventory Management</span>
       </Navbar.Brand>
 
     </Navbar>

@@ -20,11 +20,12 @@ const InvoiceForms = () => {
     breeds_supplied: null,
     goat_weight: null,
     community: '',
-    breed: 'goats', // Set a default breed
+    breed: '', // Set a default breed
     market: '',
     head_of_family: '',
     vaccinated: false,
     phone_number: '',
+    tag_number:'',
     email:'',
     price: null,
     breeder: null,
@@ -257,6 +258,7 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
         price: null,
         email: '',
         country: '',
+        tag_number:'',
         breed: '',
         breeder: null,
         abattoir: null,
@@ -314,24 +316,21 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
         <table style={{ background: 'transparent', color: '#999999', width:'100%' }}>
           <tbody>
           <tr>
-  <th style={{ border: '1px solid #999999', padding: '5px' }}>Name of breed</th>
+  <th style={{ border: '1px solid #999999', padding: '5px' }}>Product name</th>
   <td style={{ border: '1px solid #999999', padding: '5px' }}>
-    <select
-      name="breed"
-      value={formData.breed}
-      onChange={handleInputChange}
-      className='form-control'
-    >
-      {['goats', 'sheep', 'cows', 'pigs'].map((breed) => (
-        <option key={breed} value={breed}>
-          {breed.charAt(0).toUpperCase() + breed.slice(1)}
-        </option>
-      ))}
-    </select>
-  </td>
+  <input
+    type="text"
+    name="breed"
+    value={formData.breed}
+    onChange={handleInputChange}
+    className='form-control'
+    placeholder="Enter product name"
+  />
+</td>
+
 </tr>
             <tr>
-              <th style={{ border: '1px solid #999999', padding: '5px' }}>How many breeds?</th>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>Quantity</th>
               <td style={{ border: '1px solid #999999', padding: '5px' }}>
                 <input
                   type="number"
@@ -346,7 +345,7 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
               </td>
             </tr>
             <tr>
-              <th style={{ border: '1px solid #999999', padding: '5px' }}>Total Weight</th>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>Weight (Kg)</th>
               <td style={{ border: '1px solid #999999', padding: '5px' }}>
                 <input
                   type="number"
@@ -376,7 +375,7 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
               </td>
             </tr>
               <tr>
-              <th style={{ border: '1px solid #999999', padding: '5px' }}>Breed Price</th>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>Price/Kg</th>
               <td style={{ border: '1px solid #999999', padding: '5px' }}>
                 <input
                   type="number"
@@ -446,7 +445,7 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
                   value={formData.bank_account_number}
                   onChange={handleInputChange}
                   className='form-control'
-                  placeholder='+254712345678'
+                  placeholder='13754712345678'
                 />
               <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.bank_account_number}</div>
 
@@ -458,13 +457,29 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
               {/* <td style={{ border: '1px dotted black', padding: '5px' }}> */}
                 <input
                   type="hidden"
-                  name="community"
+                  name="tag_number"
                   value={user && user.community ? user.community : ''}
                   onChange={handleInputChange}
                   className='form-control'
                   readOnly
 
                   placeholder='Name of your community'
+
+                />
+              {/* </td> */}
+            {/* </tr> */}
+             {/* <tr> */}
+              {/* <th style={{ border: '1px dotted black', padding: '5px',color: '#999999' }}>Community:</th> */}
+              {/* <td style={{ border: '1px dotted black', padding: '5px' }}> */}
+              <input
+                  type="hidden"
+                  name="tag_number"
+                  value={formData.tag_number}
+                  onChange={handleInputChange}
+                  className='form-control'
+                  readOnly
+
+                  placeholder='Tag number'
 
                 />
               {/* </td> */}

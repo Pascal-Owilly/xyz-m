@@ -25,6 +25,7 @@ const ExportHandling = () => {
     axios.get(`${baseUrl}/api/all-logistics-statuses/`)
       .then(response => {
         setLogisticsStatuses(response.data);
+        console.log(response)
       })
       .catch(error => {
         console.error('Error fetching logistics statuses:', error);
@@ -204,7 +205,7 @@ const ExportHandling = () => {
         {status.status}
       </span>
 
-{status.status === 'dispatched' && (
+      {status.status === 'dispatched' && (
           <div style={{ backgroundColor: '', padding: '2px', borderRadius: '50%' }}>
             <FaTruck  style={{ fontSize: '22px', color: 'green' }} />
           </div>

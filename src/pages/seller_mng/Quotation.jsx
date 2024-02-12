@@ -5,6 +5,9 @@ import axios from 'axios';
 import { BASE_URL } from '../auth/config';
 import jsPDF from 'jspdf';
 
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function QuotationForm() {
 
     const navigate =useNavigate()
@@ -81,7 +84,9 @@ function QuotationForm() {
     quantity: '',
     unit_price: '',
     message: '',
-    confirm: false,
+    confirm: '',
+    delivery_time: null,
+
     
 
 });
@@ -125,6 +130,7 @@ useEffect(() => {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
+        delivery_time: null,
         product: formData.product,
         quantity: formData.quantity,
         unit_price: formData.unit_price,
@@ -136,8 +142,10 @@ useEffect(() => {
 
       // Make the POST request with the access token included in the headers
       const postResponse = await axios.post(`${baseUrl}/api/send-quotation/`, postData, config);
-      console.error('Quotation created successfully', postResponse);
-    } catch (error) {
+      console.log('success', postResponse);
+// Navigate back to the desired page
+
+} catch (error) {
       console.error('Error creating quotation:', error);
     }
   };
@@ -173,14 +181,69 @@ useEffect(() => {
 
   fetchBuyers();
 }, [baseUrl, accessToken]);
+  
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+      // Submit the form data
+      await postData();
+      // Show success message
+      toast.success('Quotation submitted successfully!', {
+          position: 'top-center',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+      });
+  } catch (error) {
+      // Show error message
+      toast.error('Failed to submit quotation. Please try again later.', {
+          position: 'top-center',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+      });
+  }
+};
 
+const postData = async () => {
+  try {
+      // Include the access token in the request headers
+      const config = {
+          headers: {
+              Authorization: `Bearer ${accessToken}`,
+          },
+      };
 
+      // Data to be sent in the POST request
+      const postData = {
+          buyer: formData.buyer,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          delivery_time: null,
+          product: formData.product,
+          quantity: formData.quantity,
+          unit_price: formData.unit_price,
+          message: formData.message,
+          seller_address: formData.seller_address,
+          seller_country: formData.seller_country,
+          seller_company: formData.seller_company,
+      };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Handle form submission here, for example: send data to backend
-        console.log(formData);
-    };
+      // Make the POST request with the access token included in the headers
+      const postResponse = await axios.post(`${baseUrl}/api/send-quotation/`, postData, config);
+      console.error('Quotation created successfully', postResponse);
+  } catch (error) {
+      console.error('Error creating quotation:', error);
+      throw error; // Re-throw the error to be caught by the caller (handleSubmit)
+  }
+};
 
     const generatePDF = () => {
       const doc = new jsPDF();
@@ -209,8 +272,6 @@ useEffect(() => {
       }
     };
     
-    
-
     const handleDownload = () => {
       const pdf = generatePDF();
       pdf.save('quotation.pdf');
@@ -226,7 +287,7 @@ useEffect(() => {
     const handleConfirmationByBuyer = async () => {
       try {
         const response = await axios.put(`${baseUrl}/api/send-quotation/${quotation.id}/`, {
-          confirmed: true,
+          confirm: '',
         });
         // Handle successful confirmation (e.g., display a success message)
       } catch (error) {
@@ -286,19 +347,29 @@ useEffect(() => {
                         <label htmlFor="quantity" className="form-label">Quantity</label>
                         <input type="number" className="form-control" id="quantity" name="quantity" value={formData.quantity} onChange={handleChange} min="1" required />
                     </div>
+                    <div className="col-md-6 mb-3">
+                        <label htmlFor="delivery_time" className="form-label">Delivery Date</label>
+                        <input type="date" className="form-control" id="delivery_time" name="delivery_time" value={formData.delivery_time} onChange={handleChange} min="1" required />
+                    </div>
                 </div>
-                <div className="mb-3 form-check">
-        <input type="checkbox" className="form-check-input" id="confirm" name="confirm" checked={formData.confirm} onChange={handleChange} />
-        <label className="form-check-label" htmlFor="confirm">Confirm</label>
-    </div>
+                {/* <div className="mb-3 form-check">
+                <select className="form-select" id="confirm" name="confirm" value={formData.confirm} onChange={handleChange}>
+                      <option value="">Select</option>
+                      <option value="accept">Accept</option>
+                      <option value="reject">Reject</option>
+                      <option value="review">Review</option>
+                  </select>
+                    <label className="form-check-label" htmlFor="confirm">Confirm</label>
+                </div> */}
                
                 <div className="mb-3">
                     <label htmlFor="message" className="form-label">Additional Message</label>
                     <textarea className="form-control" id="message" name="message" value={formData.message} onChange={handleChange} rows="4"></textarea>
                 </div>
-                <button type="submit" onClick={handleSubmit} className="btn btn-primary mb-2">Request Quotation</button>
+                <button type="submit" onClick={handleSubmit} className="btn btn-primary mb-2" style={{fontSize:'15px'}}>Request Quotation</button>
             </form>
         </div>
+        <ToastContainer />
 
         </div>
     );

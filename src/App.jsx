@@ -42,6 +42,12 @@ import TrackInvoice from './pages/TrackInvoice';
 import Buyer from './pages/buyers/Buyer';
 import Sellers from './pages/seller_mng/Sellers';
 import Quotation from './pages/seller_mng/Quotation';
+import QuotationList from './pages/seller_mng/QuotationList';
+
+import PurchaseOrderPage from './pages/buyers/PurchaseOrderPage';
+import PurchaseOrderPageSeller from './pages/seller_mng/PurchaseOrdersSeller';
+import ActiveOrders from './pages/breaders/ActiveOrders';
+import DocumentScanner from './pages/DocScanner';
 
 const App = () => {
   return (
@@ -66,7 +72,17 @@ const App = () => {
             {/* Sellers */}
             <Route path="/sellers" element={<Sellers />} />
             <Route path="/quotation" element={<Quotation />} />
+            <Route path="/quotation-list" element={<QuotationList />} />
 
+            <Route path="/purchase-order-seller" element={<PurchaseOrderPageSeller />} />
+
+          {/* Doc scanner */}
+          <Route path="/document-scanner" element={<DocumentScanner />} />
+
+
+            {/* Buyers */}
+
+            <Route path="/purchase-order" element={<PurchaseOrderPage />} />
 
             <Route path="/invoice_tracking" element={<BuyerDashboard />} />
             <Route path="/buyer_dashboard" element={<Buyer />} />
@@ -94,6 +110,7 @@ const App = () => {
             <Route path="/breader-info/:breaderId" element={<BreaderInfo />} />
             <Route path="/supplied-breeds" element={<SuppliedBreedsSingleUser />} />
             <Route path="/breader-more-info/:breaderId" element={<BreederMoreInfo />} />
+            <Route path="/active-purchase-orders" element={<ActiveOrders />} />
 
             <Route path="/submission-successful" element={<FormSubmissionSuccess />} />
             {/* Payment */}

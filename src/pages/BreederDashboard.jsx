@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Card } from 'react-bootstrap';
+import { Row, Col, Card, Container } from 'react-bootstrap';
 
 import { FaBell, FaBox, FaExclamation, FaMoneyBillWave, FaChartLine } from 'react-icons/fa';
 import Cookies from 'js-cookie';
@@ -150,73 +150,80 @@ const Supplier = () => {
     
 
   return (
-    <Row className='main-container' style={{ textAlign: 'left', marginBottom: '20px', minHeight: '85vh' }}>
-      <div className='p-3'>
-  <h5 className='mb-4 text-success mt-2'>Breeds supplies and history tracking section</h5>
-<p>Here, you can supply breeds to the abattoir and track all supply history details and payment updates. Feel free to contact us using the envelop icon.</p>
-  </div>
-     
+    <Container fluid>
+  <Row className='main-container' style={{ textAlign: 'left', marginBottom: '20px', minHeight: '85vh' }}>
+    <div className='p-3'>
+      <h5 className='mb-4 text-success mt-2'>Product supplies and management </h5>
+      <p>There is an active order for supply of Laptops and we will be collecting from Kululu market. Go to active <br /> orders to view more </p>
+    </div>
 
-      {/* Notifications */}
-      <Col className='' xs={6} md={6}>
-        {/* <FaBell size={20} color='white' /> */}
-      </Col>
-      {/* Flash message */}
-      <Col xs={6} md={6}></Col>
+    <Col xs={12} md={4} lg={4}>
+  <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+    <Card.Body>
+      <FaBell size={40} className='mb-3 text-success' />
+      <Card.Title>Active orders</Card.Title>
+      <Card.Text>Click below to go to active orders.</Card.Text>
+      <a href='/active-purchase-orders' className='btn btn-primary'>
+        Active orders
+      </a>
+    </Card.Body>
+  </Card>
+</Col>
 
-      {/* Goat supplies status */}
-      <Col xs={12} md={6} lg={6}>
+{/* Goat supplies status */}
+<Col xs={12} md={4} lg={4}>
+  <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+    <Card.Body>
+      <FaBox size={40} className='mb-3 text-success' />
+      <Card.Title>Supply products</Card.Title>
+      <Card.Text>Click below to supply your products.</Card.Text>
+      <a href='/breeder_invoices' className='btn btn-primary'>
+        Supply products
+      </a>
+    </Card.Body>
+  </Card>
+</Col>
+
+{/* Bread supplies status */}
+<Col xs={12} md={4} lg={4}>
+  <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+    <Card.Body>
+      <FaMoneyBillWave size={40} className='mb-3 text-success' />
+      <Card.Title>Breed Supply History</Card.Title>
+      <Card.Text>Go to your supply history.</Card.Text>
+      <button onClick={handleBreadSuppliesStatus} className='btn btn-primary'>
+        View history
+      </button>
+    </Card.Body>
+  </Card>
+</Col>
+
+    {/* Empty history message */}
+    {emptyHistoryMessageVisible && (
+      <div className="alert alert-warning mt-2" role="alert">
+        Your breed supply history is empty.
+      </div>
+    )}
+
+    {localSuppliesData && (
+      <Col xs={12} md={4} lg={4}>
         <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
           <Card.Body>
-            <FaBox size={40} className='mb-3 text-success' />
-            <Card.Title>Supply to XYZ Abattoir</Card.Title>
-            <Card.Text>Click below to supply goats to XYZ Abattoir and manage your transactions.</Card.Text>
-            <a href='/breeder_invoices' className='btn btn-primary'>
-              Go to Invoices
-            </a>
+            <h4>Additional Data</h4>
+            <p>Abattoir: {localSuppliesData.abattoir}</p>
+            <p>Breed: {localSuppliesData.breed}</p>
+            <p>Community: {localSuppliesData.breeder_community}</p>
+            <p>Number Supplied: {localSuppliesData.breeds_supplied}</p>
+            <p>Breed Weight: {localSuppliesData.goat_weight} kg</p>
+            <p>Vaccinated: {localSuppliesData.vaccinated ? 'Yes' : 'No'}</p>
+            {/* Add more lines to display other data */}
           </Card.Body>
         </Card>
       </Col>
+    )}
+  </Row>
+</Container>
 
-      {/* Bread supplies status */}
-      <Col xs={12} md={6} lg={6}>
-        <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-          <Card.Body>
-            <FaMoneyBillWave size={40} className='mb-3 text-success' />
-            <Card.Title>Breed Supply History</Card.Title>
-            <Card.Text>Check the status of your bread supplies and manage orders efficiently.</Card.Text>
-            <button onClick={handleBreadSuppliesStatus} className='btn btn-primary'>
-              View Status
-            </button>
-          </Card.Body>
-        </Card>
-      </Col>
-
-      {/* Empty history message */}
-      {emptyHistoryMessageVisible && (
-        <div className="alert alert-warning mt-2" role="alert">
-          Your breed supply history is empty.
-        </div>
-      )}
-
-      
-      {localSuppliesData && (
-  <Col xs={12} md={6} lg={4}>
-    <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-      <Card.Body>
-        <h4>Additional Data</h4>
-        <p>Abattoir: {localSuppliesData.abattoir}</p>
-        <p>Breed: {localSuppliesData.breed}</p>
-        <p>Community: {localSuppliesData.breeder_community}</p>
-        <p>Number Supplied: {localSuppliesData.breeds_supplied}</p>
-        <p>Breed Weight: {localSuppliesData.goat_weight} kg</p>
-        <p>Vaccinated: {localSuppliesData.vaccinated ? 'Yes' : 'No'}</p>
-        {/* Add more lines to display other data */}
-      </Card.Body>
-    </Card>
-  </Col>
-)}
-    </Row>
   );
 };
 
