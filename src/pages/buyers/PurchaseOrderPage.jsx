@@ -68,7 +68,7 @@ const [failureMessage, setFailureMessage] = useState('');
       setFailureMessage('');
     } catch (error) {
       console.error('Error submitting form:', error);
-      setFailureMessage('Failed to submit purchase order. Please try again later.');
+      setFailureMessage('Failed to submit purchase order. Please check the fields and try again.');
       setSuccessMessage('');
     }
   };
@@ -77,7 +77,7 @@ const [failureMessage, setFailureMessage] = useState('');
     <div className='main-container' style={{ minHeight: '85vh' }}>
       {successMessage && <h2 className='text-center text-success mt-3'>{successMessage}</h2>}
       {failureMessage && <h2 className='text-center text-danger mt-3'>{failureMessage}</h2>}
-        <p className='text-center text-success mt-3'>You have successfully confirmed the quotation. Please Proceed to generate purchase order.</p>
+        <p style={{color:'#001b40'}} className='text-center mt-3'>You have successfully confirmed the quotation. Please Proceed to generate purchase order.</p>
       <Form className='p-4 m-3' style={{ background: '#F9FAFB', color: '#666666', fontSize: '14px', border: 'none' }} onSubmit={handleSubmit}>
         <h5 className='text' style={{ color: '#666666' }}>Purchase Order Form</h5>
         <hr />
@@ -159,7 +159,7 @@ const [failureMessage, setFailureMessage] = useState('');
           </Col> */}
         </Row>
         <hr />
-        <Button className='btn btn-sm btn-primary bg-success text-white' style={{ width: '200px' }} type="submit">Create</Button>
+        <Button style={{background:'#001b40', width: '200px'}} className='btn btn-sm text-white'  type="submit">Create</Button>
       </Form>
     </div>
   );

@@ -127,7 +127,7 @@ const PurchaseOrders = () => {
 
   return (
     <div className='main-container'>
-  <h2 className='text-success'>Purchase Orders</h2>
+  <h2 style={{color:'#001b40'}}>Purchase Orders</h2>
   <hr />
   <table className="table table-stripped p-3" style={{ background: 'white', color: '#999999', fontSize: '13px' }}>
     <thead className=" p-3">
@@ -162,14 +162,15 @@ const PurchaseOrders = () => {
           <td>{order.seller_contact}</td>
           <td>{order.shipping_address}</td>
           <td>
-            <button 
-              className={order.confirmed ? 'bg-success btn-sm' : 'bg-danger btn-sm'}
-              onClick={() => toggleConfirmationStatus(order.id, order.confirmed)}
-              disabled={confirmingId === order.id || unconfirmingId === order.id}
-              style={{ fontSize: '13px' }}
-            >
-              {confirmingId === order.id ? 'Confirming...' : (unconfirmingId === order.id ? 'Unconfirming...' : (order.confirmed ? 'Confirmed' : 'Unconfirmed'))}
-            </button>
+          <button 
+            className={order.confirmed ? 'btn-sm bg-success' : 'btn-sm'}
+            onClick={() => toggleConfirmationStatus(order.id, order.confirmed)}
+            disabled={confirmingId === order.id || unconfirmingId === order.id}
+            style={{ fontSize: '13px', backgroundColor: order.confirmed ? '#708238' : '#23282d' }}
+          >
+            {confirmingId === order.id ? 'Confirming...' : (unconfirmingId === order.id ? 'Unconfirming...' : (order.confirmed ? 'Confirmed' : 'Unconfirmed'))}
+          </button>
+
           </td>
           <td>{order.product_description}</td>
           <td>{order.quantity}</td>

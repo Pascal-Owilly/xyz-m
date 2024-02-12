@@ -157,7 +157,7 @@ const BankDashboard = () => {
    <div className='main-container ' style={{ minHeight: '85vh', backgroundColor: '#f0f8ff' }}>
 
  {/* Navbar */}
- <Navbar bg="success" expand="lg" variant="dark">
+ <Navbar style={{background:'#001b40'}} bg="" expand="lg" variant="dark">
         <Navbar.Brand >Bank Dashboard</Navbar.Brand>
         
         <Navbar.Toggle aria-controls="navbarNav" />
@@ -180,7 +180,7 @@ const BankDashboard = () => {
             <Col md={10}>
         <Col>
           <Card.Body>
-            <h5 className="text-success mb-4">Search Payment by Code</h5>
+            <h5 className=" mb-4" style={{color:'#001b40'}} >Search Payment by Code</h5>
             <p className="text-muted">
               Welcome, dear bank teller. To access breeder details, please paste the code you received via email below. This code is essential for securely retrieving the relevant information. Once you see the details, please proceed to make payment.
             </p>

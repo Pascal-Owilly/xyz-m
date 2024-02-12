@@ -188,7 +188,7 @@ const BankDashboard = ({ orderId }) => {
     options: {
       chart: {
         type: 'radialBar',
-        background: 'transparent', // Set background to transparent
+        background: '', // Set background to transparent
       },
       plotOptions: {
         radialBar: {
@@ -198,6 +198,7 @@ const BankDashboard = ({ orderId }) => {
           dataLabels: {
             name: {
               fontSize: '16px',
+
             },
             value: {
               fontSize: '30px',
@@ -241,10 +242,10 @@ const BankDashboard = ({ orderId }) => {
           hollow: {
             margin: 0,
             size: '30%',
-            background: 'lightgreen',
+            background: '#20283e',
           },
           track: {
-            background: 'lightblue',
+            background: '#d32d41',
             strokeWidth: '20%',
             margin: 0, // margin is in pixels
             dropShadow: {
@@ -277,7 +278,7 @@ const BankDashboard = ({ orderId }) => {
           shade: 'dark',
           type: 'horizontal',
           shadeIntensity: 0.5,
-          gradientToColors: ['#FFD700'],
+          gradientToColors: ['#4cb5f5'],
           inverseColors: true,
           opacityFrom: 1,
           opacityTo: 1,
@@ -429,8 +430,6 @@ const handleSubmit = async (e) => {
   }
 };
   // END PO
-
-  
 
 
   // Status tracking
@@ -709,7 +708,7 @@ const formStyles = {
    <div className='main-container ' style={{ minHeight: '85vh', backgroundColor: '' }}>
 
 <div >
-<ul className="nav nav-tabs bg-success text-light" id="myTab" role="tablist" style={{fontSize:'15px'}}>
+<ul className="nav nav-tabs" id="myTab" role="tablist" style={{fontSize:'15px', backgroundColor:'#001b40', color:'#d9d9d9'}}>
 <li className="nav-item">
           <a className={`nav-link ${activeTab === 'Home' ? 'active' : ''}`} id="home-tab" onClick={() => handleTabClick('Home')} role="tab" aria-controls="Home" aria-selected={activeTab === 'Home'}>Dashboard</a>
         </li>
@@ -748,7 +747,7 @@ const formStyles = {
           <div className="weight-600 font-18 text-dark">Inventory</div>
           <div className="font-14 text-secondary weight-500">Information</div>
         </div>
-        <div className="widget-icon bg-success" style={{background:'rgb()'}}>
+        <div className="widget-icon" style={{background:'#001b40'}}>
           <div className="icon" data-color="">
             <FaArchive /> {/* Use the FaArchive icon */}
           </div>
@@ -766,8 +765,8 @@ const formStyles = {
           <div className="weight-600 font-18 text-dark">Suppliers</div>
           <div className="font-14 text-secondary weight-500">List</div>
         </div>
-        <div className="widget-icon bg-success" style={{background:'rgb(0, 27, 49)'}}>
-          <div className="icon" data-color="#09cc06">
+        <div className="widget-icon" style={{background:'#001b40'}}>
+          <div className="icon" data-color="#001b40">
             <FaList /> {/* Use the FaList icon */}
           </div>
         </div>
@@ -785,8 +784,8 @@ const formStyles = {
         <div className="weight-600 font-18 text-dark">Quotations </div>
         <div className="font-14 text-secondary weight-500">List</div>
       </div>
-      <div className="widget-icon bg-success" style={{background:'rgb(0, 27, 49)'}}>
-        <div className="icon" data-color="#09cc06">
+      <div className="widget-icon" style={{background:'#001b40'}}>
+        <div className="icon" data-color="#001b40">
           <FaMoneyBillAlt /> {/* Use the FaMoneyBillAlt icon */}
         </div>
       </div>
@@ -802,8 +801,8 @@ const formStyles = {
         <div className="widget-data"><div className="weight-600 font-18 text-dark">P.O </div>
           <div className="font-14 text-secondary weight-500">Details</div>
         </div>
-        <div className="widget-icon bg-success" style={{background:'rgb(0, 27, 49)'}}>
-          <div className="icon" data-color="#09cc06">
+        <div className="widget-icon " style={{background:'#001b40'}}>
+          <div className="icon" data-color="#001b40">
             <FaFileInvoice /> {/* Use the FaFileInvoice icon */}
           </div>
         </div>
@@ -832,7 +831,7 @@ const formStyles = {
               <div className='card p-2 mt-1'
                 style={{background:'rgb()', borderRadius:'10px', boxShadow:'0 0 28px rgba(0,0,0,.08)'}}
                 >
-                  <h6 className='mx-2 p-2  text-success' style={{ color: '' }}>Total number of finished products by category </h6>
+                  <h6 className='mx-2 p-2 ' style={{ color: '#001b40' }}>Total number of finished products by category </h6>
                   <hr />
                   <ReactApexChart options={remainingBreedsChartData.options} series={remainingBreedsChartData.series} type="donut" height={350} />
                 </div>

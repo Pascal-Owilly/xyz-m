@@ -254,7 +254,7 @@ const InvoiceModal = ({ invoiceDetails, handleClose }) => {
           style={{ 
             border: 'none', 
             background: 'none', 
-            color: '#007bff', 
+            color: '#001b40', 
             textDecoration: 'underline', 
             cursor: 'pointer' 
           }} 
@@ -344,7 +344,7 @@ const handleButtonClick = (section) => {
 
     <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
       {/* Navbar */}
-      <Navbar bg="info" expand="lg" variant="dark">
+      <Navbar bg="" expand="lg" variant="dark" style={{background:'#001b40'}}>
       <Navbar.Brand>
       <h6 className='text-light'>Export updates</h6>
       </Navbar.Brand>

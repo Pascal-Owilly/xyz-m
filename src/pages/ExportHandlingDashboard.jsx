@@ -238,7 +238,7 @@ const handleButtonClick = (section) => {
 
     <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
       {/* Navbar */}
-      <Navbar  bg="warning" expand="lg" variant="dark">
+      <Navbar  bg="" expand="lg" variant="" style={{background:'#001b40'}}>
       <Navbar.Brand>
       <h6 className='text-dark'>Order Tracking and Follow-Up
 

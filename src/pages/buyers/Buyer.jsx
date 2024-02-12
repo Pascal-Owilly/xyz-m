@@ -490,7 +490,7 @@ const toggleInvoice = (invoiceNumber) => {
     <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
 
         {/* Navbar */}
-        <Navbar bg="primary" expand="lg" variant="dark">
+        <Navbar bg="" expand="lg" variant="dark" style={{backgroundColor:'#001b40'}}>
       <Navbar.Brand>
       Welcome,  {userName && <span style={{ fontWeight: '' }}>{userName}</span>}
 
@@ -532,7 +532,7 @@ const toggleInvoice = (invoiceNumber) => {
 
         {/* Floating Message Icon */}
         <div className="floating-message-icon" onClick={handleModalShow}>
-        <FaEnvelope size={30} className="text-success" />
+        <FaEnvelope size={30} className="" style={{color:'#001b40'}}/>
       </div>
 
       {/* Contact Form */}
@@ -611,7 +611,7 @@ const toggleInvoice = (invoiceNumber) => {
                     fontSize: '13px',
                     padding: '5px 10px',
                     borderRadius: '5px',
-                    background: isConfirming(quotation.id) ? '#999999' : '#007bff',
+                    background: isConfirming(quotation.id) ? '#999999' : '#001b40',
                     color: 'white',
                     border: 'none',
                     cursor: isConfirming(quotation.id) ? 'not-allowed' : 'pointer'

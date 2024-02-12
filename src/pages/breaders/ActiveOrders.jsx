@@ -126,41 +126,28 @@ const ActiveOrders = () => {
   };
 
   return (
-    <div className='main-container'>
-      <h2>Active Orders</h2>
-      <ul>
-      {Array.isArray(purchaseOrders) && purchaseOrders.map(order => (
-  // Check if the order is confirmed before rendering
-  order.confirmed && (
-    <li key={order.id} className='mb-2 mt-1'>
-      <div>Order Number: #{order.id}</div>
-      <div>Date: {order.date}</div>
-      <div>Trader Name: {order.trader_name}</div>
-      <div>Buyer Address: {order.buyer_address}</div>
-      <div>Buyer Contact: {order.buyer_contact}</div>
-      <div>Seller Address: {order.seller_address}</div>
-      <div>Seller Contact: {order.seller_contact}</div>
-      <div>Shipping Address: {order.shipping_address}</div>
-      <button 
-        className={order.confirmed ? 'bg-success btn-sm' : 'bg-danger btn-sm'}
-        onClick={() => toggleConfirmationStatus(order.id, order.confirmed)}
-        disabled={confirmingId === order.id || unconfirmingId === order.id}
-      >
-        {confirmingId === order.id ? 'Confirming...' : (unconfirmingId === order.id ? 'Unconfirming...' : (order.confirmed ? 'Confirmed' : 'Unconfirmed'))}
-      </button>
-      <div>Product Description: {order.product_description}</div>
-      <div>Quantity: {order.quantity}</div>
-      <div>Unit Price: {order.unit_price}</div>
-      <div>Tax: {order.tax}</div>
-      <div>Total Amount: {order.total_amount}</div>
-      <div>Delivery Terms: {order.delivery_terms}</div>
-      <div>Special Instructions: {order.special_instructions}</div>
-    </li>
-  )
-))}
-
-      </ul>
+    <div className='main-container' style={{ background: '#F9FAFB', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', borderRadius: '10px', fontSize: '16px', color: '#333' }}>
+    <h2 className='text-success' style={{ marginBottom: '20px' }}>Active Orders</h2>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      {Array.isArray(purchaseOrders) && purchaseOrders.map((order, index) => (
+        // Check if the order is confirmed before rendering
+        order.confirmed && (
+          <div className='text-secondary' key={order.id} style={{ background: '#fff', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', borderRadius: '5px', marginBottom: '15px', padding: '15px' }}>
+            <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>Order Number: #{order.id}</div>
+            
+            <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
+              <div style={{ flex: '1 1 50%', marginBottom: '10px' }}>Date: {order.date}</div>
+              <div style={{ flex: '1 1 50%', marginBottom: '10px' }}>Price/Kg: {order.unit_price}</div>
+  
+              <div style={{ flex: '1 1 100%', marginBottom: '10px', fontWeight: 'bold' }}>Product Description: {order.product_description}</div>
+              <div style={{ flex: '1 1 50%', marginBottom: '10px' }}>Quantity: {order.quantity}</div>
+            </div>
+          </div>
+        )
+      )).reverse()}
     </div>
+  </div>
+  
   );
 };
 

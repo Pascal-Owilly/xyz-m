@@ -130,31 +130,46 @@ const Breader = () => {
       {breaderData && (
         <div>
           <h5 className='mb-4 text-secondary'>List of supplied products </h5>
-          <div className="row">
-            {currentItems && currentItems.map((breader) => (
-              <div key={breader.id} className="col-lg-3 mb-4">
-                <Link
-                  to={`/breader-info/${breader.id}`}
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                >
-                  <div className="card" style={{ borderRadius: '10px' }}>
-                    <div className="card-body">
-                      <h5 className="card-title">{breader.breed}</h5>
-                      <div className="card-text">
-                        <strong>Trader:</strong> {breader.breeder_first_name} {breader.breeder_last_name} <br />  <strong>supplied </strong> {formatTimestamp(breader.created_at)}
-                      </div>
-                      <div className="card-text">
-                        <strong>Market:</strong> {breader.breeder_market}
-                      </div>
-                      <p className="card-text" style={{ float: 'right', backgroundColor: breader.isPaid ? 'green' : 'blue', color: 'white', padding: '5px', borderRadius: '30px', fontSize: '11px', fontWeight: '800', width: 'auto' }}>
-                        <span className='mx'> {breader.isPaid ? 'Paid' : 'Payment Pending'}</span>
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            ))}
-          </div>
+          <div className="table-responsive" style={{ boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', backgroundColor: '#ffffff', color: '#666666' }}>
+  <table className="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col">Breed</th>
+        <th scope="col">Trader</th>
+        <th scope="col">Market</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {currentItems && currentItems.map((breader) => (
+        <tr key={breader.id}>
+          <td>
+            <Link
+              to={`/breader-info/${breader.id}`}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              {breader.breed}
+            </Link>
+          </td>
+          <td>{breader.breeder_first_name} {breader.breeder_last_name} <br /> <strong>Supplied</strong> {formatTimestamp(breader.created_at)}</td>
+          <td>{breader.breeder_market}</td>
+          <td>
+          <Link
+              to={`/breader-info/${breader.id}`}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+            <span className='p-2' style={{ backgroundColor: breader.isPaid ? 'green' : '#001b40', color: 'white', padding: '5px', borderRadius: '30px', fontSize: '11px', fontWeight: '800' }}>
+              View details
+            </span>
+            </Link>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+<hr />
+
           {totalPages > 1 && (
             <div className="pagination">
               {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (

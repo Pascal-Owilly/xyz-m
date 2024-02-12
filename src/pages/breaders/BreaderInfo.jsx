@@ -125,22 +125,20 @@ const BreaderInfo = () => {
   
   return (
     <div className='main-container'>
-        <a href = 'https://api.intellima.tech/admin/transaction/abattoirpaymenttobreader/'>
-      <button className='btn btn-sm btn-primary' style={{ float: 'right', marginRight: '10px', borderRadius: '5px' }}>Super Admin</button>
-      </a>
+       
       <div className='container-fluid' style={{ minHeight: '72vh' }}>
-
-      <hr />
-        <div className='buttons'>
-        <button
+      <div className=''>
+        <h2
           className='mb-2'
-          style={{ backgroundColor: 'goldenrod', borderRadius: '30px', fontSize: '14px' }}
+          style={{ color: '#001b40', borderRadius: '30px', fontSize: '' }}
           onClick={handleMakePayment}
           disabled={breaderData.is_paid || loading} // Disable the button if is_paid or loading is true
         >
-          {loading ? 'Initiating Payment...' : `Make Payment to ${breaderData.breeder_head_of_family}'s family`}
-        </button>
+          {loading ? 'Initiating Payment...' : `Supplies from to ${breaderData.breeder_head_of_family}'s family`}
+        </h2>
         </div>
+      <hr />
+        
      
         <div className="table-responsive">
           <table className="table table-striped">

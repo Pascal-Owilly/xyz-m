@@ -153,14 +153,14 @@ const Supplier = () => {
     <Container fluid>
   <Row className='main-container' style={{ textAlign: 'left', marginBottom: '20px', minHeight: '85vh' }}>
     <div className='p-3'>
-      <h5 className='mb-4 text-success mt-2'>Product supplies and management </h5>
+      <h5 className='mb-4 mt-2' style={{color:'#001b40'}}>Product supplies and management </h5>
       <p>There is an active order for supply of Laptops and we will be collecting from Kululu market. Go to active <br /> orders to view more </p>
     </div>
 
     <Col xs={12} md={4} lg={4}>
   <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
     <Card.Body>
-      <FaBell size={40} className='mb-3 text-success' />
+      <FaBell size={40} className='mb-3' style={{color:'#001b40'}} />
       <Card.Title>Active orders</Card.Title>
       <Card.Text>Click below to go to active orders.</Card.Text>
       <a href='/active-purchase-orders' className='btn btn-primary'>
@@ -174,7 +174,7 @@ const Supplier = () => {
 <Col xs={12} md={4} lg={4}>
   <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
     <Card.Body>
-      <FaBox size={40} className='mb-3 text-success' />
+      <FaBox size={40} className='mb-3' style={{color:'#001b40'}} />
       <Card.Title>Supply products</Card.Title>
       <Card.Text>Click below to supply your products.</Card.Text>
       <a href='/breeder_invoices' className='btn btn-primary'>
@@ -188,7 +188,7 @@ const Supplier = () => {
 <Col xs={12} md={4} lg={4}>
   <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
     <Card.Body>
-      <FaMoneyBillWave size={40} className='mb-3 text-success' />
+      <FaMoneyBillWave size={40} className='mb-3 ' style={{color:'#001b40'}}/>
       <Card.Title>Breed Supply History</Card.Title>
       <Card.Text>Go to your supply history.</Card.Text>
       <button onClick={handleBreadSuppliesStatus} className='btn btn-primary'>

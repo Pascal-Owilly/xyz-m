@@ -17,11 +17,8 @@ const Greetings = () => {
   } else {
     greeting = 'Good evening';
   }
-
   return greeting;
 };
-
-
 
 const PART_CHOICES = [
   ['ribs', 'Ribs'],
@@ -58,41 +55,37 @@ const Message = ({ type, text }) => {
   );
 };
 
-
-const SlaughterForm = ({ showForm, onSubmit, submitMessage, onVisibilityChange, breed, handleInputChange, quantity, setQuantity }) => (
+const SlaughterForm = ({ showForm, onSubmit, submitMessage, onVisibilityChange, breed, handleInputChange, quantity, setQuantity, tag_number, weight }) => (
   showForm && (
     <div className="row mb-4">
       <div className="col-md-12">
-        <div className="card">
-          <div className="card-body">
-          <h5 className="mb-3 text-success">Breed Slaughter Form</h5>
+        <div className="card" style={{ height:'500px' }}>
+          <div className="card-body" >
+          <h5 className="mb-3" style={{ color: '#001b40' }} >Raw materials form</h5>
 
             <form onSubmit={onSubmit}>
-              <label htmlFor="breedSelect" className="form-label">Select Breed:</label>
-              <select
-style={{
-  background: 'white',
-  color: '#999999', // Secondary text color
-  padding: '0.2rem',
-  borderRadius: '30px',
-  width:'100%'
-}}                  id="breedSelect"
-                  name="breed"
-                  value={breed.selectedAnimal}
-                  onChange={(e) => handleInputChange(e)}  // Use the handleInputChange function
-                  className='form-select mb-3 mx-2'
-                >
+              <label htmlFor="breedSelect" className="form-label text-secondary">Enter product name</label>
+              <input
+                style={{
+                  background: 'white',
+                  color: '#999999', // Secondary text color
+                  padding: '0.2rem',
+                  borderRadius: '30px',
+                  width:'100%',
+                  border: '1px solid #ced4da', // Add border style
+                  outline: 'none', // Remove default outline
+                }}
+                id="breedSelect"
+                name="breed"
+                value={breed.selectedAnimal}
+                onChange={(e) => handleInputChange(e)}  // Use the handleInputChange function
+                className='form-select mb-3 mx-2'
+                placeholder="Select Breed" // Add placeholder text
 
-
-                {['goats', 'sheep', 'cows', 'pigs'].map((animal) => (
-                  <option key={animal} value={animal}>
-                    {animal.charAt(0).toUpperCase() + animal.slice(1)}
-                  </option>
-                ))}
-              </select>
+              />
 
               <p>
-                <label htmlFor="quantityInput" className="form-label">Enter quantity of breeds slaughtered:</label>
+                <label htmlFor="quantityInput" className="form-label">Enter quantity of raw materials taken from the inventory:</label>
                 <input
                   id="quantityInput"
                   type="number"
@@ -100,12 +93,39 @@ style={{
                   onChange={(e) => setQuantity(e.target.value)}
                   className="form-control mb-3"
                   required
+                  placeholder='Enter quantity'
+
                 />
               </p>
-              <button type="submit" className="btn btn-primary">Submit</button>
+              <p>
+                <label htmlFor="tag_number" className="form-label">Enter tag number:</label>
+                <input
+                  id="tag_number"
+                  type="text"
+                  value={tag_number}
+                  onChange={(e) => setTagNumber(e.target.value)}
+                  className="form-control mb-3"
+                  placeholder='Tag number'
+                  required
+                />
+              </p>
+              <p>
+                <label htmlFor="weight" className="form-label">Enter weight:</label>
+                <input
+                  id="weight"
+                  type="text"
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
+                  className="form-control mb-3"
+                  placeholder='Enter weight'
+
+                  required
+                />
+              </p>
+              <button type="submit" className="btn" style={{background:'#001b40', color:'white'}}>Submit</button>
             </form>
           </div>
-        </div>
+        </div>  
       </div>
     </div>
   )
@@ -114,12 +134,12 @@ style={{
 const BreedCutForm = ({ showCutForm, onSubmit, cutData, onChange, submitMessage, onVisibilityChange }) => (
   showCutForm && (
     <div className="col-md-12">
-      <div className="card">
+      <div className="card" style={{ height:'500px' }}>
         <div className="card-body">
-          <form onSubmit={onSubmit}>
-            <h5 className="text-success mb-3">Breed Parts Form</h5>
+          <form onSubmit={onSubmit} >
+            <h5 className=" mb-3 " style={{ color: '#001b40' }} >Finished products form</h5>
             <p>
-              <label htmlFor="breedCutSelect" className="form-label">Select Breed:</label>
+              <label htmlFor="breedCutSelect" className="form-label">Enter product name:</label>
               <select
                         style={{
                           background: 'white',
@@ -134,7 +154,7 @@ const BreedCutForm = ({ showCutForm, onSubmit, cutData, onChange, submitMessage,
                         onChange={onChange}
                         className='form-select mb-3 mx-2'
                       >
-                        {['goats', 'sheep', 'cows', 'pigs'].map((animal) => (
+                        {['goats', 'sheep', 'cows'].map((animal) => (
                           <option key={animal} value={animal}>
                             {animal.charAt(0).toUpperCase() + animal.slice(1)}
                           </option>
@@ -142,26 +162,24 @@ const BreedCutForm = ({ showCutForm, onSubmit, cutData, onChange, submitMessage,
                       </select>
             </p>
             <label htmlFor="partNameSelect" className="form-label">Select Part Name:</label>
-            <select
-style={{
-  background: 'white',
-  color: '#999999', // Secondary text color
-  padding: '0.2rem',
-  borderRadius: '30px',
-  width:'100%'
-}}              id="partNameSelect"
-              name="partName"
-              value={cutData.partName}
-              onChange={onChange}
-              className='form-select mb-3 mx-2'
-            >
-              {/* Use the PART_CHOICES here */}
-              {PART_CHOICES.map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
+            <input
+  style={{
+    background: 'white',
+    color: '#999999', // Secondary text color
+    padding: '0.2rem',
+    borderRadius: '30px',
+    width: '100%',
+    border: '1px solid #ced4da', // Add border style
+    outline: 'none', // Remove default outline
+  }}
+  id="breedCutSelect"
+  name="breed"
+  value={cutData.breed}
+  onChange={onChange}
+  className='form-select mb-3 mx-2'
+  placeholder="eg rib, loin.. etc" // Add placeholder text
+/>
+
             <p>
               <label htmlFor="saleTypeSelect" className="form-label">Select Sale Type:</label>
               <select
@@ -201,7 +219,7 @@ style={{
                           padding: '0.2rem',
                         }}
                       />
-            <button type="submit" className="btn btn-success">Submit Breed Cut</button>
+            <button type="submit" className="btn text-white" style={{ background: '#001b40' }}>Submit</button>
           </form>
         </div>
       </div>
@@ -230,12 +248,12 @@ const Home = () => {
   const [showCutForm, setShowCutForm] = useState(true);
   const [breed, setBreed] = useState({
     breed: 'goats',
-    animalOptions: ['Goats', 'Sheep', 'Cows', 'Pigs'],
+    animalOptions: ['Goats', 'Sheep', 'Cows'],
     selectedAnimal: 'Goats',
   });
   const [quantity, setQuantity] = useState('');
   const [cutData, setCutData] = useState({
-    breed: 'pigs',
+    breed: 'goat',
     partName: 'ribs',
     saleType: 'export_cut',
     quantity: null,
@@ -393,7 +411,7 @@ const Home = () => {
 
       // Clear the form fields after successful submission
       setCutData({
-        breed: 'pigs',
+        breed: 'goat',
         partName: 'ribs',
         saleType: 'export_cut',
         quantity: null,
@@ -413,9 +431,9 @@ const Home = () => {
      <div className='main-container'>
 
 {/* Navbar */}
-<Navbar bg="primary" expand="lg" variant="dark">
+<Navbar bg="" style={{ background: '#001b40' }} expand="lg" variant="dark">
       <Navbar.Brand>
-        <span style={{ fontWeight: '' }}>Inventory Management</span>
+        <span style={{ fontWeight: '' }}>Inventory Record Forms</span>
       </Navbar.Brand>
 
     </Navbar>
@@ -423,7 +441,12 @@ const Home = () => {
 
         <p className='p-3'>In this dashboard, you will be recording the breeds slaughtered and the corresponding breed parts; please be cautious as the inventory will be updated based on these actions.</p>
 
-
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                
+                  <a href="/inventory-dashboard" className='mx-5' style={{ color: '#3498db', textDecoration: 'none', display: 'flex', alignItems: 'center', fontSize: '18px' }}>
+                    <i className="dw dw-back" style={{ marginLeft: '5px' }}></i> &nbsp;  Back to inventory
+                  </a>
+                </div>
   <div className="container">
     {/* User Profile */}
     <UserProfile user={user} />

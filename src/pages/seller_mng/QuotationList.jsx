@@ -10,7 +10,7 @@ import { HiEye, HiEyeOff } from 'react-icons/hi'; // Example icons, you can choo
 import { FaTruck, FaShippingFast, FaCheck, FaArchive } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import PurchaseOrders from '../seller_mng/PurchaseOrdersSeller';
-
+import './styles.css'
 const CustomerServiceDashboard = () => {
 
   const baseUrl = BASE_URL;
@@ -119,7 +119,7 @@ const [expandedInvoices, setExpandedInvoices] = useState({});
     <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
 
         {/* Navbar */}
-        <Navbar bg="primary" expand="lg" variant="dark">
+        <Navbar bg="" expand="lg" variant="dark" style={{background:'#001b40'}}>
       <Navbar.Brand>
         List of all quoatations
       </Navbar.Brand>
@@ -133,8 +133,10 @@ const [expandedInvoices, setExpandedInvoices] = useState({});
 
         {/* Floating Message Icon */}
         <div className="floating-message-icon" onClick={handleModalShow}>
-        <FaEnvelope size={30} className="text-success" />
+        <FaEnvelope size={30} className="" style={{color:'#001b40'}} />
       </div>
+
+      <br />
 
       {/* Contact Form */}
         <Modal show={showModal} onHide={handleModalClose}>
@@ -161,10 +163,13 @@ const [expandedInvoices, setExpandedInvoices] = useState({});
       </Modal>   
 
       <div className="card" style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '5px', backgroundColor: '#ffffff', padding: '20px', fontSize: '12px' }}>
+  
   <table style={{ width: '100%' }}>
+    
     <thead>
       <tr>
         <th>Quotation ID</th>
+      
         <th>Buyer</th>
         <th>Seller</th>
         <th>Product</th>
@@ -174,7 +179,9 @@ const [expandedInvoices, setExpandedInvoices] = useState({});
         <th>Status</th>
       </tr>
     </thead>
+
     <tbody>
+
     {Array.isArray(currentQuotations) && currentQuotations.reverse().map((quotation) => (
         <tr key={quotation.id}>
           <td>
@@ -223,14 +230,14 @@ const [expandedInvoices, setExpandedInvoices] = useState({});
   </table>
 </div>
 
-
-  <Pagination>
-        {Array.from({ length: Math.ceil(quotations.length / itemsPerPage) }, (_, i) => (
-          <Pagination.Item key={i + 1} active={i + 1 === currentPage} onClick={() => paginate(i + 1)}>
-            {i + 1}
-          </Pagination.Item>
-        ))}
-      </Pagination>
+<hr />
+<Pagination>
+  {Array.from({ length: Math.ceil(quotations.length / itemsPerPage) }, (_, i) => (
+    <Pagination.Item style={{ backgroundColor: '#001b40 !important' }} key={i + 1} active={i + 1 === currentPage} onClick={() => paginate(i + 1)}>
+      <span>{i + 1}</span>
+    </Pagination.Item>
+  ))}
+</Pagination>
     </div>
   );
 };

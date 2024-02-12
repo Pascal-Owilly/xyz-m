@@ -296,14 +296,14 @@ const logout = async () => {
           </li>
           
           <li>
-            <a href="/bank_teller_dashboard">
+            <a href="/bank_telinventorler_dashboard">
               <FaMapMarkedAlt /> Bank Teller Dashboard
             </a>
           </li>
-          <li>
+          <li>inventor
             <a href="inventory-dashboard">
             <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-               Inventory Dashboard
+               Inventory 
             </a>
           </li>
           <li>
@@ -371,7 +371,7 @@ const logout = async () => {
               <li>
                 <a href="inventory-dashboard">
                 <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                  Inventory Management
+                  Inventory 
                 </a>
               </li>
               {/* <li>
@@ -386,15 +386,14 @@ const logout = async () => {
               <li style={{ display: 'flex', alignItems: 'center' }}>
               <FaShippingFast style={{ marginRight: '12px', color: 'white', fontSize: '20px'}} />
                 <a href="/dispatch_and_shipping">Export Management </a></li>
-         
-
+        
             </>
                           
             );
         case 'regular':
           return (
             <>
-              {/* Add more dashboards for regular user */}
+              {/* Add more inventordashboards for regular user */}
             </>
           );
         case 'buyer':
@@ -587,7 +586,7 @@ const logout = async () => {
         </div>
       </div>
 
-      <img src={logo} />
+      {/* <img src={logo} /> */}
      
 	</div>    
     </div>
@@ -603,9 +602,11 @@ const logout = async () => {
     minHeight: '200vh',
     width: isLeftSidebarVisible ? '279px' : '0',
     transition: 'left 0.3s ease',
-    backgroundImage: `linear-gradient(rgb(75, 73, 172, 0.7), rgb(75, 73, 172, 0.7)), url(${sidebarimg})`, // Replace with your image variable
+    // backgroundImage: `linear-gradient(rgb(75, 73, 172, 0.7), rgb(75, 73, 172, 0.7)), url(${sidebarimg})`,
+    backgroundImage: 'black',
+
     backgroundSize: 'cover',
-    backgroundPosition: 'center',
+    backgroundColor: 'black',
     // overflow:'scroll',
   }}
 >
