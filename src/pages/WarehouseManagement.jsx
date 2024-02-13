@@ -448,168 +448,24 @@ const WarehouseDashboard = () => {
   }, []);
   return (
     <div className='main-container warehouse-container' style={{ minHeight: '85vh', background: 'rgb(249, 250, 251' }}>
-      <h2 className=' '>The XYZ Warehouse</h2>
+      <div className='d-flex justify-flex-end'>
+      <h3 className=' '>Finished products</h3>
 
-<div className='row'>
-  
-
-    {/* <Col lg={{ span: 3, offset: 9 }} className='text-right'>
-      <div style={{ marginBottom: '', padding: '5px', backgroundColor: '#e0e0e0', borderRadius: '30px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', width:'' }}>
-      <span className='text-center' style={{ fontSize: '16px', fontWeight: 'bold', color: '#2E8B57' }}>{`${Greetings()}, `}{` ${username}!`} </span>
-        <span style={{ textTransform: 'capitalize' }}></span>
-      </div>
-    </Col> */}
-    {/* <Col lg={{ span: 3, offset: 0 }} className='text-left'>
-      <a href='/register-buyer'>
-      <button className='' style={{ fontSize: '16px', fontWeight: 'bold', color: '#2E8B57' }}>Register buyer </button>
+      <a href='/inventory-dashboard'>
+        Back to inventory
       </a>
-    </Col> */}
-  </div>
-      {/* )} */}
-      <div className='container'>
-        <div className='row'>
-          <div className='col-md-4'>
-            <div className="card border-success mb-3 mt-4" style={{ maxWidth: '18rem' }}>
-            <div className="card-header bg-success text-white" onClick={toggleInvoiceForm} style={{ cursor: 'pointer' }}>
-            {showForm ? 'Buyer Invoice Generator' : 'Buyer Invoice Generator'}
-          </div>
 
-              <div className="card-body">
-              {showForm ? (
+      </div>
+      <br />
 
-                <form onSubmit={(e) => {
-  e.preventDefault();
-  handleGenerateInvoice();
-}} style={{transition:'1s'}}>
-  <div className="mt-3" style={{transition:'1s'}}>
-    <label className="form-label">Breed:</label>
-    <select
-      style={{ background: 'linear-gradient(45deg, #fff, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
-      className="form-select text-dark"
-      name="breed"
-      value={invoiceData.breed}
-      onChange={handleInvoiceInputChange}
-      required
-    >
-      <option className='text-dark' value="">Select breed meat</option>
-
-      <option className='text-dark' value="chevon"> Goat Meat</option>
-      <option className='text-dark' value="mutton"> Mutton (Sheep Meat)</option>
-      <option className='text-dark' value="beef">Beef</option>
-      <option className='text-dark' value="pork">Pork</option>
-    </select>
-  </div>
-
-  <div className="mt-3">
-              <label className="form-label">Part:</label><p></p>
-              <select
-      style={{ background: 'linear-gradient(45deg, #fff, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
-      className="form-select text-dark"
-                name="part_name"
-                value={invoiceData.part_name}
-                onChange={handleInvoiceInputChange}
-                required
-              >
-                <option className='mx-1' value="">Select part</option>
-                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="ribs">Ribs</option>
-                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="thighs">Thighs</option>
-                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="loin">Loin</option>
-                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="thighs">Thighs</option>
-                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="shoulder">Shoulder</option>
-                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="shanks">Shanks</option>
-                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="organ_meat">Organ Meat</option>
-                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="intestines">Intestines</option>
-                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="tripe">Tripe</option>
-                <option className='mx-1 text-dark bg-white' style={{width:'100%'}} value="sweetbreads">sweetbreads</option>
-              </select>
-            </div>
-
-  <div className="mt-3">
-              <label className="form-label">Sale Type:</label>
-              <p></p>
-              <select
-      style={{ background: 'linear-gradient(45deg, #fff, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
-      className="form-select text-dark"
-                name="sale_type"
-                value={invoiceData.sale_type}
-                onChange={handleInvoiceInputChange}
-                required
-              >
-      <option value="">Select sale type</option>
-
-                <option className='text-dark' value="export_cut">Export Cut</option>
-                <option className='text-dark' value="local_cut">Local Sale Cut</option>
-              </select>
-            </div>  
-  <div className="mt-3">
-    <label className="form-label">Quantity:</label>
-    <input
-      type="number"
-      className="form-control text-dark"
-      name="quantity"
-      value={invoiceData.quantity}
-      onChange={handleInvoiceInputChange}
-      required
-      style={{ background: 'linear-gradient(45deg, #fff, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
-         />
-  </div>
-  <div className="mt-3">
-    <label className="form-labe">Unit Price:</label>
-    <input
-      type="number"
-      className="form-control text-dark"
-      name="unit_price"
-      value={invoiceData.unit_price}
-      onChange={handleInvoiceInputChange}
-      required
-      style={{ background: 'linear-gradient(45deg, #fff, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
-          />
-  </div>
-
- 
   
-  <div className="mb-3 mt-3">
-  <div className="">
-  <label className="form-label">Buyer:</label>
-<br />
-  <select
-  className="form-select text-dark"
-  name="buyer"
-  value={selectedBuyer ? selectedBuyer.id : ''}
-  onChange={(e) => handleBuyerChange(e.target.value)}
-  required
-  style={{ background: 'linear-gradient(45deg, #fff, rgb(249, 250, 251))', padding: '0.3rem', borderRadius: '30px', color: 'white', width:'100%' }}
-  >
-  <option value="" style={{ color: 'green', background: 'linear-gradient(45deg, green, rgb(249, 250, 251))' }}>Select a buyer</option>
-  {buyers.map((buyer) => (
-    <option key={buyer.id} value={buyer.id} style={{ color: 'blue', background: 'linear-gradient(45deg, green, rgb(249, 250, 251))', padding:'1rem', width:'100%' }}>
-      <span style={{ textTransform: 'capitalize' }}>
-        {buyer.user.username}
-      </span>    </option>
-  ))}
-</select>
 
-</div>
 
-</div>
-  <button type="submit" className="btn btn-success">Generate Invoice</button>
 
-</form>
- ) : (
-  <button onClick={handleGenerateAnother} className="btn btn-sm btn-success mt-3">Generate invoice</button>
-  )}
-{/* Display success or error messages */}
-{successMessage && <div className="alert alert-success mt-3">{successMessage}</div>}
-            {errorMessage && <div className="alert alert-danger mt-3">{errorMessage}</div>}
-
-              </div>
-            </div>
-          </div>
-          <div className='col-md-8'>
           <Card className="weather-card" style={{ background: '#ffffff' }}>
             <Card.Body>
 
-              <Card.Title className='text-center mb-3' style={{ color: '#A9A9A9', fontSize: '1.5rem', marginBottom: '1rem' }}>Breed parts available in the warehouse</Card.Title>
+              <Card.Title className='text-center mb-3' style={{ color: '#A9A9A9', fontSize: '1.5rem', marginBottom: '1rem' }}> Available in the chilled warehouse</Card.Title>
 
               <Row>
                 {Object.entries(inventoryData.breedPartsInWarehouse).map(([breed, parts]) => (
@@ -643,9 +499,8 @@ const WarehouseDashboard = () => {
             </Card.Body>
           </Card>
           </div>
-        </div>
-      </div>
-    </div>
+          
+     
   );
 };
 

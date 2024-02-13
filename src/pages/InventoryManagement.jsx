@@ -125,13 +125,22 @@ const InventoryPage = () => {
 
   return (
     <div className='main-container container-fluid'>
-      <h3 style={{color:'#001b40'}}>Inventory</h3>
+      <h3 style={{color:'#001b40'}}>Inventory
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+  <div></div> {/* Empty div to push the link to the far right */}
+  <a href="/inventory-record-forms" className='mx-1' style={{ color: '#3498db', textDecoration: 'none', display: 'flex', alignItems: 'center', fontSize: '18px' }}>
+    <i className="dw dw-edit" style={{ marginLeft: '5px' }}></i> &nbsp; Update inventory
+  </a>
+</div>
+
+      </h3>
       <br />
+
       <div className='container-fluid' style={{ minHeight: '75vh', color:'#666666' }}>
         <div className='row'>
           <div className='col-md-4 card p-3' style={{ minHeight: '75vh', color:'#001b42', padding: '5px', display: 'flex', flexDirection: 'column', justifyContent: '', alignItems: '', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', backgroundColor: '#f5f5f5' }}>
             <ul className='list-unstyled'>
-              <li className='mb-2 text-secondary' style={{ fontSize: '.8rem', color:'#001b40' }}>Total By Category</li>
+              <li className='mb-2 text-secondary' style={{ fontSize: '1rem', color:'#001b40', fontWeight:'bold' }}>Total raw materials By <br />  Category</li>
               <ul className="list-unstyled">
                 {currentBreeds.map(([breed, total]) => {
                   const percentage = (total / inventoryData.totalBreeds) * 100;
@@ -146,13 +155,13 @@ const InventoryPage = () => {
                           </div>
                           <div className="row align-items-center d-fle">
                             <div className="col-4">
-                              <p className=" mb-0" style={{backgroundColor:'', color:'#666666', fontSize:'12px', fontWeight:'bold'}}>{capitalizeFirstLetter(breed)}</p>
+                              <p className=" mb-0" style={{backgroundColor:'', color:'#666666', fontSize:'16px', fontWeight:'bold'}}>{capitalizeFirstLetter(breed)}</p>
                             </div>
                             <div className="col-3">
-                              <span className="mb-0" style={{backgroundColor:'', color:'#666666', fontSize:'12px'}}>{total}</span>
+                              <span className="mb-0" style={{backgroundColor:'', color:'#666666', fontSize:'15px'}}>{total}</span>
                             </div>
                             <div className="col-3">
-                              <span className="mb-0" style={{backgroundColor:'', color:'#666666', fontSize:'12px'}}>{percentage.toFixed(2)}%</span>
+                              <span className="mb-0" style={{backgroundColor:'', color:'#666666', fontSize:'15px'}}>{percentage.toFixed(2)}%</span>
                             </div>
                           </div>
                           <div className="row align-items-center mb-2 d-flex">
@@ -187,18 +196,21 @@ const InventoryPage = () => {
           <div className='col-md-8'>
             {/* <div className='container-fluid' style={{width:'100%'}}> */}
               <div className='row mt-2 mb-2'>
-                <div className='col-sm-6 col-md-5 text-center my-auto'>
+                <div className='col-sm-8 col-md-5 text-center my-auto'>
                 <div className='card' style={{ minHeight: '20vh', color:'#001b42', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', backgroundColor: '#f5f5f5' }}>
-  <h5 style={{ marginBottom: '10px' }}>Total Raw Materials left</h5> 
-  <h2>{inventoryData.totalBreeds}</h2>
-</div>
+                <h6 style={{ marginBottom: '10px' }}>Cummulative raw materials available</h6> 
+                <h2>{inventoryData.totalBreeds}</h2>
+              </div>
 
               </div>
-              <div className='col-sm-6 col-md-5 text-center my-auto'>
-              <div className='card' style={{ minHeight: '20vh', color:'#001b42', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', backgroundColor: '#f5f5f5' }}>
-  <h5 style={{ marginBottom: '10px' }}>Total Raw Materials left</h5> 
-  <h2>{inventoryData.totalBreeds}</h2>
+              <div className='col-sm-4 btn   col-md-5 text-center my-auto'>
+                <a href='/warehouse'>
+
+              <div className='button' >
+  <h5 style={{ marginBottom: '10px' }}>Finished products page</h5> 
 </div>
+                  
+</a>
 
               </div>
             </div>
