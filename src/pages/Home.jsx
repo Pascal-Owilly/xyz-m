@@ -606,7 +606,7 @@ const logout = async () => {
     backgroundImage: 'black',
 
     backgroundSize: 'cover',
-    backgroundColor: 'black',
+    backgroundColor: '#001b42',
     // overflow:'scroll',
   }}
 >
