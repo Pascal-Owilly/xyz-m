@@ -2,13 +2,23 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../pages/auth/config';
 import Cookies from 'js-cookie';
-import { Card, Row, Col, Modal, Button } from 'react-bootstrap';
+import { Card, Modal, Button, Table, Pagination } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 const InventoryPage = () => {
   const navigate = useNavigate();
   const [authToken, setAuthToken] = useState(Cookies.get('authToken'));
   const baseUrl = BASE_URL;
+  const [itemsReferencePerPage] = useState(3);
+
+  const [itemsPerPage] = useState(5);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const handleReferenceClick = (item) => {
+    setSelectedItem(item);
+    setShowModal(true);
+  };
 
   const getColorClass = (breed) => {
     switch (breed.toLowerCase()) {
@@ -25,20 +35,8 @@ const InventoryPage = () => {
     }
   };
 
+  const [currentReferencePage, setCurrentReferencePage] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
-  const breedsPerPage = 4;
-
-  // Function to handle opening modal and setting selected data
-  const handleCardClick = (breed) => {
-    // Retrieve the details of the clicked breed from inventoryData
-    const breedDetails = inventoryData.breedTotals[breed];
-    
-    // Log the details to the console
-    console.log('Breed Details:', breedDetails);
-    
-    // Show the modal if needed
-    setShowModal(true);
-  };
 
   const [inventoryData, setInventoryData] = useState({
     totalBreeds: 0,
@@ -50,6 +48,8 @@ const InventoryPage = () => {
     breedPartsInWarehouse: {},
   });
 
+  const [compareWeight, setCompareWeight] = useState([]);
+
   useEffect(() => {
     const fetchInventoryData = async () => {
       try {
@@ -58,21 +58,15 @@ const InventoryPage = () => {
           'Content-Type': 'application/json',
         };
 
-        const [breederTradeResponse, breederTotalsResponse, slaughteredDataResponse, partTotalsCountResponse, breedSalesResponse, breedCutResponse] = await Promise.all([
+        const [breederTradeResponse, breederTotalsResponse, slaughteredDataResponse, partTotalsCountResponse, breedSalesResponse, breedCutResponse, compareWeightResponse] = await Promise.all([
           axios.get(`${baseUrl}/api/breader-trade/`, { headers }),
           axios.get(`${baseUrl}/api/breeder_totals/`, { headers }),
           axios.get(`${baseUrl}/api/slaughtered-list/`, { headers }),
           axios.get(`${baseUrl}/api/part_totals_count/`, { headers }),
           axios.get(`${baseUrl}/api/inventory-breed-sales/`, { headers }),
           axios.get(`${baseUrl}/api/breed-cut/`, { headers }),
+          axios.get(`${baseUrl}/api/compare-weight-loss-after-slaughter/`, { headers }),
         ]);
-
-        console.log('breederTradeResponse:', breederTradeResponse);
-        console.log('breederTotalsResponse:', breederTotalsResponse);
-        console.log('slaughteredDataResponse:', slaughteredDataResponse);
-        console.log('partTotalsCountResponse:', partTotalsCountResponse);
-        console.log('breedSalesResponse:', breedSalesResponse);
-        console.log('breedCutResponse:', breedCutResponse);
 
         const breedTotalsMap = breederTotalsResponse.data.reduce((acc, item) => {
           const breed = item.breed.toLowerCase();
@@ -102,6 +96,8 @@ const InventoryPage = () => {
           breedTotals: breedTotalsMap,
           breedPartsInWarehouse: breedPartsMap,
         });
+
+        setCompareWeight(compareWeightResponse.data);
       } catch (error) {
         console.error('Error fetching inventory data:', error);
       }
@@ -115,90 +111,142 @@ const InventoryPage = () => {
   };
 
   // Logic for displaying breeds
-  const indexOfLastBreed = currentPage * breedsPerPage;
-  const indexOfFirstBreed = indexOfLastBreed - breedsPerPage;
+  const indexOfLastBreed = currentPage * itemsPerPage;
+  const indexOfFirstBreed = indexOfLastBreed - itemsPerPage;
   const currentBreeds = Object.entries(inventoryData.breedTotals).slice(indexOfFirstBreed, indexOfLastBreed);
 
-  // Change page
+  // Logic for displaying compare weight
+  const indexOfLastItem = currentReferencePage * itemsReferencePerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsReferencePerPage;
+  const currentItems = compareWeight.slice(indexOfFirstItem, indexOfLastItem);
+
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginateReference = (pageNumber) => setCurrentReferencePage(pageNumber);
 
   return (
     <div className='main-container container-fluid'>
+      <h3 style={{color:'#001b40'}}>Inventory</h3>
+      <br />
       <div className='container-fluid' style={{ minHeight: '75vh', color:'#666666' }}>
         <div className='row'>
-        <div className='col-md-4 card p-3' style={{ minHeight: '75vh' }}>
-          <ul className='list-unstyled'>
-            <li className='mb-2 text-secondary' style={{ fontSize: '.8rem', color:'#001b40' }}>Total By Category</li>
-            <ul className="list-unstyled">
-              {currentBreeds.map(([breed, total]) => {
-                const percentage = (total / inventoryData.totalBreeds) * 100;
-                return (
-                  <li key={breed} className="mb-4">
-                    <div className={` l-bg-${getColorClass(breed)}`} onClick={() => handleCardClick(breed)}>
-                      <div className="car-statistic-3 ">
-                        <div className="card-icon card-icon-large">
-                          <i className="fas fa-shopping-cart"></i>
-                        </div>
-                        <div className="mb-">
-                        </div>
-                        <div className="row align-items-center d-fle">
-                          <div className="col-4">
-                            <p className=" mb-0" style={{backgroundColor:'', color:'#666666', fontSize:'12px', fontWeight:'bold'}}>{capitalizeFirstLetter(breed)}</p>
+          <div className='col-md-4 card p-3' style={{ minHeight: '75vh', color:'#001b42', padding: '5px', display: 'flex', flexDirection: 'column', justifyContent: '', alignItems: '', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', backgroundColor: '#f5f5f5' }}>
+            <ul className='list-unstyled'>
+              <li className='mb-2 text-secondary' style={{ fontSize: '.8rem', color:'#001b40' }}>Total By Category</li>
+              <ul className="list-unstyled">
+                {currentBreeds.map(([breed, total]) => {
+                  const percentage = (total / inventoryData.totalBreeds) * 100;
+                  return (
+                    <li key={breed} className="mb-4">
+                      <div className={` l-bg-${getColorClass(breed)}`} onClick={() => handleCardClick(breed)}>
+                        <div className="car-statistic-3 ">
+                          <div className="card-icon card-icon-large">
+                            <i className="fas fa-shopping-cart"></i>
                           </div>
-                          <div className="col-3">
-                            <span className="mb-0" style={{backgroundColor:'', color:'#666666', fontSize:'12px'}}>{total}</span>
+                          <div className="mb-">
                           </div>
-                          <div className="col-3">
-                            <span className="mb-0" style={{backgroundColor:'', color:'#666666', fontSize:'12px'}}>{percentage.toFixed(2)}%</span>
+                          <div className="row align-items-center d-fle">
+                            <div className="col-4">
+                              <p className=" mb-0" style={{backgroundColor:'', color:'#666666', fontSize:'12px', fontWeight:'bold'}}>{capitalizeFirstLetter(breed)}</p>
+                            </div>
+                            <div className="col-3">
+                              <span className="mb-0" style={{backgroundColor:'', color:'#666666', fontSize:'12px'}}>{total}</span>
+                            </div>
+                            <div className="col-3">
+                              <span className="mb-0" style={{backgroundColor:'', color:'#666666', fontSize:'12px'}}>{percentage.toFixed(2)}%</span>
+                            </div>
                           </div>
-                        </div>
-                        <div className="row align-items-center mb-2 d-flex">
-                          <div className="col-4">
+                          <div className="row align-items-center mb-2 d-flex">
+                            <div className="col-4">
+                            </div>
                           </div>
-                        </div>
-                        <div className="progress " data-height="4" style={{  background:'', height:'8px'}}>
-                          <div className={`progress-bar l-bg-${getColorClass(breed)}`} role="progressbar" style={{ width: percentage + "%", background:'#00142b', height:'8px' }} aria-valuenow={percentage} aria-valuemin="0" aria-valuemax="100"></div>
+                          <div className="progress " data-height="4" style={{  background:'', height:'8px'}}>
+                            <div className={`progress-bar l-bg-${getColorClass(breed)}`} role="progressbar" style={{ width: percentage + "%", background:'#00142b', height:'8px' }} aria-valuenow={percentage} aria-valuemin="0" aria-valuemax="100"></div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </li>
-                );
-              })}
+                    </li>
+                  );
+                })}
+              </ul>
             </ul>
-          </ul>
-          <ul>
-            {/* Additional information */}
-          </ul>
-          <ul>
-            {/* Additional rows for finished products */}
-          </ul>
-          {/* Pagination */}
-          <nav>
-            <ul className="pagination justify-content-center">
-              <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                <button className="page-link" onClick={() => paginate(currentPage - 1)}>Previous</button>
-              </li>
-              <li className="page-item">
-                <span className="page-link">{currentPage}</span>
-              </li>
-              <li className={`page-item ${currentBreeds.length < breedsPerPage ? 'disabled' : ''}`}>
-                <button className="page-link" onClick={() => paginate(currentPage + 1)}>Next</button>
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <div className='col-md-2'>
-            <div className='card' style={{minHeight:'75vh'}}>
-
-            </div>
+            <nav style={{ color: '#666666', fontSize: '10px' }}>
+              <ul className="pagination justify-content-center" >
+                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                  <button className="page-link" onClick={() => paginate(currentPage - 1)}>Previous</button>
+                </li>
+                <li className="page-item">
+                  <span className="page-link">{currentPage}</span>
+                </li>
+                <li className={`page-item ${currentBreeds.length < itemsPerPage ? 'disabled' : ''}`}>
+                  <button className="page-link" onClick={() => paginate(currentPage + 1)}>Next</button>
+                </li>
+              </ul>
+            </nav>
           </div>
-          <div className='col-md-6'>
-            <div className='card' style={{minHeight:'75vh'}}>
 
+          <div className='col-md-8'>
+            {/* <div className='container-fluid' style={{width:'100%'}}> */}
+              <div className='row mt-2 mb-2'>
+                <div className='col-sm-6 col-md-5 text-center my-auto'>
+                <div className='card' style={{ minHeight: '20vh', color:'#001b42', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', backgroundColor: '#f5f5f5' }}>
+  <h5 style={{ marginBottom: '10px' }}>Total Raw Materials left</h5> 
+  <h2>{inventoryData.totalBreeds}</h2>
+</div>
+
+              </div>
+              <div className='col-sm-6 col-md-5 text-center my-auto'>
+              <div className='card' style={{ minHeight: '20vh', color:'#001b42', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', backgroundColor: '#f5f5f5' }}>
+  <h5 style={{ marginBottom: '10px' }}>Total Raw Materials left</h5> 
+  <h2>{inventoryData.totalBreeds}</h2>
+</div>
+
+              </div>
             </div>
+            {/* </div> */}
+            <Card className="p-3" style={{ minHeight: '20vh', color:'#001b42', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', backgroundColor: '#f5f5f5' }}>
+            <Table striped responsive bordered hover style={{ color: '#666666', fontSize: '12px' }}>
+  <thead className=" text-white" style={{backgroundColor:'#001b42'}}>
+    <tr style={{fontSize: '12px' }}>
+      <th style={{  fontSize: '12px' }}>#</th>
+      <th style={{  fontSize: '12px' }}>Tag number</th>
+      <th style={{  fontSize: '12px' }}>Breed</th>
+      <th style={{  fontSize: '12px' }}>Trade Weight</th>
+      <th style={{  fontSize: '12px' }}>Total Cut Weight</th>
+      <th style={{  fontSize: '12px' }}>% Weight Loss</th>
+
+      <th style={{  fontSize: '12px' }}>Classification</th>
+
+    </tr>
+  </thead>
+  <tbody style={{ color: '#666666', fontSize: '10px' }}>
+    {currentItems.map((item, index) => (
+      <tr key={index}>
+        <td  style={{ color: '#666666', fontSize: '12px' }}>{item.id}</td>
+        <td  style={{ color: '#666666', fontSize: '12px', cursor: 'pointer' }} onClick={() => handleReferenceClick(item)} >{item.reference}</td>
+        <td style={{ color: '#666666', fontSize: '12px' }}>{item.breed}</td>
+        <td style={{ color: '#666666', fontSize: '12px' }}>{item.trade_weight} Kg</td>
+        <td style={{ color: '#666666', fontSize: '12px' }}>{item.total_cut_weight} </td>
+        <td style={{ color: '#666666', fontSize: '12px' }}>{item.weight_loss_percentage} </td>
+
+        <td style={{ color: '#666666', fontSize: '12px' }}>{item.classification} </td>
+
+      </tr>
+    ))}
+  </tbody>
+</Table>
+
+              <Pagination style={{ color: '#666666', fontSize: '10px' }}>
+                <Pagination.Prev onClick={() => paginateReference(currentReferencePage - 1)} disabled={currentReferencePage === 1} />
+                {[...Array(Math.ceil(compareWeight.length / itemsPerPage))].map((_, index) => (
+                  <Pagination.Item key={index} active={index + 1 === currentReferencePage} onClick={() => paginateReference(index + 1)}>
+                    {index + 1}
+                  </Pagination.Item>
+                ))}
+                <Pagination.Next onClick={() => paginateReference(currentReferencePage + 1)} disabled={currentItems.length < itemsPerPage} />
+              </Pagination>
+            </Card>
           </div>
         </div>
-
       </div>
     </div>
   );
