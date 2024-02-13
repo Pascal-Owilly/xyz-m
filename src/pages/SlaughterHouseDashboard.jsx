@@ -387,7 +387,7 @@ const handleSubmit = async (e) => {
         <div className="col-md-12">
           <div className="card" style={{ height: '500px' }}>
             <div className="card-body">
-              <h5 className="mb-3" style={{ color: '#001b40' }}>Raw materials form</h5>
+              <h5 className="mb-3" style={{ color: '#001b40' }}>Raw materials form </h5>
               {breedsData && breedsData.map((breed, index) => (
                 <div key={index} className="mb-4">
                   <h6>{breed.name}</h6>
