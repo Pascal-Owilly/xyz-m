@@ -55,9 +55,6 @@ const Message = ({ type, text }) => {
   );
 };
 
-
-
-
 const BreedCutForm = ({ showCutForm, onSubmit, cutData, onChange, submitMessage, onVisibilityChange }) => (
   showCutForm && (
     <div className="col-md-12">
@@ -110,13 +107,13 @@ const BreedCutForm = ({ showCutForm, onSubmit, cutData, onChange, submitMessage,
             <p>
               <label htmlFor="saleTypeSelect" className="form-label">Select Sale Type:</label>
               <select
-style={{
-  background: 'white',
-  color: '#999999', // Secondary text color
-  padding: '0.2rem',
-  borderRadius: '30px',
-  width:'100%'
-}}                id="saleTypeSelect"
+                style={{
+                  background: 'white',
+                  color: '#999999', // Secondary text color
+                  padding: '0.2rem',
+                  borderRadius: '30px',
+                  width:'100%'
+                }}                id="saleTypeSelect"
                 name="saleType"
                 value={cutData.saleType}
                 onChange={onChange}
@@ -249,7 +246,6 @@ const Home = () => {
     }
   };
   
-
   const handleFormVisibility = () => {
     setShowForm(!showForm);
     setSubmitMessage(null);
@@ -303,7 +299,6 @@ const handleInputChange = (e) => {
     }
   };
   
-
   // Update the form submission logic to handle multiple selected breeds
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -337,9 +332,6 @@ const handleSubmit = async (e) => {
   }
 };
   
-
-
-
   const handleCutSubmit = async (e) => {
     e.preventDefault();
 
@@ -381,49 +373,50 @@ const handleSubmit = async (e) => {
     }
   };
 
-  const SlaughterForm = ({ showForm, onSubmit, submitMessage, onVisibilityChange, breedsData, handleInputChange, selectedBreeds }) => (
+  const SlaughterForm = ({ showForm, onSubmit, submitMessage, onVisibilityChange, breed, handleInputChange, quantity, setQuantity }) => (
     showForm && (
       <div className="row mb-4">
         <div className="col-md-12">
-          <div className="card" style={{ height: '500px' }}>
+          <div className="card">
             <div className="card-body">
-              <h5 className="mb-3" style={{ color: '#001b40' }}>Raw materials form </h5>
-              {breedsData && breedsData.map((breed, index) => (
-                <div key={index} className="mb-4">
-                  <h6>{breed.name}</h6>
-                  <div className="mb-3">
-                    <label htmlFor={`quantity_${index}`} className="form-label">Select Quantity for {breed.name}:</label>
-                    <input
-                      id={`quantity_${index}`}
-                      type="number"
-                      name={`quantity_${index}`}
-                      value={breed.quantity}
-                      onChange={(e) => handleInputChange(index, e.target.value)}
-                      className="form-control mb-3"
-                      placeholder={`Enter quantity for ${breed.name}`}
-                      required
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor={`animal_${index}`} className="form-label">Select Animals for {breed.name}:</label>
-                    <select
-                      id={`animal_${index}`}
-                      name={`animal_${index}`}
-                      value={selectedBreeds[index]}
-                      onChange={(e) => handleInputChange(index, e.target.value)}
-                      className='form-select mb-3'
-                      multiple
-                    >
-                      {breed.animals.map((animal, animalIndex) => (
-                        <option key={animalIndex} value={animal.id}>
-                          {animal.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              ))}
-              <button type="submit" className="btn" style={{ background: '#001b40', color: 'white' }}>Submit</button>
+            <h5 className="mb-3 " style={{color:'#001b40'}}>Raw materials</h5>
+  
+              <form onSubmit={onSubmit}>
+                <label htmlFor="breedSelect" className="form-label">Select: </label>
+                  <select
+                    style={{
+                      background: 'white',
+                      color: '#999999', // Secondary text color
+                      padding: '0.2rem',
+                      borderRadius: '30px',
+                      width:'100%'
+                    }}                  id="breedSelect"
+                    name="breed"
+                    value={breed.selectedAnimal}
+                    onChange={(e) => handleInputChange(e)}  // Use the handleInputChange function
+                    className='form-select mb-3 mx-2'
+                  >
+  
+                  {['goats', 'sheep', 'cows'].map((animal) => (
+                    <option key={animal} value={animal}>
+                      {animal.charAt(0).toUpperCase() + animal.slice(1)}
+                    </option>
+                  ))}
+                </select>
+  
+                <p>
+                  <label htmlFor="quantityInput" className="form-label">Enter quantity:</label>
+                  <input
+                    id="quantityInput"
+                    type="number"
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                    className="form-control mb-3"
+                    required
+                  />
+                </p>
+                <button type="submit" className="btn text-white" style={{background:'#001b40'}}>Submit</button>
+              </form>
             </div>
           </div>
         </div>
@@ -431,14 +424,9 @@ const handleSubmit = async (e) => {
     )
   );
   
-  
-  
-
-  return (
+return (
     <>
-
      <div className='main-container'>
-
 {/* Navbar */}
 <Navbar bg="" style={{ background: '#001b40' }} expand="lg" variant="dark">
       <Navbar.Brand>
