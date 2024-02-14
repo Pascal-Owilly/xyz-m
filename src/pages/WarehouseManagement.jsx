@@ -449,18 +449,16 @@ const WarehouseDashboard = () => {
   return (
     <div className='main-container warehouse-container' style={{ minHeight: '85vh', background: 'rgb(249, 250, 251' }}>
       <div className='d-flex justify-flex-end'>
-      <h3 className=' '>Finished products</h3>
+      <h3 className=' ' style={{right:0}}>Finished products</h3>
 
-      <a href='/inventory-dashboard'>
-        Back to inventory
+<div className='d-flex'>
+      <a style={{marginLeft:'5rem'}} href='/inventory-dashboard'>
+      <i className='dw dw-back'></i>
+        Back 
       </a>
-
+      </div>
       </div>
       <br />
-
-  
-
-
 
           <Card className="weather-card" style={{ background: '#ffffff' }}>
             <Card.Body>
