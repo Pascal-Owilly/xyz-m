@@ -1,0 +1,27 @@
+1. (a) po comes as a pdf doc
+   (b) quotation to be converted to pdf then sent to the buyer 
+    (c) buyer quotation confirmation autofils purchase order
+     (d) Lc confirmation to rigger the active orders
+
+2. Control centers
+    - managed by collateral manager-appointed by bank 
+    - Inventory below the bank
+        - cummulative for all sellers
+        - add collateral manager
+        - name of control agent on both inventories - specific to each inventory
+        - below the bank - name of all control agents (collateral managers)
+            - click name of control agent gives what is controlled by a specific manager
+            - seller creates a collateral manager (collateral manager appointed by bank and seller simultaneously)
+
+     # WEIGHT COMPARISON
+        Integrate with a weighing scale to automatically calculate the WEIGHT
+
+        Add grading 
+
+        export handlig
+            - The seller creates clearing agent - they login then key in logistics and upload bill of ladding
+            - added by clearing agent
+
+        Tough security measures
+        - minimize human input
+        - to assure the bank they can risk a lot of money

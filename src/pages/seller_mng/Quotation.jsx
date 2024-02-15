@@ -106,7 +106,7 @@ useEffect(() => {
 
       // Make the GET request with the access token included in the headers
       const getResponse = await axios.get(`${baseUrl}/api/send-quotation/`, config);
-      console.error('Quotation fetched successfully', getResponse);
+
     } catch (error) {
       console.error('Error fetching quotation:', error);
     }
@@ -188,9 +188,9 @@ const handleSubmit = async (e) => {
       // Submit the form data
       await postData();
       // Show success message
-      toast.success('Quotation submitted successfully!', {
+      toast.success('Quotation submitted successfully! Please wait for confirmation from the buyer. Thank you', {
           position: 'top-center',
-          autoClose: 3000,
+          autoClose: 7000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -366,7 +366,7 @@ const postData = async () => {
                     <label htmlFor="message" className="form-label">Additional Message</label>
                     <textarea className="form-control" id="message" name="message" value={formData.message} onChange={handleChange} rows="4"></textarea>
                 </div>
-                <button type="submit" onClick={handleSubmit} className="btn btn-primary mb-2" style={{fontSize:'15px'}}>Request Quotation</button>
+                <button type="submit" onClick={handleSubmit} className="btn btn-primary mb-2" style={{fontSize:'15px'}}>Send Quotation</button>
             </form>
         </div>
         <ToastContainer />

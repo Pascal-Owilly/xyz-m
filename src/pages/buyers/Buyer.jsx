@@ -521,7 +521,7 @@ const toggleInvoice = (invoiceNumber) => {
             className={`text-white ${activeSection === 'InvoiceTracking' ? 'active-buyer-button' : ''}`}
             onClick={() => handleButtonClick('InvoiceTracking')}
           >
-            Invoice Tracking
+            Shipping Tracking
           </Nav.Link>
         </Nav>
       </Navbar.Collapse>

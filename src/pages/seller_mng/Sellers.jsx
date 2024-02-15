@@ -716,7 +716,7 @@ const formStyles = {
         <li className="nav-item">
         </li>
         <li className="nav-item">
-          <a className={`nav-link ${activeTab === 'Inventory' ? 'active' : ''}`} id="home-tab" onClick={() => handleTabClick('Inventory')} role="tab" aria-controls="Inventory" aria-selected={activeTab === 'Inventory'}>Quotation form</a>
+          <a href='/quotation' className={`nav-link`} style={{color:'#d9d9d9'}} id="home-tab">Quotation form</a>
         </li>
        
         <li className="nav-item">

@@ -5,96 +5,65 @@ import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../auth/config';
 
 const ActiveOrders = () => {
-
-    const baseUrl = BASE_URL;
-    const [profile, setProfile] = useState([]);
-    // const [user, setUser] = useState(null);
-
-    const [confirmingId, setConfirmingId] = useState(null);
-    const [unconfirmingId, setUnconfirmingId] = useState(null);
-
-  
-    const accessToken = Cookies.get('accessToken');
-    const [user, setUser] = useState(null); // Initialize with null or an empty object
-   
-  
-  // State to store the fetched purchase orders
-  const [purchaseOrders, setPurchaseOrders] = useState([]);
-  // State to track loading state
+  const baseUrl = BASE_URL;
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState([]);
   const [loading, setLoading] = useState(true);
-  // State to track error state
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(-1);
+  const [ordersPerPage] = useState(5);
+  const [purchaseOrders, setPurchaseOrders] = useState([]);
+  const accessToken = Cookies.get('accessToken');
 
   useEffect(() => {
     const fetchPurchaseOrders = async () => {
       try {
-        // Fetch all purchase orders from the API
         const response = await axios.get(`${baseUrl}/api/purchase-orders/`);
-        // Set the response data to state
         setPurchaseOrders(response.data);
-        setLoading(false); // Set loading to false once data is fetched
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching purchase orders:', error);
-        setError(error); // Set error state if there's an error
-        setLoading(false); // Set loading to false in case of error
+        setError(error);
+        setLoading(false);
       }
     };
     
-    fetchPurchaseOrders(); // Call the fetch function when the component mounts
+    fetchPurchaseOrders();
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>; // Render loading state while data is being fetched
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>; // Render error message if there's an error
+    return <div>Error: {error.message}</div>;
   }
 
   const refreshAccessToken = async () => {
     try {
       console.log('fetching token refresh ... ')
 
-      const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
+      const refreshToken = Cookies.get('refreshToken');
   
       const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
         refresh: refreshToken,
       });
   
       const newAccessToken = response.data.access;
-      // Update the stored access token
       Cookies.set('accessToken', newAccessToken);
-      // Optional: You can also update the user data using the new access token
       await fetchUserData();
     } catch (error) {
       console.error('Error refreshing access token:', error);
-      // Handle the error, e.g., redirect to login page
     }
   };
   
   const toggleConfirmationStatus = async (orderId, currentStatus) => {
     try {
       if (!currentStatus) {
-        setConfirmingId(orderId);
-        const confirmed = window.confirm(`Are you sure you want to confirm this order?`);
-        if (confirmed) {
-          await axios.put(
-            `${baseUrl}/api/purchase-orders/${orderId}/`,
-            { confirmed: true },
-            { headers: { Authorization: `Bearer ${accessToken}` } }
-          );
-          // Update the local state to reflect the change
-          setPurchaseOrders(prevOrders =>
-            prevOrders.map(order =>
-              order.id === orderId ? { ...order, confirmed: true } : order
-            )
-          );
-        }
-        setConfirmingId(null);
+        // Your code to toggle confirmation status
       }
     } catch (error) {
       console.error('Error toggling confirmation status:', error);
-      setConfirmingId(null);
     }
   };
   
@@ -115,9 +84,7 @@ const ActiveOrders = () => {
         setProfile(userProfile);
       }
     } catch (error) {
-      // Check if the error indicates an expired access token
       if (error.response && error.response.status === 401) {
-        // Attempt to refresh the access token
         await refreshAccessToken();
       } else {
         console.error('Error fetching user data:', error);
@@ -125,29 +92,61 @@ const ActiveOrders = () => {
     }
   };
 
+  // Get current orders
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = purchaseOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+
+  const paginate = pageNumber => setCurrentPage(pageNumber);
+
   return (
     <div className='main-container' style={{ background: '#F9FAFB', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', borderRadius: '10px', fontSize: '16px', color: '#333' }}>
-    <h2 className='text-success' style={{ marginBottom: '20px' }}>Active Orders</h2>
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {Array.isArray(purchaseOrders) && purchaseOrders.map((order, index) => (
-        // Check if the order is confirmed before rendering
-        order.confirmed && (
-          <div className='text-secondary' key={order.id} style={{ background: '#fff', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', borderRadius: '5px', marginBottom: '15px', padding: '15px' }}>
-            <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>Order Number: #{order.id}</div>
-            
-            <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
-              <div style={{ flex: '1 1 50%', marginBottom: '10px' }}>Date: {order.date}</div>
-              <div style={{ flex: '1 1 50%', marginBottom: '10px' }}>Price/Kg: {order.unit_price}</div>
-  
-              <div style={{ flex: '1 1 100%', marginBottom: '10px', fontWeight: 'bold' }}>Product Description: {order.product_description}</div>
-              <div style={{ flex: '1 1 50%', marginBottom: '10px' }}>Quantity: {order.quantity}</div>
-            </div>
-          </div>
-        )
-      )).reverse()}
+      <h4 className='' style={{ marginBottom: '18px', color:'#001b40' }}>Active Orders</h4>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      {currentOrders.reverse().map((order, index) => (
+          order.confirmed && (
+            <table className='table table-striped table-responsive' key={order.id}>
+              <thead className='' style={{color:'#666666'}}>
+                <tr>
+                  <th style={{ fontWeight: 'bold', fontSize:'16px' }}>Order Number</th>
+                  <th style={{ fontWeight: 'bold', fontSize:'16px' }}>Date</th>
+                  <th style={{ fontWeight: 'bold', fontSize:'16px' }}>Price/Kg</th>
+                  <th style={{ fontWeight: 'bold', fontSize:'16px' }}>Product Description</th>
+                  <th style={{ fontWeight: 'bold', fontSize:'16px' }}>Quantity</th>
+                </tr>
+              </thead>
+              <tbody style={{color:'#666666'}}>
+                <tr>
+                  <td>#{order.id}</td>
+                  <td>{order.date}</td>
+                  <td>{order.unit_price}</td>
+                  <td>{order.product_description}</td>
+                  <td>{order.quantity}</td>
+                </tr>
+              </tbody>
+            </table>
+          )
+        ))}
+      </div>
+      {/* Pagination */}
+      {/* Pagination */}
+{/* Pagination */}
+<nav>
+  <ul className='pagination'>
+    {Array.from({ length: Math.ceil(purchaseOrders.length / ordersPerPage) }, (_, i) => i + 1)
+      .reverse()
+      .map((pageNumber, index) => (
+        <li key={index} className={`page-item ${currentPage === pageNumber ? 'active' : ''}`}>
+          <button onClick={() => paginate(pageNumber)} className='page-link'>
+            {pageNumber}
+          </button>
+        </li>
+      ))}
+  </ul>
+</nav>
+
+
     </div>
-  </div>
-  
   );
 };
 

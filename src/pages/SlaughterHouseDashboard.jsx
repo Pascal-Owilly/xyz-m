@@ -3,7 +3,7 @@ import { HiBell, HiCube, HiCurrencyDollar } from 'react-icons/hi';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { BASE_URL } from './auth/config';
-import { Container, Row, Col, Pagination, Card, Form, Table, Button,  Navbar, Nav } from 'react-bootstrap';
+import { Container, Row, Col, Table, Button, Pagination, Card } from 'react-bootstrap';
 
 const Greetings = () => {
   const currentTime = new Date();
@@ -17,6 +17,7 @@ const Greetings = () => {
   } else {
     greeting = 'Good evening';
   }
+
   return greeting;
 };
 
@@ -38,9 +39,10 @@ const SALE_CHOICES = [
 ];
 
 const UserProfile = ({ user }) => (
-  <Col lg={{ span: 3, offset: 9 }} className='text-right'>
- 
-</Col>
+<div className="mb-3" style={{ color: '#666666' }}>
+  <p>Please enter the raw materials name and finished product name exactly as it appears in the inventory. Note that the form is case sensitive. and will add the entered name as a brand new product if not in the inventory</p>
+</div>
+
 );
 
 const Message = ({ type, text }) => {
@@ -55,65 +57,119 @@ const Message = ({ type, text }) => {
   );
 };
 
+const SlaughterForm = ({ showForm, onSubmit, submitMessage, onVisibilityChange, breed, handleInputChange, quantity, setQuantity }) => (
+  showForm && (
+    <div className="row mb-4">
+      <div className="col-md-12">
+        <div className="card">
+          <div className="card-body">
+          <h5 className="mb-3 " style={{color:'#001b40'}}>Raw materials</h5>
+          <h6 className="mb-3 " style={{color:'#999999'}}>To be deducted from inventory</h6>
+
+            <form onSubmit={onSubmit}>
+            <label htmlFor="breedInput" className="form-label" style={{color:'#666666'}}>Enter product name: (eg Cow, Goat etc)</label>
+<input
+  id="breedInput"
+  type="text"
+  name="breed"
+  value={breed.selectedAnimal}
+  onChange={(e) => handleInputChange(e)}
+  className="form-control mb-3"
+  required
+/>
+
+
+              <p>
+                <label htmlFor="quantityInput" className="form-label">Enter quantity: (eg 300 etc)</label>
+                <input
+                  id="quantityInput"
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                  className="form-control mb-3"
+                  required
+                />
+              </p>
+              <button type="submit" className="btn text-white" style={{background:'#001b40'}}>Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+);
+
 const BreedCutForm = ({ showCutForm, onSubmit, cutData, onChange, submitMessage, onVisibilityChange }) => (
   showCutForm && (
     <div className="col-md-12">
-      <div className="card" style={{ height:'500px' }}>
+      <div className="card">
         <div className="card-body">
-          <form onSubmit={onSubmit} >
-            <h5 className=" mb-3 " style={{ color: '#001b40' }} >Finished products form</h5>
+          <form onSubmit={onSubmit}>
+            <h5 className="mb-3" style={{color:'#001b40'}}>Finished products</h5>
+            <h6 className="mb-3 " style={{color:'#999999'}}>To be added to inventory/(chilled warehouse)</h6>
+
             <p>
-              <label htmlFor="breedCutSelect" className="form-label">Enter product name:</label>
-              <select
-                        style={{
-                          background: 'white',
-                          color: '#999999', // Secondary text color
-                          padding: '0.2rem',
-                          borderRadius: '30px',
-                          width:'100%'
-                        }}
-                        id="breedCutSelect"
-                        name="breed"
-                        value={cutData.breed}
-                        onChange={onChange}
-                        className='form-select mb-3 mx-2'
-                      >
-                        {['goats', 'sheep', 'cows'].map((animal) => (
-                          <option key={animal} value={animal}>
-                            {animal.charAt(0).toUpperCase() + animal.slice(1)}
-                          </option>
-                        ))}
-                      </select>
+            <label htmlFor="breedInput" className="form-label">Enter raw product name: (eg Cow, Goat etc)</label>
+<input
+  id="breedInput"
+  type="text"
+  name="breed"
+  value={cutData.breed}
+  onChange={onChange}
+  className="form-control mb-3"
+  required
+/>
             </p>
-            <label htmlFor="partNameSelect" className="form-label">Select Part Name:</label>
-            <input
+            <label htmlFor="partNameInput" className="form-label text-secondary">Enter finished product name: (eg ribs, intestines etc)</label>
+<input
+  id="partNameInput"
+  type="text"
+  name="partName"
+  value={cutData.partName}
+  onChange={onChange}
+  className="form-control mb-3"
   style={{
     background: 'white',
     color: '#999999', // Secondary text color
     padding: '0.2rem',
-    borderRadius: '30px',
-    width: '100%',
-    border: '1px solid #ced4da', // Add border style
-    outline: 'none', // Remove default outline
+    width: '100%'
   }}
-  id="breedCutSelect"
-  name="breed"
-  value={cutData.breed}
-  onChange={onChange}
-  className='form-select mb-3 mx-2'
-  placeholder="eg rib, loin.. etc" // Add placeholder text
+  required
 />
+
+<label htmlFor="weightInput" className="form-label" style={{
+    background: 'white',
+    color: '#999999', // Secondary text color
+    padding: '0.1rem',
+    width: '100%'
+  }}>Enter weight in Kg: (eg 300, 120 etc)</label>
+<input
+  id="weightInput"
+  type="number"
+  name="weight"
+  value={cutData.weight}
+  onChange={onChange}
+  className="form-control mb-3"
+  style={{
+    background: 'white',
+    color: '#999999', // Secondary text color
+    padding: '0.2rem',
+    width: '100%'
+  }}
+  required
+/>
+
 
             <p>
               <label htmlFor="saleTypeSelect" className="form-label">Select Sale Type:</label>
               <select
-                style={{
-                  background: 'white',
-                  color: '#999999', // Secondary text color
-                  padding: '0.2rem',
-                  borderRadius: '30px',
-                  width:'100%'
-                }}                id="saleTypeSelect"
+style={{
+  background: 'white',
+  color: '#999999', // Secondary text color
+  padding: '0.2rem',
+  borderRadius: '30px',
+  width:'100%'
+}}                id="saleTypeSelect"
                 name="saleType"
                 value={cutData.saleType}
                 onChange={onChange}
@@ -127,7 +183,12 @@ const BreedCutForm = ({ showCutForm, onSubmit, cutData, onChange, submitMessage,
                 ))}
               </select>
             </p>
-            <label htmlFor="quantityInputCut" className="form-label">Enter quantity of breed parts:</label>
+            <label htmlFor="quantityInputCut" className="form-label" 
+            style={{
+              background: 'white',
+              color: '#999999', // Secondary text color
+            }}
+            >Enter quantity: (eg 30, 120 etc)</label>
             <input
                         id="quantityInputCut"
                         type="number"
@@ -143,7 +204,7 @@ const BreedCutForm = ({ showCutForm, onSubmit, cutData, onChange, submitMessage,
                           padding: '0.2rem',
                         }}
                       />
-            <button type="submit" className="btn text-white" style={{ background: '#001b40' }}>Submit</button>
+            <button type="submit" className="btn text-white" style={{background:'#001b40'}}>Submit</button>
           </form>
         </div>
       </div>
@@ -170,8 +231,6 @@ const Home = () => {
   const [showForm, setShowForm] = useState(true);
   const [cutSubmitMessage, setCutSubmitMessage] = useState(null);
   const [showCutForm, setShowCutForm] = useState(true);
-  const [selectedBreeds, setSelectedBreeds] = useState([]);
-
   const [breed, setBreed] = useState({
     breed: 'goats',
     animalOptions: ['Goats', 'Sheep', 'Cows'],
@@ -184,9 +243,6 @@ const Home = () => {
     saleType: 'export_cut',
     quantity: null,
   });
-
-  const [activeSection, setActiveSection] = useState('BreederPayments');
-
   // ... (other state variables and functions)
 
   useEffect(() => {
@@ -197,55 +253,20 @@ const Home = () => {
     fetchUserData();
   }, []);
 
-  const refreshAccessToken = async () => {
-    try {
-      console.log('fetching token refresh ... ')
-
-      const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
-  
-      const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
-        refresh: refreshToken,
-      });
-  
-      const newAccessToken = response.data.access;
-      // Update the stored access token
-      Cookies.set('accessToken', newAccessToken);
-      // Optional: You can also update the user data using the new access token
-      await fetchUserData();
-    } catch (error) {
-      console.error('Error refreshing access token:', error);
-      // Handle the error, e.g., redirect to login page
-    }
-  };
-  
-
   const fetchUserData = async () => {
     try {
-      const accessToken = Cookies.get('accessToken');
-      if(!accessToken){
-        navigate('/')
-      }
-      if (accessToken) {
-        const response = await axios.get(`${baseUrl}/auth/user/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-  
-        const userProfile = response.data;
-        setProfile(userProfile);
-      }
+      const response = await axios.get(`${baseUrl}/authentication/user/`, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
+      const userData = response.data;
+      setUser(userData);
     } catch (error) {
-      // Check if the error indicates an expired access token
-      if (error.response && error.response.status === 401) {
-        // Attempt to refresh the access token
-        await refreshAccessToken();
-      } else {
-        console.error('Error fetching user data:', error);
-      }
+      console.error('Error fetching user data:', error);
     }
   };
-  
+
   const handleFormVisibility = () => {
     setShowForm(!showForm);
     setSubmitMessage(null);
@@ -256,22 +277,10 @@ const Home = () => {
     setCutSubmitMessage(null);
   };
 
-// Modify the handleInputChange function to handle changes in multiple breed selections
-const handleInputChange = (e) => {
-  const { value } = e.target;
-  setSelectedBreeds((prevSelectedBreeds) => {
-    if (prevSelectedBreeds.includes(value)) {
-      return prevSelectedBreeds.filter((breed) => breed !== value);
-    } else {
-      return [...prevSelectedBreeds, value];
-    }
-  });
-};
-
-  const handleCutInputChange = (e) => {
-    setCutData({
-      ...cutData,
-      [e.target.name]: e.target.value,
+  const handleInputChange = (e) => {
+    setBreed({
+      ...breed,
+      selectedAnimal: e.target.value,
     });
   };
 
@@ -299,39 +308,63 @@ const handleInputChange = (e) => {
     }
   };
   
-  // Update the form submission logic to handle multiple selected breeds
-const handleSubmit = async (e) => {
-  e.preventDefault();
 
-  try {
-    const response = await axios.post(
-      `${baseUrl}/api/slaughtered-list/`,
-      {
-        breeds: selectedBreeds, // Pass the selected breeds array
-        quantity: parseInt(quantity, 10),
-      },
-      {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      }
-    );
-
-    console.log('Post response:', response.data);
-
-    setSubmitMessage({ type: 'success', text: 'Slaughter form submitted successfully!' });
-    setShowForm(false);
-
-    // Clear the form fields after successful submission
-    setSelectedBreeds([]); // Clear the selected breeds array
-    setQuantity('');
-  } catch (error) {
-    console.error('Error submitting form:', error);
-
-    setSubmitMessage({ type: 'error', text: 'Failed to submit form. Please refresh the page and try again' });
-  }
-};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
   
+    // Get the total bred quantity for the selected breed
+    const breedTotalBred = await getTotalBredQuantity(breed.selectedAnimal);
+  
+    console.log('Breed Total Bred:', breedTotalBred);
+    console.log('Entered Quantity:', parseInt(quantity, 10));
+  
+    // Check if slaughtered quantity is more than total bred
+    if (parseInt(quantity, 10) > breedTotalBred) {
+      // Alert the user or handle the error as needed
+      alert(`Inputed quantity (${parseInt(quantity, 10)}) is greater than total quantity left in the inventory for this particular product (${breedTotalBred}).`);
+      return;
+    }
+  
+    try {
+      // Make a POST request to the endpoint
+      const response = await axios.post(
+        `${baseUrl}/api/slaughtered-list/`,
+        {
+          breed: breed.selectedAnimal.toLowerCase(),
+          quantity: parseInt(quantity, 10),
+        },
+        {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        }
+      );
+  
+      console.log('Post response:', response.data);
+  
+      // Show success message and hide the form
+      setSubmitMessage({ type: 'success', text: 'Form submitted successfully!' });
+      setShowForm(false);
+  
+      // Clear the form fields after successful submission
+      setBreed({ ...breed, selectedAnimal: '' });
+      setQuantity('');
+    } catch (error) {
+      console.error('Error submitting form:', error);
+  
+      // Show failure message
+      setSubmitMessage({ type: 'error', text: 'Failed to submit form. Please refresh the page and try again' });
+    }
+  };
+  
+
+  const handleCutInputChange = (e) => {
+    setCutData({
+      ...cutData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const handleCutSubmit = async (e) => {
     e.preventDefault();
 
@@ -355,7 +388,7 @@ const handleSubmit = async (e) => {
       console.log('Cut post response:', response.data);
 
       // Show success message and hide the form
-      setCutSubmitMessage({ type: 'success', text: 'Breed Parts Form submitted successfully!' });
+      setCutSubmitMessage({ type: 'success', text: 'Form submitted successfully!' });
       setShowCutForm(false);
 
       // Clear the form fields after successful submission
@@ -369,81 +402,16 @@ const handleSubmit = async (e) => {
       console.error('Error submitting cut form:', error);
 
       // Show failure message
-      setCutSubmitMessage({ type: 'error', text: 'Failed to submit Breed parts Form. Please refresh the page and try again.' });
+      setCutSubmitMessage({ type: 'error', text: 'Failed to submit. Please refresh the page and try again.' });
     }
   };
+  
 
-  const SlaughterForm = ({ showForm, onSubmit, submitMessage, onVisibilityChange, breed, handleInputChange, quantity, setQuantity }) => (
-    showForm && (
-      <div className="row mb-4">
-        <div className="col-md-12">
-          <div className="card">
-            <div className="card-body">
-            <h5 className="mb-3 " style={{color:'#001b40'}}>Raw materials</h5>
-  
-              <form onSubmit={onSubmit}>
-                <label htmlFor="breedSelect" className="form-label">Select: </label>
-                  <select
-                    style={{
-                      background: 'white',
-                      color: '#999999', // Secondary text color
-                      padding: '0.2rem',
-                      borderRadius: '30px',
-                      width:'100%'
-                    }}                  id="breedSelect"
-                    name="breed"
-                    value={breed.selectedAnimal}
-                    onChange={(e) => handleInputChange(e)}  // Use the handleInputChange function
-                    className='form-select mb-3 mx-2'
-                  >
-  
-                  {['goats', 'sheep', 'cows'].map((animal) => (
-                    <option key={animal} value={animal}>
-                      {animal.charAt(0).toUpperCase() + animal.slice(1)}
-                    </option>
-                  ))}
-                </select>
-  
-                <p>
-                  <label htmlFor="quantityInput" className="form-label">Enter quantity:</label>
-                  <input
-                    id="quantityInput"
-                    type="number"
-                    value={quantity}
-                    onChange={(e) => setQuantity(e.target.value)}
-                    className="form-control mb-3"
-                    required
-                  />
-                </p>
-                <button type="submit" className="btn text-white" style={{background:'#001b40'}}>Submit</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  );
-  
-return (
+  return (
     <>
      <div className='main-container'>
-{/* Navbar */}
-<Navbar bg="" style={{ background: '#001b40' }} expand="lg" variant="dark">
-      <Navbar.Brand>
-        <span style={{ fontWeight: '' }}>Inventory Record Forms</span>
-      </Navbar.Brand>
+  <h3 className='' style={{color:'#001b40'}}>Inventory update forms</h3>
 
-    </Navbar>
-        <hr />
-
-        <p className='p-3'>In this dashboard, you will be recording the breeds slaughtered and the corresponding breed parts; please be cautious as the inventory will be updated based on these actions.</p>
-
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                
-                  <a href="/inventory-dashboard" className='mx-5' style={{ color: '#3498db', textDecoration: 'none', display: 'flex', alignItems: 'center', fontSize: '18px' }}>
-                    <i className="dw dw-back" style={{ marginLeft: '5px' }}></i> &nbsp;  Back to inventory
-                  </a>
-                </div>
   <div className="container">
     {/* User Profile */}
     <UserProfile user={user} />

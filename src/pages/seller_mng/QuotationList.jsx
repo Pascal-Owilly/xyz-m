@@ -221,7 +221,7 @@ const [expandedInvoices, setExpandedInvoices] = useState({});
           </td>
           <td>
             <div className="card" style={{ boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', borderRadius: '5px', padding: '10px' }}>
-              {confirmedQuotation === quotation.id ? 'Confirmed' : 'Pending'}
+              {confirmedQuotation === quotation.id ? 'Confirmed' : 'Pendi ng'}
             </div>
           </td>
         </tr>
