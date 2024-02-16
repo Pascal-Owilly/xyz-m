@@ -303,7 +303,7 @@ const logout = async () => {
           <li>inventor
             <a href="inventory-dashboard">
             <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-               Inventory 
+               Control centers
             </a>
           </li>
           <li>
@@ -369,9 +369,9 @@ const logout = async () => {
               </li> */}
 
               <li>
-                <a href="inventory-dashboard">
+                <a href="/control-centers-list">
                 <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                  Inventory 
+                Control centers
                 </a>
               </li>
               {/* <li>

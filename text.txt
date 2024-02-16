@@ -3,15 +3,12 @@
     (c) buyer quotation confirmation autofils purchase order
      (d) Lc confirmation to rigger the active orders
 
-2. Control centers
+2. Control centers(inventory below then bank)
     - managed by collateral manager-appointed by bank 
-    - Inventory below the bank
         - cummulative for all sellers
-        - add collateral manager
-        - name of control agent on both inventories - specific to each inventory
+        - sellser adds collateral manager/control agent on both inventories specific to each inventory then mnger appointed by bank
         - below the bank - name of all control agents (collateral managers)
-            - click name of control agent gives what is controlled by a specific manager
-            - seller creates a collateral manager (collateral manager appointed by bank and seller simultaneously)
+            - click name of control agent gives what is controlled by them
 
      # WEIGHT COMPARISON
         Integrate with a weighing scale to automatically calculate the WEIGHT
@@ -25,3 +22,18 @@
         Tough security measures
         - minimize human input
         - to assure the bank they can risk a lot of money
+
+### model changes
+    logistics: 
+        models.py
+        views.py
+        serializers.py
+
+### urls
+    scm -urls.py
+
+### cutom reg
+    control center role
+    
+
+

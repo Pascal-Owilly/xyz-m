@@ -716,6 +716,9 @@ const formStyles = {
         <li className="nav-item">
         </li>
         <li className="nav-item">
+          <a href='/control-centers-single-trader' className={`nav-link`} style={{color:'#d9d9d9'}} id="home-tab">Control center</a>
+        </li>
+        <li className="nav-item">
           <a href='/quotation' className={`nav-link`} style={{color:'#d9d9d9'}} id="home-tab">Quotation form</a>
         </li>
        

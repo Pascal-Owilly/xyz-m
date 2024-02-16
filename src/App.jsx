@@ -49,6 +49,10 @@ import PurchaseOrderPageSeller from './pages/seller_mng/PurchaseOrdersSeller';
 import ActiveOrders from './pages/breaders/ActiveOrders';
 import DocumentScanner from './pages/DocScanner';
 
+// Control centere
+import ControlCenters from './pages/control_centers/ControlCenters';
+import ControlCentersSingleTrader from './pages/control_centers/ControlCentersSingleTrader';
+
 const App = () => {
   return (
     <Router>
@@ -125,6 +129,11 @@ const App = () => {
             {/* Export handling */}
             <Route path="/dispatch_and_shipping" element={<DispatchAndShipping />} />
             <Route path="/arrival" element={<Arrival />} />
+
+            {/* Control centers */}
+            <Route path="/control-centers-list" element={<ControlCenters />} />
+            <Route path="/control-centers-single-trader" element={<ControlCentersSingleTrader />} />
+
 
           </Routes>
         </div>
