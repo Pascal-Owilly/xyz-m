@@ -723,7 +723,7 @@ const formStyles = {
         </li>
        
         <li className="nav-item">
-          <a className={`nav-link ${activeTab === 'Send LPO' ? 'active' : ''}`} id="profile-tab" onClick={() => handleTabClick('Send LPO')} role="tab" aria-controls="Send LPO" aria-selected={activeTab === 'Send LPO'}>Purchase order form</a>
+          <a className={`nav-link ${activeTab === 'Send LPO' ? 'active' : ''}`} id="profile-tab" onClick={() => handleTabClick('Send LPO')} role="tab" aria-controls="Send LPO" aria-selected={activeTab === 'Send LPO'}>Shipping clearing agent</a>
         </li>
         
         <li className="nav-item">
@@ -742,7 +742,7 @@ const formStyles = {
       <div className="container-fluid" style={{ minHeight: '' }}>
          
   <div className="row">
-  <div className="col-lg-3 col-md-12 ">
+  <div className="col-lg-3 col-md-12 mb-4">
   <a href='/inventory-dashboard'>
     <div className="card-box height-100-p widget-style3">
       <div className="d-flex flex-wrap">
@@ -760,7 +760,7 @@ const formStyles = {
   </a>
 </div>
 
-<div className="col-lg-3 col-md-6 ">
+<div className="col-lg-3 col-md-6 mb-4">
   <a href='/breaders'>
     <div className="card-box height-100-p widget-style3 custom-card">
       <div className="d-flex flex-wrap">
@@ -778,7 +778,7 @@ const formStyles = {
   </a>
 </div>
 
-<div className="col-lg-3 col-md-6 ">
+<div className="col-lg-3 col-md-6 mb-4">
 <a href='/quotation-list'>
 
   <div className="card-box height-100-p widget-style3">
@@ -797,7 +797,7 @@ const formStyles = {
   </a>
 </div>
 
-<div className="col-lg-3 col-md-6 ">
+<div className="col-lg-3 col-md-6 mb-4">
   <a href='/purchase-order-seller'>
     <div className="card-box height-100-p widget-style3 custom-card">
       <div className="d-flex flex-wrap">

@@ -52,6 +52,7 @@ import DocumentScanner from './pages/DocScanner';
 // Control centere
 import ControlCenters from './pages/control_centers/ControlCenters';
 import ControlCentersSingleTrader from './pages/control_centers/ControlCentersSingleTrader';
+import InventoryCT from './pages/control_centers/Inventory';
 
 const App = () => {
   return (
@@ -133,6 +134,7 @@ const App = () => {
             {/* Control centers */}
             <Route path="/control-centers-list" element={<ControlCenters />} />
             <Route path="/control-centers-single-trader" element={<ControlCentersSingleTrader />} />
+            <Route path="/control-centers-inventory" element={<InventoryCT />} />
 
 
           </Routes>

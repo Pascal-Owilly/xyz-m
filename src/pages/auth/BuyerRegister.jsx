@@ -178,7 +178,6 @@ const SignUpForm = () => {
           )}
         </div>
       </div>
-
       <div className='form-row'>
         <div className='form-group col-md-4'>
           <label htmlFor='email' className='text-secondary'>
@@ -239,12 +238,9 @@ const SignUpForm = () => {
             <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.confirm_password}</p>
           )}
         </div>
-       
-        
-        
+     
       </div>
 
-     
       <div className='form-row'>
        
         {/* Add more form groups for other fields if needed */}

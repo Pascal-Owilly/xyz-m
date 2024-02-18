@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { BASE_URL } from '../pages/auth/config';
+import { BASE_URL } from '../auth/config';
 import Cookies from 'js-cookie';
 import { Card, Modal, Button, Table, Pagination } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
-const InventoryPage = () => {
+const InventoryPage = ({ managerId }) => {
   const navigate = useNavigate();
   const [authToken, setAuthToken] = useState(Cookies.get('authToken'));
   const baseUrl = BASE_URL;
@@ -104,7 +104,7 @@ const InventoryPage = () => {
     };
 
     fetchInventoryData();
-  }, [authToken, baseUrl]);
+  }, [authToken, baseUrl, managerId]);
 
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -127,10 +127,9 @@ const InventoryPage = () => {
     <div className='main-container container-fluid'>
       <h3 style={{color:'#001b40'}}>Inventory
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-  <div></div> {/* Empty div to push the link to the far right */}
-  <a href="/inventory-record-forms" className='mx-1' style={{ color: '#3498db', textDecoration: 'none', display: 'flex', alignItems: 'center', fontSize: '18px' }}>
-    <i className="dw dw-edit" style={{ marginLeft: '5px' }}></i> &nbsp; Update inventory
-  </a>
+  <div>
+    </div>
+
 </div>
 
       </h3>
