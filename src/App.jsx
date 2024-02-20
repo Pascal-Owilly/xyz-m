@@ -53,7 +53,7 @@ import DocumentScanner from './pages/DocScanner';
 import ControlCenters from './pages/control_centers/ControlCenters';
 import ControlCentersSingleTrader from './pages/control_centers/ControlCentersSingleTrader';
 import InventoryCT from './pages/control_centers/Inventory';
-
+import RegisterCollateralManager from './pages/auth/RegisterCollateralManager';
 const App = () => {
   return (
     <Router>
@@ -66,6 +66,7 @@ const App = () => {
             <Route path="/register" element={<Registration2 />} />
             <Route path="/register-buyer" element={<RegisterBuyer />} />
             <Route path="/buyer-register-success" element={<BuyerRegidterSuccess />} />
+            <Route path="/collateral-manager-register-success" element={<RegisterCollateralManager />} />
 
             <Route path="/login" element={<Login />} />
             <Route path="/password_reset" element={<ForgotPassword />} />

@@ -5,12 +5,10 @@ const InvoiceSuccessMessage = () => {
   return (
     <div style={styles.container}>
     <h1 style={styles.successMessage}>Buyer register success!</h1>
-    <p style={styles.infoMessage}>
-      To complete buyer address details, please click the link below:
-    </p>
-    <Link to="https://api.intellima.tech/admin/invoice_generator/buyer/add/" style={styles.dashboardLink}>
-Complet buyer registration
-    </Link>
+   
+    <a href="/quotation" style={styles.dashboardLink}>
+Back to quotation
+    </a>
   </div>
   
   );

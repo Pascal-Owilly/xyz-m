@@ -3,6 +3,7 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { BASE_URL } from '../auth/config';
 import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import { useNavigate } from 'react-router-dom';
 
 import { toast, ToastContainer } from 'react-toastify';
@@ -37,6 +38,7 @@ function QuotationForm() {
           },
         });
         setBuyers(response.data);
+        console.log('buyer data', response.data)
       } catch (error) {
         console.error('Error fetching buyers:', error);
       }
@@ -95,26 +97,60 @@ function QuotationForm() {
     }
   };
 
-  const generatePDF = () => {
-    const doc = new jsPDF();
-    const { buyer, product, unit_price, quantity, confirm } = formData;
-    const content = `
-      Buyer: ${buyer}
-      Product Name: ${product}
-      Unit Price: ${unit_price}
-      Quantity: ${quantity}
-      Confirm: [ ] Yes, I confirm this quotation
-    `;
-    doc.text(content, 10, 10);
+const generatePDF = () => {
+  const doc = new jsPDF();
+  const selectedBuyer = buyers.find(buyer => buyer.id === formData.buyer);
+  if (!selectedBuyer) {
+    console.error('Selected buyer not found');
+    return null; // Return null if selected buyer is not found
+  }
+  // Header
+  const header = `
+  Buyer Details:
+  Name: ${selectedBuyer.id} 
+  Address: ${selectedBuyer.address}
+  Country: ${selectedBuyer.country}
+`;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text(header, 10, 10);
 
-    // Add checkbox for confirmation
-    doc.setDrawColor(0); // Black color
-    doc.rect(22, 55, 5, 5); // Draw the checkbox
-    doc.setFontSize(12);
-    doc.text("Yes, I confirm this quotation", 30, 60); // Add label next to the checkbox
+  // Body (Table)
+  const { buyer, product, unit_price, quantity, delivery_time, message } = formData;
+  const data = [
+    ['Buyer', buyer],
+    ['Product Name', product],
+    ['Unit Price', unit_price],
+    ['Quantity', quantity],
+    ['Delivery Date', delivery_time],
+    ['Additional Message', message]
+  ];
+  doc.autoTable({
+    startY: 40,
+    head: [['Field', 'Value']],
+    body: data,
+    theme: 'striped', // Apply striped theme
+    styles: { cellPadding: 5, fontSize: 12 },
+    columnStyles: { 0: { fontStyle: 'bold' } }
+  });
 
-    return doc;
-  };
+  // Footer
+  const footer = `
+    Confirm: [ ] Yes, I confirm this quotation
+  `;
+  doc.setTextColor(0); // Reset color to black
+  doc.text(footer, 10, doc.autoTable.previous.finalY + 10); // Use previous.finalY to position after the table
+
+  // Add checkbox for confirmation
+  doc.setDrawColor(0); // Black color
+  doc.rect(22, doc.autoTable.previous.finalY + 15, 5, 5); // Draw the checkbox
+  doc.setFontSize(12);
+  doc.text("Yes, I confirm this quotation", 30, doc.autoTable.previous.finalY + 20); // Add label next to the checkbox
+
+  return doc;
+};
+
+  
 
   const handleSendQuotationAsPDF = () => {
     const pdf = generatePDF();

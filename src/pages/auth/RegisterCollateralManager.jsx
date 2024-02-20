@@ -22,9 +22,9 @@ const SignUpForm = () => {
     county: '',
     country: '',
     address: '',
-    role: 'buyer',
+    role: 'collateral_manager',
 
-    user_type: 'buyer', // Add user_type field
+    user_type: 'collateral_manager', // Add user_type field
   });
 
   const [loading, setLoading] = useState(false);
@@ -43,7 +43,7 @@ const SignUpForm = () => {
       setErrorMessages({});
 
       // Set the role for the user
-      const role = 'buyer';
+      const role = 'collateral_manager';
 
       // Add the role and user_type to the registration data
       const requestData = {
@@ -95,7 +95,7 @@ const SignUpForm = () => {
                 }}
                 onSubmit={signUp}
               >
-                <h4 className='text-secondary'>Sign Up</h4>
+                <h4 className='text-secondary'>Register Collateral Mnager</h4>
                 <hr />
                 <div className='form-row'>
                   <div className='form-group col-md-4'>
@@ -170,19 +170,19 @@ const SignUpForm = () => {
                   </div>
                   <div className='form-group col-md-4'>
                     <label htmlFor='country' className='text-secondary'>
-                      Country
+                      County
                     </label>
                     <input
                       type='text'
                       className='form-control mb-1'
-                      id='country'
-                      name='country'
-                      value={registrationData.country}
+                      id='county'
+                      name='county'
+                      value={registrationData.county}
                       onChange={handleRegistrationChange}
                       required
                     />
                     {errorMessages.country && (
-                      <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.country}</p>
+                      <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.county}</p>
                     )}
                   </div>
                   <div className='form-group col-md-4'>

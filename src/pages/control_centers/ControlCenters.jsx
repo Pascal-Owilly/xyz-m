@@ -302,10 +302,12 @@ const currentBuyers = buyers.slice(indexOfFirstItemBuyers, indexOfLastItemBuyers
           <hr />
           <div className='d-flex justify-content-between align-items-center'>
   <h4 className='text-secondary mx-2' style={{ marginRight: '5px', color:'#666666' }}><FaClipboardList /> All Control Centers</h4>
-  <Button className="btn btn-primary mb-5 mx-2" style={{ width: '240px', fontSize: '15px' }} onClick={handleShowManagerModal}>
+  <a href='/collateral-manager-register-success'>
+  <Button className="btn btn-primary mb-5 mx-2" style={{ width: '240px', fontSize: '15px' }}>
         <FaPlus style={{ marginRight: '5px', fontSize: '15px' }} />
         Add Collateral Manager
       </Button>
+      </a>
 </div>
           <hr />
           <div className='table-responsive'>
