@@ -1,16 +1,19 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 const InvoiceSuccessMessage = () => {
+  const goBack = () => {
+    window.history.back();
+    window.history.back();
+
+  };
+
   return (
     <div style={styles.container}>
-    <h1 style={styles.successMessage}>Buyer register success!</h1>
-   
-    <a href="/quotation" style={styles.dashboardLink}>
-Back to quotation
-    </a>
-  </div>
-  
+      <h1 style={styles.successMessage}> Registration success!</h1>
+      <button onClick={goBack} style={styles.dashboardLink}>
+        Go back
+      </button>
+    </div>
   );
 };
 
@@ -23,7 +26,7 @@ const styles = {
     minHeight: '85vh',
   },
   successMessage: {
-    fontSize: '24px',   
+    fontSize: '24px',
     fontWeight: 'bold',
     color: '#28a745', // Green color for success
     marginBottom: '20px',
@@ -33,6 +36,8 @@ const styles = {
     color: '#007bff', // Blue color for link
     textDecoration: 'none',
     cursor: 'pointer',
+    border: 'none',
+    background: 'none',
   },
 };
 

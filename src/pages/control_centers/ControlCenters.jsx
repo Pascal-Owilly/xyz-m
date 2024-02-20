@@ -29,7 +29,12 @@ const ControlCenters = () => {
   const [newManagerName, setNewManagerName] = useState('');
   const [collateralManagers, setCollateralManagers] = useState([]);
   const accessToken = Cookies.get('accessToken');
-
+  const [selectedCollateralManagerId, setSelectedCollateralManagerId] = useState(null);
+  const [selectedControlCenterId, setSelectedControlCenterId] = useState(null);
+  const [confirmUpdate, setConfirmUpdate] = useState(false);
+  const [message, setMessage] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
+  
   // Add state variables to hold the data for buyers and sellers
 const [buyers, setBuyers] = useState([]);
 const [sellers, setSellers] = useState([]);
@@ -106,15 +111,81 @@ const fetchSellers = async () => {
   };
 
    // Function to handle opening the modal
-   const handleShowManagerModal = () => {
-    setShowManagerModal(true);
-  };
-
-  // Function to handle closing the modal
-  const handleCloseManagerModal = () => {
+   const handleCloseManagerModal = () => {
     setShowManagerModal(false);
   };
+// Function to handle change in the selected control center
+const handleControlCenterChange = (event) => {
+  const selectedControlCenterId = event.target.value;
+  
+  // Find the selected control center by ID
+  const selectedControlCenter = controlCenters.find(center => center.id === selectedControlCenterId);
+  
+  // Check if a control center is found
+  if (selectedControlCenter) {
+    // Update the selected collateral manager ID based on the associated manager of the selected control center
+    setSelectedCollateralManagerId(selectedControlCenter.assigned_collateral_agent);
+    // Update the state with the selected control center ID
+    setSelectedControlCenterId(selectedControlCenterId);
+  } else {
+    // Handle the case where the selected control center is not found
+    console.error('Selected control center not found');
+    // Reset the selected control center ID and associated manager ID
+    setSelectedControlCenterId('');
+    setSelectedCollateralManagerId(null);
+  }
+};
 
+// Function to confirm the update of collateral manager
+// Function to confirm the update of collateral manager
+const handleConfirmUpdate = async () => {
+  const isConfirmed = window.confirm('Are you sure you want to update the collateral manager?');
+  if (isConfirmed) {
+    try {
+      // Attempt to update the collateral manager
+      await updateCollateralManager();
+      // If updateCollateralManager succeeds, set success message
+      setMessage('Operation successful.');
+      setIsSuccess(true);
+    } catch (error) {
+      // If updateCollateralManager fails, set failure message
+      setMessage('Operation failed.');
+      setIsSuccess(false);
+    }
+  } else {
+    // Reset the selected collateral manager and associated control center ID if the user cancels
+    setSelectedCollateralManagerId(null);
+    setSelectedControlCenterId(null);
+    setMessage('');
+    setIsSuccess(false);
+  }
+};
+
+
+// Function to update the collateral manager
+const updateCollateralManager = async () => {
+  try {
+    // Make the PUT request to update the collateral manager
+    const response = await axios.put(`${baseUrl}/api/control-centers/${selectedControlCenterId}/`, {
+      assigned_collateral_agent: selectedCollateralManagerId,
+    });
+    // Handle the response accordingly
+    console.log('Collateral manager updated successfully:', response.data);
+    // Update the control centers state with the updated data
+    const updatedControlCenters = controlCenters.map(center => {
+      if (center.id === selectedControlCenterId) {
+        return {
+          ...center,
+          assigned_collateral_agent: selectedCollateralManagerId,
+        };
+      }
+      return center;
+    });
+    setControlCenters(updatedControlCenters);
+  } catch (error) {
+    console.error('Error updating collateral manager:', error);
+  }
+};
   // Function to handle input change in the modal form
   const handleManagerInputChange = (event) => {
     setNewManagerName(event.target.value);
@@ -166,6 +237,89 @@ const handleAddManagerSubmit = async () => {
     console.error('Error adding manager:', error);
   }
 };
+
+// Associate collateral manager
+
+// Add a function to associate a collateral manager with the control center
+// Add a function to associate a collateral manager with the control center
+const associateCollateralManager = async () => {
+  try {
+    if (!selectedCollateralManagerId || !selectedControlCenterId) {
+      console.error('Please select both a collateral manager and a control center.');
+      return;
+    }
+
+    // Log the contents of controlCenters and selectedControlCenterId
+    console.log('Control centers:', controlCenters);
+    console.log('Selected control center ID:', selectedControlCenterId);
+
+    // Get the selected control center data
+    let selectedControlCenter = null;
+
+    for (let i = 0; i < controlCenters.length; i++) {
+      if (controlCenters[i].id === selectedControlCenterId) {
+        selectedControlCenter = controlCenters[i];
+        break; // Exit the loop once the control center is found
+      }
+    }
+    
+    console.log('Selected control center:', selectedControlCenter);
+    
+    // Make sure selectedControlCenter is not undefined before proceeding
+    if (!selectedControlCenter) {
+      console.error('Selected control center not found.');
+      return;
+    }
+
+    // Call handleControlCenterChange to set selectedControlCenterId
+    handleControlCenterChange(selectedControlCenterId);
+
+    // Make an API call to associate the selected collateral manager with the control center
+    const response = await axios.put(`${baseUrl}/api/control-centers/${selectedControlCenterId}/`, {
+      name: selectedControlCenter.name,
+      location: selectedControlCenter.location,
+      assigned_collateral_agent: selectedCollateralManagerId,
+    });
+    
+    // Update the control center data to include the associated collateral manager
+    const updatedControlCenters = controlCenters.map(center => {
+      if (center.id === selectedControlCenterId) {
+        return {
+          ...center,
+          assigned_collateral_agent: selectedCollateralManagerId,
+        };
+      }
+      return center;
+    });
+
+    // Update the state with the updated control center data
+    setControlCenters(updatedControlCenters);
+
+    // Close the modal or reset the form
+    setShowManagerModal(false);
+    setSelectedCollateralManagerId(null);
+    setSelectedControlCenterId(null);
+  } catch (error) {
+    console.error('Error associating collateral manager:', error);
+  }
+};
+
+
+// Function to handle changes in the selected collateral manager
+const handleCollateralManagerChange = (controlCenterId, event) => {
+  const selectedCollateralManagerId = event.target.value;
+  // Set the selected collateral manager and associated control center ID
+  setSelectedCollateralManagerId(selectedCollateralManagerId);
+  setSelectedControlCenterId(controlCenterId);
+  // Show confirmation popup
+  handleConfirmUpdate();
+};
+
+
+const handleAssociateCollateralManager = () => {
+  setShowManagerModal(true); // Show the modal for associating collateral manager
+};
+
 
   
   const handleManagerClick = (center) => {
@@ -222,7 +376,7 @@ const indexOfFirstItemBuyers = indexOfLastItemBuyers - itemsPerPage;
 const currentBuyers = buyers.slice(indexOfFirstItemBuyers, indexOfLastItemBuyers)
 
   return (
-    <div className='main-container container-fluid' style={{minHeight:'85vh', padding: '80px 2px 2px 300px' }}>
+    <div className='main-container container-fluid' style={{minHeight:'85vh' }}>
 
 
       <ul className="nav nav-tabs" id="myTab" role="tablist" style={{fontSize:'15px', backgroundColor:'#001b40', color:'#d9d9d9'}}>
@@ -258,89 +412,112 @@ const currentBuyers = buyers.slice(indexOfFirstItemBuyers, indexOfLastItemBuyers
        {/* Manager Modal */}
        <Modal show={showManagerModal} onHide={handleCloseManagerModal} className='mt-5'>
   <Modal.Header closeButton>
-    <Modal.Title>Add Collateral Manager</Modal.Title>
+    <Modal.Title>Associate Collateral Manager</Modal.Title>
   </Modal.Header>
   <Modal.Body>
     <Form>
-      <Form.Group controlId="managerName">
-        <Form.Label>Manager Name</Form.Label>
-        <Form.Control type="text" placeholder="Enter manager name" value={newManagerName} onChange={handleManagerInputChange} />
+      <Form.Group controlId="collateralManager">
+        <Form.Label>Select Collateral Manager</Form.Label>
+        <Form.Control as="select" value={selectedCollateralManagerId} onChange={handleCollateralManagerChange}>
+          <option value="">Select collateral manager</option>
+          {collateralManagers.map(manager => (
+            <option key={manager.id} value={manager.id}>{manager.full_name}</option>
+          ))}
+        </Form.Control>
       </Form.Group>
-      <Form.Group controlId="lastName">
-        <Form.Label>Last Name</Form.Label>
-        <Form.Control type="text" placeholder="Enter last name" />
-        {/* Display error message if last name field is empty */}
-        <Form.Text className="text-danger">This field may not be blank.</Form.Text>
-      </Form.Group>
-      <Form.Group controlId="password">
-        <Form.Label>Password</Form.Label>
-        <Form.Control type="password" placeholder="Enter password" />
-        {/* Display error message if password field is empty */}
-        <Form.Text className="text-danger">This field is required.</Form.Text>
-      </Form.Group>
-      <Form.Group controlId="confirmPassword">
-        <Form.Label>Confirm Password</Form.Label>
-        <Form.Control type="password" placeholder="Confirm password" />
-        {/* Display error message if confirm password field is empty */}
-        <Form.Text className="text-danger">This field is required.</Form.Text>
-      </Form.Group>
+      <Form.Group controlId="controlCenter">
+  <Form.Label>Select Control Center</Form.Label>
+  <Form.Control
+    as="select"
+    value={selectedControlCenterId}
+    onChange={handleControlCenterChange}
+    className="custom-select" // Add custom-select class for Bootstrap styling
+    style={{ boxShadow: 'none', border: '1px solid #ced4da', borderRadius: '4px' }} // Custom inline styles for additional styling
+  >
+    <option value="">Select control center</option>
+    {controlCenters.map(center => (
+      <option key={center.id} value={center.id}>{center.name}</option>
+    ))}
+  </Form.Control>
+</Form.Group>
+
     </Form>
   </Modal.Body>
   <Modal.Footer>
     <Button variant="secondary" onClick={handleCloseManagerModal}>
       Close
     </Button>
-    <Button variant="primary" onClick={handleAddManagerSubmit}>
-      Add Manager
+    <Button variant="primary" onClick={associateCollateralManager}>
+      Associate Manager
     </Button>
   </Modal.Footer>
 </Modal>
-
 
       {activeTab === 'ControlCenters' && (
         <div>
           <hr />
           <div className='d-flex justify-content-between align-items-center'>
-  <h4 className='text-secondary mx-2' style={{ marginRight: '5px', color:'#666666' }}><FaClipboardList /> All Control Centers</h4>
-  <a href='/collateral-manager-register-success'>
-  <Button className="btn btn-primary mb-5 mx-2" style={{ width: '240px', fontSize: '15px' }}>
-        <FaPlus style={{ marginRight: '5px', fontSize: '15px' }} />
-        Add Collateral Manager
-      </Button>
-      </a>
-</div>
+            <h4 className='text-secondary mx-2' style={{ marginRight: '5px', color:'#666666' }}><FaClipboardList /> All Control Centers</h4>
+           
+                <a href='/collateral-manager-register '>
+
+                <Button variant="" style={{fontSize:"12px", backgroundColor:'#001b42', color:'white'}} >
+                Add Collateral Manager
+          </Button>
+          </a>
+
+          </div>
           <hr />
+          {message && (
+  <div className={`alert ${isSuccess ? 'alert-success' : 'alert-danger'}`} role="alert">
+    {message}
+  </div>
+)}
           <div className='table-responsive'>
-            <table className='table table-striped' style={{ color: '#666666' }}>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Location</th>
-                  <th>Address</th>
-                  <th>Contact</th>
-                  <th>Collateral Agent</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentControlCenters.map((center, index) => (
-                  <tr key={index}>
-                    <td>{center.name}</td>
-                    <td>{center.location}</td>
-                    <td>{center.address}</td>
-                    <td>{center.contact}</td>
-                    <td>{center.assiged_agent_full_name}</td>
-                    <td>
-                      <button className="btn btn-sm text-light" style={{backgroundColor:'#001b42', fontSize:'11px'}} onClick={() => handleManagerClick(center)}>View Details</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>  
+          
+  <table className='table table-striped' style={{ color: '#666666' }}>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Address</th>
+        <th>Contact</th>
+        <th>Collateral Agent</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+  {currentControlCenters.map((center, index) => (
+    <tr key={index}>
+      <td>{center.name}</td>
+      <td>{center.location}</td>
+      <td>{center.address}</td>
+      <td>{center.contact}</td>
+      <td>
+  <select
+    className="form-select" // Add form-select class for Bootstrap styling
+    value={center.assigned_collateral_agent}
+    onChange={(e) => handleCollateralManagerChange(center.id, e)}
+    style={{ boxShadow: 'none', border: '1px solid #ced4da', borderRadius: '4px', background:'#fff', color:'#666666', padding:'5px' }} // Custom inline styles for additional styling
+  >
+    <option value="">Select collateral manager</option>
+    {collateralManagers.reverse().map(manager => (
+      <option key={manager.id} value={manager.id}>{manager.full_name}</option>
+    ))}
+  </select>
+</td>
+
+      <td>
+        <button className="btn btn-sm text-light" style={{backgroundColor:'#001b42', fontSize:'11px'}} onClick={() => handleManagerClick(center)}>View Details</button>
+      </td>
+    </tr>
+  ))}
+</tbody>  </table>
+</div>
+
        <Pagination>
   {Array.from({ length: Math.ceil(controlCenters.length / itemsPerPage) }, (_, i) => {
-    const pageNumber = i + 1; // Increment i by 1 since we start from the last page
+    const pageNumber = i + 1; 
     return (
       <Pagination.Item
         key={pageNumber}

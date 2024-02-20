@@ -734,13 +734,25 @@ const formStyles = {
 
       <div className="tab-content mt-3 mb-3" id="myTabContent">
       <div className={`tab-pane fade ${activeTab === 'Home' ? 'show active' : ''}`} id="Home" role="tabpanel" aria-labelledby="profile-tab">
-        <h5 style={{color:'#999999'}}> <i className='dw dw-settings text-primary' style={{fontSize:'20px'}}></i> Manage Supplies</h5>
+      <div className="d-flex justify-content-between align-items-center">
+  <h5 style={{ color: '#999999' }}>
+    <i className='dw dw-settings text-primary' style={{ fontSize: '20px' }}></i> Manage Supplies
+  </h5>
+  <div className="text-right">
+    <a href='/supplier-register'>
+      <button className='btn btn-sm' style={{ background: 'white', color: '#ccc' }}>
+        Register supplier
+      </button>
+    </a>
+  </div>
+</div>
+
       <hr />
 
       {/* DASHBOARD */}
       <div className="">
       <div className="container-fluid" style={{ minHeight: '' }}>
-         
+
   <div className="row">
   <div className="col-lg-3 col-md-12 mb-4">
   <a href='/inventory-dashboard'>
