@@ -11,32 +11,9 @@ import { FaTruck, FaShippingFast, FaCheck, FaArchive } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import PurchaseOrders from '../seller_mng/PurchaseOrdersSeller';
 
-const styles = {
-  invoiceContainer: {
-    // backgroundColor: '#f5f5f5',
-    padding: '20px',
-    minHeight: '80vh',
-  },
-  invoiceItems: {
-    backgroundColor: '#ffffff',
-    borderRadius: '8px',
-    padding: '20px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    height: '100%',
-    overflow: 'hidden', // Hide content overflow during transition
-    transition: 'height 0.3s ease-in-out', // Transition height property
-  },
-  tableCell: {
-    border: 'none',
-  },
-  invoiceList: {
-    listStyle: 'none',
-    padding: 0,
-  },
-  listItem: {
-    marginBottom: '10px',
-  },
-};
+// convert quotation to pdf
+import { PDFDownloadLink, Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
+
 
 const CustomerServiceDashboard = () => {
   const navigate = useNavigate()
@@ -45,7 +22,7 @@ const CustomerServiceDashboard = () => {
   const [showDetails, setShowDetails] = useState(false);
   const baseUrl = BASE_URL;
 
-  const [activeSection, setActiveSection] = useState('InformationSection');
+  const [activeSection, setActiveSection] = useState('Quotation');
 
   const [arrivedOrdersData, setArrivedOrdersData] = useState([]);
   const [shipmentProgressData, setShipmentProgressData] = useState([]);
@@ -391,7 +368,7 @@ const toggleInvoice = (invoiceNumber) => {
 
   const renderBreederTradeTable = (breederTrade) => {
     return (
-      <Table striped responsive bordered hover className="mt-3">
+      <Table striped responsive bordered hover className="mt-">
         <thead>
           <tr>
             <th>Field</th>
@@ -409,6 +386,28 @@ const toggleInvoice = (invoiceNumber) => {
       </Table>
     );
   };
+
+
+
+  const QuotationPDF = ({ quotation }) => (
+    <Document>
+      <Page style={styles.page}>
+        <View style={styles.section}>
+          <Text style={styles.heading}>Quotation Details</Text>
+          <Text style={styles.text}>Quotation Number: {quotation.number}</Text>
+          <Text style={styles.text}>Date: {quotation.date}</Text>
+          <Text style={styles.text}>Buyer: {quotation.buyer}</Text>
+          <Text style={styles.text}>Seller: {quotation.seller}</Text>
+          <Text style={styles.text}>Product: {quotation.product}</Text>
+          <Text style={styles.text}>Unit Price: {quotation.unit_price}</Text>
+          <Text style={styles.text}>Quantity: {quotation.quantity}</Text>
+          <Text style={styles.text}>Message: {quotation.message}</Text>
+          <Text style={styles.text}>Status: {confirmedQuotation === quotation.id ? 'Confirmed' : 'Pending'}</Text>
+          {/* Add more quotation details here */}
+        </View>
+      </Page>
+    </Document>
+  );
 
   const handleButtonClick = (section) => {
     setActiveSection(section);
@@ -485,6 +484,78 @@ const toggleInvoice = (invoiceNumber) => {
       // Optionally, you can show an error message or handle the error in other ways
     }
   };
+
+  const styles = StyleSheet.create({
+    page: {
+      backgroundColor: '#f2f2f2', // Light background color
+      padding: 20,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginBottom: 10,
+      textAlign: 'center',
+    },
+    head: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 20,
+    },
+    column: {
+      width: '30%',
+    },
+    body: {
+      marginBottom: 20,
+    },
+    footer: {
+      position: 'absolute',
+      bottom: 20,
+      left: 20,
+      right: 20,
+      textAlign: 'center',
+      fontSize: 10,
+      color: '#666666', // Text color
+    },
+  });
+  
+  const QuotationListPDF = ({ quotation }) => (
+    <Document>
+      <Page style={styles.page}>
+        <Text style={styles.title}>Quotation Details</Text>
+        <hr />
+        <View style={styles.head}>
+          <View style={styles.column}>
+            <Text>Quotation Number:</Text>
+            <Text>Date:</Text>
+            <Text>Buyer:</Text>
+          </View>
+          <View style={styles.column}>
+            <Text>{quotation.number}</Text>
+            <Text>{quotation.date}</Text>
+            <Text>{quotation.buyer}</Text>
+          </View>
+          <View style={styles.column}>
+            <Text>Seller:</Text>
+            <Text>Product:</Text>
+            <Text>Unit Price:</Text>
+          </View>
+          <View style={styles.column}>
+            <Text>{quotation.seller}</Text>
+            <Text>{quotation.product}</Text>
+            <Text>{quotation.unit_price}</Text>
+          </View>
+        </View>
+        <View style={styles.body}>
+          <Text>Message: {quotation.message}</Text>
+          <Text>Status: {confirmedQuotation === quotation.id ? 'Confirmed' : 'Pending'}</Text>
+        </View>
+        <View style={styles.footer}>
+          <Text>Thank you</Text>
+        </View>
+      </Page>
+    </Document>
+  );
+  
    
   return (
     <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
@@ -499,10 +570,9 @@ const toggleInvoice = (invoiceNumber) => {
       <Navbar.Collapse id="navbarNav">
         <Nav className="ml-auto" style={{fontWeight:'500'}}>
           <Nav.Link
-            onClick={() => handleButtonClick('InformationSection')}
-            className={`mr-2 text-white ${activeSection === 'InformationSection' ? 'active-buyer-button' : ''}`}
+            onClick={() => handleButtonClick('Quotation')}
+            className={`mr-2 text-white ${activeSection === 'Quotation' ? 'active-buyer-button' : ''}`}
           >
-            Info
           </Nav.Link>
           <Nav.Link
             className={`text-white ${activeSection === 'InvoiceList' ? 'active-buyer-button' : ''}`}
@@ -571,12 +641,13 @@ const toggleInvoice = (invoiceNumber) => {
           </Card.Body>
         </Card>
       )}
-{activeSection === 'InformationSection' && (
+{activeSection === 'Quotation' && (
   <div>
   <h5 className='mb-4' style={{ fontSize: '1.5rem' }}></h5>
 
   <div className="quotation-list-container" style={{ background: 'white', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', borderRadius: '10px', padding: '20px', color: '#999999', fontSize: '13px' }}>
     <h1 className="quotation-list-header text-secondary" style={{ fontSize: '1.8rem', marginBottom: '20px' }}>Quotation List</h1>
+   
     <table className="table">
       <thead>
         <tr>
@@ -589,6 +660,8 @@ const toggleInvoice = (invoiceNumber) => {
           <th className='text-secondary'>Message</th>
           <th className='text-secondary'>Status</th>
           <th className='text-secondary'>Action</th>
+          <th className='text-secondary'>Download PDF</th>
+
         </tr>
       </thead>
       <tbody>
@@ -620,6 +693,19 @@ const toggleInvoice = (invoiceNumber) => {
                 </button>
               )}
             </td>
+            <td className='text-secondary' style={{ textAlign: 'center' }}>
+  <div>
+    <PDFDownloadLink document={<QuotationListPDF quotation={quotation} />} fileName={`quotation_${quotation.id}.pdf`}>
+      {({ blob, url, loading, error }) =>
+        loading ? 'Loading document...' : 'Download PDF'
+      }
+    </PDFDownloadLink>
+  </div>
+</td>
+
+
+
+
           </tr>
         ))}
       </tbody>
@@ -839,7 +925,7 @@ const toggleInvoice = (invoiceNumber) => {
             <div style={{ width: '15px', height: '15px', backgroundColor: '#fff', borderRadius: '50%', border: '2px solid #007bff' }}></div>
           </div>
         </div>
-        <h6 className='mt-3 mb-2'>Current Statuses</h6>
+        <h6 className='mt- mb-2'>Current Statuses</h6>
           {logisticsStatuses.map((status) => (
            <div className="card mb-4" style={{ width: '100%', margin: 'auto' }}>
 

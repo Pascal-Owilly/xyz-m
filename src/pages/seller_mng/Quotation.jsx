@@ -216,7 +216,7 @@ const generatePDF = () => {
             <label htmlFor="message" className="form-label">Additional Message</label>
             <textarea className="form-control" id="message" name="message" value={formData.message} onChange={handleChange} rows="4"></textarea>
           </div>
-          <button type="button" className="btn btn-primary mb-2" style={{fontSize:'15px'}} onClick={handleSendQuotationAsPDF}>Send Quotation as PDF</button>
+          <button type="button" className="btn btn-primary mb-2" style={{fontSize:'15px'}} onClick={handleSubmit}>Send Quotation as PDF</button>
         </form>
       </div>
       <ToastContainer />

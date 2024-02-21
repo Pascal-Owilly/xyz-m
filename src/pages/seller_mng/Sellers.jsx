@@ -719,15 +719,15 @@ const formStyles = {
           <a href='/control-centers-single-trader' className={`nav-link`} style={{color:'#d9d9d9'}} id="home-tab">Control center</a>
         </li>
         <li className="nav-item">
-          <a href='/quotation' className={`nav-link`} style={{color:'#d9d9d9'}} id="home-tab">Quotation form</a>
+          <a href='/quotation' className={`nav-link`} style={{color:'#d9d9d9'}} id="home-tab">Send quotataion</a>
         </li>
        
-        <li className="nav-item">
+        {/* <li className="nav-item">
           <a className={`nav-link ${activeTab === 'Send LPO' ? 'active' : ''}`} id="profile-tab" onClick={() => handleTabClick('Send LPO')} role="tab" aria-controls="Send LPO" aria-selected={activeTab === 'Send LPO'}>Shipping clearing agent</a>
-        </li>
+        </li> */}
         
         <li className="nav-item">
-          <a className={`nav-link ${activeTab === 'Open LC' ? 'active' : ''}`} id="contact-tab" onClick={() => handleTabClick('Open LC')} role="tab" aria-controls="Open LC" aria-selected={activeTab === 'Open LC'}>Letter of credit attachment</a>
+          <a className={`nav-link ${activeTab === 'Open LC' ? 'active' : ''}`} id="contact-tab" onClick={() => handleTabClick('Open LC')} role="tab" aria-controls="Open LC" aria-selected={activeTab === 'Open LC'}>LC</a>
         </li>
         
       </ul>
@@ -1007,19 +1007,19 @@ const formStyles = {
       <Button variant="primary btn-sm mt-3" onClick={handleLcUpload} style={{ width: '100px', fontSize:'15px' }}>
         Upload
       </Button>
-      <Button className='bg-success' variant=" btn-sm mt-3 " onClick={handleLcUpload} style={{ width: '100%', fontSize:'15px' }}>
+      {/* <Button className='bg-success' variant=" btn-sm mt-3 " onClick={handleLcUpload} style={{ width: '100%', fontSize:'15px' }}>
         Send to bank
-      </Button>
+      </Button> */}
     </Form>
     
-    {lcUploadMessage && (
+    {/* {lcUploadMessage && (
       <div>
         <p className={lcUploadSuccess ? "text-success mt-3" : "text-danger mt-3"}>{lcUploadMessage}</p>
-        <Button className='btn btn-sm' variant="secondary" onClick={() => setActiveSection('BreederPayments')}>
+        <Button className='btn btn-sm' variant="secondary" onClick={() => setActiveSection('Dashboard')}>
           Back
         </Button>
       </div>
-    )}
+    )} */}
   </div>
 )}
       </Col>

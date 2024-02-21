@@ -5,10 +5,13 @@ import axios from 'axios';
 import { BASE_URL } from '../auth/config';
 import { useNavigate } from 'react-router-dom';
 import { Row, Col, Card, Container, Form, Table, Button, ProgressBar, Navbar, Nav, NavDropdown, Pagination, Modal } from 'react-bootstrap';
+import Cookies from 'js-cookie';
 
 const ControlCenters = () => {
   const baseUrl = BASE_URL;
   const navigate = useNavigate();
+  const accessToken = Cookies.get('accessToken');
+
   const [controlCenters, setControlCenters] = useState([]);
   const [collateralManagers, setCollateralManagers] = useState([]);
   const [selectedManager, setSelectedManager] = useState(null);
@@ -20,6 +23,10 @@ const ControlCenters = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [lcUploadMessage, setLcUploadMessage] = useState('');
+  const [lcUploadSuccess, setLcUploadSuccess] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
+  const [lcDocument, setLcDocument] = useState(null);
 
   useEffect(() => {
     // Fetch control centers and collateral managers from the backend when component mounts
@@ -78,6 +85,40 @@ const ControlCenters = () => {
   const [activeTab, setActiveTab] = useState('ControlCenters');
   const [billOfLading, setBillOfLading] = useState(null);
 
+  const handleLcUpload = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('lc_document', lcDocument);
+  
+      const response = await axios.post(
+        `${baseUrl}/api/letter_of_credits/`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'X-User-ID': userProfile?.user?.id,
+            'X-User-Email': userProfile?.user?.email,
+          },
+        }
+      );
+  
+      console.log('upload response', response);
+      if (response.status === 201) {
+        setLcUploadSuccess(true);
+        setLcUploadMessage('Document uploaded successfully');
+        // Optionally, you can perform additional actions upon successful upload
+      } else {
+        const data = response.data;
+        setLcUploadSuccess(false);
+        setLcUploadMessage(data.error || 'Error uploading document');
+      }
+    } catch (error) {
+      console.error('Error uploading document:', error);
+      setLcUploadSuccess(false);
+      setLcUploadMessage('Error uploading  document');
+    }
+  };
+
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
   };    
@@ -117,14 +158,9 @@ const ControlCenters = () => {
           <a className={`nav-link ${activeTab === 'ControlCenters' ? 'active' : ''}`} onClick={() => handleTabClick('ControlCenters')} role="tab" aria-controls="ControlCenters" aria-selected={activeTab === 'ControlCenters'}>Control Centers</a>
         </li>
         <li className="nav-item">
-          <a className={`nav-link ${activeTab === 'CollateralManager' ? 'active' : ''}`} onClick={() => handleTabClick('CollateralManager')} role="tab" aria-controls="CollateralManager" aria-selected={activeTab === 'CollateralManager'}>Collateral manager</a>
+          <a className={`nav-link ${activeTab === 'CollateralManager' ? 'active' : ''}`} onClick={() => handleTabClick('CollateralManager')} role="tab" aria-controls="CollateralManager" aria-selected={activeTab === 'CollateralManager'}>Documents</a>
         </li>
-        <li className="nav-item">
-          <a className={`nav-link ${activeTab === 'Sellers' ? 'active' : ''}`} onClick={() => handleTabClick('Sellers')} role="tab" aria-controls="Sellers" aria-selected={activeTab === 'Sellers'}>Sellers</a>
-        </li>
-        <li className="nav-item">
-          <a className={`nav-link ${activeTab === 'Buyers' ? 'active' : ''}`} onClick={() => handleTabClick('Buyers')} role="tab" aria-controls="Buyers" aria-selected={activeTab === 'Buyers'}>Buyers</a>
-        </li>
+        
       </ul>
 
 
@@ -211,19 +247,30 @@ const ControlCenters = () => {
   </div>
 )}
 
-      {activeTab === 'CollateralManager' && (
+       {activeTab === 'CollateralManager' && (
         <div>
-          <h2>Collateral Manager</h2>
-                      <hr />
-                      
+        <h6 className="text mb-4 mt-3">Upload Bill of lading</h6>
+        <Form>
+          <Form.Group controlId="lcDocument">
+            <Form.Label className="text-primary">Choose Document</Form.Label>
+            <Form.Control
+              type="file"
+              onChange={(e) => setLcDocument(e.target.files[0])}
+            />
+          </Form.Group>
+          <Button variant="primary btn-sm mt-3" onClick={handleLcUpload} style={{ width: '100px', fontSize:'15px' }}>
+            Upload
+          </Button>
+         
+        </Form>
+        
+        {lcUploadMessage && (
           <div>
-            <h4>Upload Bill of Lading</h4>
-            <input type="file" onChange={handleUploadBillOfLading} />
-            {billOfLading && (
-              <p>File uploaded: {billOfLading.name}</p>
-            )}
-          </div> 
-        </div>
+            <p className={lcUploadSuccess ? "text-success mt-3" : "text-danger mt-3"}>{lcUploadMessage}</p>
+
+          </div>
+        )}
+      </div>
       )}
 
       {activeTab === 'Sellers' && (

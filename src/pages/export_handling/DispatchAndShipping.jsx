@@ -6,30 +6,9 @@ import { FaTruck, FaShippingFast, FaCheck, FaArchive } from 'react-icons/fa';
 import axios from 'axios';
 import { BASE_URL } from '../auth/config';
 import { Row, Col, Card, Container, Form, Table, Button, Navbar, Nav, NavDropdown, Pagination, Modal} from 'react-bootstrap';
+import Cookies from 'js-cookie';
 
 const ExportHandling = ({packageInfo}) => {
-
-  // Define a functional component for the invoice modal
-const InvoiceModal = ({ invoiceDetails, handleClose }) => {
-  return (
-    <Modal show={true} onHide={handleClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>Invoice Details</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <p>Invoice Number: {invoiceDetails.invoice_number}</p>
-        <p>Amount: {invoiceDetails.amount}</p>
-        <p>Date: {invoiceDetails.date}</p>
-        {/* Add more invoice details as needed */}
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
-        </Button>
-      </Modal.Footer>
-    </Modal>
-  );
-};
 
   const baseUrl = BASE_URL;
   const [map, setMap] = useState(null);
@@ -42,11 +21,115 @@ const InvoiceModal = ({ invoiceDetails, handleClose }) => {
   const [disabledButtons, setDisabledButtons] = useState([]);
   const [activeSection, setActiveSection] = useState('InformationSection');
   const [selectedPackageInfo, setSelectedPackageInfo] = useState(null);
-
+  const [invoices, setInvoices] = useState([]);
+  const accessToken = Cookies.get('accessToken'); // Assuming your access token is stored in a cookie named 'accessToken'
+  const [showForm, setShowForm] = useState(false);
+  const [selectedInvoice, setSelectedinvoice] = useState(null)
   const [selectedInvoiceDetails, setSelectedInvoiceDetails] = useState(null);
   const [showPackageModal, setShowPackageModal] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [formData, setFormData] = useState({
+    package_name: '',
+    package_description: '',
+    package_charge: '',
+    weight: '',
+    height: '',
+    length: '',
+    logistics: {
+        time_of_delivery: '',
+        shipping_mode: '',
+        logistics_company: '',
+        invoice: null,
+    }
+});
 
+const handleModalToggle = () => {
+  setShowForm(!showForm);
+};
+
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  if (name === 'invoice') {
+    // Handle invoice selection separately
+    setSelectedInvoice(value);
+  } else if (name.includes('logistics.')) {
+    const logisticsField = name.split('.')[1];
+    setFormData({
+      ...formData,
+      logistics: {
+        ...formData.logistics,
+        [logisticsField]: value
+      }
+    });
+  } else {
+    setFormData({ ...formData, [name]: value });
+  }
+};
+
+
+useEffect(() => {
+  const fetchInvoices = async () => {
+    try {
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        };
+
+        const res = await axios.get(`${baseUrl}/api/generate-invoice/`, config);
+        const formattedInvoices = res.data.map(invoice => invoice.invoice_number);
+        setInvoices(['Select Invoice', ...formattedInvoices]);
+    } catch (error) {
+        console.error('Error fetching invoices:', error);
+    }
+};
+
+  fetchInvoices();
+}, [accessToken, baseUrl]);
+
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+      // First, create the invoice
+      const invoiceRes = await axios.post(`${baseUrl}/api/generate-invoice/`, formData, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      }); 
+      
+      console.log(invoiceRes.data); // Assuming the backend returns the created invoice object
+
+      // Extract the newly created invoice's ID from the response
+      const newInvoiceId = invoiceRes.data.id;
+
+      // Next, create the package info
+      const packageData = {
+          ...formData,
+          logistics: {
+              ...formData.logistics,
+              invoice: newInvoiceId, // Pass the newly created invoice ID
+          },
+      };
+      const packageRes = await axios.post(`${baseUrl}/api/package-info/`, packageData);
+      console.log(packageRes.data); // Assuming the backend returns the created package object
+
+      const logisticsData = {
+          ...packageData.logistics,
+          package_info: packageRes.data.id, // Assuming the backend returns the ID of the created package
+          status: 'ordered' // Default status for newly created logistics
+      };
+
+      const logisticsRes = await axios.post(`${baseUrl}/api/all-logistics-statuses/`, logisticsData);
+      console.log(logisticsRes.data); // Assuming the backend returns the created logistics object
+
+      // You can add further handling here, such as redirecting to a success page
+  } catch (error) {
+      console.error('Error creating package and logistics:', error);
+      // Handle error, show error message to user, etc.
+  }
+};
 
   const [show, setShow] = useState(false);
 
@@ -71,7 +154,7 @@ const InvoiceModal = ({ invoiceDetails, handleClose }) => {
   };
 
   const handleInvoiceDetailsClick = (invoiceNumber) => {
-    axios.get(`${baseUrl}/api/invoice/${invoiceNumber}/`)
+    axios.get(`${baseUrl}/api/generate-invoice/${invoiceNumber}/`)
       .then(response => {
         setSelectedInvoiceDetails(response.data);
         setShowInvoiceModal(true);
@@ -83,7 +166,6 @@ const InvoiceModal = ({ invoiceDetails, handleClose }) => {
 
   const handleCloseInvoiceModal = () => setShowInvoiceModal(false);
 
-  
   useEffect(() => {
 
   axios.get(`${baseUrl}/api/package-info/`)
@@ -353,6 +435,70 @@ const handleButtonClick = (section) => {
 
     <section className="" >
     <p className='mt-4'>Here, you'll be responsible for updating logistics statuses." Your attention to detail and timely updates in this area are crucial for maintaining accurate records and ensuring transparency in our shipping processes. </p>
+    <h2>Create Package</h2>
+    <Button onClick={handleModalToggle}>Create Package</Button>
+
+      <Modal show={showForm} onHide={handleModalToggle}>
+        <Modal.Header closeButton>
+          <Modal.Title>Create Package</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <form onSubmit={handleSubmit}>
+  <div className="form-group">
+    <label>Invoice:</label>
+    <select className="form-control" name="invoice" value={selectedInvoice} onChange={handleChange}>
+  <option value="">Select Invoice</option>
+  {invoices.map(invoice => (
+    <option key={invoice.id} value={invoice.id}>
+      {invoice.invoice_number}
+    </option>
+  ))}
+</select>
+
+  </div>
+  <div className="form-group">
+    <label>Package Name:</label>
+    <input className="form-control" type="text" name="package_name" value={formData.package_name} onChange={handleChange} />
+  </div>
+  <div className="form-group">
+    <label>Package Description:</label>
+    <input className="form-control" type="text" name="package_description" value={formData.package_description} onChange={handleChange} />
+  </div>
+  <div className="form-group">
+    <label>Package Charge:</label>
+    <input className="form-control" type="text" name="package_charge" value={formData.package_charge} onChange={handleChange} />
+  </div>
+  <div className="form-group">
+    <label>Weight:</label>
+    <input className="form-control" type="text" name="weight" value={formData.weight} onChange={handleChange} />
+  </div>
+  <div className="form-group">
+    <label>Height:</label>
+    <input className="form-control" type="text" name="height" value={formData.height} onChange={handleChange} />
+  </div>
+  <div className="form-group">
+    <label>Length:</label>
+    <input className="form-control" type="text" name="length" value={formData.length} onChange={handleChange} />
+  </div>
+  <div className="form-group">
+    <label>Time of Delivery:</label>
+    <input className="form-control" type="date" name="logistics.time_of_delivery" value={formData.logistics.time_of_delivery} onChange={handleChange} />
+  </div>
+  <div className="form-group">
+    <label>Shipping Mode:</label>
+    <input className="form-control" type="text" name="logistics.shipping_mode" value={formData.logistics.shipping_mode} onChange={handleChange} />
+  </div>
+  <div className="form-group">
+    <label>Logistics Company:</label>
+    <input className="form-control" type="text" name="logistics.logistics_company" value={formData.logistics.logistics_company} onChange={handleChange} />
+  </div>
+  <Button variant="primary" type="submit">
+    Create Package
+  </Button>
+</form>
+
+        </Modal.Body>
+      </Modal>
 
     <div>
       {updateMessage && <div className="alert alert-success">{updateMessage}</div>}

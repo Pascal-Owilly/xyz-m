@@ -105,7 +105,7 @@ const ActiveOrders = () => {
       <div style={{ display: 'flex', flexDirection: 'column' }}>
       {currentOrders.reverse().map((order, index) => (
           order.confirmed && (
-            <table className='table table-striped table-responsive' key={order.id}>
+            <table className='table table-striped table-responsive' key={order.id} style={{width:'100%'}}>
               <thead className='' style={{color:'#666666'}}>
                 <tr>
                   <th style={{ fontWeight: 'bold', fontSize:'16px' }}>Order Number</th>

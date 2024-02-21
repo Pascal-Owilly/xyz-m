@@ -149,6 +149,41 @@ const sections = [
    // Change page
    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const [sellers, setSellers] = useState([]);
+  const [buyers, setBuyers] = useState([]);
+  const [collateralManagers, setCollateralManagers] = useState([]);
+
+  useEffect(() => {
+    // Fetch sellers
+    axios.get(`${baseUrl}/api/sellers/`)
+      .then(response => {
+        setSellers(response.data);
+        
+      })
+      .catch(error => {
+        console.error('Error fetching sellers:', error);
+      });
+
+    // Fetch buyers
+    axios.get(`${baseUrl}/api/buyers/`)
+      .then(response => {
+        setBuyers(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching buyers:', error);
+      });
+
+    // Fetch collateral managers
+    axios.get(`${baseUrl}/api/collateral-managers/`)
+      .then(response => {
+        setCollateralManagers(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching collateral managers:', error);
+      });
+  }, [baseUrl]);
+
+
   return (
     <div className='main-container' style={{minHeight:'85vh'}}>
       <ul className="nav nav-tabs" id="myTab" role="tablist" style={{fontSize:'15px', backgroundColor:'#001b40', color:'#d9d9d9'}}>
@@ -170,7 +205,7 @@ const sections = [
       <Card.Body>
         
         <p style={{ color:'#666666' }}><FaUser size={30} color="#666666" /> Sellers</p>
-        <p style={{ color:'#666666', fontSize: '20px', fontWeight: 'bold' }}>1234</p> {/* Dummy number */}
+        <p style={{ color:'#666666', fontSize: '20px', fontWeight: 'bold' }}>{sellers.length}</p> {/* Dummy number */}
       </Card.Body>
     </div>
   </Col>
@@ -178,8 +213,8 @@ const sections = [
     <div className="shadow p-3 mb-5 bg-body rounded">
       <Card.Body>
         
-        <p style={{ color:'#666666' }}><FaUserShield size={30} color="#666666" /> Agents</p>
-        <p style={{ color:'#666666', fontSize: '20px', fontWeight: 'bold' }}>5678</p> {/* Dummy number */}
+        <p style={{ color:'#666666' }}><FaUserShield size={30} color="#666666" />&nbsp; Agents</p>
+        <p style={{ color:'#666666', fontSize: '20px', fontWeight: 'bold' }}>{collateralManagers.length}</p> {/* Dummy number */}
       </Card.Body>
     </div>
   </Col>
@@ -188,7 +223,7 @@ const sections = [
       <Card.Body>
         
         <p style={{ color:'' }}><FaShoppingBag size={30} color="#666666" /> Buyers</p>
-        <p style={{ color:'', fontSize: '20px', fontWeight: 'bold' }}>9012</p> {/* Dummy number */}
+        <p style={{ color:'', fontSize: '20px', fontWeight: 'bold' }}>{buyers.length}</p> {/* Dummy number */}
       </Card.Body>
     </div>
   </Col>
@@ -279,12 +314,17 @@ const sections = [
     ))}
     {/* Upload form for LC */}
     {showUpload && (
-      <div>
-        <input type="file" onChange={handleUploadLC} />
-        {lcFile && (
-          <p>File uploaded: {lcFile.name}</p>
-        )}
-      </div>
+       <div>
+       <h4 className="text-success mb-4">Letter of Credit Document Uploaded Successfully</h4>
+       <p className="text-success">
+         <br />
+         Thank you
+       </p>
+       <Button variant="secondary btn-sm" onClick={() => setActiveSection('BreederPayments')} className="mt-3">
+         Back 
+       </Button>
+     </div>
+     
     )}
   </div>
 )}

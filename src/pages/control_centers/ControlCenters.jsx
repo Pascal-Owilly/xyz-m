@@ -34,7 +34,8 @@ const ControlCenters = () => {
   const [confirmUpdate, setConfirmUpdate] = useState(false);
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
-  
+  const [lcDocument, setLcDocument] = useState(null);
+
   // Add state variables to hold the data for buyers and sellers
 const [buyers, setBuyers] = useState([]);
 const [sellers, setSellers] = useState([]);
