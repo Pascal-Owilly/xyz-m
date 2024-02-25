@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import PurchaseOrders from '../seller_mng/PurchaseOrdersSeller';
 
 // convert quotation to pdf
-import { PDFDownloadLink, Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
+import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
 
 
 const CustomerServiceDashboard = () => {
@@ -174,7 +174,6 @@ const toggleInvoice = (invoiceNumber) => {
     [invoiceNumber]: !prevExpanded[invoiceNumber],
   }));
 };
-
 
   useEffect(() => {
     // Fetch letter of credits from the new endpoint with headers
@@ -387,8 +386,6 @@ const toggleInvoice = (invoiceNumber) => {
     );
   };
 
-
-
   const QuotationPDF = ({ quotation }) => (
     <Document>
       <Page style={styles.page}>
@@ -445,6 +442,7 @@ const toggleInvoice = (invoiceNumber) => {
           },
         });
         setQuotations(response.data);
+        console.log('quotation response', response.data)
       } catch (error) {
         console.error('Error fetching quotations:', error);
       }
@@ -463,147 +461,180 @@ const toggleInvoice = (invoiceNumber) => {
           // Include other required fields here
           buyer:  quotations.find(q => q.id === quotationId).buyer,
           seller:  quotations.find(q => q.id === quotationId).seller,
-  
           product: quotations.find(q => q.id === quotationId).product,
           message:  quotations.find(q => q.id === quotationId).message,
           quantity: quotations.find(q => q.id === quotationId).quantity,
           unit_price: quotations.find(q => q.id === quotationId).unit_price,
         },
-     
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      setConfirmedQuotation(quotationId); // Update the confirmedQuotation state with the ID of the confirmed 
-      navigate('/purchase-order');
-
-      // Optionally, you can show a success message or perform other actions upon successful confirmation
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+  
+      setConfirmedQuotation(quotationId); // Update the confirmedQuotation state with the ID of the confirmed quotation
+  
+      // Redirect to the success page
+      navigate(`/buyer-confirmation`);
     } catch (error) {
       console.error('Error confirming quotation:', error);
-      // Optionally, you can show an error message or handle the error in other ways
+      // Show error message toast notification
+      toast.error('Failed to confirm quotation. Please try again later.', {
+        position: 'top-center',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
   };
+  
+  
+const styles = StyleSheet.create({
+  page: {
+    // fontFamily: 'Arial',
+    padding: 30,
+    lineHeight: 1.5,
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 20,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    textDecoration: 'underline',
+    color: '#008000', // Green color
+  },
+  section: {
+    marginBottom: 20,
+  },
+  label: {
+    fontWeight: 'bold',
+    color: '#008000', // Green color
+    fontSize: 13, // Font size 13px
+  },
+  text: {
+    fontSize: 18, // Font size 18px
+    color: '#666666', // Gray color
+  },
+  footer: {
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  hr: {
+    borderBottom: '1px solid #000',
+    marginBottom: 10,
+  },
+});
 
-  const styles = StyleSheet.create({
-    page: {
-      backgroundColor: '#f2f2f2', // Light background color
-      padding: 20,
-    },
-    title: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      marginBottom: 10,
-      textAlign: 'center',
-    },
-    head: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 20,
-    },
-    column: {
-      width: '30%',
-    },
-    body: {
-      marginBottom: 20,
-    },
-    footer: {
-      position: 'absolute',
-      bottom: 20,
-      left: 20,
-      right: 20,
-      textAlign: 'center',
-      fontSize: 10,
-      color: '#666666', // Text color
-    },
-  });
+const QuotationListPDF = ({ quotation }) => (
+  <Document>
+    <Page style={styles.page}>
+      <Text style={styles.title}>Quotation Details</Text>
+      <View style={styles.hr} />
+
+      <View style={styles.section}>
+        <Text style={styles.label}>Quotation Number:</Text>
+        <Text style={styles.text}>{quotation.number}</Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.label}>Date:</Text>
+        <Text style={styles.text}>{quotation.date}</Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.label}>Buyer:</Text>
+        <Text style={styles.text}>{quotation.buyer}</Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.label}>Seller:</Text>
+        <Text style={styles.text}>{quotation.seller}</Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.label}>Product:</Text>
+        <Text style={styles.text}>{quotation.product}</Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.label}>Unit Price:</Text>
+        <Text style={styles.text}>{quotation.unit_price}</Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.label}>Message:</Text>
+        <Text style={styles.text}>{quotation.message}</Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.label}>Status:</Text>
+        <Text style={styles.text}>{confirmedQuotation === quotation.id ? 'Confirmed' : 'Pending'}</Text>
+      </View>
+
+      <View style={styles.footer}>
+        <Text>Thank you</Text>
+      </View>
+    </Page>
+  </Document>
+);
+
+
   
-  const QuotationListPDF = ({ quotation }) => (
-    <Document>
-      <Page style={styles.page}>
-        <Text style={styles.title}>Quotation Details</Text>
-        <hr />
-        <View style={styles.head}>
-          <View style={styles.column}>
-            <Text>Quotation Number:</Text>
-            <Text>Date:</Text>
-            <Text>Buyer:</Text>
-          </View>
-          <View style={styles.column}>
-            <Text>{quotation.number}</Text>
-            <Text>{quotation.date}</Text>
-            <Text>{quotation.buyer}</Text>
-          </View>
-          <View style={styles.column}>
-            <Text>Seller:</Text>
-            <Text>Product:</Text>
-            <Text>Unit Price:</Text>
-          </View>
-          <View style={styles.column}>
-            <Text>{quotation.seller}</Text>
-            <Text>{quotation.product}</Text>
-            <Text>{quotation.unit_price}</Text>
-          </View>
-        </View>
-        <View style={styles.body}>
-          <Text>Message: {quotation.message}</Text>
-          <Text>Status: {confirmedQuotation === quotation.id ? 'Confirmed' : 'Pending'}</Text>
-        </View>
-        <View style={styles.footer}>
-          <Text>Thank you</Text>
-        </View>
-      </Page>
-    </Document>
-  );
-  
-   
   return (
     <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
 
         {/* Navbar */}
-        <Navbar bg="" expand="lg" variant="dark" style={{backgroundColor:'#001b40'}}>
-      <Navbar.Brand>
-      Welcome,  {userName && <span style={{ fontWeight: '' }}>{userName}</span>}
-
-      </Navbar.Brand>
-      <Navbar.Toggle aria-controls="navbarNav" />
-      <Navbar.Collapse id="navbarNav">
-        <Nav className="ml-auto" style={{fontWeight:'500'}}>
-          <Nav.Link
-            onClick={() => handleButtonClick('Quotation')}
-            className={`mr-2 text-white ${activeSection === 'Quotation' ? 'active-buyer-button' : ''}`}
-          >
-          </Nav.Link>
-          <Nav.Link
-            className={`text-white ${activeSection === 'InvoiceList' ? 'active-buyer-button' : ''}`}
-            onClick={() => handleButtonClick('InvoiceList')}
-          >
-            Received Quotations
-          </Nav.Link>
-
-          <Nav.Link
-            className={`text-white ${activeSection === 'InvoiceList' ? 'active-buyer-button' : ''}`}
-            onClick={() => handleButtonClick('InvoiceList')}
-          >
-            Send purchase orders
-          </Nav.Link>
-          <Nav.Link
-            className={`text-white ${activeSection === 'InvoiceTracking' ? 'active-buyer-button' : ''}`}
-            onClick={() => handleButtonClick('InvoiceTracking')}
-          >
-            Shipping Tracking
-          </Nav.Link>
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
+        <ul className="nav nav-tabs" id="myTab" role="tablist" style={{ fontSize: '15px', backgroundColor: '#001b40', color: '#d9d9d9' }}>
+      <li className="nav-item">
+        <a
+          className={`nav-link ${activeSection === 'Quotation' ? 'active' : ''}`}
+          onClick={() => handleButtonClick('Quotation')}
+          role="tab"
+          aria-controls="Quotation"
+          aria-selected={activeSection === 'Quotation'}
+        >
+          Quotation
+        </a>
+      </li>
+      <li className="nav-item">
+        <a
+          className={`nav-link ${activeSection === 'InvoiceList' ? 'active' : ''}`}
+          onClick={() => handleButtonClick('InvoiceList')}
+          role="tab"
+          aria-controls="InvoiceList"
+          aria-selected={activeSection === 'InvoiceList'}
+        >
+          Invoices
+        </a>
+      </li>
+ 
+      <li className="nav-item">
+        <a
+          className={`nav-link ${activeSection === 'InvoiceTracking' ? 'active' : ''}`}
+          onClick={() => handleButtonClick('InvoiceTracking')}
+          role="tab"
+          aria-controls="InvoiceTracking"
+          aria-selected={activeSection === 'InvoiceTracking'}
+        >
+          Shipping Tracking
+        </a>
+      </li>
+      <li className="nav-item ml-auto">
+        <span className="nav-link">Hello, {userName}</span>
+      </li>
+    </ul>
         <hr />
 
         {/* contact form */}
 
         {/* Floating Message Icon */}
-        <div className="floating-message-icon" onClick={handleModalShow}>
+        {/* <div className="floating-message-icon" onClick={handleModalShow}>
         <FaEnvelope size={30} className="" style={{color:'#001b40'}}/>
-      </div>
+      </div> */}
 
       {/* Contact Form */}
         <Modal show={showModal} onHide={handleModalClose}>
@@ -642,44 +673,57 @@ const toggleInvoice = (invoiceNumber) => {
         </Card>
       )}
 {activeSection === 'Quotation' && (
-  <div>
-  <h5 className='mb-4' style={{ fontSize: '1.5rem' }}></h5>
-
   <div className="quotation-list-container" style={{ background: 'white', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', borderRadius: '10px', padding: '20px', color: '#999999', fontSize: '13px' }}>
-    <h1 className="quotation-list-header text-secondary" style={{ fontSize: '1.8rem', marginBottom: '20px' }}>Quotation List</h1>
+    <h1 className="quotation-list-header text-secondary" style={{ fontSize: '1.5rem', marginBottom: '20px' }}>Quotation List</h1>
    
-    <table className="table">
+    <table className="table responsive">
       <thead>
         <tr>
-          <th className='text-secondary'>Quotation Number</th>
-          <th className='text-secondary'>Buyer</th>
-          <th className='text-secondary'>Seller</th>
-          <th className='text-secondary'>Product</th>
-          <th className='text-secondary'>Unit Price</th>
-          <th className='text-secondary'>Quantity</th>
-          <th className='text-secondary'>Message</th>
-          <th className='text-secondary'>Status</th>
-          <th className='text-secondary'>Action</th>
-          <th className='text-secondary'>Download PDF</th>
+          <th className='' style={{color:'#666666'}}>Number</th>
+          <th className='' style={{color:'#666666'}}>Seller</th>
 
+          <th className='' style={{color:'#666666'}}>Product</th>
+          <th className='' style={{color:'#666666'}}>Unit Price</th>
+          <th className='' style={{color:'#666666'}}>Quantity</th>
+          <th className='' style={{color:'#666666'}}>Message</th>
+          <th className='' style={{color:'#666666'}}>Status</th>
+          <th className='' style={{color:'#666666'}}>Action</th>
+          <th className='' style={{color:'#666666'}}>Download </th>
         </tr>
       </thead>
       <tbody>
         {quotations.slice().reverse().map((quotation) => (
           <tr key={quotation.id}>
-            <td className='text-secondary'>{quotation.id}</td>
-            <td className='text-secondary'>{quotation.buyer}</td>
-            <td className='text-secondary'>{quotation.seller}</td>
-            <td className='text-secondary'>{quotation.product}</td>
-            <td className='text-secondary'>{quotation.unit_price}</td>
-            <td className='text-secondary'>{quotation.quantity}</td>
-            <td className='text-secondary'>{quotation.message}</td>
-            <td className='text-secondary'>{confirmedQuotation === quotation.id ? 'Confirmed' : 'Pending'}</td>
-            <td className='text-secondary'>
-              {confirmedQuotation !== quotation.id && (
+            <td className='text' style={{color:'#666666'}}>#{quotation.id}</td>
+            <td className='text' style={{color:'#666666'}}>{quotation.seller} Pascal</td>
+
+            <td className='text' style={{color:'#666666'}}>{quotation.product}</td>
+            <td className='text' style={{color:'#666666'}}>{quotation.unit_price}</td>
+            <td className='text' style={{color:'#666666'}}>{quotation.quantity}</td>
+            <td className='text' style={{color:'#666666'}}>{quotation.message}</td>
+            <td className='text' style={{color:'#666666'}}>
+              {quotation.confirm ? 'Confirmed' : 'Pending'}
+            </td>
+            <td className='text' style={{color:'#666666'}}>
+              {quotation.confirm ? (
+                <button
+                  disabled
+                  style={{
+                    fontSize: '13px',
+                    padding: '5px 10px',
+                    borderRadius: '5px',
+                    background: 'green',
+                    color: 'white',
+                    border: 'none',
+                    cursor: 'not-allowed'
+                  }}
+                >
+                  Confirmed
+                </button>
+              ) : (
                 <button
                   onClick={() => handleConfirm(quotation.id)}
-                  disabled={isConfirming(quotation.id)}
+                  disabled={isConfirming(quotation.id) || confirmedQuotation === quotation.id}
                   style={{
                     fontSize: '13px',
                     padding: '5px 10px',
@@ -688,38 +732,39 @@ const toggleInvoice = (invoiceNumber) => {
                     color: 'white',
                     border: 'none',
                     cursor: isConfirming(quotation.id) ? 'not-allowed' : 'pointer'
-                  }}>
+                  }}
+                >
                   {isConfirming(quotation.id) ? 'Confirming...' : 'Confirm'}
                 </button>
               )}
             </td>
-            <td className='text-secondary' style={{ textAlign: 'center' }}>
-  <div>
+            <div className='d-flex mt-3 mx-3'>
     <PDFDownloadLink document={<QuotationListPDF quotation={quotation} />} fileName={`quotation_${quotation.id}.pdf`}>
-      {({ blob, url, loading, error }) =>
-        loading ? 'Loading document...' : 'Download PDF'
-      }
+      {({ blob, url, loading, error }) => (
+        <a
+          href={loading ? '#' : url || '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontSize: '15px',
+            borderRadius: '5px',
+            background: loading ? '#999999' : '#fff',
+            color: '#666666',
+            textDecoration: 'none',
+            cursor: loading ? 'not-allowed' : 'pointer'
+          }}
+        >
+          {loading ? 'Loading...' : 'View PDF'}
+        </a>
+      )}
     </PDFDownloadLink>
-  </div>
-</td>
-
-
-
-
-          </tr>
+  </div>          </tr>
         ))}
       </tbody>
     </table>
-    <Pagination>
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-        <Pagination.Item key={page} active={page === currentPage} onClick={() => paginate(page)}>
-          {page}
-        </Pagination.Item>
-      ))}
-    </Pagination>
   </div>
-</div>
 )}
+
 
 
 {activeSection === 'LetterOfCredit' && (

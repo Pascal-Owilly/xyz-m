@@ -29,10 +29,11 @@ const PurchaseOrders = () => {
     const fetchPurchaseOrders = async () => {
       try {
         // Fetch all purchase orders from the API
-        const response = await axios.get(`${baseUrl}/api/purchase-orders/`);
+        const response = await axios.get(`${baseUrl}/api/quotations/`);
         // Set the response data to state
         setPurchaseOrders(response.data);
         setLoading(false); // Set loading to false once data is fetched
+        console.log('quotation list', response.data)
       } catch (error) {
         console.error('Error fetching purchase orders:', error);
         setError(error); // Set error state if there's an error

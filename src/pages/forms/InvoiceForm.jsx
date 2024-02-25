@@ -39,73 +39,71 @@ useEffect(() => {
   fetchUserData();
 }, [navigate, accessToken]);
 
-  const refreshAccessToken = async () => {
-    try {
-      console.log('fetching token refresh ... ')
 
-      const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
-  
-      const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
-        refresh: refreshToken,
-      });
-  
-      const newAccessToken = response.data.access;
-      // Update the stored access token
-      Cookies.set('accessToken', newAccessToken);
-      // Optional: You can also update the user data using the new access token
-      await fetchUserData();
-    } catch (error) {
-      console.error('Error refreshing access token:', error);
-      // Handle the error, e.g., redirect to login page
-    }
-  };
 
   useEffect(() => {
 
-    const refreshAccessToken = async () => {
-      try {
-        console.log('fetching token refresh ... ')
+    // const refreshAccessToken = async () => {
+    //   try {
+    //     console.log('fetching token refresh ... ')
   
-        const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
+    //     const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
     
-        const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
-          refresh: refreshToken,
-        });
+    //     const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+    //       refresh: refreshToken,
+    //     });
     
-        const newAccessToken = response.data.access;
-        // Update the stored access token
-        Cookies.set('accessToken', newAccessToken);
-        // Optional: You can also update the user data using the new access token
-        await fetchUserData();
-      } catch (error) {
-        console.error('Error refreshing access token:', error);
-        // Handle the error, e.g., redirect to login page
-      }
-    };
+    //     const newAccessToken = response.data.access;
+    //     // Update the stored access token
+    //     Cookies.set('accessToken', newAccessToken);
+    //     // Optional: You can also update the user data using the new access token
+    //     await fetchUserData();
+    //   } catch (error) {
+    //     console.error('Error refreshing access token:', error);
+    //     // Handle the error, e.g., redirect to login page
+    //   }
+    // };
 
-    
     const fetchData = async () => {
       try {
-        const abattoirResponse = await axios.get(`${baseUrl}/api/abattoirs/`, {
+        // Fetch seller data for the currently logged-in breeder
+        const response = await axios.get(`${baseUrl}/api/sellers/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
+          params: {
+            breeder_id: user?.id, // Pass the currently logged-in breeder's ID as a parameter
+          },
         });
-
-        // ... (other code)
+    
+        const sellerData = response.data;
+        console.log('seller data', sellerData); // Log the sellerData array
+    
+        // Set Abattoir name to the full name of the first seller related to the breeder
+        if (sellerData.length > 0) {
+          setFormData((prevData) => ({
+            ...prevData,
+            abattoir_name: sellerData[0]?.full_name || '',
+          }));
+        } else {
+          console.error('No seller data found for the breeder.');
+          // Handle the case where no seller data is found
+        }
       } catch (error) {
         if (error.response && error.response.status === 401) {
           // Token expired, try refreshing the token
           await refreshAccessToken();
-          // Retry fetching user data
-          await fetchUserData();
+          // Retry fetching data
+          await fetchData();
         } else {
           // Handle other errors
+          console.error('Error fetching seller data:', error);
+          // You can set an error state here to display an error message to the user
         }
       }
     };
-
+    
     fetchData();
   }, [accessToken, user]);
 
@@ -147,22 +145,30 @@ useEffect(() => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const abattoirResponse = await axios.get(`${baseUrl}/api/abattoirs/`, {
+        // Fetch seller data for the currently logged-in breeder
+        const abattoirResponse = await axios.get(`${baseUrl}/api/sellers/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
+          params: {
+            breeder_id: user?.id, // Pass the currently logged-in breeder's ID as a parameter
+          },
         });
-
+  
         const abattoirData = abattoirResponse.data;
+        console.log('seller data', abattoirData);
+  
+        // Set default abattoir name if available
         if (abattoirData.length > 0) {
           setFormData((prevData) => ({
             ...prevData,
             abattoir: abattoirData[0].id,
-            abattoir_name: abattoirData[0].user,
+            abattoir_name: abattoirData[0].full_name,
           }));
         }
-
+  
+        // Set default breeder name
         setFormData((prevData) => ({
           ...prevData,
           breeder: user?.id,
@@ -172,18 +178,14 @@ useEffect(() => {
       } catch (error) {
         if (error.response && error.response.status === 401) {
           await refreshAccessToken();
-        } 
-        console.error('Error fetching data:', error);
-        if (error.response && error.response.status === 401) {
-          await refreshAccessToken();
-          await fetchUserData();
         }
+        console.error('Error fetching data:', error);
       }
     };
-
+  
     fetchData();
   }, [accessToken, user]);
-
+  
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
@@ -531,9 +533,9 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
             {/* </td> */}
 
             {/* </tr> */}
-            {/* <tr> */}
-              {/* <th style={{ border: '1px dotted black', padding: '5px' }}>Abattoir Name</th> */}
-              {/* <td style={{ border: '1px dotted black', padding: '5px', textTransform:'capitalize' }}> */}
+            <tr>
+              <th style={{ border: '1px dotted black', padding: '5px' }}>Abattoir Name</th>
+              <td style={{ border: '1px dotted black', padding: '5px', textTransform:'capitalize' }}>
                 <input
                 style={{}}
                   type="hidden"
@@ -542,8 +544,8 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
                   readOnly
                   className='form-control'
                 />
-              {/* </td> */}
-            {/* </tr> */}
+              </td>
+            </tr>
           </tbody>
         </table>
         <button

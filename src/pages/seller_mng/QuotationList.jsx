@@ -68,7 +68,7 @@ const [expandedInvoices, setExpandedInvoices] = useState({});
     const fetchQuotations = async () => {
       try {
         const accessToken = Cookies.get('accessToken');
-        const response = await axios.get(`${baseUrl}/api/send-quotation/`, {
+        const response = await axios.get(`${baseUrl}/api/quotations/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -171,7 +171,6 @@ const [expandedInvoices, setExpandedInvoices] = useState({});
         <th>Quotation ID</th>
       
         <th>Buyer</th>
-        <th>Seller</th>
         <th>Product</th>
         <th>Unit Price</th>
         <th>Quantity</th>
@@ -194,11 +193,7 @@ const [expandedInvoices, setExpandedInvoices] = useState({});
               {quotation.buyer}
             </div>
           </td>
-          <td>
-            <div className="card" style={{ boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', borderRadius: '5px', padding: '10px' }}>
-              {quotation.seller}
-            </div>
-          </td>
+
           <td>
             <div className="card" style={{ boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', borderRadius: '5px', padding: '10px' }}>
               {quotation.product}

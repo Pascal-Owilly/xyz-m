@@ -39,7 +39,6 @@ const navigate =useNavigate()
   const [defaultTextColor, setDefaultTextColor] = useState('#000000');
   const [userRole, setUserRole] = useState('loading'); // Initialize with 'loading'
 
-
 // USE THIS INSTEAD INCASE OF DIFEERENT BEHAVIOUR IN USER SESSION
       // useEffect(() => {
       //   if (accessToken && baseUrl) {
@@ -67,11 +66,9 @@ useEffect(() => {
   })
   }, []);
 
-
 const toggleNotificationPanel = () => {
 	setIsNotificationPanelVisible(!isNotificationPanelVisible);
   };
-  
   
 useEffect(() => {
 	setDefaultBackgroundColor('#0074cc');
@@ -103,7 +100,6 @@ useEffect(() => {
 	setIsDashboardsVisible(!isDashboardsVisible);
  };
  
-
   useEffect(() => {
     const storedToken = Cookies.get('accessToken');
     if (storedToken) {
@@ -134,7 +130,6 @@ useEffect(() => {
     };
   }, []);
   
-
   const refreshAccessToken = async () => {
     try {
       console.log('fetching token refresh ... ')
@@ -156,7 +151,6 @@ useEffect(() => {
     }
   };
   
-
   const fetchUserData = async () => {
     try {
       const accessToken = Cookies.get('accessToken');
@@ -184,7 +178,6 @@ useEffect(() => {
     }
   };
   
-
 // const fetchProfile = async () => {
 //   try {
 //     const response = await axios.get(`${baseUrl}/auth/user/`, {
@@ -214,8 +207,6 @@ const logout = async () => {
     setIsSettingsDropdownVisible(false);
     setIsLeftSidebarVisible(false);
 
-    
-
     // Redirect based on user role
     // switch (userRole) {
     //   case 'superuser':
@@ -237,6 +228,7 @@ const logout = async () => {
     //   default:
     //     navigate('/');
     // }
+
   } catch (error) {
     console.error('Failed to logout', error);
   }
@@ -253,7 +245,6 @@ const logout = async () => {
   const handleLeftSidebarToggle = () => {
     setIsLeftSidebarVisible(!isLeftSidebarVisible);
   };
-
 
 	const [isChecked, setIsChecked] = useState(false);
 

@@ -10,15 +10,14 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function QuotationForm() {
-
-
   const navigate = useNavigate();
-
   const baseUrl = BASE_URL;
   const accessToken = Cookies.get('accessToken');
   const [buyers, setBuyers] = useState([]);
+  const [sellers, setSellers] = useState([]);
 
   const [formData, setFormData] = useState({
+    seller: null,
     buyer: null,
     product: '',
     quantity: '',
@@ -27,7 +26,11 @@ function QuotationForm() {
     delivery_time: null,
   });
 
-  
+  const [formDataSeller, setFormDataSeller] = useState({
+    full_name: '',
+    id: null,
+
+  });
 
   useEffect(() => {
     const fetchBuyers = async () => {
@@ -38,13 +41,30 @@ function QuotationForm() {
           },
         });
         setBuyers(response.data);
-        console.log('buyer data', response.data)
       } catch (error) {
         console.error('Error fetching buyers:', error);
       }
     };
 
     fetchBuyers();
+  }, [baseUrl, accessToken]);
+
+  useEffect(() => {
+    const fetchSellers = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/api/sellers/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        console.log('sellers', response.data)
+        setSellers(response.data);
+      } catch (error) {
+        console.error('Error fetching sellers:', error);
+      }
+    };
+
+    fetchSellers();
   }, [baseUrl, accessToken]);
 
   const handleChange = (e) => {
@@ -55,19 +75,32 @@ function QuotationForm() {
     });
   };
 
+  const handleSellerChange = (e) => {
+    const { name, value } = e.target;
+    setFormDataSeller({
+      ...formDataSeller,
+      [name]: value,
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await postData();
-      toast.success('Quotation submitted successfully! Please wait for confirmation from the buyer. Thank you', {
+      toast.success(<div>Quotation submitted successfully!<br /> <br />Redirecting ...</div>, {
         position: 'top-center',
-        autoClose: 7000,
+        autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
       });
+  
+      // Redirect to the quotations list after 3 seconds
+      setTimeout(() => {
+        navigate('/quotation-submission-success');
+      }, 3000);
     } catch (error) {
       toast.error('Failed to submit quotation. Please try again later.', {
         position: 'top-center',
@@ -80,6 +113,7 @@ function QuotationForm() {
       });
     }
   };
+  
 
   const postData = async () => {
     try {
@@ -89,76 +123,13 @@ function QuotationForm() {
         },
       };
 
-      const postResponse = await axios.post(`${baseUrl}/api/send-quotation/`, formData, config);
-      console.log('Quotation created successfully', postResponse);
+      await axios.post(`${baseUrl}/api/send-quotation/`, formData, config);
     } catch (error) {
       console.error('Error creating quotation:', error);
       throw error;
     }
   };
 
-const generatePDF = () => {
-  const doc = new jsPDF();
-  const selectedBuyer = buyers.find(buyer => buyer.id === formData.buyer);
-  if (!selectedBuyer) {
-    console.error('Selected buyer not found');
-    return null; // Return null if selected buyer is not found
-  }
-  // Header
-  const header = `
-  Buyer Details:
-  Name: ${selectedBuyer.id} 
-  Address: ${selectedBuyer.address}
-  Country: ${selectedBuyer.country}
-`;
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  doc.text(header, 10, 10);
-
-  // Body (Table)
-  const { buyer, product, unit_price, quantity, delivery_time, message } = formData;
-  const data = [
-    ['Buyer', buyer],
-    ['Product Name', product],
-    ['Unit Price', unit_price],
-    ['Quantity', quantity],
-    ['Delivery Date', delivery_time],
-    ['Additional Message', message]
-  ];
-  doc.autoTable({
-    startY: 40,
-    head: [['Field', 'Value']],
-    body: data,
-    theme: 'striped', // Apply striped theme
-    styles: { cellPadding: 5, fontSize: 12 },
-    columnStyles: { 0: { fontStyle: 'bold' } }
-  });
-
-  // Footer
-  const footer = `
-    Confirm: [ ] Yes, I confirm this quotation
-  `;
-  doc.setTextColor(0); // Reset color to black
-  doc.text(footer, 10, doc.autoTable.previous.finalY + 10); // Use previous.finalY to position after the table
-
-  // Add checkbox for confirmation
-  doc.setDrawColor(0); // Black color
-  doc.rect(22, doc.autoTable.previous.finalY + 15, 5, 5); // Draw the checkbox
-  doc.setFontSize(12);
-  doc.text("Yes, I confirm this quotation", 30, doc.autoTable.previous.finalY + 20); // Add label next to the checkbox
-
-  return doc;
-};
-
-  
-
-  const handleSendQuotationAsPDF = () => {
-    const pdf = generatePDF();
-    const pdfDataUri = pdf.output('datauristring');
-    // Send the PDF to the buyer via email or any other method
-    console.log('Sending PDF:', pdfDataUri);
-    // You can add your logic to send the PDF here
-  };
 
   return (
     <div className=" main-container text-secondary">
@@ -192,11 +163,35 @@ const generatePDF = () => {
                   <a href="/register-buyer" className="text-primary">Register new buyer</a>
                 </small>
               </div>
+              
+            </div>
+            <div className="col-md-6 mb-3">
+              <label htmlFor="seller" className="form-label">
+                Seller
+              </label>
+              <div>
+                <select
+                  className="form-select text-dark p-2 bg-light "
+                  style={{ borderRadius: '', width: '100%', border: '1px solid #999999', opacity: 0.5 }}
+                  id="seller"
+                  name="seller"
+                  value={formData.seller}
+                  onChange={handleSellerChange}
+                  required
+                >
+              {sellers.map((seller) => (
+                  <option  key={seller.id} value={seller.id} className='bg-light p-3 text-dark' >{seller.full_name}</option>
+                  ))}
+                </select>
+               
+              </div>
+              
             </div>
             <div className="col-md-6 mb-3">
               <label htmlFor="product" className="form-label">Product Name</label>
               <input type="text" className="form-control" id="product" name="product" value={formData.product} onChange={handleChange} required />
             </div>
+
           </div>
           <div className="row">
             <div className="col-md-6 mb-3">

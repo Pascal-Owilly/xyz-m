@@ -292,20 +292,6 @@ const BankDashboard = ({ orderId }) => {
    
   };
   
-
-  // useEffect(() => {
-  //   const checkUser = async () => {
-  //     const role = await checkUserRole();
-  //     setUserRole(role);
-  
-  //     if (role !== 'superuser' && role !== 'admin') {
-  //       navigate('/unauthorized');
-  //     }
-  //   };
-  
-  //   checkUser();
-  // }, [navigate]);
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -1007,19 +993,9 @@ const formStyles = {
       <Button variant="primary btn-sm mt-3" onClick={handleLcUpload} style={{ width: '100px', fontSize:'15px' }}>
         Upload
       </Button>
-      {/* <Button className='bg-success' variant=" btn-sm mt-3 " onClick={handleLcUpload} style={{ width: '100%', fontSize:'15px' }}>
-        Send to bank
-      </Button> */}
+     
     </Form>
     
-    {/* {lcUploadMessage && (
-      <div>
-        <p className={lcUploadSuccess ? "text-success mt-3" : "text-danger mt-3"}>{lcUploadMessage}</p>
-        <Button className='btn btn-sm' variant="secondary" onClick={() => setActiveSection('Dashboard')}>
-          Back
-        </Button>
-      </div>
-    )} */}
   </div>
 )}
       </Col>
@@ -1032,11 +1008,6 @@ const formStyles = {
       </div>
 </div>
 
-  <Container>
-    <Row>
-      
-    </Row>
-  </Container>
   <ToastContainer />
 
 </div>

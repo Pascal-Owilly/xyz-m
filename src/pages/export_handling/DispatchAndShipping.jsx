@@ -24,7 +24,7 @@ const ExportHandling = ({packageInfo}) => {
   const [invoices, setInvoices] = useState([]);
   const accessToken = Cookies.get('accessToken'); // Assuming your access token is stored in a cookie named 'accessToken'
   const [showForm, setShowForm] = useState(false);
-  const [selectedInvoice, setSelectedinvoice] = useState(null)
+  const [selectedInvoice, setSelectedInvoice] = useState(null)
   const [selectedInvoiceDetails, setSelectedInvoiceDetails] = useState(null);
   const [showPackageModal, setShowPackageModal] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
@@ -66,7 +66,6 @@ const handleChange = (e) => {
   }
 };
 
-
 useEffect(() => {
   const fetchInvoices = async () => {
     try {
@@ -76,9 +75,10 @@ useEffect(() => {
             }
         };
 
-        const res = await axios.get(`${baseUrl}/api/generate-invoice/`, config);
+        const res = await axios.get(`${baseUrl}/api/invoices/`, config);
         const formattedInvoices = res.data.map(invoice => invoice.invoice_number);
         setInvoices(['Select Invoice', ...formattedInvoices]);
+        console.log('invoices', res.data)
     } catch (error) {
         console.error('Error fetching invoices:', error);
     }
@@ -86,8 +86,6 @@ useEffect(() => {
 
   fetchInvoices();
 }, [accessToken, baseUrl]);
-
-
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -130,13 +128,9 @@ const handleSubmit = async (e) => {
       // Handle error, show error message to user, etc.
   }
 };
-
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-
   const getStatusIndex = (status) => ['Order Placed', 'Processing', 'Shipped', 'Arrived', 'Received'].indexOf(status);
 
   // package info id
@@ -273,17 +267,6 @@ const handleSubmit = async (e) => {
     }
   };
   
-  
-
-  const handleUpdateLogisticsStatus = (statusId, newStatus) => {
-    axios.patch(`${baseUrl}/api/all-logistics-statuses/${statusId}/`, { status: newStatus })
-      .then(response => {
-        console.log('Logistics status updated:', response.data);
-      })
-      .catch(error => {
-        console.error('Error updating logistics status:', error);
-      });
-  };
 
   const handleUpdateOrderStatus = (orderId, newStatus) => {
     axios.patch(`${baseUrl}/api/order/${orderId}/`, { status: newStatus })
@@ -328,7 +311,6 @@ const handleSubmit = async (e) => {
     setShipmentProgressData(updatedShipmentProgress);
   };
 
-
   const renderLogisticsStatus = (status) => (
     <tr key={status.id}>
       <td style={{ color: '#999999', fontWeight: 'bold' }}>
@@ -338,7 +320,9 @@ const handleSubmit = async (e) => {
             background: 'none', 
             color: '#001b40', 
             textDecoration: 'underline', 
-            cursor: 'pointer' 
+            cursor: 'pointer',
+            textDecoration:'none',
+            fontSize:'10px',
           }} 
           onClick={() => handleInvoiceDetailsClick(status.invoice_number)}
         >
@@ -409,7 +393,7 @@ const handleSubmit = async (e) => {
     handleShow(); // Set show state to true
   }}
 >
-View Package Info
+View 
 </button>
       </td>
       <td style={{ color: '#999999', fontSize:'12px' }}>{status.shipping_mode}</td>
@@ -425,101 +409,157 @@ const handleButtonClick = (section) => {
   return (
 
     <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
-      {/* Navbar */}
-      <Navbar bg="" expand="lg" variant="dark" style={{background:'#001b40'}}>
-      <Navbar.Brand>
-      <h6 className='text-light'>Export updates</h6>
-      </Navbar.Brand>
-
-    </Navbar>
-
     <section className="" >
-    <p className='mt-4'>Here, you'll be responsible for updating logistics statuses." Your attention to detail and timely updates in this area are crucial for maintaining accurate records and ensuring transparency in our shipping processes. </p>
-    <h2>Create Package</h2>
-    <Button onClick={handleModalToggle}>Create Package</Button>
-
-      <Modal show={showForm} onHide={handleModalToggle}>
-        <Modal.Header closeButton>
-          <Modal.Title>Create Package</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+    <Modal style={{ color: '#666666', fontSize:'12px' }} show={showForm} onHide={handleModalToggle}>
+      <Modal.Header closeButton>
+        <Modal.Title>Create Package</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
         <form onSubmit={handleSubmit}>
-  <div className="form-group">
-    <label>Invoice:</label>
-    <select className="form-control" name="invoice" value={selectedInvoice} onChange={handleChange}>
-  <option value="">Select Invoice</option>
-  {invoices.map(invoice => (
-    <option key={invoice.id} value={invoice.id}>
-      {invoice.invoice_number}
-    </option>
-  ))}
-</select>
+          <div className="row">
+            <div className="col-md-4">
+              <div className="form-group">
+                <label>Invoice:</label>
+                <select className="form-control" name="invoice" value={selectedInvoice} onChange={handleChange}>
+                  <option value="">Select Invoice</option>
+                  {invoices.map(invoice => (
+                    <option key={invoice.id} value={invoice.id}>
+                      {invoice.id}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="form-group">
+                <label>Package Name:</label>
+                <input className="form-control" type="text" name="package_name" value={formData.package_name} onChange={handleChange} />
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="form-group">
+                <label>Package Description:</label>
+                <input className="form-control" type="text" name="package_description" value={formData.package_description} onChange={handleChange} />
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-4">
+              <div className="form-group">
+                <label>Package Charge:</label>
+                <input className="form-control" type="text" name="package_charge" value={formData.package_charge} onChange={handleChange} />
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="form-group">
+                <label>Weight:</label>
+                <input className="form-control" type="text" name="weight" value={formData.weight} onChange={handleChange} />
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="form-group">
+                <label>Height:</label>
+                <input className="form-control" type="text" name="height" value={formData.height} onChange={handleChange} />
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-4">
+              <div className="form-group">
+                <label>Length:</label>
+                <input className="form-control" type="text" name="length" value={formData.length} onChange={handleChange} />
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="form-group">
+                <label>Time of Delivery:</label>
+                <input className="form-control" type="date" name="logistics.time_of_delivery" value={formData.logistics.time_of_delivery} onChange={handleChange} />
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="form-group">
+                <label>Shipping Mode:</label>
+                <input className="form-control" type="text" name="logistics.shipping_mode" value={formData.logistics.shipping_mode} onChange={handleChange} />
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-4">
+              <div className="form-group">
+                <label>Logistics Company:</label>
+                <input className="form-control" type="text" name="logistics.logistics_company" value={formData.logistics.logistics_company} onChange={handleChange} />
+              </div>
+            </div>
+          </div>
+          <Button className='btn btn-sm  text-white' variant="" type="submit" style={{ width: '100px', backgroundColor:'#001b42' }}>
+           Create
+          </Button>
+        </form>
+      </Modal.Body>
+    </Modal>
 
-  </div>
-  <div className="form-group">
-    <label>Package Name:</label>
-    <input className="form-control" type="text" name="package_name" value={formData.package_name} onChange={handleChange} />
-  </div>
-  <div className="form-group">
-    <label>Package Description:</label>
-    <input className="form-control" type="text" name="package_description" value={formData.package_description} onChange={handleChange} />
-  </div>
-  <div className="form-group">
-    <label>Package Charge:</label>
-    <input className="form-control" type="text" name="package_charge" value={formData.package_charge} onChange={handleChange} />
-  </div>
-  <div className="form-group">
-    <label>Weight:</label>
-    <input className="form-control" type="text" name="weight" value={formData.weight} onChange={handleChange} />
-  </div>
-  <div className="form-group">
-    <label>Height:</label>
-    <input className="form-control" type="text" name="height" value={formData.height} onChange={handleChange} />
-  </div>
-  <div className="form-group">
-    <label>Length:</label>
-    <input className="form-control" type="text" name="length" value={formData.length} onChange={handleChange} />
-  </div>
-  <div className="form-group">
-    <label>Time of Delivery:</label>
-    <input className="form-control" type="date" name="logistics.time_of_delivery" value={formData.logistics.time_of_delivery} onChange={handleChange} />
-  </div>
-  <div className="form-group">
-    <label>Shipping Mode:</label>
-    <input className="form-control" type="text" name="logistics.shipping_mode" value={formData.logistics.shipping_mode} onChange={handleChange} />
-  </div>
-  <div className="form-group">
-    <label>Logistics Company:</label>
-    <input className="form-control" type="text" name="logistics.logistics_company" value={formData.logistics.logistics_company} onChange={handleChange} />
-  </div>
-  <Button variant="primary" type="submit">
-    Create Package
-  </Button>
-</form>
+<h3>Shipping</h3>
+<div className='row'>
+<div className='col-md-6' style={{ marginTop: '30px', marginBottom: '5px' }}>
+      <div className="card" style={{ borderRadius: '15px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', border: '1px solid #e0e0e0' }}>
+        <div className="card-body">
+          <div className="row">
+            <div className="col-6">
+              <label className="form-label" style={{ color: '#333', fontSize: '16px', fontWeight: 'bold' }}>Shipping Prefix</label>
+              <input className="form-control" type="text" id="" value="AWB" name="prefix" readOnly />
+            </div>
+            <div className="col-6">
+              <label className="form-label" style={{ color: '#333', fontSize: '16px', fontWeight: 'bold' }}>Tracking ID</label>
+              <input className="form-control" type="text" id="random_no" value="000049" name="invoice" readOnly />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        </Modal.Body>
-      </Modal>
-
+    <div className='col-md-6' style={{ marginTop: '30px', marginBottom: '5px' }}>
+      <div className="card" style={{ borderRadius: '15px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', border: '1px solid #e0e0e0' }}>
+        <div className="card-body">
+          <div className="row">
+            <div className="col-6">
+              <label className="form-label" style={{ color: '#333', fontSize: '16px', fontWeight: 'bold' }}>Shipping Prefix</label>
+              <input className="form-control" type="text" id="" value="AWB" name="prefix" readOnly />
+            </div>
+            <div className="col-6">
+              <label className="form-label" style={{ color: '#333', fontSize: '16px', fontWeight: 'bold' }}>Tracking ID</label>
+              <input className="form-control" type="text" id="random_no" value="000049" name="invoice" readOnly />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <div>
+    </div>
       {updateMessage && <div className="alert alert-success">{updateMessage}</div>}
 
-      <div className="card mb-4" style={{ width: '100%', margin: 'auto', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '10px' }}>
+      <div className="card mb-4 mt-3" style={{ width: '100%', margin: 'auto', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '10px' }}>
   <div className="card-body">
-    <h5 className="card-title">Logistics Progress</h5>
+  <div className="d-flex justify-content-between align-items-center">
+      <h5 className="card-title">List Of Shipment</h5>
+      <Button className='btn btn-sm text-white mb-2' variant="" type="submit" style={{ width: '200px', background: '#001b42', padding: '10px', borderRadius:'30px' }} onClick={handleModalToggle}>
+        <i className='dw dw-plus'></i>Create new shipment
+      </Button>
+    </div>
     {/* Your progress bar code */}
     <div className="table-responsive">
       <table className="table">
         <thead>
-          <tr style={{ backgroundColor: '#f8f9fa' }}>
-            <th style={{ color: '#999999', fontSize:'12px' }}>Tracking No</th>
-            <th style={{ color: '#999999', fontSize:'12px' }}>Current Status</th>
-            <th style={{ color: '#999999', fontSize:'12px' }}>Actions</th>
-            <th style={{ color: '#999999', fontSize:'12px' }}>Buyer</th>
-            <th style={{ color: '#999999', fontSize:'12px' }}>Seller</th>
-            <th style={{ color: '#999999', fontSize:'12px' }}>Logistics Company</th>
-            <th style={{ color: '#999999', fontSize:'12px' }}>Package Info</th>
-            <th style={{ color: '#999999', fontSize:'12px' }}>Shipping Mode</th>
-            <th style={{ color: '#999999', fontSize:'12px' }}>Time of Delivery</th>
+          <tr style={{ backgroundColor: '#f8f9fa', color:'#666666' }}>
+            <th style={{ color: '#666666', fontSize:'12px' }}>Tracking No</th>
+            <th style={{ color: '#666666', fontSize:'12px' }}>Current Status</th>
+            <th style={{ color: '#666666', fontSize:'12px' }}>Actions</th>
+            <th style={{ color: '#666666', fontSize:'12px' }}>Buyer</th>
+            <th style={{ color: '#666666', fontSize:'12px' }}>Seller</th>
+            <th style={{ color: '#666666', fontSize:'12px' }}>Logistics Company</th>
+            <th style={{ color: '#666666', fontSize:'12px' }}>Package Info</th>
+            <th style={{ color: '#666666', fontSize:'12px' }}>Shipping Mode</th>
+            <th style={{ color: '#666666', fontSize:'12px' }}>Time of Delivery</th>
           </tr>
         </thead>
         <tbody>
@@ -555,10 +595,6 @@ const handleButtonClick = (section) => {
     </Button>
   </Modal.Footer>
 </Modal>
-
-
-
-
   </div>
    );
 };

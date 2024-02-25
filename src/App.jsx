@@ -43,6 +43,8 @@ import Buyer from './pages/buyers/Buyer';
 import Sellers from './pages/seller_mng/Sellers';
 import Quotation from './pages/seller_mng/Quotation';
 import QuotationList from './pages/seller_mng/QuotationList';
+import QuotationSuccess from './pages/seller_mng/QuotationSuccess';
+import QuotationConfirmation from './pages/buyers/QuotationConfirmation';
 
 import PurchaseOrderPage from './pages/buyers/PurchaseOrderPage';
 import PurchaseOrderPageSeller from './pages/seller_mng/PurchaseOrdersSeller';
@@ -55,6 +57,7 @@ import ControlCentersSingleTrader from './pages/control_centers/ControlCentersSi
 import InventoryCT from './pages/control_centers/Inventory';
 import RegisterCollateralManager from './pages/auth/RegisterCollateralManager';
 import RegisterBreeder from './pages/auth/RegisterBreeder';
+import RegisterSeller from './pages/auth/RegisterSeller';
 
 const App = () => {
   return (
@@ -70,6 +73,7 @@ const App = () => {
             <Route path="/buyer-register-success" element={<BuyerRegidterSuccess />} />
             <Route path="/collateral-manager-register" element={<RegisterCollateralManager />} />
             <Route path="/supplier-register" element={<RegisterBreeder />} />
+            <Route path="/register-seller" element={<RegisterSeller />} />
 
             <Route path="/login" element={<Login />} />
             <Route path="/password_reset" element={<ForgotPassword />} />
@@ -82,6 +86,7 @@ const App = () => {
             <Route path="/sellers" element={<Sellers />} />
             <Route path="/quotation" element={<Quotation />} />
             <Route path="/quotation-list" element={<QuotationList />} />
+            <Route path="/buyer-confirmation" element={<QuotationConfirmation />} />
 
             <Route path="/purchase-order-seller" element={<PurchaseOrderPageSeller />} />
 
@@ -91,7 +96,7 @@ const App = () => {
 
             {/* Buyers */}
 
-            <Route path="/purchase-order" element={<PurchaseOrderPage />} />
+        <Route path="/purchase-order/:id"  element={<PurchaseOrderPage />}  />
 
             <Route path="/invoice_tracking" element={<BuyerDashboard />} />
             <Route path="/buyer_dashboard" element={<Buyer />} />
@@ -140,6 +145,7 @@ const App = () => {
             <Route path="/control-centers-single-trader" element={<ControlCentersSingleTrader />} />
             <Route path="/control-centers-inventory" element={<InventoryCT />} />
 
+            <Route path="/quotation-submission-success" element={<QuotationSuccess />} />
 
           </Routes>
         </div>

@@ -240,19 +240,14 @@ const handleButtonClick = (section) => {
       {/* Navbar */}
       <Navbar  bg="" expand="lg" variant="" style={{background:'#001b40'}}>
       <Navbar.Brand>
-      <h6 className='text-dark'>Order Tracking and Follow-Up
-
-</h6>
+      <h6 className='text-dark'>Order Tracking and Follow-Up</h6>
       </Navbar.Brand>
-
     </Navbar>
-
     <section className="" >
     <p className='mt-4'>
     In this segment, you'll gain visibility into all orders using their respective invoice IDs. You'll be able to view the current status of each order, allowing you to closely monitor the progress. Additionally, you can use this information to follow up with the individuals responsible for dispatch, shipping, arrival, and reception, ensuring a seamless logistics workflow.    </p>
     <div>
       {updateMessage && <div className="alert alert-success">{updateMessage}</div>}
-
       <div className="card mb-4" style={{ width: '100%', margin: 'auto' }}>
         <div className="card-body">
           <h5 className="card-title">Logistics Progress</h5>
