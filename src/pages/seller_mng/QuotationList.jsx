@@ -87,7 +87,7 @@ const [expandedInvoices, setExpandedInvoices] = useState({});
     try {
       const accessToken = Cookies.get('accessToken');
       const response = await axios.put(
-        `${baseUrl}/api/send-quotation/${quotationId}/`, 
+        `${baseUrl}/api/quotations/${quotationId}/`, 
         {
           confirm: true,
           // Include other required fields here

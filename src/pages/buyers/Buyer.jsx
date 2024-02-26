@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 import { HiBell, HiCube, HiExclamation, HiCurrencyDollar, HiChartBar } from 'react-icons/hi';
 import { FaEnvelope } from 'react-icons/fa';  
 import { HiEye, HiEyeOff } from 'react-icons/hi'; // Example icons, you can choose others
-import { FaTruck, FaShippingFast, FaCheck, FaArchive } from 'react-icons/fa';
+import { FaTruck, FaShippingFast, FaCheck, FaArchive, FaShoppingCart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import PurchaseOrders from '../seller_mng/PurchaseOrdersSeller';
 
@@ -15,7 +15,7 @@ import PurchaseOrders from '../seller_mng/PurchaseOrdersSeller';
 import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
 
 
-const CustomerServiceDashboard = () => {
+const CustomerServiceDashboard = ({packageInfo}) => {
   const navigate = useNavigate()
   const [payments, setPayments] = useState([]);
   const [selectedPayment, setSelectedPayment] = useState(null);
@@ -40,6 +40,13 @@ const CustomerServiceDashboard = () => {
 
   const [quotations, setQuotations] = useState([]);
   const [confirmedQuotation, setConfirmedQuotation] = useState(null);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const [showPackageModal, setShowPackageModal] = useState(false);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [selectedPackageInfo, setSelectedPackageInfo] = useState(null);
+
 
   // Pagination
  const indexOfLastQuotation = currentPage * quotationsPerPage;
@@ -64,6 +71,42 @@ const CustomerServiceDashboard = () => {
 
   const itemsPerPage = 7; // Number of items to display per page
  
+  const handlePackageInfoClick = (packageInfo) => {
+    axios.get(`${baseUrl}/api/package-info/${packageInfo}/`)
+      .then(response => {
+        setSelectedPackageInfo(response.data);
+        // Here, you can trigger a modal or another component to show the package details
+      })
+      .catch(error => {
+        console.error('Error fetching package info:', error);
+        // Handle error
+      });
+  };
+
+  const handleInvoiceDetailsClick = (invoiceNumber) => {
+    axios.get(`${baseUrl}/api/invoices/${invoiceNumber}/`)
+      .then(response => {
+        setSelectedInvoiceDetails(response.data);
+        setShowInvoiceModal(true);
+      })
+      .catch(error => {
+        console.error('Error fetching invoice details:', error);
+      });
+  };
+
+  useEffect(() => {
+
+    axios.get(`${baseUrl}/api/package-info/`)
+    .then(response => {
+      setSelectedPackageInfo(response.data);
+      console.log('package', response)
+      // Here, you can trigger a modal or another component to show the package details
+    })
+    .catch(error => {
+      console.error('Error fetching package info:', error);
+      // Handle error
+    });
+  }, []);
 
   // contact form
   const [showModal, setShowModal] = useState(false);
@@ -217,7 +260,7 @@ const toggleInvoice = (invoiceNumber) => {
     .then(response => {
         setLogisticsStatuses(response.data);
 
-        console.log('response', response)
+        console.log('logistics response', response)
       })
       .catch(error => {
         console.error('Error fetching logistics statuses:', error);
@@ -284,55 +327,84 @@ const toggleInvoice = (invoiceNumber) => {
   // Status tracking
 
   const getStatusIndex = (status) => ['ordered', 'dispatched', 'shipped', 'arrived', 'received'].indexOf(status);
-
   const renderLogisticsStatus = (status) => (
-    <tr key={status.id}>
-      <td>
-        <span style={{ textTransform: 'capitalize', color: '#333', fontSize: '14px', display: 'flex', alignItems: 'center', fontWeight:'bold' }}>
-           #{status.invoice_number} 
-         
-        </span>
-      </td>
-      <td className='d-flex'>
-        <span
-          style={{
-            fontWeight: '',
-            marginLeft: '5px',
-            color: 'black',
-            marginRight: '5px',
-            textTransform: 'capitalize',
-            fontWeight: 'bold',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Added box shadow
-            padding: '5px', // Adjust padding as needed
-          }}
-        >
-          {status.status}
-        </span>
+    <tr key={status.id} style={{ 
+      backgroundColor: 
+        status.status === 'ordered' ? '#f0f8ff' : // Light Blue
+        status.status === 'dispatched' ? '#f0ffff' : // Light Cyan
+        status.status === 'shipped' ? '#f0f0f0' : // Light Gray
+        status.status === 'received' ? 'lightgreen' : '' // Light Green
+    }}>
+        <td style={{ color: '#999999', fontWeight: 'bold' }}>
+            <button 
+              style={{ 
+                border: 'none', 
+                background: 'none', 
+                color: '#666666', 
+                textDecoration: 'underline', 
+                cursor: 'pointer',
+                textDecoration:'none',
+                fontSize:'12px',
+              }} 
+              onClick={() => handleInvoiceDetailsClick(status.invoice_number)}
+            >
+              {status.invoice_number}
+            </button>
+          </td>
   
-  {status.status === 'dispatched' && (
-            <div style={{ backgroundColor: '', padding: '2px', borderRadius: '50%' }}>
-              <FaTruck  style={{ fontSize: '22px', color: 'green' }} />
-            </div>
-          )}
-          {status.status === 'shipped' && (
-            <div style={{ backgroundColor: '', padding: '10px', borderRadius: '50%' }}>
-              <FaShippingFast  style={{ fontSize: '22px', color: 'blue' }} />
-            </div>
-          )}
-          {status.status === 'arrived' && (
-            <div style={{ backgroundColor: '', padding: '2px', borderRadius: '50%' }}>
-              <FaArchive  style={{ fontSize: '22px', color: 'green' }} />
-            </div>
-          )}
-          {status.status === 'received' && (
-            <div style={{ backgroundColor: '', padding: '10px', borderRadius: '50%' }}>
-              <FaCheck  style={{ fontSize: '22px', color: 'green' }} />
-            </div>
-          )}
-      </td>
-  
-    </tr>
-  );
+
+          <td style={{ color: '#999999', fontSize: '12px' }}>{status ? status.seller: ''}</td>
+          <td style={{ color: '#999999', fontSize:'12px' }}>
+          
+            {status.logistics_company}</td>
+          <td style={{ color: '#999999', fontSize:'12px' }}>
+            <button 
+              style={{ 
+                border: 'none', 
+                background: 'none', 
+                color: '#007bff', 
+                textDecoration: 'underline', 
+                cursor: 'pointer' 
+              }} 
+              onClick={() => {
+                handlePackageInfoClick(status.package_info);
+                handleShow(); // Set show state to true
+              }}
+            >
+              View 
+            </button>
+          </td>
+          <td style={{ color: '#999999', fontSize:'12px' }}> 
+          <button
+      style={{
+        fontWeight: '',
+        color: '#fff',
+        backgroundColor: status.status === 'ordered' ? '#001b42' : 'dispatched' ? '#001b42' : status.status === 'shipped' ? '#001b42' : status.status === 'arrived' ? '#001b42' : status.status === 'received' ? 'green' : '',
+        border: 'none', 
+        borderRadius: '5px', 
+        fontSize: '11px', 
+        cursor: 'pointer', 
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+        borderRadius:'30px',
+        textTransform:'capitalize' 
+      }} 
+      disabled={status.status === 'received'} // Disable the button if status is 'received'
+    >
+      {status.status}
+      {status.status === 'ordered' && <FaShoppingCart style={{ marginLeft: '5px', fontSize: '11px', color: 'white', textTransform:'capitalize' }} />}
+      {status.status === 'dispatched' && <FaTruck style={{ marginLeft: '5px', fontSize: '11px', color: 'white' , textTransform:'capitalize' }} />}
+      {status.status === 'shipped' && <FaShippingFast style={{ marginLeft: '5px', fontSize: '11px', color: 'blue' , textTransform:'capitalize' }} />}
+      {status.status === 'received' && <FaCheck style={{ marginLeft: '5px', fontSize: '11px', color: 'green', textTransform:'capitalize'}} />}
+    </button>
+          </td>
+
+          <td style={{ color: '#999999', fontSize:'12px' }}>
+            {status.shipping_mode}
+            </td>
+            <td style={{ color: '#999999', fontSize:'12px' }}>{status.time_of_delivery}</td>
+
+        </tr>
+      );
   
 
   const renderOrderDetails = (order) => (
@@ -416,7 +488,7 @@ const toggleInvoice = (invoiceNumber) => {
     }
   
     // Get the file extension
-    const fileExtension = documentUrl.split('.').pop().toLowerCase();
+    const fileExtension = documentUrl.split('.').pop()?.toLowerCase(); // Added null check with '?'
     console.log('File Extension:', fileExtension);
   
     // Check the file type and render accordingly
@@ -429,6 +501,7 @@ const toggleInvoice = (invoiceNumber) => {
       return <a href={documentUrl} target="_blank" rel="noopener noreferrer">View Document</a>;
     }
   };
+  
 
 
   useEffect(() => {
@@ -660,6 +733,30 @@ const QuotationListPDF = ({ quotation }) => (
         </Modal.Body>
       </Modal>
 
+       <Modal show={show} onHide={handleClose} animation={true}>
+  <Modal.Header closeButton>
+    <Modal.Title>Package Info</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    {selectedPackageInfo && (
+     <>
+     <p style={{ marginBottom: '8px', fontSize: '16px', fontWeight: 'bold' }}>Package Name: {selectedPackageInfo.package_name}</p>
+     <p style={{ marginBottom: '8px' }}>Package Description: {selectedPackageInfo.package_description}</p>
+     <p style={{ marginBottom: '8px' }}>Package Charge: {selectedPackageInfo.package_charge}</p>
+     <p style={{ marginBottom: '8px' }}>Weight: {selectedPackageInfo.weight}</p>
+     <p style={{ marginBottom: '8px' }}>Height: {selectedPackageInfo.height}</p>
+     <p style={{ marginBottom: '8px' }}>Length: {selectedPackageInfo.length}</p>
+    
+   </>
+    )}
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={handleClose}>
+      Close
+    </Button>
+  </Modal.Footer>
+</Modal>
+
       {/* enc contact */}
      
       {/* Detailed View */}
@@ -695,7 +792,7 @@ const QuotationListPDF = ({ quotation }) => (
         {quotations.slice().reverse().map((quotation) => (
           <tr key={quotation.id}>
             <td className='text' style={{color:'#666666'}}>#{quotation.id}</td>
-            <td className='text' style={{color:'#666666'}}>{quotation.seller} Pascal</td>
+            <td className='text' style={{color:'#666666'}}>{quotation.seller} </td>
 
             <td className='text' style={{color:'#666666'}}>{quotation.product}</td>
             <td className='text' style={{color:'#666666'}}>{quotation.unit_price}</td>
@@ -784,7 +881,7 @@ const QuotationListPDF = ({ quotation }) => (
         <tbody>
           {letterOfCredits && letterOfCredits.map(letterOfCredit => (
             <tr key={letterOfCredit.id}>
-              <td>{renderDocumentPreview(letterOfCredit.lc_document, `LC Document for ${letterOfCredit.buyer.username}`)}</td>
+              <td>{renderDocumentPreview(letterOfCredit.lc_document, `LC Document for ${letterOfCredit.buyer.buyer_full_name}`)}</td>
               <td>#{letterOfCredit.id}</td>
               <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td><Pagination
                     itemsPerPage={quotationsPerPage}
@@ -820,7 +917,7 @@ const QuotationListPDF = ({ quotation }) => (
       {currentInvoices.map((invoice, index) => (
         <Container fluid key={index} style={{ ...styles.invoiceItems, height: expandedInvoices ? 'auto' : '100%', marginBottom: '20px' }}>
 <Button
-  className='bg-success mx-0'
+  className='bg-white text-secondary mx-0'
   style={{ width: '100%', color: '#fff', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}
   variant="link"
   onClick={() => toggleInvoice(invoice.invoiceNumber)}
@@ -835,18 +932,18 @@ const QuotationListPDF = ({ quotation }) => (
         )}
       </div>
     </div>
-    <div className='col-md-6'>
+    <div className='col-md-6 '>
       <div>
        INV-#{invoice.invoiceNumber}
       </div>
     </div>
-    <div className='col-md-3 text-light'>
+    <div className='col-md-3 text-secondary'>
       Date issued {invoice.date} {/* Display the date to the right */}
     </div>
   </div>
 </Button>
           {expandedInvoices[invoice.invoiceNumber] && (
-            <Table borderless responsive>
+            <Table borderless responsive className='bg-white'>
 <tbody>
             <br />
             <tr>
@@ -855,19 +952,20 @@ const QuotationListPDF = ({ quotation }) => (
               <td colSpan="2"></td>
             </tr>
             <tr>
-                <td colSpan="2">Attached LC</td>
-                <td colSpan="2">
-                  {/* Check if the attached LC is a PDF file */}
-                  {invoice.attachedLc.toLowerCase().endsWith('.pdf') ? (
-                    <embed src={invoice.attachedLc} type="application/pdf" width="200" height="200" />
-                  ) : (
-                    // Handle other file types or provide a download link
-                    <a href={invoice.attachedLc} target="_blank" rel="noopener noreferrer">
-                      View Attached LC
-                    </a>
-                  )}
-                </td>
-              </tr>
+  <td colSpan="2">Attached LC</td>
+  <td colSpan="2">
+    {/* Check if the invoice object exists and if attachedLc is a PDF file */}
+    {invoice && invoice.attachedLc && invoice.attachedLc.toLowerCase().endsWith('.pdf') ? (
+      <embed src={invoice.attachedLc} type="application/pdf" width="200" height="200" />
+    ) : (
+      // Handle the case where invoice or attachedLc is undefined, or attachedLc is not a PDF
+      <a href={invoice && invoice.attachedLc} target="_blank" rel="noopener noreferrer">
+        View Attached LC
+      </a>
+    )}
+  </td>
+</tr>
+
             {/* Bill To */}
             <tr>
               <td colSpan="4">
@@ -952,7 +1050,7 @@ const QuotationListPDF = ({ quotation }) => (
     {orders.map(renderOrderDetails)}
     <div className="card mb-4" style={{ maxWidth: '100%', margin: 'auto' }}>
       <div className="card-body">
-        <h5 className="card-title">Logistics Progress</h5>
+        <h5 className="card-title" style={{color:'#666666'}}>Shipping tracking</h5>
         <div className="progress" style={{ position: 'relative', padding: '' }}>
 
           {shipmentProgressData.map((status, index) => (
@@ -970,7 +1068,7 @@ const QuotationListPDF = ({ quotation }) => (
             <div style={{ width: '15px', height: '15px', backgroundColor: '#fff', borderRadius: '50%', border: '2px solid #007bff' }}></div>
           </div>
         </div>
-        <h6 className='mt- mb-2'>Current Statuses</h6>
+        <h6 className='mt- mb-2'></h6>
           {logisticsStatuses.map((status) => (
            <div className="card mb-4" style={{ width: '100%', margin: 'auto' }}>
 
@@ -978,8 +1076,15 @@ const QuotationListPDF = ({ quotation }) => (
                <table className="table">
                  <thead>
                    <tr>
-                     <th>Order No</th>
-                     <th>Current Status</th>
+                     <th style={{color:'#666666', fontSize:'12px'}}>Order No</th>
+                     <th style={{color:'#666666', fontSize:'12px'}}>Seller</th>
+                     <th style={{color:'#666666', fontSize:'12px'}}>Shipping Company</th>
+                     <th style={{color:'#666666', fontSize:'12px'}}>View package Info</th>
+
+                     <th style={{color:'#666666', fontSize:'12px'}}>Current Status</th>
+                     <th style={{color:'#666666', fontSize:'12px'}}>Shipping mode</th>
+                     <th style={{color:'#666666', fontSize:'12px'}}>Delivered by</th>
+
                    </tr>
                  </thead>
                  <tbody>
