@@ -47,6 +47,10 @@ const CustomerServiceDashboard = ({packageInfo}) => {
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [selectedPackageInfo, setSelectedPackageInfo] = useState(null);
 
+  // LC
+  const [lcUploadMessage, setLcUploadMessage] = useState('');
+  const [lcUploadSuccess, setLcUploadSuccess] = useState(false);
+  const [lcDocument, setLcDocument] = useState(null);
 
   // Pagination
  const indexOfLastQuotation = currentPage * quotationsPerPage;
@@ -62,6 +66,33 @@ const CustomerServiceDashboard = ({packageInfo}) => {
    setConfirmingId(quotationId);
    handleConfirmation(quotationId);
  };
+
+//  lc
+const handleLcUpload = async () => {
+  try {
+    const formData = new FormData();
+    formData.append('lc_document', lcDocument);
+
+    const response = await axios.post(
+      `${baseUrl}/api/all-lcs/`,formData);
+
+
+    console.log('upload response', response);
+    if (response.status === 201) {
+      setLcUploadSuccess(true);
+      setLcUploadMessage('Document uploaded successfully');
+      // Optionally, you can perform additional actions upon successful upload
+    } else {
+      const data = response.data;
+      setLcUploadSuccess(false);
+      setLcUploadMessage(data.error || 'Error uploading document');
+    }
+  } catch (error) {
+    console.error('Error uploading document:', error);
+    setLcUploadSuccess(false);
+    setLcUploadMessage('Error uploading  document');
+  }
+};
 
   // invoiceslist
   const [loading, setLoading] = useState(true);
@@ -125,6 +156,18 @@ const CustomerServiceDashboard = ({packageInfo}) => {
     // You may want to send the data to your backend or perform any other actions
     handleModalClose();  // Close the modal after submission
   };
+
+  const getButtonColor = (status) => {
+    switch (status) {
+      case 'approved':
+        return 'green';
+      case 'rejected':
+        return 'red';
+      default:
+        return '#001b42'; // Default color for not confirmed
+    }
+  };
+
 
   const refreshAccessToken = async () => {
     try {
@@ -696,6 +739,17 @@ const QuotationListPDF = ({ quotation }) => (
           Shipping Tracking
         </a>
       </li>
+      <li className="nav-item">
+        <a
+          className={`nav-link ${activeSection === 'LC' ? 'active' : ''}`}
+          onClick={() => handleButtonClick('LC')}
+          role="tab"
+          aria-controls="LC"
+          aria-selected={activeSection === 'LC'}
+        >
+          LC
+        </a>
+      </li>
       <li className="nav-item ml-auto">
         <span className="nav-link">Hello, {userName}</span>
       </li>
@@ -720,19 +774,16 @@ const QuotationListPDF = ({ quotation }) => (
               <Form.Label>Your Name:</Form.Label>
               <Form.Control type="text" placeholder="Enter your name" required />
             </Form.Group>
-
             <Form.Group controlId="messageField">
               <Form.Label>Your Message:</Form.Label>
               <Form.Control as="textarea" rows={4} placeholder="Enter your message" required />
             </Form.Group>
-
             <Button variant="primary" type="submit">
               Send Message
             </Button>
           </Form>
         </Modal.Body>
       </Modal>
-
        <Modal show={show} onHide={handleClose} animation={true}>
   <Modal.Header closeButton>
     <Modal.Title>Package Info</Modal.Title>
@@ -864,39 +915,73 @@ const QuotationListPDF = ({ quotation }) => (
 
 
 
-{activeSection === 'LetterOfCredit' && (
-  <Card>
-    <h5 className='mb-4 mx-3 mt-2'>Letter of Credits</h5>
-    <Card.Body>
-      <Table responsive striped bordered hover>
+{activeSection === 'LC' && (
+  <>
+  <div>
+        <Form>
+          <div className='d-flex align-center justify-space-between'>
+          <Form.Group controlId="lcDocument">
+            
+            <Form.Label className="text" style={{color:'#999999'}}>Upload new LC</Form.Label>
+            
+            <Form.Control
+              type="file"
+              onChange={(e) => setLcDocument(e.target.files[0])}
+            />
+          </Form.Group>
+          <Button variant="primary btn-sm mt-5 mx-1" onClick={handleLcUpload} style={{ width: '100px', fontSize:'14px' }}>
+            Upload
+          </Button>
+          </div>
+        </Form>
+        <hr />
+        {lcUploadMessage && (
+          <div>
+            <p className={lcUploadSuccess ? "text-primary mt-3" : "text-danger mt-3"}>{lcUploadMessage}</p>
+          </div>
+        )}
+      </div>
+
+  <Card style={{ width: '100%', padding: '1rem', borderRadius: '10px', minHeight: '70vh', color: '#666666' }}>
+  <h5 className='mt-1 mx-3 mb-3' style={{color:'#999999'}}>List of LCs</h5>
+
+      <Table style={{ color: '#999999' }} responsive striped bordered hover>
         <thead>
           <tr>
-            <th>LC Document</th>
+            <th>Letter of credit</th>
             <th>LC ID</th>
             <th>Issue Date</th>
             <th>Status</th>
-            {/* Add more columns as needed */}
           </tr>
         </thead>
         <tbody>
-          {letterOfCredits && letterOfCredits.map(letterOfCredit => (
+        {letterOfCredits && letterOfCredits.map(letterOfCredit => (
             <tr key={letterOfCredit.id}>
-              <td>{renderDocumentPreview(letterOfCredit.lc_document, `LC Document for ${letterOfCredit.buyer.buyer_full_name}`)}</td>
+             <td>{renderDocumentPreview(letterOfCredit.lc_document, `LC Document for ${letterOfCredit.buyer}`)} 
+             <a href={letterOfCredit.lc_document} target="_blank" rel="noopener noreferrer" className="btn btn-sm float-right " style={{backgroundColor:'rgb(255, 255, 255)', fontSize:'12px', color:'#999999'}}>
+              View
+              </a>
+        </td>
+
               <td>#{letterOfCredit.id}</td>
-              <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td><Pagination
-                    itemsPerPage={quotationsPerPage}
-                    totalItems={quotations.length}
-                    paginate={paginate}
-                />
-              <td style={{textTransform:'capitalize'}}>{letterOfCredit.status}</td>
-              {/* Add more columns as needed */}
+              <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td>
+              <td style={{ textTransform: 'capitalize' }}>
+                <button className='btn btn-sm text-white' style={{ backgroundColor: getButtonColor(letterOfCredit.status) }}>
+                  {letterOfCredit.status}
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
-       
+        
       </Table>
-    </Card.Body>
-  </Card>
+      <Pagination
+        itemsPerPage={quotationsPerPage}
+        totalItems={quotations.length}
+        paginate={paginate}
+      />
+    </Card>
+  </>
 )}
 
 {activeSection === 'InvoiceList' && (

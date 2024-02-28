@@ -1,13 +1,11 @@
 // Import necessary dependencies
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Card, Container, Form, Button, ProgressBar, Navbar, Nav, NavDropdown, NavLink, FormGroup, FormLabel, InputGroup } from 'react-bootstrap';
+import { Row, Col, Card, Container, Form, Button, ProgressBar, Navbar, Nav, NavDropdown, NavLink, FormGroup, FormLabel, InputGroup, Table, Pagination } from 'react-bootstrap';
 import { FaTruck } from 'react-icons/fa'; // Assuming you're using react-icons for the truck icon
 import { BASE_URL } from '../auth/config';
 import Cookies from 'js-cookie';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
 import './Seller.css';
-
 import { FaFileInvoice, FaList, FaMoneyBillAlt, FaWarehouse, FaArchive } from 'react-icons/fa'; // Import the desired icons
 import { checkUserRole } from '../auth/CheckUserRoleUtils'; 
 import ReactApexChart from 'react-apexcharts';
@@ -31,6 +29,20 @@ const BankDashboard = ({ orderId }) => {
   const [remainingBreeds, setRemainingBreeds] = useState([]);
   const [buyers, setBuyers] = useState([]);
 
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [quotationsPerPage] = useState(5); // Number of quotations per page
+  const [quotations, setQuotations] = useState([]);
+  const [updateCompleted, setUpdateCompleted] = useState(false);
+
+  // Pagination
+  const itemsPerPage = 7; // Number of items to display per page
+
+const indexOfLastItem = currentPage * itemsPerPage;
+const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
     // admin vars
     const [activeSection, setActiveSection] = useState('Negotiations');
 
@@ -51,12 +63,30 @@ const BankDashboard = ({ orderId }) => {
     const [arrivedOrdersData, setArrivedOrdersData] = useState([]);
     const [shipmentProgressData, setShipmentProgressData] = useState([]);
     const [selectedOrder, setSelectedOrder] = useState(null);
-    const [currentPage, setCurrentPage] = useState(1);
     const [logisticsStatuses, setLogisticsStatuses] = useState([]);
     const [orders, setOrders] = useState([]);
-  
+    const [letterOfCredits, setLetterOfCredits] = useState([]);
+
     const [lcUploadSuccess, setLcUploadSuccess] = useState(false);
     const [lcUploadMessage, setLcUploadMessage] = useState('');
+
+  
+    useEffect(() => {
+      // Fetch letter of credits from the new endpoint with headers
+      axios.get(`${baseUrl}/api/all-lcs/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+        .then(response => {
+          console.log('Fetched letter of credits:', response.data);
+          setLetterOfCredits(response.data);
+  
+          console.log('LC list', response)
+        })
+        .catch(error => console.error('Error fetching letter of credits:', error));
+    }, [baseUrl, accessToken]);
+
     // end admin vrs
 
   const refreshAccessToken = async () => {
@@ -79,6 +109,27 @@ const BankDashboard = ({ orderId }) => {
       // Handle the error, e.g., redirect to login page
     }
   };
+
+  const renderDocumentPreview = (documentUrl, altText) => {
+    if (!documentUrl) {
+      return null;
+    }
+  
+    // Get the file extension
+    const fileExtension = documentUrl.split('.').pop()?.toLowerCase(); // Added null check with '?'
+    console.log('File Extension:', fileExtension);
+  
+    // Check the file type and render accordingly
+    if (fileExtension === 'pdf') {
+      return <embed src={documentUrl} type="application/pdf" width="50" height="50" />;
+    } else if (['png', 'jpg', 'jpeg', 'gif'].includes(fileExtension)) {
+      return <img src={documentUrl} alt={altText} width="50" height="50" />;
+    } else {
+      // For other file types, provide a generic link
+      return <a href={documentUrl} target="_blank" rel="noopener noreferrer">View Document</a>;
+    }
+  };
+  
   
 
   const fetchUserData = async () => {
@@ -690,9 +741,57 @@ const formStyles = {
   padding: '20px', // Add padding to the form
 };
 
-  return (
-   <div className='main-container ' style={{ minHeight: '85vh', backgroundColor: '' }}>
+// Function to determine button color based on status
+const getButtonColor = (status) => {
+  switch (status) {
+    case 'approved':
+      return 'green';
+    case 'rejected':
+      return 'red';
+    default:
+      return '#001b42'; // Default color for not confirmed
+  }
+};
+const [confirmationAlert, setConfirmationAlert] = useState(false);
+const [selectedStatus, setSelectedStatus] = useState('');
+const [updateMessage, setUpdateMessage] = useState(null);
 
+const handleStatusChange = (status) => {
+  setSelectedStatus(status);
+  setConfirmationAlert(true);
+
+  // Add your confirmation alert logic here
+  alert(`Are you sure you want to change the status to ${status}?`);
+};
+
+const [lcStatus, setLcStatus] = useState('active');
+const [disabledButtons, setDisabledButtons] = useState([]);
+
+
+const handleUpdateStatus = async (lcId, newStatus) => {
+  try {
+    // Make the API call to update the status
+    await axios.patch(`${baseUrl}/api/all-lcs/${lcId}/`, { status: newStatus }, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    // Update the letter of credits after successful update
+    setLetterOfCredits(prevState => prevState.map(lc => lc.id === lcId ? { ...lc, status: newStatus } : lc));
+    // Set updateCompleted to true
+    setUpdateCompleted(true);
+    // Display success message or toast notification
+    alert(`Are you sure you want to change the status to ${newStatus}?`);
+    toast.success('Status updated successfully');
+  } catch (error) {
+    // Handle errors
+    console.error('Error updating status:', error);
+    toast.error('Error updating status');
+  }
+};
+
+return (
+   <div className='main-container ' style={{ minHeight: '85vh', backgroundColor: '' }}>
 <div >
 <ul className="nav nav-tabs" id="myTab" role="tablist" style={{fontSize:'15px', backgroundColor:'#001b40', color:'#d9d9d9'}}>
 <li className="nav-item">
@@ -707,11 +806,7 @@ const formStyles = {
         <li className="nav-item">
           <a href='/quotation' className={`nav-link`} style={{color:'#d9d9d9'}} id="home-tab">Send quotataion</a>
         </li>
-       
-        {/* <li className="nav-item">
-          <a className={`nav-link ${activeTab === 'Send LPO' ? 'active' : ''}`} id="profile-tab" onClick={() => handleTabClick('Send LPO')} role="tab" aria-controls="Send LPO" aria-selected={activeTab === 'Send LPO'}>Shipping clearing agent</a>
-        </li> */}
-        
+             
         <li className="nav-item">
           <a className={`nav-link ${activeTab === 'Open LC' ? 'active' : ''}`} id="contact-tab" onClick={() => handleTabClick('Open LC')} role="tab" aria-controls="Open LC" aria-selected={activeTab === 'Open LC'}>LC</a>
         </li>
@@ -732,13 +827,10 @@ const formStyles = {
     </a>
   </div>
 </div>
-
       <hr />
-
       {/* DASHBOARD */}
       <div className="">
       <div className="container-fluid" style={{ minHeight: '' }}>
-
   <div className="row">
   <div className="col-lg-3 col-md-12 mb-4">
   <a href='/inventory-dashboard'>
@@ -778,7 +870,6 @@ const formStyles = {
 
 <div className="col-lg-3 col-md-6 mb-4">
 <a href='/quotation-list'>
-
   <div className="card-box height-100-p widget-style3">
     <div className="d-flex flex-wrap">
       <div className="widget-data">
@@ -824,11 +915,9 @@ const formStyles = {
                   <h4 className='mt-3' style={{ color: '#001f33', opacity: 0.5 }}>Product Supply vs Demand</h4>
                   <ReactApexChart options={chartData.options} series={chartData.series} type="bar" height={350} />
                 </div>
-                  
                 </div>
               </div>
               <div className='col-md-4'>
-
               <div className='card p-2 mt-1'
                 style={{background:'rgb()', borderRadius:'10px', boxShadow:'0 0 28px rgba(0,0,0,.08)'}}
                 >
@@ -846,7 +935,7 @@ const formStyles = {
                     height:'130px'
                     // Set text color to white
                   }}
-                          >
+                >
           <h6 className='mx-2'>{breedSupplyStatus}</h6>
         </div>
               </div>
@@ -955,55 +1044,77 @@ const formStyles = {
     </Col>
     </Row>
 
-      <Row>
-            </Row>
 <hr />
 
   <Button className='btn btn-sm btn-primary bg-success text-white' style={{width:'200px'}}  type="submit">Create</Button>
 </Form>
         </div>
         <div className={`tab-pane fade ${activeTab === 'Open LC' ? 'show active' : ''}`} id="Open LC" role="tabpanel" aria-labelledby="home-tab">
-        <Row>
          {/* lc */}
 <Row>
-    <Col md={10}>
-      <Col className="bg-light p-4 rounded shadow">
-      {lcUploadSuccess ? (
-  <div>
-    <h4 className="text-success mb-4">Letter of Credit Document Uploaded Successfully</h4>
-    <p className="text-success">
-      <br />
-      Thank you
-    </p>
-    <Button variant="secondary btn-sm" onClick={() => setActiveSection('BreederPayments')} className="mt-3">
-      Back 
-    </Button>
-  </div>
-) : (
-  <div>
-    <h6 className="text-success mb-4">Upload Letter of Credit Document</h6>
-    <Form>
-      <Form.Group controlId="lcDocument">
-        <Form.Label className="text-primary">Choose the Letter of Credit Document</Form.Label>
-        <Form.Control
-          type="file"
-          onChange={(e) => setLcDocument(e.target.files[0])}
-        />
-      </Form.Group>
-      <Button variant="primary btn-sm mt-3" onClick={handleLcUpload} style={{ width: '100px', fontSize:'15px' }}>
-        Upload
-      </Button>
-     
-    </Form>
-    
-  </div>
-)}
-      </Col>
-    </Col>
+<h5 className='mt-2 mb-3' style={{ color:'#999999'}}>List of LCs</h5>
+
+<Card style={{ width: '100%', padding: '1rem', borderRadius: '10px', minHeight: '70vh', color: '#666666' }}>
+      <Table style={{ color: '#999999' }} responsive striped bordered hover>
+        <thead>
+          <tr>
+            <th>Letter of credit</th>
+            <th>LC ID</th>
+            <th>Issue Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {letterOfCredits && letterOfCredits.map(letterOfCredit => (
+            <tr key={letterOfCredit.id}>
+             <td>{renderDocumentPreview(letterOfCredit.lc_document, `LC Document for ${letterOfCredit.buyer}`)} 
+             <a href={letterOfCredit.lc_document} target="_blank" rel="noopener noreferrer" className="btn btn-sm float-right " style={{backgroundColor:'rgb(255, 255, 255)', fontSize:'12px', color:'#999999'}}>
+              View
+              </a>
+</td>
+
+              <td>#{letterOfCredit.id}</td>
+              <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td>
+              <td style={{ textTransform: 'capitalize' }}>
+  <button className='btn btn-sm text-white' style={{ backgroundColor: getButtonColor(letterOfCredit.status) }}>
+    {letterOfCredit.status}
+  </button>
+</td>
+              <td>
+              <select
+      className="form-select p-1 text-dark bg-white"
+      onChange={(e) => {
+        // Check LC status before updating
+        if (lcStatus === 'active') {
+          handleUpdateStatus(letterOfCredit.id, e.target.value);
+        } else {
+          // Display error message or prevent update
+          console.error('Cannot update status. Letter of credit is not active.');
+        }
+      }}
+      style={{ border: 'none', borderRadius: '30px', padding: '5px' }}
+    >
+      <option style={{ fontSize: '12px' }} value="">Update</option>
+      <option style={{ fontSize: '12px' }} value="approved">Approv</option>
+      <option style={{ fontSize: '12px' }} value="rejected">Reject</option>
+
+    </select>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+        
+      </Table>
+      <Pagination
+        itemsPerPage={quotationsPerPage}
+        totalItems={quotations.length}
+        paginate={paginate}
+      />
+    </Card>
   </Row>
 {/* end lc */}
 
-        </Row>
         </div>
       </div>
 </div>

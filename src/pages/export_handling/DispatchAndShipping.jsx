@@ -429,7 +429,6 @@ const handleSubmit = async (e) => {
   {status.status === 'shipped' && <FaShippingFast style={{ marginLeft: '5px', fontSize: '11px', color: 'blue' , textTransform:'capitalize' }} />}
   {status.status === 'received' && <FaCheck style={{ marginLeft: '5px', fontSize: '11px', color: 'green', textTransform:'capitalize'}} />}
 </button>
-
       </td>
       <td style={{ color: '#999999', fontWeight: 'bold' }}>
         <div className='d-flex'>

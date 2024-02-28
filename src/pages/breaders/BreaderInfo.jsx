@@ -8,6 +8,7 @@ import { FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 const BreaderInfo = () => {
+  
   const navigate = useNavigate();
   const baseUrl = BASE_URL;
   const { breaderId } = useParams();

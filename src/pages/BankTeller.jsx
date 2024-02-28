@@ -23,7 +23,42 @@ const ControlCenters = () => {
   const [selectedSeller, setSelectedSeller] = useState(null);
   const [selectedSellerOutsideModal, setSelectedSellerOutsideModal] = useState(null);
   const [selectedSellerInsideModal, setSelectedSellerInsideModal] = useState(null);
-    
+  const [letterOfCredits, setLetterOfCredits] = useState([]);
+  const [quotationsPerPage] = useState(5); // Number of quotations per page
+  const [quotations, setQuotations] = useState([]);
+
+
+  const renderDocumentPreview = (documentUrl, altText) => {
+    if (!documentUrl) {
+      return null;
+    }
+  
+    // Get the file extension
+    const fileExtension = documentUrl.split('.').pop()?.toLowerCase(); // Added null check with '?'
+    console.log('File Extension:', fileExtension);
+  
+    // Check the file type and render accordingly
+    if (fileExtension === 'pdf') {
+      return <embed src={documentUrl} type="application/pdf" width="50" height="50" />;
+    } else if (['png', 'jpg', 'jpeg', 'gif'].includes(fileExtension)) {
+      return <img src={documentUrl} alt={altText} width="50" height="50" />;
+    } else {
+      // For other file types, provide a generic link
+      return <a href={documentUrl} target="_blank" rel="noopener noreferrer">View Document</a>;
+    }
+  };
+
+  const getButtonColor = (status) => {
+    switch (status) {
+      case 'approved':
+        return 'green';
+      case 'rejected':
+        return 'red';
+      default:
+        return '#001b42'; // Default color for not confirmed
+    }
+  };
+
   const handleSellerSelectionInsideModal = (seller) => {
     setSelectedSellerInsideModal(seller);
   };
@@ -232,14 +267,17 @@ const handleDownloadLC = () => {
     const handleSellerChange = (e) => setSelectedSeller(e.target.value);
   const handleDocumentChange = (e) => setSelectedDocument(e.target.files[0]);
 
-  return (
-    <div className='main-container' style={{minHeight:'85vh'}}>
+  return (  
+    <div className='main-container' style={{minHeight:'90vh'}}>
       <ul className="nav nav-tabs" id="myTab" role="tablist" style={{fontSize:'15px', backgroundColor:'#001b40', color:'#d9d9d9'}}>
         <li className="nav-item">
           <a className={`nav-link ${activeTab === 'Dashboard' ? 'active' : ''}`} onClick={() => handleTabClick('Dashboard')} role="tab" aria-controls="Dashboard" aria-selected={activeTab === 'Dashboard'}>Overview</a>
         </li>
         <li className="nav-item">
-          <a className={`nav-link ${activeTab === 'CollateralManager' ? 'active' : ''}`} onClick={() => handleTabClick('CollateralManager')} role="tab" aria-controls="CollateralManager" aria-selected={activeTab === 'CollateralManager'}>Documents</a>
+          <a className={`nav-link ${activeTab === 'CollateralManager' ? 'active' : ''}`} onClick={() => handleTabClick('CollateralManager')} role="tab" aria-controls="CollateralManager" aria-selected={activeTab === 'CollateralManager'}>LCs</a>
+        </li>
+        <li className="nav-item">
+          <a className={`nav-link ${activeTab === 'BOL' ? 'active' : ''}`} onClick={() => handleTabClick('BOL')} role="tab" aria-controls="BOL" aria-selected={activeTab === 'BOL'}>Bill of Lading</a>
         </li>
        
       </ul>
@@ -248,42 +286,42 @@ const handleDownloadLC = () => {
       {activeTab === 'Dashboard' && (
       <Container>
        <Row>
-  <Col md={3}>
-    <div className="shadow p-3 mb-5 bg-body rounded">
+  <Col md={4}>
+    <div className="shadow p-1 mb-5 bg-body rounded">
+    <a href='/sellers-list'>
+
       <Card.Body>
         
         <p style={{ color:'#666666' }}><FaUser size={30} color="#666666" /> Sellers</p>
         <p style={{ color:'#666666', fontSize: '20px', fontWeight: 'bold' }}>{sellers.length}</p> {/* Dummy number */}
       </Card.Body>
+      </a>
     </div>
   </Col>
-  <Col md={3}>
-    <div className="shadow p-3 mb-5 bg-body rounded">
+  <Col md={4}>
+    <div className="shadow shadow-white p-1 mb-5 bg-body rounded">
+      <a href='/collateral-managers-list'>
       <Card.Body>
         
-        <p style={{ color:'#666666' }}><FaUserShield size={30} color="#666666" />&nbsp; Agents</p>
+        <p style={{ color:'#666666' }}><FaUserShield size={30} color="#666666" />&nbsp; Collateral Managers</p>
         <p style={{ color:'#666666', fontSize: '20px', fontWeight: 'bold' }}>{collateralManagers.length}</p> {/* Dummy number */}
       </Card.Body>
+      </a>
     </div>
   </Col>
-  <Col md={3}>
-    <div className="shadow p-3 mb-5 bg-body rounded">
+  <Col md={4}>
+    <div className="shadow p-1 mb-5 bg-body rounded">
+    <a href='/buyers-list'>
+
       <Card.Body>
         
         <p style={{ color:'' }}><FaShoppingBag size={30} color="#666666" /> Buyers</p>
         <p style={{ color:'', fontSize: '20px', fontWeight: 'bold' }}>{buyers.length}</p> {/* Dummy number */}
       </Card.Body>
+      </a>
     </div>
   </Col>
-  <Col md={3}>
-    <div className="shadow p-3 mb-5 bg-body rounded">
-      <Card.Body>
-        
-        <p style={{ color:'#' }}><FaBoxes size={30} color="" /> Inventory </p>
-        <p style={{ color:'#', fontSize: '20px', fontWeight: 'bold' }}>3456</p> {/* Dummy number */}
-      </Card.Body>
-    </div>
-  </Col>
+  
 </Row>
 
       <Row>
@@ -336,7 +374,7 @@ const handleDownloadLC = () => {
       >
         <FaUpload /> &nbsp; Send LC to Seller
       </Button> */}
-          <h4 className='mt-3 mb-3'>Documents</h4>
+          <h4 className='mt-3 mb-3'>Letter of credits</h4>
 
         
 <Modal show={showUpload} onHide={handleCloseModal}>
@@ -368,22 +406,43 @@ const handleDownloadLC = () => {
 </Modal>
 
           <hr />
-          <div className="row row-cols-1 row-cols-md-2 g-4">
-            {currentDocuments.map((document, index) => (
-             <div key={index} className="col">
-             <Card className="h-100" style={{ backgroundColor: '#fff', color: 'white' }}>
-               <Card.Body>
-                 <Card.Title>ID: {document.id}</Card.Title>
-                 <Card.Text>
-                   Status: {document.status}<br />
-                   Issue Date: {new Date(document.issue_date).toLocaleDateString()}<br />
-                 </Card.Text>
-                 <a href={document.lc_document} target="_blank" rel="noopener noreferrer" className="btn btn-sm float-right " style={{backgroundColor:'rgb(0, 27, 64)', fontSize:'12px', color:'white'}}>View Document</a>
-               </Card.Body>
-             </Card>
-           </div>
-            ))}
-          </div>
+          <Card style={{ width: '100%', padding: '1rem', borderRadius: '10px', minHeight: '70vh', color: '#666666' }}>
+      <Table style={{ color: '#999999' }} responsive striped bordered hover>
+        <thead>
+          <tr>
+            <th>Letter of credit</th>
+            <th>LC ID</th>
+            <th>Issue Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+        {currentDocuments.map(letterOfCredit => (
+            <tr key={letterOfCredit.id}>
+             <td>{renderDocumentPreview(letterOfCredit.lc_document, `LC Document for ${letterOfCredit.buyer}`)} 
+             <a href={letterOfCredit.lc_document} target="_blank" rel="noopener noreferrer" className="btn btn-sm float-right " style={{backgroundColor:'rgb(255, 255, 255)', fontSize:'12px', color:'#999999'}}>
+              View
+              </a>
+        </td>
+
+              <td>#{letterOfCredit.id}</td>
+              <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td>
+              <td style={{ textTransform: 'capitalize' }}>
+                <button className='btn btn-sm text-white' style={{ backgroundColor: getButtonColor(letterOfCredit.status) }}>
+                  {letterOfCredit.status}
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+        
+      </Table>
+      <Pagination
+        itemsPerPage={quotationsPerPage}
+        totalItems={quotations.length}
+        paginate={paginate}
+      />
+    </Card>
           <hr />
           <nav aria-label="Page navigation" className='mt-3'>
             <ul className="pagination justify-content-center">

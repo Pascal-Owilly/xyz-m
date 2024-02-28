@@ -59,6 +59,14 @@ import RegisterCollateralManager from './pages/auth/RegisterCollateralManager';
 import RegisterBreeder from './pages/auth/RegisterBreeder';
 import RegisterSeller from './pages/auth/RegisterSeller';
 
+import SellersList from './pages/bank/SelersList';
+import BuyersList from './pages/bank/BuyersList';
+import CollateralManagersList from './pages/bank/CollateramManagersList';
+import InventoryList from './pages/bank/Inventorylist';
+import BuyersInfo from './pages/bank/BuyersInfo';
+import CollateralManagerInfo from './pages/bank/CollateralManagerInfo';
+import SellersInfo from './pages/bank/SellersInfo';
+
 const App = () => {
   return (
     <Router>
@@ -146,6 +154,16 @@ const App = () => {
             <Route path="/control-centers-inventory" element={<InventoryCT />} />
 
             <Route path="/quotation-submission-success" element={<QuotationSuccess />} />
+
+            {/* Bank list details */}
+            <Route path="/sellers-list" element={<SellersList />} />
+            <Route path="/buyers-list" element={<BuyersList />} />
+            <Route path="/collateral-managers-list" element={<CollateralManagersList />} />
+            <Route path="/Inventory-list" element={<InventoryList />} />
+
+            <Route path="/buyer-info/:buyerId" element={<BuyersInfo />} />
+            <Route path="/colateral-manager-info/:managerId" element={<CollateralManagerInfo />} />
+            <Route path="/seller-info/:sellerId" element={<SellersInfo />} />
 
           </Routes>
         </div>
