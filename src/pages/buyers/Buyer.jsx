@@ -73,9 +73,11 @@ const handleLcUpload = async () => {
     const formData = new FormData();
     formData.append('lc_document', lcDocument);
 
-    const response = await axios.post(
-      `${baseUrl}/api/all-lcs/`,formData);
-
+    const response = await axios.post(`${baseUrl}/api/all-lcs/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
 
     console.log('upload response', response);
     if (response.status === 201) {
@@ -545,8 +547,6 @@ const toggleInvoice = (invoiceNumber) => {
     }
   };
   
-
-
   useEffect(() => {
     // Fetch quotations from the server
     const fetchQuotations = async () => {
@@ -574,7 +574,9 @@ const toggleInvoice = (invoiceNumber) => {
         `${baseUrl}/api/send-quotation/${quotationId}/`, 
         {
           confirm: true,
+
           // Include other required fields here
+
           buyer:  quotations.find(q => q.id === quotationId).buyer,
           seller:  quotations.find(q => q.id === quotationId).seller,
           product: quotations.find(q => q.id === quotationId).product,
@@ -607,8 +609,7 @@ const toggleInvoice = (invoiceNumber) => {
       });
     }
   };
-  
-  
+    
 const styles = StyleSheet.create({
   page: {
     // fontFamily: 'Arial',
@@ -756,13 +757,6 @@ const QuotationListPDF = ({ quotation }) => (
     </ul>
         <hr />
 
-        {/* contact form */}
-
-        {/* Floating Message Icon */}
-        {/* <div className="floating-message-icon" onClick={handleModalShow}>
-        <FaEnvelope size={30} className="" style={{color:'#001b40'}}/>
-      </div> */}
-
       {/* Contact Form */}
         <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
@@ -789,6 +783,7 @@ const QuotationListPDF = ({ quotation }) => (
     <Modal.Title>Package Info</Modal.Title>
   </Modal.Header>
   <Modal.Body>
+
     {selectedPackageInfo && (
      <>
      <p style={{ marginBottom: '8px', fontSize: '16px', fontWeight: 'bold' }}>Package Name: {selectedPackageInfo.package_name}</p>

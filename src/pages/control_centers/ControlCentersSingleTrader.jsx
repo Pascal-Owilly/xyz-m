@@ -157,16 +157,10 @@ const ControlCenters = () => {
         <li className="nav-item">
           <a className={`nav-link ${activeTab === 'ControlCenters' ? 'active' : ''}`} onClick={() => handleTabClick('ControlCenters')} role="tab" aria-controls="ControlCenters" aria-selected={activeTab === 'ControlCenters'}>Control Centers</a>
         </li>
-        <li className="nav-item">
-          <a className={`nav-link ${activeTab === 'CollateralManager' ? 'active' : ''}`} onClick={() => handleTabClick('CollateralManager')} role="tab" aria-controls="CollateralManager" aria-selected={activeTab === 'CollateralManager'}>Documents</a>
-        </li>
-        
       </ul>
 
+  {activeTab === 'ControlCenters' && (
 
-      {activeTab === 'ControlCenters' && (
-        
-        
   <div className="table-responsive">
     <hr />
     <div className='d-flex justify-content-between align-items-center'>
@@ -176,7 +170,6 @@ const ControlCenters = () => {
     Add Control Center
   </Button>
 </div>
-
 
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
@@ -208,7 +201,6 @@ const ControlCenters = () => {
 </Modal.Footer>
 
       </Modal>
-
             {successMessage && <div className='success text-success'>{successMessage}</div>}
             {errorMessage && <div className='error'>{errorMessage}</div>}
       
@@ -223,7 +215,6 @@ const ControlCenters = () => {
         </tr>
       </thead>
       <tbody>
-        {/* Form to add a new control center */}
 
         {/* Display existing control centers */}
         {currentControlCenters.reverse().map((controlCenter) => (
@@ -233,8 +224,14 @@ const ControlCenters = () => {
             <td>{controlCenter.address}</td>
             <td>{controlCenter.assiged_agent_full_name}</td>
             <td>{controlCenter.contact}</td>
+            <td>
+              <Button className='btn-sm' variant="" style={{background:'#001b42', color:'white'}} size="sm" onClick={() => handleShowDetails(controlCenter)}>
+                Show Details
+              </Button>
+            </td>
           </tr>
         ))}
+
       </tbody>
     </table>
     <Pagination>
@@ -246,46 +243,6 @@ const ControlCenters = () => {
           </Pagination>
   </div>
 )}
-
-       {activeTab === 'CollateralManager' && (
-        <div>
-        <h6 className="text mb-4 mt-3">Upload Bill of lading</h6>
-        <Form>
-          <Form.Group controlId="lcDocument">
-            <Form.Label className="text-primary">Choose Document</Form.Label>
-            <Form.Control
-              type="file"
-              onChange={(e) => setLcDocument(e.target.files[0])}
-            />
-          </Form.Group>
-          <Button variant="primary btn-sm mt-3" onClick={handleLcUpload} style={{ width: '100px', fontSize:'15px' }}>
-            Upload
-          </Button>
-         
-        </Form>
-        
-        {lcUploadMessage && (
-          <div>
-            <p className={lcUploadSuccess ? "text-success mt-3" : "text-danger mt-3"}>{lcUploadMessage}</p>
-
-          </div>
-        )}
-      </div>
-      )}
-
-      {activeTab === 'Sellers' && (
-        <div>
-          <h2>Sellers</h2>
-          {/* Display sellers section */}
-        </div>
-      )}
-      {activeTab === 'Buyers' && (
-        <div>
-          <h2>Buyers</h2>
-          {/* Display buyers section */}
-        </div>
-      )}
-
     </div>
   );
 };

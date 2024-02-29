@@ -176,11 +176,16 @@ const handleDownloadLC = () => {
    const currentControlCenters = controlCenters.slice(indexOfFirstItem, indexOfLastItem);
    const currentDocuments = documents.slice(indexOfFirstItem, indexOfLastItem);
 
+   
+   const currentBOLDocuments = documents.slice(indexOfFirstItem, indexOfLastItem);
+
    // Change page
    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const [sellers, setSellers] = useState([]);
   const [buyers, setBuyers] = useState([]);
+  const [logisticsStatuses, setLogisticsStatuses] = useState([]);
+
   const [collateralManagers, setCollateralManagers] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null);
  // State variable to hold the selected document
@@ -210,6 +215,14 @@ const handleDownloadLC = () => {
       .catch(error => {
         console.error('Error fetching buyers:', error);
       });
+      axios.get(`${baseUrl}/api/package-info/`, { headers: { Authorization: `Bearer ${accessToken}` } })
+      .then(response => {
+        setBuyers(response.data);
+        console.log('statuses', response.data)
+      })
+      .catch(error => {
+        console.error('Error fetching buyers:', error);
+      });
 
     // Fetch collateral managers
     axios.get(`${baseUrl}/api/collateral-managers/`, { headers: { Authorization: `Bearer ${accessToken}` } })
@@ -222,6 +235,7 @@ const handleDownloadLC = () => {
 
     // Fetch documents
     axios.get(`${baseUrl}/api/all-lcs/`)
+
   .then(response => {
     console.log('docs', response.data); // Log the received data
     setDocuments(response.data);
@@ -365,45 +379,6 @@ const handleDownloadLC = () => {
 <div>
       {activeTab === 'CollateralManager' && (
         <div>
-          
-{/* <Button
-        variant="primary"
-        className="btn btn-sm float-right mt-2 mb-2"
-        style={{ background: '#fff', color: '#666666', width: '200px' }}
-        onClick={handleOpenModal}
-      >
-        <FaUpload /> &nbsp; Send LC to Seller
-      </Button> */}
-          <h4 className='mt-3 mb-3'>Letter of credits</h4>
-
-        
-<Modal show={showUpload} onHide={handleCloseModal}>
-  <Modal.Header closeButton>
-    <Modal.Title>Send LC information</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <Form>
-    <Form.Group controlId="formSeller">
-  <Form.Label>Select Seller</Form.Label>
-  <Form.Control as="select" onChange={handleSellerChange} value={selectedSeller}>
-    <option value="">Select Seller</option>
-    {sellers && sellers.map((seller, index) => (
-      <option key={index} value={seller.id}>{seller.full_name}</option>
-    ))}
-  </Form.Control>
-</Form.Group>
-
-      <Form.Group controlId="message">
-        <Form.Label>Message</Form.Label>
-        <Form.Control type="text" onChange={handleSellerChange} />
-      </Form.Group>
-    </Form>
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
-    <Button variant="primary" onClick={handleSubmit}>Upload</Button>
-  </Modal.Footer>
-</Modal>
 
           <hr />
           <Card style={{ width: '100%', padding: '1rem', borderRadius: '10px', minHeight: '70vh', color: '#666666' }}>
@@ -457,6 +432,65 @@ const handleDownloadLC = () => {
       )}
       {/* Render modal component */}
     </div>
+
+    <div>
+    {activeTab === 'BOL' && (
+  <div>
+    <h4 className='mt-3 mb-3'>Bill of Lading</h4>
+    <hr />
+    <Card style={{ width: '100%', padding: '1rem', borderRadius: '10px', minHeight: '70vh', color: '#666666' }}>
+      <Table style={{ color: '#999999' }} responsive striped bordered hover>
+        <thead>
+          <tr>
+            <th>Bill of Lading</th>
+            <th>LC ID</th>
+            <th>Issue Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {logisticsStatuses.map(letterOfCredit => (
+            <tr key={letterOfCredit.id}>
+              <td>
+                {renderDocumentPreview(letterOfCredit.bill_of_lading, `Bill of Lading Document for ${letterOfCredit.buyer}`)} 
+                <a href={letterOfCredit.bill_of_lading} target="_blank" rel="noopener noreferrer" className="btn btn-sm float-right " style={{backgroundColor:'rgb(255, 255, 255)', fontSize:'12px', color:'#999999'}}>
+                  View
+                </a>
+              </td>
+              <td>#{letterOfCredit.id}</td>
+              <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td>
+              <td style={{ textTransform: 'capitalize' }}>
+                <button className='btn btn-sm text-white' style={{ backgroundColor: getButtonColor(letterOfCredit.status) }}>
+                  {letterOfCredit.status}
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+      <Pagination
+        itemsPerPage={quotationsPerPage}
+        totalItems={quotations.length}
+        paginate={paginate}
+      />
+    </Card>
+    <hr />
+    <nav aria-label="Page navigation" className='mt-3'>
+      <ul className="pagination justify-content-center">
+        {Array.from({ length: Math.ceil(documents.length / itemsPerPage) }, (_, index) => (
+          <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+            <button className="page-link" onClick={() => paginate(index + 1)}>{index + 1}</button>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+)}
+
+      {/* Render modal component */}
+    </div>
+
+
 
 
       

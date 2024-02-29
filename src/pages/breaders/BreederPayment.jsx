@@ -15,11 +15,9 @@ const PaymentPage = () => {
 
   const [paymentStatus, setPaymentStatus] = useState(null);
 
-  
   return (
     <div className='main-container' style={{minHeight:'85vh' }}>
 
- 
     <div className=' d-flex justify-content-center align-items-center' style={{minHeight:'5vh' }}>
     <div className='main-content' style={{ fontFamily: 'Arial, sans-serif', background: 'linear-gradient(#FFF, #f8f8f8)', borderRadius: '10px', padding: '20px', maxWidth: '500px'}}>
         <h4 className='text-primary mt-1 mb-3 text-center'>Payment initiated successfully</h4>
