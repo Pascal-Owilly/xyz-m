@@ -154,7 +154,7 @@ const Supplier = () => {
   <Row className='main-container' style={{ textAlign: 'left', marginBottom: '20px', minHeight: '85vh' }}>
     <div className='p-3'>
       <h5 className='mb-4 mt-2' style={{color:'#001b40'}}>Product supplies and management </h5>
-      <p>There is an active order for supply of Laptops and we will be collecting from Kululu market. Go to active <br /> orders to view more </p>
+      <p style={{ textAlign: 'center', marginTop: '1rem' }}>Go to active orders to view details of new orders and the market will be collecting from. </p>
     </div>
 
     <Col xs={12} md={4} lg={4}>

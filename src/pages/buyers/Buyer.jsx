@@ -263,6 +263,57 @@ const toggleInvoice = (invoiceNumber) => {
   }));
 };
 
+useEffect(() => {
+  // Fetch sellers
+  axios.get(`${baseUrl}/api/sellers/`, { headers: { Authorization: `Bearer ${accessToken}` } })
+    .then(response => {
+      setSellers(response.data);
+      
+    })
+    .catch(error => {
+      console.error('Error fetching sellers:', error);
+    });
+
+  // Fetch buyers
+  axios.get(`${baseUrl}/api/buyers/`, { headers: { Authorization: `Bearer ${accessToken}` } })
+    .then(response => {
+      setBuyers(response.data);
+      console.log('buyers', buyers)
+    })
+    .catch(error => {
+      console.error('Error fetching buyers:', error);
+    });
+    axios.get(`${baseUrl}/api/package-info/`, { headers: { Authorization: `Bearer ${accessToken}` } })
+    .then(response => {
+      setBuyers(response.data);
+      console.log('statuses', response.data)
+    })
+    .catch(error => {
+      console.error('Error fetching buyers:', error);
+    });
+
+  // Fetch collateral managers
+  axios.get(`${baseUrl}/api/collateral-managers/`, { headers: { Authorization: `Bearer ${accessToken}` } })
+    .then(response => {
+      setCollateralManagers(response.data);
+    })
+    .catch(error => {
+      console.error('Error fetching collateral managers:', error);
+    });
+
+  // Fetch documents
+  axios.get(`${baseUrl}/api/all-lcs/`)
+
+.then(response => {
+  console.log('docs', response.data); // Log the received data
+  setDocuments(response.data);
+})
+.catch(error => {
+  console.error('Error fetching documents:', error);
+});
+
+}, [baseUrl, accessToken]);
+
   useEffect(() => {
     // Fetch letter of credits from the new endpoint with headers
     axios.get(`${baseUrl}/api/letter_of_credits/`, {
@@ -470,7 +521,7 @@ const toggleInvoice = (invoiceNumber) => {
         .map((status) => (
           <Card
             key={status.id}
-            className={`card ${getStatusColor(status.status)} mr-2`}
+            className={`card ${getColor(status.status)} mr-2`}
             disabled
           >
             <Card.Body>
@@ -478,7 +529,7 @@ const toggleInvoice = (invoiceNumber) => {
             </Card.Body>
           </Card>
         ))}
-      <ProgressBar now={calculatePercentage(order.status)} label={`${order.status} - ${calculatePercentage(order.status)}%`} />
+      {/* <ProgressBar now={calculatePercentage(order.status)} label={`${order.status} - ${calculatePercentage(order.status)}%`} /> */}
     </div>
   );
 

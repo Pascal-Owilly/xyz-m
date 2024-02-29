@@ -17,6 +17,7 @@ const ActiveOrders = () => {
   const ordersPerPage = 5;
 
   useEffect(() => {
+    // Fetching actual data from API
     const fetchQuotations = async () => {
       try {
         const response = await axios.get(`${baseUrl}/api/quotations/`);
@@ -65,46 +66,53 @@ const ActiveOrders = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const formattedDate = new Date(quotation.created_at).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-  
-
   return (
     <div className='main-container' style={{ background: '#F9FAFB', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', borderRadius: '10px', fontSize: '16px', color: '#333' }}>
-      <h4 className='' style={{ marginBottom: '18px', color: '#001b40' }}>Active Orders</h4>
+      <hr />
+      <h4 className='' style={{ marginBottom: '18px', color: '#666666' }}>Active Orders</h4>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
       {currentQuotations.map((quotation) => (
   <div key={quotation.id} style={{ marginBottom: '20px', background: 'white', borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', padding: '20px' }}>
-    <table className='table table-striped table-responsive' style={{ width: '100%' }}>
-      <thead className='' style={{ color: '#666666' }}>
-        <tr>
-          <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Order Number</th>
-          <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Date</th>
-          <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Price/Kg</th>
-          <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Product Description</th>
-          <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Quantity</th>
-        </tr>
-      </thead>
-      <tbody style={{ color: '#666666' }}>
-        <tr>
-          <td style={{ fontSize: '13px', color: '#666666' }}>#{quotation.id}</td>
-          <td style={{ fontSize: '13px', color: '#666666' }}>{new Date(quotation.created_at).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}</td>
-          <td style={{ fontSize: '13px', color: '#666666' }}>{quotation.unit_price}</td>
-          <td style={{ fontSize: '13px', color: '#666666' }}>{quotation.product}</td>
-          <td style={{ fontSize: '13px', color: '#666666' }}>{quotation.quantity}</td>
-        </tr>
-      </tbody>
-    </table>
+   <div className="card" style={{ backgroundColor: '#f8f9fa', padding: '1rem' }}>
+      <div className="card-body">
+        <table className="table table-striped table-responsive" style={{ width: '100%', border: 'none' }}>
+          <thead style={{ color: '#999999' }}>
+            <tr>
+              <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Order Number</th>
+              <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Date</th>
+              <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Price/Kg</th>
+              <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Product Description</th>
+              <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Quantity</th>
+              <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Collected from</th>
+
+              <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Status</th>
+            </tr>
+          </thead>
+          <tbody style={{ color: '#666666' }}>
+            <tr>
+              <td style={{ fontSize: '13px' }}>#{quotation.id}</td>
+              <td style={{ fontSize: '13px' }}>{new Date(quotation.created_at).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}</td>
+              <td style={{ fontSize: '13px', textTransform:'capitalize' }}>{quotation.unit_price}</td>
+              <td style={{ fontSize: '13px', textTransform:'capitalize' }}>{quotation.product}</td>
+              <td style={{ fontSize: '13px', textTransform:'capitalize' }}>{quotation.quantity}</td>
+              <td style={{ fontSize: '13px', textTransform:'capitalize' }}>{quotation.market} market</td>
+
+              <td style={{ fontSize: '13px' }}>
+                <button style={{ backgroundColor: quotation.status === 'active' ? 'green' : 'red', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }}>
+                  {quotation.status === 'active' ? 'Active' : 'Closed'}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 ))}
-
       </div>
       <nav>
         <ul className='pagination'>
