@@ -5,39 +5,6 @@ import axios from 'axios';
 import { BASE_URL } from './auth/config';
 import { Container, Row, Col, Table, Button, Pagination, Card } from 'react-bootstrap';
 
-const Greetings = () => {
-  const currentTime = new Date();
-  const currentHour = currentTime.getHours();
-  let greeting;
-
-  if (currentHour < 12) {
-    greeting = 'Good morning';
-  } else if (currentHour < 18) {
-    greeting = 'Good afternoon';
-  } else {
-    greeting = 'Good evening';
-  }
-
-  return greeting;
-};
-
-const PART_CHOICES = [
-  ['ribs', 'Ribs'],
-  ['thighs', 'Thighs'],
-  ['loin', 'Loin'],
-  ['shoulder', 'Shoulder'],
-  ['shanks', 'Shanks'],
-  ['organ_meat', 'Organ Meat'],
-  ['intestines', 'Intestines'],
-  ['tripe', 'Tripe'],
-  ['sweetbreads', 'Sweetbreads'],
-];
-
-const SALE_CHOICES = [
-  ['export_cut', 'Export Cut'],
-  ['local_sale', 'Local Sale Cut'],
-];
-
 const UserProfile = ({ user }) => (
 <div className="mb-3" style={{ color: '#666666' }}>
   <p>Please enter the raw materials name and finished product name exactly as it appears in the inventory. Note that the form is case sensitive. and will add the entered name as a brand new product if not in the inventory</p>
@@ -93,119 +60,6 @@ const SlaughterForm = ({ showForm, onSubmit, submitMessage, onVisibilityChange, 
               <button type="submit" className="btn text-white" style={{background:'#001b40'}}>Submit</button>
             </form>
           </div>
-        </div>
-      </div>
-    </div>
-  )
-);
-
-const BreedCutForm = ({ showCutForm, onSubmit, cutData, onChange, submitMessage, onVisibilityChange }) => (
-  showCutForm && (
-    <div className="col-md-12">
-      <div className="card">
-        <div className="card-body">
-          <form onSubmit={onSubmit}>
-            <h5 className="mb-3" style={{color:'#001b40'}}>Finished products</h5>
-            <h6 className="mb-3 " style={{color:'#999999'}}>To be added to inventory/(chilled warehouse)</h6>
-
-            <p>
-            <label htmlFor="breedInput" className="form-label">Enter raw product name: (eg Cow, Goat etc)</label>
-<input
-  id="breedInput"
-  type="text"
-  name="breed"
-  value={cutData.breed}
-  onChange={onChange}
-  className="form-control mb-3"
-  required
-/>
-            </p>
-            <label htmlFor="partNameInput" className="form-label text-secondary">Enter finished product name: (eg ribs, intestines etc)</label>
-<input
-  id="partNameInput"
-  type="text"
-  name="partName"
-  value={cutData.partName}
-  onChange={onChange}
-  className="form-control mb-3"
-  style={{
-    background: 'white',
-    color: '#999999', // Secondary text color
-    padding: '0.2rem',
-    width: '100%'
-  }}
-  required
-/>
-
-<label htmlFor="weightInput" className="form-label" style={{
-    background: 'white',
-    color: '#999999', // Secondary text color
-    padding: '0.1rem',
-    width: '100%'
-  }}>Enter weight in Kg: (eg 300, 120 etc)</label>
-<input
-  id="weightInput"
-  type="number"
-  name="weight"
-  value={cutData.weight}
-  onChange={onChange}
-  className="form-control mb-3"
-  style={{
-    background: 'white',
-    color: '#999999', // Secondary text color
-    padding: '0.2rem',
-    width: '100%'
-  }}
-  required
-/>
-
-
-            <p>
-              <label htmlFor="saleTypeSelect" className="form-label">Select Sale Type:</label>
-              <select
-style={{
-  background: 'white',
-  color: '#999999', // Secondary text color
-  padding: '0.2rem',
-  borderRadius: '30px',
-  width:'100%'
-}}                id="saleTypeSelect"
-                name="saleType"
-                value={cutData.saleType}
-                onChange={onChange}
-                className='form-select mb-3 mx-2'
-              >
-                {/* Use the SALE_CHOICES here */}
-                {SALE_CHOICES.map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </p>
-            <label htmlFor="quantityInputCut" className="form-label" 
-            style={{
-              background: 'white',
-              color: '#999999', // Secondary text color
-            }}
-            >Enter quantity: (eg 30, 120 etc)</label>
-            <input
-                        id="quantityInputCut"
-                        type="number"
-                        name="quantity"
-                        value={cutData.quantity}
-                        onChange={onChange}
-                        className="form-control mb-3"
-                        required
-                        style={{
-                          background: 'white',
-                          color: '#6c757d', // Secondary text color
-                          borderRadius: '30px',
-                          padding: '0.2rem',
-                        }}
-                      />
-            <button type="submit" className="btn text-white" style={{background:'#001b40'}}>Submit</button>
-          </form>
         </div>
       </div>
     </div>
@@ -435,26 +289,7 @@ const Home = () => {
                 setQuantity={setQuantity} // Pass the setQuantity function
               />
             </Col>
-
-            {/* Breed Cut Form */}
-            <Col md={6}>
-              <BreedCutForm
-                showCutForm={showCutForm}
-                onSubmit={handleCutSubmit}
-                cutData={cutData}
-                onChange={handleCutInputChange}
-                submitMessage={cutSubmitMessage}
-                onVisibilityChange={handleCutFormVisibility}
-              />
-            </Col>
           </Row>
-
-
-    {/* <div className="mb-3 ">
-      <div className="icon-box">
-        <HiBell size={20} color='white' />
-      </div>
-    </div> */}
   </div>
 </div>
 

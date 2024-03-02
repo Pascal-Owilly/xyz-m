@@ -3,9 +3,8 @@ import { FaPlus } from 'react-icons/fa';
 import axios from 'axios';
 import { BASE_URL } from '../auth/config';
 import { useNavigate } from 'react-router-dom';
-import { FaTruck, FaWarehouse, FaBoxes, FaShippingFast, FaBarcode, FaPallet, FaClipboardList } from 'react-icons/fa';
-import { Row, Col, Card, Container, Form, Table, Button, ProgressBar, Navbar, Nav, NavDropdown, Pagination, Modal } from 'react-bootstrap';
-import Inventory from './Inventory'
+import { FaClipboardList } from 'react-icons/fa';
+import { Form, Button, Pagination, Modal } from 'react-bootstrap';
 import Cookies from 'js-cookie';
 
 const ControlCenters = () => {
@@ -14,6 +13,11 @@ const ControlCenters = () => {
   const [controlCenters, setControlCenters] = useState([]);
   const [selectedManager, setSelectedManager] = useState(null);
   const [newControlCenterName, setNewControlCenterName] = useState('');
+  const [newLocation, setNewLocation] = useState('');
+  const [newAddress, setNewAddress] = useState('');
+  const [newContact, setNewContact] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [newCollateralManagerName, setNewCollateralManagerName] = useState('');
   const [inventory, setInventory] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,6 +29,7 @@ const ControlCenters = () => {
   const [activeTab, setActiveTab] = useState('ControlCenters');
   const [billOfLading, setBillOfLading] = useState(null);
   const [showModal, setShowModal] = useState(false); // State for showing/hiding the modal
+  const [showAlertModal, setShowAlertModal] = useState(false); // State for showing/hiding the modal
   const [showManagerModal, setShowManagerModal] = useState(false);
   const [newManagerName, setNewManagerName] = useState('');
   const [collateralManagers, setCollateralManagers] = useState([]);
@@ -34,49 +39,48 @@ const ControlCenters = () => {
   const [confirmUpdate, setConfirmUpdate] = useState(false);
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
-  const [lcDocument, setLcDocument] = useState(null);
+  const [showInventoryModal, setShowInventoryModal] = useState(false);
 
-  // Add state variables to hold the data for buyers and sellers
-const [buyers, setBuyers] = useState([]);
-const [sellers, setSellers] = useState([]);
+const handleAddControlCenter = async () => {
+  try {
+    await axios.post(`${baseUrl}/api/control-centers/`, {
+      name: newControlCenterName,
+      location: newLocation,
+      address: newAddress,
+      contact: newContact
+      // Add other fields as needed
+    });
+    fetchControlCenters(); // Refresh control centers after adding a new one
+    setNewControlCenterName(''); // Clear the input field after adding
+    setNewLocation(''); // Clear the location field after adding
+    setNewAddress(''); // Clear the address field after adding
+    setNewContact(''); // Clear the contact field after adding
+    setSuccessMessage('Control center added successfully.');
+    setErrorMessage('');
 
-// Use useEffect to fetch data from the backend when the component mounts
-useEffect(() => {
-    fetchBuyers();
-    fetchSellers();
-}, []);
-
-// Fetch buyers from the backend
-const fetchBuyers = async () => {
-    try {
-        const response = await axios.get(`${baseUrl}/api/buyers/`);
-        setBuyers(response.data);
-    } catch (error) {
-        console.error('Error fetching buyers:', error);
-    }
-};
-
-// Fetch sellers from the backend
-const fetchSellers = async () => {
-    try {
-        const response = await axios.get(`${baseUrl}/api/sellers/`);
-        setSellers(response.data);
-    } catch (error) {
-        console.error('Error fetching sellers:', error);
-    }
+    // Close the modal
+    setShowModal(false);
+    // Reset the form
+    setNewControlCenterName('');
+  } catch (error) {
+    console.error('Error adding control center:', error);
+    setSuccessMessage('');
+    setErrorMessage('Failed to add control center.');
+  }
 };
 
   useEffect(()  => {
     const fetchInventory = async () => {
       try {
         setLoading(true); // Set loading to true while fetching data
-        const response = await axios.get(`${baseUrl}/api/inventory/${selectedManager.id}`);
+        const response = await axios.get(`${baseUrl}/api/control-centers/${selectedManager.id}`);
         setInventory(response.data);
-        setLoading(false); // Set loading to false after data is fetched
+        setLoading(false); 
+        console.log('inventory response', response.data)
       } catch (error) {
         console.error('Error fetching inventory:', error);
         setLoading(false); // Set loading to false if there's an error
-      }
+      } 
     };
   
     if (selectedManager) {
@@ -138,7 +142,6 @@ const handleControlCenterChange = (event) => {
 };
 
 // Function to confirm the update of collateral manager
-// Function to confirm the update of collateral manager
 const handleConfirmUpdate = async () => {
   const isConfirmed = window.confirm('Are you sure you want to update the collateral manager?');
   if (isConfirmed) {
@@ -162,16 +165,16 @@ const handleConfirmUpdate = async () => {
   }
 };
 
-
 // Function to update the collateral manager
 const updateCollateralManager = async () => {
   try {
-    // Make the PUT request to update the collateral manager
     const response = await axios.put(`${baseUrl}/api/control-centers/${selectedControlCenterId}/`, {
       assigned_collateral_agent: selectedCollateralManagerId,
     });
-    // Handle the response accordingly
-    console.log('Collateral manager updated successfully:', response.data);
+
+    // Log the response data to double-check the updated control center information
+    console.log('Update Collateral Manager Response:', response.data);
+
     // Update the control centers state with the updated data
     const updatedControlCenters = controlCenters.map(center => {
       if (center.id === selectedControlCenterId) {
@@ -183,66 +186,20 @@ const updateCollateralManager = async () => {
       return center;
     });
     setControlCenters(updatedControlCenters);
+
+    // Check if the assigned collateral manager ID matches the selected one
+    if (response.data.assigned_collateral_agent === selectedCollateralManagerId) {
+      console.log('Collateral manager successfully assigned to control center.');
+    } else {
+      console.error('Error: Collateral manager not assigned to control center.');
+    }
   } catch (error) {
     console.error('Error updating collateral manager:', error);
-  }
-};
-  // Function to handle input change in the modal form
-  const handleManagerInputChange = (event) => {
-    setNewManagerName(event.target.value);
-  };
-
-  // Function to handle submission of the modal form
-const handleAddManagerSubmit = async () => {
-  try {
-    // Get the access token from wherever it's stored in your application
-    const accessToken = Cookies.get('accessToken');
-
-    // Set the headers with the bearer token
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-    };
-
-    // Get the values of the confirm_password and last_name fields
-    const confirm_password = document.getElementById('confirmPassword').value;
-    const last_name = document.getElementById('lastName').value;
-
-    // Check if confirm_password is empty, if so, display error message and return
-    if (!confirm_password) {
-      console.error('Confirm password is required.');
-      return;
-    }
-
-    // Check if last_name is empty, if so, display error message and return
-    if (!last_name) {
-      console.error('Last name may not be blank.');
-      return;
-    }
-
-    // Make the POST request with the headers
-    const response = await axios.post(`${baseUrl}/api/register/`, {
-      first_name: newManagerName,
-      last_name: last_name, // Use the last_name entered in the form
-      username: newManagerName, // Use the manager name as the username
-      password: document.getElementById('password').value, // Get password value from input
-      confirmPassword: confirm_password, // Use the confirm_password entered in the form
-      role: "collateral_manager", // Assign the role 'collateral_manager'
-    }, {
-      headers: headers // Pass the headers to the request configuration
-    });
-
-    // Update the state with the new manager's data
-    setCollateralManagers([...collateralManagers, response.data]);
-    setShowManagerModal(false); // Close the modal
-  } catch (error) {
-    console.error('Error adding manager:', error);
   }
 };
 
 // Associate collateral manager
 
-// Add a function to associate a collateral manager with the control center
-// Add a function to associate a collateral manager with the control center
 const associateCollateralManager = async () => {
   try {
     if (!selectedCollateralManagerId || !selectedControlCenterId) {
@@ -305,7 +262,6 @@ const associateCollateralManager = async () => {
   }
 };
 
-
 // Function to handle changes in the selected collateral manager
 const handleCollateralManagerChange = (controlCenterId, event) => {
   const selectedCollateralManagerId = event.target.value;
@@ -316,21 +272,21 @@ const handleCollateralManagerChange = (controlCenterId, event) => {
   handleConfirmUpdate();
 };
 
-
-const handleAssociateCollateralManager = () => {
-  setShowManagerModal(true); // Show the modal for associating collateral manager
+const handleManagerClick = async (center) => {
+  setSelectedManager(center);
+  setShowInventoryModal(true);
+  setActiveTab('InventoryOverview');
+  try {
+    const response = await axios.get(`${baseUrl}/api/control-centers/${center.id}/`);
+    setInventory(response.data);
+  } catch (error) {
+    console.error('Error fetching inventory:', error);
+  }
 };
-
-
-  
-  const handleManagerClick = (center) => {
-    setSelectedManager(center);
-    setActiveTab('CollateralManager'); // Set active tab to 'CollateralManager'
-};
-
+ 
   const handleTabClick = (tabName) => {
     if (tabName === 'CollateralManager') {
-      setShowModal(true); // Show the modal when 'Inventory Overview' tab is clicked
+      setShowAlertModal(true); // Show the modal when 'Inventory Overview' tab is clicked
     } else {
       setActiveTab(tabName);
     }
@@ -338,18 +294,7 @@ const handleAssociateCollateralManager = () => {
 
   const handleCloseModal = () => {
     setShowModal(false); // Hide the modal
-  };
-
-  const handleAddManager = () => {
-    // For demonstration purposes, let's generate a random name for the new manager
-    const newManagerName = `Collateral Manager ${collateralManagers.length + 1}`;
-    const newManager = { id: Date.now(), name: newManagerName };
-    setCollateralManagers([...collateralManagers, newManager]);
-  };
-
-  const handleUploadBillOfLading = (event) => {
-    const file = event.target.files[0];
-    setBillOfLading(file);
+    setShowAlertModal(false); // Hide the modal
   };
 
   // pagination
@@ -357,29 +302,12 @@ const handleAssociateCollateralManager = () => {
     setCurrentPageControlCenters(pageNumber);
 };
 
-const paginateSellers = (pageNumber) => {
-    setCurrentPageSellers(pageNumber);
-};
-
-const paginateBuyers = (pageNumber) => {
-    setCurrentPageBuyers(pageNumber);
-};
-const indexOfLastItemControlCenters = currentPageControlCenters * itemsPerPage;
-const indexOfFirstItemControlCenters = indexOfLastItemControlCenters - itemsPerPage;
-const currentControlCenters = controlCenters.slice(indexOfFirstItemControlCenters, indexOfLastItemControlCenters)
-
-const indexOfLastItemSellers = currentPageSellers * itemsPerPage;
-const indexOfFirstItemSellers = indexOfLastItemSellers - itemsPerPage;
-const currentSellers = sellers.slice(indexOfFirstItemSellers, indexOfLastItemSellers)
-
-const indexOfLastItemBuyers = currentPageBuyers * itemsPerPage;
-const indexOfFirstItemBuyers = indexOfLastItemBuyers - itemsPerPage;
-const currentBuyers = buyers.slice(indexOfFirstItemBuyers, indexOfLastItemBuyers)
+  const indexOfLastItemControlCenters = currentPageControlCenters * itemsPerPage;
+  const indexOfFirstItemControlCenters = indexOfLastItemControlCenters - itemsPerPage;
+  const currentControlCenters = controlCenters.slice(indexOfFirstItemControlCenters, indexOfLastItemControlCenters)
 
   return (
     <div className='main-container container-fluid' style={{minHeight:'85vh' }}>
-
-
       <ul className="nav nav-tabs" id="myTab" role="tablist" style={{fontSize:'15px', backgroundColor:'#001b40', color:'#d9d9d9'}}>
         <li className="nav-item">
           <a className={`nav-link ${activeTab === 'ControlCenters' ? 'active' : ''}`} onClick={() => handleTabClick('ControlCenters')} role="tab" aria-controls="ControlCenters" aria-selected={activeTab === 'ControlCenters'}>Control Centers</a>
@@ -387,16 +315,10 @@ const currentBuyers = buyers.slice(indexOfFirstItemBuyers, indexOfLastItemBuyers
         <li className="nav-item">
           <a className={`nav-link text-secondary ${activeTab === 'CollateralManager' ? 'active' : ''}`} onClick={() => handleTabClick('CollateralManager')} role="tab" aria-controls="CollateralManager" aria-selected={activeTab === 'CollateralManager'}>Inventory Overview</a>
         </li>
-        <li className="nav-item">
-          <a className={`nav-link ${activeTab === 'Sellers' ? 'active' : ''}`} onClick={() => handleTabClick('Sellers')} role="tab" aria-controls="Sellers" aria-selected={activeTab === 'Sellers'}>Sellers</a>
-        </li>
-        <li className="nav-item">
-          <a className={`nav-link ${activeTab === 'Buyers' ? 'active' : ''}`} onClick={() => handleTabClick('Buyers')} role="tab" aria-controls="Buyers" aria-selected={activeTab === 'Buyers'}>Buyers</a>
-        </li>
       </ul>
 
       {/* Modal for prompting the user */}
-      <Modal show={showModal} onHide={handleCloseModal} className='mt-5'>
+      <Modal show={showAlertModal} onHide={handleCloseModal} className='mt-5'>
         <Modal.Header closeButton>
           <Modal.Title>Inventory Overview</Modal.Title>
         </Modal.Header>
@@ -411,7 +333,7 @@ const currentBuyers = buyers.slice(indexOfFirstItemBuyers, indexOfLastItemBuyers
       </Modal>
 
        {/* Manager Modal */}
-       <Modal show={showManagerModal} onHide={handleCloseManagerModal} className='mt-5'>
+  <Modal show={showManagerModal} onHide={handleCloseManagerModal} className='mt-5'>
   <Modal.Header closeButton>
     <Modal.Title>Associate Collateral Manager</Modal.Title>
   </Modal.Header>
@@ -441,8 +363,7 @@ const currentBuyers = buyers.slice(indexOfFirstItemBuyers, indexOfLastItemBuyers
     ))}
   </Form.Control>
 </Form.Group>
-
-    </Form>
+</Form>
   </Modal.Body>
   <Modal.Footer>
     <Button variant="secondary" onClick={handleCloseManagerModal}>
@@ -454,6 +375,38 @@ const currentBuyers = buyers.slice(indexOfFirstItemBuyers, indexOfLastItemBuyers
   </Modal.Footer>
 </Modal>
 
+<Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add New Control Center</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+  <Form>
+    <Form.Group controlId="formControlCenterName">
+      <Form.Label>Name:</Form.Label>
+      <Form.Control type="text" placeholder="Enter control center name" value={newControlCenterName} onChange={(e) => setNewControlCenterName(e.target.value)} />
+    </Form.Group>
+    <Form.Group controlId="formControlCenterLocation">
+      <Form.Label>Location:</Form.Label>
+      <Form.Control type="text" placeholder="Enter location" value={newLocation} onChange={(e) => setNewLocation(e.target.value)} />
+    </Form.Group>
+    <Form.Group controlId="formControlCenterAddress">
+      <Form.Label>Address:</Form.Label>
+      <Form.Control type="text" placeholder="Enter address" value={newAddress} onChange={(e) => setNewAddress(e.target.value)} />
+    </Form.Group>
+    <Form.Group controlId="formControlCenterContact">
+      <Form.Label>Contact:</Form.Label>
+      <Form.Control type="text" placeholder="Enter contact" value={newContact} onChange={(e) => setNewContact(e.target.value)} />
+    </Form.Group>
+  </Form>
+</Modal.Body>
+<Modal.Footer>
+  <Button className='btn btn-sm' variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
+  <Button className='btn' variant="primary" onClick={handleAddControlCenter}>Add</Button>
+</Modal.Footer>
+
+      </Modal>
+            {successMessage && <div className='success text-success'>{successMessage}</div>}
+            {errorMessage && <div className='error'>{errorMessage}</div>}      
       {activeTab === 'ControlCenters' && (
         <div>
           <hr />
@@ -461,11 +414,12 @@ const currentBuyers = buyers.slice(indexOfFirstItemBuyers, indexOfLastItemBuyers
             <h4 className='text-secondary mx-2' style={{ marginRight: '5px', color:'#666666' }}><FaClipboardList /> All Control Centers</h4>
            
                 <a href='/collateral-manager-register '>
-
-                <Button variant="" style={{fontSize:"12px", backgroundColor:'#001b42', color:'white'}} >
-                Add Collateral Manager
-          </Button>
           </a>
+
+          <Button className="btn btn-info mb-5" style={{width:'250px', fontSize:'15px'}} onClick={() => setShowModal(true)}>
+    <FaPlus style={{ marginRight: '5px', fontSize:'15px' }} />
+    Add Control Center
+  </Button>
 
           </div>
           <hr />
@@ -507,16 +461,16 @@ const currentBuyers = buyers.slice(indexOfFirstItemBuyers, indexOfLastItemBuyers
     ))}
   </select>
 </td>
-
       <td>
         <button className="btn btn-sm text-light" style={{backgroundColor:'#001b42', fontSize:'11px'}} onClick={() => handleManagerClick(center)}>View Details</button>
       </td>
     </tr>
   ))}
-</tbody>  </table>
+</tbody>
+</table>
 </div>
 
-       <Pagination>
+  <Pagination>
   {Array.from({ length: Math.ceil(controlCenters.length / itemsPerPage) }, (_, i) => {
     const pageNumber = i + 1; 
     return (
@@ -530,101 +484,75 @@ const currentBuyers = buyers.slice(indexOfFirstItemBuyers, indexOfLastItemBuyers
     );
   })}
 </Pagination>
-
-
         </div>
       )}
+{activeTab === 'InventoryOverview' && selectedManager && inventory && (
+  <div style={{ padding: '20px' }}>
+    <div style={{ backgroundColor: '#f9f9f9', borderRadius: '5px', padding: '10px', marginBottom: '20px' }}>
+      <h5>Inventory Information</h5><hr />
+      <span style={{fontSize:'12px', color:'#666666', fontWeight:'bold'}}> Managed by {selectedManager.assigned_agent_full_name} </span>
 
-{activeTab === 'CollateralManager' && selectedManager && (
-    <div style={{ width: '100%', height: '100%' }}>
-        <h4 className="mt-3">Inventory for <span style={{color:'#666666', fontStyle:'italic'}}>{selectedManager.name} </span></h4>
-        <span style={{fontSize:'12px', color:'#666666', fontWeight:'bold'}}> Managed by {selectedManager.assiged_agent_full_name} </span>
-
-        {selectedManager.associated_seller && (
-            <h6 className="mt-3">Associated seller: {selectedManager.associated_seller_full_name}</h6>
-        )}
-        <div style={{ }}> 
-            <Inventory managerId={selectedManager.id} style={{ width: '100%', height: '100%' }} />
+      {inventory && (
+        <div>
+          <p><strong>Control center:</strong> {inventory.name}</p>
+          <p><strong>Seller:</strong> {inventory.breadertrades.seller}</p>
+          {/* Render other inventory details as needed */}
         </div>
+      )}
     </div>
-)}
-
-{activeTab === 'Sellers' && (
-    <div>
-        <h4 className='mb-3 mt-4' style={{color:'#666666'}}> Sellers List</h4>
-        <div className="table-responsive">
-            <table style={{color:'#666666'}} className="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Name</th>
-                        <th>Date added</th>
-
-                    </tr>
-                </thead>
-                <tbody>
-                    {currentSellers.map((seller, index) => (
-                        <tr key={index}>
-                            <td>{seller.id}</td>
-                            <td>{seller.full_name}</td>
-                            <td>{seller.formatted_created_at}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+    {/* Display total weight at the top */}
+      {/* Calculate total breeds supplied */}
+      <div className='d-flex'>
+      <p className='mx-4'><strong>Total available:</strong><span className='mx-2' style={{fontWeight:'700', fontSize:'20px', color:'#001b42'}}>{Object.values(inventory.breadertrades.reduce((acc, trade) => {
+            if (!acc[trade.breed]) {
+              acc[trade.breed] = 0;
+            }
+            acc[trade.breed] += trade.breeds_supplied;
+            return acc;
+          }, {})).reduce((total, count) => total + count, 0)}</span> </p>
+          
+    <p><strong>Total Weight:</strong> {Object.values(inventory.breadertrades.reduce((acc, trade) => {
+      if (!acc[trade.breed]) {
+        acc[trade.breed] = 0;
+      }
+      acc[trade.breed] += trade.goat_weight;
+      return acc;
+    }, {})).reduce((total, weight) => total + weight, 0)} Kgs</p>
+    </div>
+    {/* Display each trade item */}
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+    {inventory.breadertrades && inventory.breadertrades.length > 0 && (
+  <div>
+    {/* Group trades by breed */}
+    {Object.values(inventory.breadertrades.reduce((acc, trade) => {
+      if (!acc[trade.breed]) {
+        acc[trade.breed] = {...trade, totalBreedsSupplied: 0, totalWeight: 0};
+      }
+      acc[trade.breed].totalBreedsSupplied += trade.breeds_supplied;
+      acc[trade.breed].totalWeight += trade.goat_weight;
+      return acc;
+    }, {})).map((trade, index) => (
+      <div key={index} style={{ marginBottom: '20px', backgroundColor: '#f9f9f9', borderRadius: '5px', padding: '10px', display: 'grid', gridTemplateColumns: '1fr 3fr' }}>
+        <h5 style={{ fontSize: '14px', fontWeight: '500', color: '#666666', gridColumn: '1 / span 2' }}>Raw material: <span style={{ fontSize: '16px', fontWeight: '700', color: '#666666' }}>{trade.breed}</span> </h5>
+        <hr style={{ gridColumn: '1 / span 2' }} />
+        <div>
+          <p><strong>Level:</strong> {trade.totalBreedsSupplied}</p>
+        </div> &nbsp;
+        <div>
+          <p><strong>Weight:</strong> {trade.totalWeight} Kgs</p>
         </div>
-        <Pagination>
-    {Array.from({ length: Math.ceil(sellers.length / itemsPerPage) }, (_, i) => (
-        <Pagination.Item key={i + 1} active={i + 1 === currentPageSellers} onClick={() => paginateSellers(i + 1)}>
-            {i + 1}
-        </Pagination.Item>
+      </div>
     ))}
-</Pagination>
-    </div>
+    {/* Calculate total breeds supplied */}
+  
+  </div>
 )}
 
-{activeTab === 'Buyers' && (
-    <div style={{color:'#666666'}}>
-        <h4 className='mb-3 mt-4' style={{color:'#666666'}}>Buyers List</h4>
-        <div className="table-responsive">
-            <table className="table table-striped" style={{color:'#666666'}}>
-                <thead>
-                    <tr>
-                    <th>Full Name</th>
-
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Country</th>
-                        <th>Address</th>
-
-                        {/* Add more columns if needed */}
-                    </tr>
-                </thead>
-                <tbody>
-                    {currentBuyers.map((buyer, index) => (
-                        <tr key={index}>
-                            <td>{buyer.full_name}</td>
-                            <td>{buyer.username}</td>
-                            <td>{buyer.email}</td>
-                            <td>{buyer.country}</td>
-                            <td>{buyer.address}</td>
-
-                            {/* Add more cells for additional buyer data */}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-        <hr />
-        <Pagination>
-    {Array.from({ length: Math.ceil(buyers.length / itemsPerPage) }, (_, i) => (
-        <Pagination.Item key={i + 1} active={i + 1 === currentPageBuyers} onClick={() => paginateBuyers(i + 1)}>
-            {i + 1}
-        </Pagination.Item>
-    ))}
-</Pagination>
     </div>
+  </div>
 )}
+
+
 
 
     </div>

@@ -12,6 +12,8 @@ const InvoiceForms = () => {
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [profile, setProfile] = useState([]);
   const [errors, setErrors] = useState({}); // Initialize errors state
+  const [controlCenters, setControlCenters] = useState([]);
+  const [sellers, setSellers] = useState([]);
 
   const accessToken = Cookies.get('accessToken');
   const baseUrl = BASE_URL;
@@ -33,6 +35,8 @@ const InvoiceForms = () => {
     user: null,
     animalOptions: ['Goats', 'Sheep', 'Cows', 'Pigs'],
     selectedAnimal: 'Goats',
+    control_center:null,
+    seller:  null,
   });
 
 useEffect(() => {
@@ -40,30 +44,27 @@ useEffect(() => {
 }, [navigate, accessToken]);
 
 
+// Fetch control centers and sellers data
+useEffect(() => {
+  const fetchControlCentersAndSellers = async () => {
+    try {
+      const controlCentersResponse = await axios.get(`${baseUrl}/api/control-centers/`);
+      const sellersResponse = await axios.get(`${baseUrl}/api/sellers/`);
+
+      setControlCenters(controlCentersResponse.data);
+      setSellers(sellersResponse.data);
+      console.log('sellers', sellersResponse.data)
+      console.log('control center', controlCentersResponse.data)
+
+    } catch (error) {
+      console.error('Error fetching control centers and sellers data:', error);
+    }
+  };
+
+  fetchControlCentersAndSellers();
+}, [baseUrl]);
 
   useEffect(() => {
-
-    // const refreshAccessToken = async () => {
-    //   try {
-    //     console.log('fetching token refresh ... ')
-  
-    //     const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
-    
-    //     const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
-    //       refresh: refreshToken,
-    //     });
-    
-    //     const newAccessToken = response.data.access;
-    //     // Update the stored access token
-    //     Cookies.set('accessToken', newAccessToken);
-    //     // Optional: You can also update the user data using the new access token
-    //     await fetchUserData();
-    //   } catch (error) {
-    //     console.error('Error refreshing access token:', error);
-    //     // Handle the error, e.g., redirect to login page
-    //   }
-    // };
-
     const fetchData = async () => {
       try {
         // Fetch seller data for the currently logged-in breeder
@@ -189,6 +190,12 @@ useEffect(() => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
+    // Check if control_center and seller are selected
+  if (!formData.control_center || !formData.seller) {
+    alert('Please select both Control Center and Seller.'); // Display an error message
+    return; // Prevent form submission
+  }
+
      // Initialize errors object
      const errors = {};
 
@@ -265,6 +272,8 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
         breeder: null,
         abattoir: null,
         user: null,
+        control_center: null,
+        seller: null,
       });
     } catch (error) {
       if (error.response && error.response.status === 500) {
@@ -362,8 +371,6 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
 
               </td>
             </tr>
-            
-
 <tr>
               <th style={{ border: '1px solid #999999', padding: '5px' }}>Vaccinated:</th>
               <td style={{ border: '1px solid #999999', padding: '5px' }}>
@@ -452,11 +459,50 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
               <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.bank_account_number}</div>
 
               </td>
-            </tr>
+              </tr>
+              <tr>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>Select seller</th>
+              <td>
+              <div className='form-group'>
+                  <label htmlFor='control_center'>Select Control Center:</label>
+                  <select
+                    id='control_center'
+                    name='control_center'
+                    className='form-control'
+                    value={formData.control_center}
+                    onChange={handleInputChange}
+                  >
+                    <option value=''>Select Control Center</option>
+                    {controlCenters.map((center) => (
+                      <option key={center.id} value={center.id}>{center.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </td>
+              </tr>
             
-            {/* <tr> */}
-              {/* <th style={{ border: '1px dotted black', padding: '5px',color: '#999999' }}>Community:</th> */}
-              {/* <td style={{ border: '1px dotted black', padding: '5px' }}> */}
+              <tr>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>Select control center</th>
+              <td style={{ border: '1px solid #999999', padding: '5px' }}>
+
+              <div className='form-group'>
+                  <label htmlFor='seller'>Select Seller:</label>
+                  <select
+                    id='seller'
+                    name='seller'
+                    className='form-control'
+                    value={formData.seller}
+                    onChange={handleInputChange}
+                  >
+                    <option value=''>Select Seller</option>
+                    {sellers.map((seller) => (
+                      <option key={seller.id} value={seller.id}>{seller.full_name}</option>
+                    ))}
+                  </select>
+                </div>
+                </td>
+                </tr>
+   
                 <input
                   type="hidden"
                   name="tag_number"
@@ -468,11 +514,7 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
                   placeholder='Name of your community'
 
                 />
-              {/* </td> */}
-            {/* </tr> */}
-             {/* <tr> */}
-              {/* <th style={{ border: '1px dotted black', padding: '5px',color: '#999999' }}>Community:</th> */}
-              {/* <td style={{ border: '1px dotted black', padding: '5px' }}> */}
+              
               <input
                   type="hidden"
                   name="tag_number"
@@ -484,11 +526,7 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
                   placeholder='Tag number'
 
                 />
-              {/* </td> */}
-            {/* </tr> */}
             <tr>
-              {/* <th style={{ border: '1px dotted black', padding: '5px' }}>Market:</th> */}
-              {/* <td style={{ border: '1px dotted black', padding: '5px' }}> */}
                 <input
                   type="hidden"
                   name="market"
@@ -500,11 +538,8 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
                   placeholder='Name of your market'
 
                 />
-              {/* </td> */}
             </tr>
-            {/* <tr> */}
-              {/* <th style={{ border: '1px dotted black', padding: '5px' }}>Head of Family:</th> */}
-              {/* <td style={{ border: '1px dotted black', padding: '5px' }}> */}
+            
               <input
                   type="hidden"
                   name="head_of_family"
@@ -516,13 +551,7 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
                   placeholder='Family head'
 
                 />
-              {/* </td> */}
-            {/* </tr> */}
-           
-            {/* <tr> */}
-            {/* <th style={{ border: '1px dotted black', padding: '5px' }}>Breeder Name</th> */}
-
-            {/* <td style={{ border: '1px dotted black', padding: '5px', textTransform: 'capitalize' }}> */}
+            
               <input
                 type="hidden"
                 name="breeder"
@@ -530,22 +559,7 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
                 readOnly
                 className='form-control'
               />
-            {/* </td> */}
-
-            {/* </tr> */}
-            <tr>
-              <th style={{ border: '1px dotted black', padding: '5px' }}>Abattoir Name</th>
-              <td style={{ border: '1px dotted black', padding: '5px', textTransform:'capitalize' }}>
-                <input
-                style={{}}
-                  type="hidden"
-                  name="abattoir_name"
-                  value={formData.abattoir_name ? formData.abattoir_name : ''}
-                  readOnly
-                  className='form-control'
-                />
-              </td>
-            </tr>
+           
           </tbody>
         </table>
         <button
@@ -558,7 +572,6 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
 </button>
       </Card.Body>
     </Card>
-        {/* )} */}
           </div>
           <div className='col-md-4'></div>
         </div>

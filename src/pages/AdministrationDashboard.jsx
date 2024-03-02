@@ -10,7 +10,6 @@ import axios from 'axios';
 
 const Admin = () => {
   const navigate = useNavigate();
-
   const baseUrl = BASE_URL;
   const accessToken = Cookies.get('accessToken');
   const [userRole, setUserRole] = useState('');
@@ -227,20 +226,6 @@ const Admin = () => {
    
   };
   
-
-  // useEffect(() => {
-  //   const checkUser = async () => {
-  //     const role = await checkUserRole();
-  //     setUserRole(role);
-  
-  //     if (role !== 'superuser' && role !== 'admin') {
-  //       navigate('/unauthorized');
-  //     }
-  //   };
-  
-  //   checkUser();
-  // }, [navigate]);
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -276,8 +261,6 @@ const Admin = () => {
       .catch(error => console.error('Error fetching breaders count:', error));
   }, []);
 
-  
-
   return (
     <>
       <div className="main-container">
@@ -305,7 +288,7 @@ const Admin = () => {
             </a>
             <div className="row">
 
-            <div className="col-lg-3 col-md-12 mb-3">
+<div className="col-lg-3 col-md-12 mb-3">
   <a href='/inventory-dashboard'>
     <div className="card-box height-100-p widget-style3">
       <div className="d-flex flex-wrap">
@@ -322,8 +305,6 @@ const Admin = () => {
     </div>
   </a>
 </div>
-
-           
 
 <div className="col-lg-3 col-md-6 mb-3">
   <a href='/breaders'>

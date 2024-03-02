@@ -801,15 +801,12 @@ return (
         <li className="nav-item">
         </li>
         <li className="nav-item">
-          <a href='/control-centers-single-trader' className={`nav-link`} style={{color:'#d9d9d9'}} id="home-tab">Control center</a>
-        </li>
-        <li className="nav-item">
           <a href='/quotation' className={`nav-link`} style={{color:'#d9d9d9'}} id="home-tab">Send quotataion</a>
         </li>
              
-        <li className="nav-item">
+        {/* <li className="nav-item">
           <a className={`nav-link ${activeTab === 'Open LC' ? 'active' : ''}`} id="contact-tab" onClick={() => handleTabClick('Open LC')} role="tab" aria-controls="Open LC" aria-selected={activeTab === 'Open LC'}>LC</a>
-        </li>
+        </li> */}
         
       </ul>
 
@@ -833,7 +830,7 @@ return (
       <div className="container-fluid" style={{ minHeight: '' }}>
   <div className="row">
   <div className="col-lg-3 col-md-12 mb-4">
-  <a href='/inventory-dashboard'>
+  <a href='/control-centers-single-trader'>
     <div className="card-box height-100-p widget-style3">
       <div className="d-flex flex-wrap">
         <div className="widget-data">
@@ -874,7 +871,7 @@ return (
     <div className="d-flex flex-wrap">
       <div className="widget-data">
         <div className="weight-600 font-18 text-dark">Quotations </div>
-        <div className="font-14 text-secondary weight-500">List</div>
+        <div className="font-14 text-secondary weight-500">List history</div>
       </div>
       <div className="widget-icon" style={{background:'#001b40'}}>
         <div className="icon" data-color="#001b40">
@@ -887,11 +884,11 @@ return (
 </div>
 
 <div className="col-lg-3 col-md-6 mb-4">
-  <a href='/purchase-order-seller'>
+  <a  onClick={() => handleTabClick('Open LC')} style={{cursor:'pointer'}}>
     <div className="card-box height-100-p widget-style3 custom-card">
       <div className="d-flex flex-wrap">
-        <div className="widget-data"><div className="weight-600 font-18 text-dark">P.O </div>
-          <div className="font-14 text-secondary weight-500">Details</div>
+        <div className="widget-data"><div className="weight-600 font-18 text-dark">L.C </div>
+          <div className="font-14 text-secondary weight-500">List</div>
         </div>
         <div className="widget-icon " style={{background:'#001b40'}}>
           <div className="icon" data-color="#001b40">
@@ -902,7 +899,6 @@ return (
     </div>
   </a>
 </div>
-
            </div>
           </div>
           <div className='container-fluid mt-3'>

@@ -843,7 +843,13 @@ const QuotationListPDF = ({ quotation }) => (
      <p style={{ marginBottom: '8px' }}>Weight: {selectedPackageInfo.weight}</p>
      <p style={{ marginBottom: '8px' }}>Height: {selectedPackageInfo.height}</p>
      <p style={{ marginBottom: '8px' }}>Length: {selectedPackageInfo.length}</p>
-    
+     <h4>Boll of lading Document</h4>
+
+     <p style={{ marginBottom: '8px', width:'100%' }}>
+            <a href={selectedPackageInfo.bill_of_lading} style={{ marginBottom: '8px', width:'100%' }} target="_blank" rel="noopener noreferrer">
+              {selectedPackageInfo.bill_of_lading}
+            </a>
+          </p>
    </>
     )}
   </Modal.Body>

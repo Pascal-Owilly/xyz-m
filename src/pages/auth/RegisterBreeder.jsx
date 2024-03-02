@@ -330,9 +330,7 @@ const SignUpForm = () => {
       </button>
 
       <hr />
-      <p>
-        Already have an account? <Link to='/login'>Login</Link>
-      </p>
+
     </form>
     </div>
                </div>
