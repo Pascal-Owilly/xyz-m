@@ -95,7 +95,7 @@ const SignUpForm = () => {
                 }}
                 onSubmit={signUp}
               >
-                <h4 className='text-secondary'>Register Collateral Mnager</h4>
+                <h4 className='text-secondary'>Register Collateral Manager</h4>
                 <hr />
                 <div className='form-row'>
                   <div className='form-group col-md-4'>

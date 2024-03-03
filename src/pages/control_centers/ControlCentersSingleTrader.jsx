@@ -411,7 +411,7 @@ const handleManagerClick = async (center) => {
         <div>
           <hr />
           <div className='d-flex justify-content-between align-items-center'>
-            <h4 className='text-secondary mx-2' style={{ marginRight: '5px', color:'#666666' }}><FaClipboardList /> All Control Centers</h4>
+            <h4 className='text-secondary mx-2' style={{ marginRight: '5px', color:'#666666' }}><FaClipboardList /> Control Centers</h4>
            
                 <a href='/collateral-manager-register '>
           </a>
@@ -438,6 +438,7 @@ const handleManagerClick = async (center) => {
         <th>Address</th>
         <th>Contact</th>
         <th>Collateral Agent</th>
+
         <th>Action</th>
       </tr>
     </thead>
@@ -448,19 +449,8 @@ const handleManagerClick = async (center) => {
       <td>{center.location}</td>
       <td>{center.address}</td>
       <td>{center.contact}</td>
-      <td>
-  <select
-    className="form-select" // Add form-select class for Bootstrap styling
-    value={center.assigned_collateral_agent}
-    onChange={(e) => handleCollateralManagerChange(center.id, e)}
-    style={{ boxShadow: 'none', border: '1px solid #ced4da', borderRadius: '4px', background:'#fff', color:'#666666', padding:'5px' }} // Custom inline styles for additional styling
-  >
-    <option value="">Select collateral manager</option>
-    {collateralManagers.reverse().map(manager => (
-      <option key={manager.id} value={manager.id}>{manager.full_name}</option>
-    ))}
-  </select>
-</td>
+      <td style={{fontFamily:'verdana', fontWeight:'bold',fontSize:'15px'}}>{center.assigned_agent_full_name}</td>
+
       <td>
         <button className="btn btn-sm text-light" style={{backgroundColor:'#001b42', fontSize:'11px'}} onClick={() => handleManagerClick(center)}>View Details</button>
       </td>
@@ -488,18 +478,21 @@ const handleManagerClick = async (center) => {
       )}
 {activeTab === 'InventoryOverview' && selectedManager && inventory && (
   <div style={{ padding: '20px' }}>
-    <div style={{ backgroundColor: '#f9f9f9', borderRadius: '5px', padding: '10px', marginBottom: '20px' }}>
-      <h5>Inventory Information</h5><hr />
-      <span style={{fontSize:'12px', color:'#666666', fontWeight:'bold'}}> Managed by {selectedManager.assigned_agent_full_name} </span>
+ <div style={{ backgroundColor: '#f9f9f9', borderRadius: '5px', padding: '10px', marginBottom: '20px', position: 'relative' }}>
+    <h5 style={{ display: 'inline-block' }}>Inventory Information</h5>
+    <a href='/inventory-record-forms'>
+    <button className='btn-sm' style={{ position: 'absolute', top: '10px', right: '10px', backgroundColor:'#001b42' }}>Remove Item</button> {/* Adjust top and right values as needed */}
+    </a>
+    <hr />
+    <span style={{ fontSize: '12px', color: '#666666', fontWeight: 'bold' }}>Managed by {selectedManager.assigned_agent_full_name}</span>
 
-      {inventory && (
-        <div>
-          <p><strong>Control center:</strong> {inventory.name}</p>
-          <p><strong>Seller:</strong> {inventory.breadertrades.seller}</p>
-          {/* Render other inventory details as needed */}
-        </div>
-      )}
-    </div>
+    {inventory && (
+      <div>
+        <p><strong>Control center:</strong> {inventory.name}</p>
+        <p><strong>Seller:</strong> {inventory.breadertrades.seller}</p>
+      </div>
+    )}
+  </div>
     {/* Display total weight at the top */}
       {/* Calculate total breeds supplied */}
       <div className='d-flex'>
@@ -536,24 +529,13 @@ const handleManagerClick = async (center) => {
         </div>
       </div>
     ))}
-    {/* Calculate total breeds supplied */}
-    <p><strong>Total Breeds Supplied:</strong> {Object.values(inventory.breadertrades.reduce((acc, trade) => {
-      if (!acc[trade.breed]) {
-        acc[trade.breed] = 0;
-      }
-      acc[trade.breed] += trade.breeds_supplied;
-      return acc;
-    }, {})).reduce((total, count) => total + count, 0)}</p>
+
   </div>
 )}
 
     </div>
   </div>
 )}
-
-
-
-
     </div>
   );
 };

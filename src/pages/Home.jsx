@@ -341,6 +341,13 @@ const logout = async () => {
                 </a>
               </li>
               {/* <li style={{ display: 'flex', alignItems: 'center' }}>
+              <FaHome style={{ marginRight: '12px', color: 'white', fontSize: '20px' }} />
+
+            <a href="/inventory-record-forms">
+               Warehouse 
+            </a>
+          </li> */}
+              {/* <li style={{ display: 'flex', alignItems: 'center' }}>
                 <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
                 <a href="/slaughterhouse-dashboard">Slaughterhouse</a>
               </li> */}

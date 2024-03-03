@@ -174,7 +174,6 @@ const updateCollateralManager = async () => {
 
     // Log the response data to double-check the updated control center information
     console.log('Update Collateral Manager Response:', response.data);
-
     // Update the control centers state with the updated data
     const updatedControlCenters = controlCenters.map(center => {
       if (center.id === selectedControlCenterId) {
@@ -198,68 +197,23 @@ const updateCollateralManager = async () => {
   }
 };
 
+
 // Associate collateral manager
 
-const associateCollateralManager = async () => {
-  try {
-    if (!selectedCollateralManagerId || !selectedControlCenterId) {
-      console.error('Please select both a collateral manager and a control center.');
-      return;
-    }
+const associateCollateralManager = (event) => {
+  event.preventDefault();
 
-    // Log the contents of controlCenters and selectedControlCenterId
-    console.log('Control centers:', controlCenters);
-    console.log('Selected control center ID:', selectedControlCenterId);
-
-    // Get the selected control center data
-    let selectedControlCenter = null;
-
-    for (let i = 0; i < controlCenters.length; i++) {
-      if (controlCenters[i].id === selectedControlCenterId) {
-        selectedControlCenter = controlCenters[i];
-        break; // Exit the loop once the control center is found
-      }
-    }
-    
-    console.log('Selected control center:', selectedControlCenter);
-    
-    // Make sure selectedControlCenter is not undefined before proceeding
-    if (!selectedControlCenter) {
-      console.error('Selected control center not found.');
-      return;
-    }
-
-    // Call handleControlCenterChange to set selectedControlCenterId
-    handleControlCenterChange(selectedControlCenterId);
-
-    // Make an API call to associate the selected collateral manager with the control center
-    const response = await axios.put(`${baseUrl}/api/control-centers/${selectedControlCenterId}/`, {
-      name: selectedControlCenter.name,
-      location: selectedControlCenter.location,
-      assigned_collateral_agent: selectedCollateralManagerId,
-    });
-    
-    // Update the control center data to include the associated collateral manager
-    const updatedControlCenters = controlCenters.map(center => {
-      if (center.id === selectedControlCenterId) {
-        return {
-          ...center,
-          assigned_collateral_agent: selectedCollateralManagerId,
-        };
-      }
-      return center;
-    });
-
-    // Update the state with the updated control center data
-    setControlCenters(updatedControlCenters);
-
-    // Close the modal or reset the form
-    setShowManagerModal(false);
-    setSelectedCollateralManagerId(null);
-    setSelectedControlCenterId(null);
-  } catch (error) {
-    console.error('Error associating collateral manager:', error);
-  }
+  // Make a POST request to assign the selected collateral manager to the selected control center
+  axios.post(`/api/control_centers/${selectedControlCenter}/assign_collateral_manager/`, {
+    collateral_manager_id: selectedCollateralManager
+  })
+  .then(response => {
+    console.log('Collateral manager assigned successfully:', response.data);
+    // Optionally, you can update the UI to reflect the assignment
+  })
+  .catch(error => {
+    console.error('Error assigning collateral manager:', error);
+  });
 };
 
 // Function to handle changes in the selected collateral manager
@@ -268,8 +222,8 @@ const handleCollateralManagerChange = (controlCenterId, event) => {
   // Set the selected collateral manager and associated control center ID
   setSelectedCollateralManagerId(selectedCollateralManagerId);
   setSelectedControlCenterId(controlCenterId);
-  // Show confirmation popup
   handleConfirmUpdate();
+
 };
 
 const handleManagerClick = async (center) => {
@@ -301,7 +255,6 @@ const handleManagerClick = async (center) => {
   const paginateControlCenters = (pageNumber) => {
     setCurrentPageControlCenters(pageNumber);
 };
-
   const indexOfLastItemControlCenters = currentPageControlCenters * itemsPerPage;
   const indexOfFirstItemControlCenters = indexOfLastItemControlCenters - itemsPerPage;
   const currentControlCenters = controlCenters.slice(indexOfFirstItemControlCenters, indexOfLastItemControlCenters)
@@ -403,7 +356,6 @@ const handleManagerClick = async (center) => {
   <Button className='btn btn-sm' variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
   <Button className='btn' variant="primary" onClick={handleAddControlCenter}>Add</Button>
 </Modal.Footer>
-
       </Modal>
             {successMessage && <div className='success text-success'>{successMessage}</div>}
             {errorMessage && <div className='error'>{errorMessage}</div>}      
@@ -411,16 +363,13 @@ const handleManagerClick = async (center) => {
         <div>
           <hr />
           <div className='d-flex justify-content-between align-items-center'>
-            <h4 className='text-secondary mx-2' style={{ marginRight: '5px', color:'#666666' }}><FaClipboardList /> All Control Centers</h4>
-           
-                <a href='/collateral-manager-register '>
+            <h4 className='text-secondary mx-2' style={{ marginRight: '5px', color:'#666666' }}><FaClipboardList />  Control Centers</h4>
+          <a href='/collateral-manager-register'>
+          <Button variant="" style={{fontSize:"12px", backgroundColor:'#001b42', color:'white'}} >
+          <FaPlus style={{ marginRight: '5px', fontSize:'15px' }} />
+                Add Collateral Manager
+          </Button>
           </a>
-
-          <Button className="btn btn-info mb-5" style={{width:'250px', fontSize:'15px'}} onClick={() => setShowModal(true)}>
-    <FaPlus style={{ marginRight: '5px', fontSize:'15px' }} />
-    Add Control Center
-  </Button>
-
           </div>
           <hr />
           {message && (
@@ -429,8 +378,7 @@ const handleManagerClick = async (center) => {
   </div>
 )}
           <div className='table-responsive'>
-          
-  <table className='table table-striped' style={{ color: '#666666' }}>
+          <table className='table table-striped' style={{ color: '#666666' }}>
     <thead>
       <tr>
         <th>Name</th>
@@ -438,6 +386,7 @@ const handleManagerClick = async (center) => {
         <th>Address</th>
         <th>Contact</th>
         <th>Collateral Agent</th>
+        <td>Update</td>
         <th>Action</th>
       </tr>
     </thead>
@@ -448,6 +397,7 @@ const handleManagerClick = async (center) => {
       <td>{center.location}</td>
       <td>{center.address}</td>
       <td>{center.contact}</td>
+      <td style={{fontFamily:'verdana', fontWeight:'bold',fontSize:'15px'}}>{center.assigned_agent_full_name}</td>
       <td>
   <select
     className="form-select" // Add form-select class for Bootstrap styling
@@ -467,8 +417,7 @@ const handleManagerClick = async (center) => {
     </tr>
   ))}
 </tbody>
-</table>
-</div>
+</table></div>
 
   <Pagination>
   {Array.from({ length: Math.ceil(controlCenters.length / itemsPerPage) }, (_, i) => {
