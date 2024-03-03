@@ -334,9 +334,14 @@ const logout = async () => {
                 <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
                 <a href="/supplier_dashboard">Supplier </a>
               </li>
+             
+              <li style={{ display: 'flex', alignItems: 'center' }}>
+                <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+                <a href="/inventory-confirmation">Store </a>
+              </li>
               <li style={{ display: 'flex', alignItems: 'center' }}>
                 <FaHome style={{ marginRight: '12px', color: 'white', fontSize: '20px' }} />
-                <a href="/buyer_dashboard" onClick={handleLinkClick}>
+                <a href="/buyer_dashboard" >
                   Buyer 
                 </a>
               </li>
@@ -408,6 +413,7 @@ const logout = async () => {
           case 'warehouse_personnel':
           return (
             <>
+              <li><a href="/inventory-confirmation">Warehouse Dashboard</a></li>
               <li><a href="/warehouse">Warehouse Dashboard</a></li>
               <li><a href="/buyer_dashboard">Buyer Dashboard</a></li>
               <li><a href="/export_handling_dashboard">Export Handling Dashboard </a></li>

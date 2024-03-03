@@ -66,6 +66,7 @@ import InventoryList from './pages/bank/Inventorylist';
 import BuyersInfo from './pages/bank/BuyersInfo';
 import CollateralManagerInfo from './pages/bank/CollateralManagerInfo';
 import SellersInfo from './pages/bank/SellersInfo';
+import ConfirmItemRemoval from './pages/ConfirmItemRemoval'
 
 const App = () => {
   return (
@@ -164,6 +165,7 @@ const App = () => {
             <Route path="/buyer-info/:buyerId" element={<BuyersInfo />} />
             <Route path="/colateral-manager-info/:managerId" element={<CollateralManagerInfo />} />
             <Route path="/seller-info/:sellerId" element={<SellersInfo />} />
+            <Route path="/inventory-confirmation" element={<ConfirmItemRemoval />} />
 
           </Routes>
         </div>
