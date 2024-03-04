@@ -157,6 +157,8 @@ const Supplier = () => {
       <p style={{ textAlign: 'center', marginTop: '1rem' }}>Go to active orders to view details of new orders and the market will be collecting from. </p>
     </div>
 
+    <br />
+
     <Col xs={12} md={4} lg={4}>
   <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
     <Card.Body>

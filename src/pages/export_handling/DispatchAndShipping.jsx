@@ -623,22 +623,7 @@ const handleSubmit = async (e) => {
       </div>
     </div>
 
-    <div className='col-md-6' style={{ marginTop: '30px', marginBottom: '5px' }}>
-      <div className="card" style={{ borderRadius: '15px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', border: '1px solid #e0e0e0' }}>
-        <div className="card-body">
-          <div className="row">
-            <div className="col-6">
-              <label className="form-label" style={{ color: '#333', fontSize: '16px', fontWeight: 'bold' }}>Shipping Prefix</label>
-              <input className="form-control" type="text" id="" value="AWB" name="prefix" readOnly />
-            </div>
-            <div className="col-6">
-              <label className="form-label" style={{ color: '#333', fontSize: '16px', fontWeight: 'bold' }}>Tracking ID</label>
-              <input className="form-control" type="text" id="random_no" value="000049" name="invoice" readOnly />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+
     
     <div>
     </div>

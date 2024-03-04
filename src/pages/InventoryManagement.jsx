@@ -132,15 +132,13 @@ const InventoryPage = () => {
     <i className="dw dw-edit" style={{ marginLeft: '5px' }}></i> &nbsp; Update inventory
   </a>
 </div>
-
       </h3>
       <br />
-
       <div className='container-fluid' style={{ minHeight: '75vh', color:'#666666' }}>
         <div className='row'>
           <div className='col-md-4 card p-3' style={{ minHeight: '75vh', color:'#001b42', padding: '5px', display: 'flex', flexDirection: 'column', justifyContent: '', alignItems: '', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', backgroundColor: '#f5f5f5' }}>
             <ul className='list-unstyled'>
-              <li className='mb-2 text-secondary' style={{ fontSize: '1rem', color:'#001b40', fontWeight:'bold' }}>Total raw materials By <br />  Category</li>
+              <li className='mb-2 text-secondary' style={{ fontSize: '1rem', color:'#001b40', fontWeight:'bold' }}>Total raw materials By <br /> Category</li>
               <ul className="list-unstyled">
                 {currentBreeds.map(([breed, total]) => {
                   const percentage = (total / inventoryData.totalBreeds) * 100;

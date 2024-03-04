@@ -489,7 +489,7 @@ const handleManagerClick = async (center) => {
     {inventory && (
       <div>
         <p><strong>Control center:</strong> {inventory.name}</p>
-        <p><strong>Seller:</strong> {inventory.breadertrades.seller}</p>
+        {/* <p><strong>Seller:</strong> {inventory.breadertrades.seller}</p> */}
       </div>
     )}
   </div>
@@ -497,13 +497,16 @@ const handleManagerClick = async (center) => {
       {/* Calculate total breeds supplied */}
       <div className='d-flex'>
                
-    <p><strong>Total Weight:</strong> {Object.values(inventory.breadertrades.reduce((acc, trade) => {
-      if (!acc[trade.breed]) {
-        acc[trade.breed] = 0;
-      }
-      acc[trade.breed] += trade.goat_weight;
-      return acc;
-    }, {})).reduce((total, weight) => total + weight, 0)} Kgs</p>
+      {inventory.breadertrades && inventory.breadertrades.length > 0 && (
+  <p><strong>Total Weight:</strong> {Object.values(inventory.breadertrades.reduce((acc, trade) => {
+    if (!acc[trade.breed]) {
+      acc[trade.breed] = 0;
+    }
+    acc[trade.breed] += trade.goat_weight;
+    return acc;
+  }, {})).reduce((total, weight) => total + weight, 0)} Kgs</p>
+)}
+
     </div>
     {/* Display each trade item */}
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -532,6 +535,7 @@ const handleManagerClick = async (center) => {
 
   </div>
 )}
+
 
     </div>
   </div>

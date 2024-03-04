@@ -230,11 +230,11 @@ const handleLcUpload = async () => {
     date: invoice.invoice_date,
     dueDate: invoice.due_date,
     billTo: {
-      name: invoice.buyer ? invoice.buyer.buyer_first_name + " " + invoice.buyer.buyer_last_name : '', // Check if buyer is not null or undefined
-      address: invoice.buyer.address,
-      email: invoice.buyer.buyer_email,
-      phone: invoice.buyer.buyer_phone,
-      buyerCountry: invoice.buyer.buyer_country
+      name: invoice.buyer_full_name,
+      address: invoice.buyer_user_address,
+      email: invoice.buyer_user_email,
+      // phone: invoice.buyer.buyer_phone,
+      buyerCountry: invoice.buyer_country
     },
     shipTo: 'Same as Bill To',
     items: [
@@ -306,7 +306,7 @@ useEffect(() => {
 
 .then(response => {
   console.log('docs', response.data); // Log the received data
-  setDocuments(response.data);
+  setLcDocument(response.data);
 })
 .catch(error => {
   console.error('Error fetching documents:', error);
@@ -420,6 +420,14 @@ useEffect(() => {
     setSelectedPayment(payment);
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear().toString().slice(-2); // Get last two digits of the year
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Get month and pad with leading zero if necessary
+    const day = date.getDate().toString().padStart(2, '0'); // Get day and pad with leading zero if necessary
+    return `${year}-${month}-${day}`;
+  };
+
   // Status tracking
 
   const getStatusIndex = (status) => ['ordered', 'dispatched', 'shipped', 'arrived', 'received'].indexOf(status);
@@ -449,7 +457,7 @@ useEffect(() => {
           </td>
   
 
-          <td style={{ color: '#999999', fontSize: '12px' }}>{status ? status.seller: ''}</td>
+          {/* <td style={{ color: '#999999', fontSize: '12px' }}>{status ? status.seller: ''}</td> */}
           <td style={{ color: '#999999', fontSize:'12px' }}>
           
             {status.logistics_company}</td>
@@ -660,98 +668,105 @@ useEffect(() => {
       });
     }
   };
-    
-const styles = StyleSheet.create({
-  page: {
-    // fontFamily: 'Arial',
-    padding: 30,
-    lineHeight: 1.5,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-    textAlign: 'center',
-    fontWeight: 'bold',
-    textDecoration: 'underline',
-    color: '#008000', // Green color
-  },
-  section: {
-    marginBottom: 20,
-  },
-  label: {
-    fontWeight: 'bold',
-    color: '#008000', // Green color
-    fontSize: 13, // Font size 13px
-  },
-  text: {
-    fontSize: 18, // Font size 18px
-    color: '#666666', // Gray color
-  },
-  footer: {
-    textAlign: 'center',
-    marginTop: 20,
-  },
-  hr: {
-    borderBottom: '1px solid #000',
-    marginBottom: 10,
-  },
-});
-
-const QuotationListPDF = ({ quotation }) => (
-  <Document>
-    <Page style={styles.page}>
-      <Text style={styles.title}>Quotation Details</Text>
-      <View style={styles.hr} />
-
-      <View style={styles.section}>
-        <Text style={styles.label}>Quotation Number:</Text>
-        <Text style={styles.text}>{quotation.number}</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.label}>Date:</Text>
-        <Text style={styles.text}>{quotation.date}</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.label}>Buyer:</Text>
-        <Text style={styles.text}>{quotation.buyer}</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.label}>Seller:</Text>
-        <Text style={styles.text}>{quotation.seller}</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.label}>Product:</Text>
-        <Text style={styles.text}>{quotation.product}</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.label}>Unit Price:</Text>
-        <Text style={styles.text}>{quotation.unit_price}</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.label}>Message:</Text>
-        <Text style={styles.text}>{quotation.message}</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.label}>Status:</Text>
-        <Text style={styles.text}>{confirmedQuotation === quotation.id ? 'Confirmed' : 'Pending'}</Text>
-      </View>
-
-      <View style={styles.footer}>
-        <Text>Thank you</Text>
-      </View>
-    </Page>
-  </Document>
-);
-
-
   
+  const styles = StyleSheet.create({
+    page: {
+      padding: 30,
+    },
+    title: {
+      fontSize: 24,
+      marginBottom: 20,
+      textAlign: 'center',
+      fontWeight: 'bold',
+      textDecoration: 'underline',
+      color: '#999999',
+    },
+    section: {
+      marginBottom: 20,
+    },
+    table: {
+      display: 'table',
+      width: '100%',
+      borderStyle: 'solid',
+      borderWidth: 1,
+      borderColor: '#000',
+      marginBottom: 10,
+    },
+    tableRow: {
+      flexDirection: 'row',
+    },
+    tableCellLabel: {
+      width: '30%',
+      borderStyle: 'solid',
+      borderWidth: 1,
+      borderColor: '#000',
+      padding: 5,
+      backgroundColor: '#008000',
+      color: '#fff',
+      fontWeight: 'bold',
+      fontSize: 13,
+    },
+    tableCellData: {
+      width: '70%',
+      borderStyle: 'solid',
+      borderWidth: 1,
+      borderColor: '#000',
+      padding: 5,
+      fontSize: 18,
+      color: '#666666',
+    },
+    footer: {
+      textAlign: 'center',
+      marginTop: 20,
+    },
+  });
+  
+  const QuotationListPDF = ({ quotation }) => (
+    <Document>
+      <Page style={styles.page}>
+        <Text style={styles.title}>Quotation Details</Text>
+        <View style={styles.hr} />
+  
+        <View style={styles.table}>
+          {/* <View style={styles.tableRow}>
+            <Text style={styles.tableCellLabel}>Quotation Number:</Text>
+            <Text style={styles.tableCellData}>{quotation.number}</Text>
+          </View> */}
+          
+          <View style={styles.tableRow}>
+            <Text style={styles.tableCellLabel}>Delivery by:</Text>
+            <Text style={styles.tableCellData}>{formatDate(quotation.created_at)}</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={styles.tableCellLabel}>Product:</Text>
+            <Text style={styles.tableCellData}>{quotation.product}</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={styles.tableCellLabel}>Unit Price:</Text>
+            <Text style={styles.tableCellData}>{quotation.unit_price}</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={styles.tableCellLabel}>Message:</Text>
+            <Text style={styles.tableCellData}>{quotation.message}</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={styles.tableCellLabel}>Date created:</Text>
+            <Text style={styles.tableCellData}>{quotation.delivery_time}</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={styles.tableCellLabel}>Status:</Text>
+            <Text style={styles.tableCellData}>{confirmedQuotation === quotation.id ? 'Confirmed' : 'Pending'}</Text>
+          </View>
+        </View>
+  
+        <View style={styles.footer}>
+          <Text>Thank you</Text>
+        </View>
+      </Page>
+    </Document>
+  );
+  
+ 
   return (
     <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
 
@@ -880,7 +895,7 @@ const QuotationListPDF = ({ quotation }) => (
       <thead>
         <tr>
           <th className='' style={{color:'#666666'}}>Number</th>
-          <th className='' style={{color:'#666666'}}>Seller</th>
+          {/* <th className='' style={{color:'#666666'}}>Seller</th> */}
 
           <th className='' style={{color:'#666666'}}>Product</th>
           <th className='' style={{color:'#666666'}}>Unit Price</th>
@@ -895,7 +910,7 @@ const QuotationListPDF = ({ quotation }) => (
         {quotations.slice().reverse().map((quotation) => (
           <tr key={quotation.id}>
             <td className='text' style={{color:'#666666'}}>#{quotation.id}</td>
-            <td className='text' style={{color:'#666666'}}>{quotation.seller} </td>
+            {/* <td className='text' style={{color:'#666666'}}>{quotation.seller} </td> */}
 
             <td className='text' style={{color:'#666666'}}>{quotation.product}</td>
             <td className='text' style={{color:'#666666'}}>{quotation.unit_price}</td>
@@ -1083,15 +1098,14 @@ const QuotationListPDF = ({ quotation }) => (
             <Table borderless responsive className='bg-white'>
 <tbody>
             <br />
-            <tr>
+            {/* <tr>
               <td><strong>Due Date:</strong></td>
               <td>{invoice.dueDate}</td>
               <td colSpan="2"></td>
-            </tr>
-            <tr>
+            </tr> */}
+{/* <tr>
   <td colSpan="2">Attached LC</td>
   <td colSpan="2">
-    {/* Check if the invoice object exists and if attachedLc is a PDF file */}
     {invoice && invoice.attachedLc && invoice.attachedLc.toLowerCase().endsWith('.pdf') ? (
       <embed src={invoice.attachedLc} type="application/pdf" width="200" height="200" />
     ) : (
@@ -1101,7 +1115,7 @@ const QuotationListPDF = ({ quotation }) => (
       </a>
     )}
   </td>
-</tr>
+</tr> */}
 
             {/* Bill To */}
             <tr>
@@ -1110,9 +1124,9 @@ const QuotationListPDF = ({ quotation }) => (
                 <p>{invoice.billTo.name}</p>
                 <p>{invoice.billTo.address}</p>
                 <p>Email: {invoice.billTo.email}</p>
-                <p>Phone: {invoice.billTo.phone}</p>
+                {/* <p>Phone: {invoice.billTo.phone}</p> */}
                 <hr />
-                <p>Country: {invoice.billTo.buyerCountry}</p>
+                {/* <p>Country: {invoice.billTo.buyerCountry}</p> */}
               </td>
             </tr>
             {/* Ship To */}
@@ -1132,7 +1146,7 @@ const QuotationListPDF = ({ quotation }) => (
                       <th>Title</th>
                       <th>Description</th>
                       <th>Quantity</th>
-                      <th>Sale Type</th>
+                      {/* <th>Sale Type</th> */}
                       <th>Unit Price</th>
                       <th>Total Price</th>
                     </tr>
@@ -1143,7 +1157,7 @@ const QuotationListPDF = ({ quotation }) => (
                         <td>{item.title}</td>
                         <td>{item.description}</td>
                         <td>{item.quantity} pc</td>
-                        <td>{item.saleType}</td>
+                        {/* <td>{item.saleType}</td> */}
                         <td>$ {item.unitPrice}</td>
                         <td>$ {item.quantity * item.unitPrice}</td>
                       </tr>
@@ -1214,13 +1228,13 @@ const QuotationListPDF = ({ quotation }) => (
                  <thead>
                    <tr>
                      <th style={{color:'#666666', fontSize:'12px'}}>Order No</th>
-                     <th style={{color:'#666666', fontSize:'12px'}}>Seller</th>
+                     {/* <th style={{color:'#666666', fontSize:'12px'}}>Seller</th> */}
                      <th style={{color:'#666666', fontSize:'12px'}}>Shipping Company</th>
                      <th style={{color:'#666666', fontSize:'12px'}}>View package Info</th>
 
                      <th style={{color:'#666666', fontSize:'12px'}}>Current Status</th>
                      <th style={{color:'#666666', fontSize:'12px'}}>Shipping mode</th>
-                     <th style={{color:'#666666', fontSize:'12px'}}>Delivered by</th>
+                     {/* <th style={{color:'#666666', fontSize:'12px'}}>Delivered by</th> */}
 
                    </tr>
                  </thead>

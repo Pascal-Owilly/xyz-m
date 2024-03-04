@@ -444,7 +444,7 @@ const handleManagerClick = async (center) => {
       {inventory && (
         <div>
           <p><strong>Control center:</strong> {inventory.name}</p>
-          <p><strong>Seller:</strong> {inventory.breadertrades.seller}</p>
+          {/* <p><strong>Seller:</strong> {inventory.breadertrades.seller}</p> */}
           {/* Render other inventory details as needed */}
         </div>
       )}
@@ -452,6 +452,8 @@ const handleManagerClick = async (center) => {
     {/* Display total weight at the top */}
       {/* Calculate total breeds supplied */}
       <div className='d-flex'>
+      {inventory.breadertrades && inventory.breadertrades.length > 0 && (
+
       <p className='mx-4'><strong>Total available:</strong><span className='mx-2' style={{fontWeight:'700', fontSize:'20px', color:'#001b42'}}>{Object.values(inventory.breadertrades.reduce((acc, trade) => {
             if (!acc[trade.breed]) {
               acc[trade.breed] = 0;
@@ -459,14 +461,16 @@ const handleManagerClick = async (center) => {
             acc[trade.breed] += trade.breeds_supplied;
             return acc;
           }, {})).reduce((total, count) => total + count, 0)}</span> </p>
-          
-    <p><strong>Total Weight:</strong> {Object.values(inventory.breadertrades.reduce((acc, trade) => {
-      if (!acc[trade.breed]) {
-        acc[trade.breed] = 0;
-      }
-      acc[trade.breed] += trade.goat_weight;
-      return acc;
-    }, {})).reduce((total, weight) => total + weight, 0)} Kgs</p>
+      )}
+          {inventory.breadertrades && inventory.breadertrades.length > 0 && (
+  <p><strong>Total Weight:</strong> {Object.values(inventory.breadertrades.reduce((acc, trade) => {
+    if (!acc[trade.breed]) {
+      acc[trade.breed] = 0;
+    }
+    acc[trade.breed] += trade.goat_weight;
+    return acc;
+  }, {})).reduce((total, weight) => total + weight, 0)} Kgs</p>
+)}
     </div>
     {/* Display each trade item */}
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -492,10 +496,10 @@ const handleManagerClick = async (center) => {
         </div>
       </div>
     ))}
-    {/* Calculate total breeds supplied */}
-  
+
   </div>
 )}
+
 
     </div>
   </div>

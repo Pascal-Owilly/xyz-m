@@ -86,25 +86,21 @@ const BreaderInfo = () => {
       <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{breaderData.formatted_created_at}</td>
     </tr>
     <tr style={{ backgroundColor: '#f2f2f2' }}>
-      <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Company name:</td>
-      <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{breaderData.formatted_created_at}</td>
+      <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Address:</td>
+      <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{breaderData.address}</td>
     </tr>
            <tr>
       <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Email:</td>
-      <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}></td>
+      <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{breaderData.email}</td>
     </tr>
             <tr>
-              <td style={{ padding: '10px', textAlign: 'left' }}>First Name:</td>
-              <td style={{ padding: '10px', textAlign: 'left' }}>{}</td>
-            </tr>
-            <tr>
-              <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Last Name:</td>
-              <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{}</td>
+              <td style={{ padding: '10px', textAlign: 'left' }}>Username:</td>
+              <td style={{ padding: '10px', textAlign: 'left' }}>{breaderData.username}</td>
             </tr>
   
             <tr>
-              <td style={{ padding: '10px', textAlign: 'left' }}>Country:</td>
-              <td style={{ padding: '10px', textAlign: 'left' }}></td>
+              <td style={{ padding: '10px', textAlign: 'left' }}>System id:</td>
+              <td style={{ padding: '10px', textAlign: 'left' }}>{breaderData.id}</td>
             </tr>
 
           </tbody>

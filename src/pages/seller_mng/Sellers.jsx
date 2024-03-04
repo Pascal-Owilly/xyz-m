@@ -804,6 +804,10 @@ return (
           <a href='/quotation' className={`nav-link`} style={{color:'#d9d9d9'}} id="home-tab">Send quotataion</a>
         </li>
              
+        <li className="nav-item">
+          <a href='/control-centers-single-trader' className={`nav-link`} style={{color:'#d9d9d9'}} id="home-tab">Control centers</a>
+        </li>
+
         {/* <li className="nav-item">
           <a className={`nav-link ${activeTab === 'Open LC' ? 'active' : ''}`} id="contact-tab" onClick={() => handleTabClick('Open LC')} role="tab" aria-controls="Open LC" aria-selected={activeTab === 'Open LC'}>LC</a>
         </li> */}
@@ -830,7 +834,7 @@ return (
       <div className="container-fluid" style={{ minHeight: '' }}>
   <div className="row">
   <div className="col-lg-3 col-md-12 mb-4">
-  <a href='/control-centers-single-trader'>
+  <a href='/inventory-dashboard'>
     <div className="card-box height-100-p widget-style3">
       <div className="d-flex flex-wrap">
         <div className="widget-data">
