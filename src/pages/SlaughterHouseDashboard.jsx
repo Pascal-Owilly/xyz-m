@@ -109,12 +109,101 @@ const Home = () => {
     setSubmitMessage(null);
   };
 
+
+  // CUT FORM
+  const [cutSubmitMessage, setCutSubmitMessage] = useState(null);
+  const [showCutForm, setShowCutForm] = useState(true);
+
+  const [cutData, setCutData] = useState({
+    breed: 'goat',
+    partName: 'ribs',
+    saleType: 'export_cut',
+    quantity: null,
+  });
+  // ... (other state variables and functions)
+
+  useEffect(() => {
+    const storedToken = Cookies.get('authToken');
+    if (storedToken) {
+      // Do something with the token if needed
+    }
+    fetchUserData();
+  }, []);
+
+
+
+  const handleCutInputChange = (e) => {
+    setCutData({
+      ...cutData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleCutSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      // Make a POST request to the endpoint
+      const response = await axios.post(
+        `${baseUrl}/api/breed-cut/`,
+        {
+          breed: cutData.breed.toLowerCase(),
+          part_name: cutData.partName.toLowerCase(),
+          sale_type: cutData.saleType.toLowerCase(),
+          quantity: parseInt(cutData.quantity, 10),
+        },
+        {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        }
+      );
+
+      console.log('Cut post response:', response.data);
+
+      // Show success message and hide the form
+      setCutSubmitMessage({ type: 'success', text: 'Form submitted successfully!' });
+      setShowCutForm(false);
+
+      // Clear the form fields after successful submission
+      setCutData({
+        breed: 'goat',
+        partName: 'ribs',
+        saleType: 'export_cut',
+        quantity: null,
+      });
+    } catch (error) {
+      console.error('Error submitting cut form:', error);
+
+      // Show failure message
+      setCutSubmitMessage({ type: 'error', text: 'Failed to submit. Please refresh the page and try again.' });
+    }
+  };
+  const [showForm, setShowForm] = useState(true);
+
+
   return (
     <div className="main-container" style={{minHeight:'85vh'}}>
           <h5 className="mb-4">Inventory Update Record Form</h5>
       <Container>
         <Col md={2}></Col>
         <Col md={8}>
+
+              {/* Submit Messages */}
+    <SubmitMessage message={submitMessage} onVisibilityChange={handleFormVisibility} />
+    <SubmitMessage message={cutSubmitMessage} onVisibilityChange={handleCutFormVisibility} />
+
+{/* Breed Cut Form */}
+<Col md={6}>
+              <BreedCutForm
+                showCutForm={showCutForm}
+                onSubmit={handleCutSubmit}
+                cutData={cutData}
+                onChange={handleCutInputChange}
+                submitMessage={cutSubmitMessage}
+                onVisibilityChange={handleCutFormVisibility}
+              />
+            </Col>
 
         <div className="card p-4" style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius:'11px' }}>
           {submitMessage && (
