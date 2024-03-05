@@ -39,6 +39,7 @@ const ExportHandling = ({packageInfo}) => {
   const [formData, setFormData] = useState({
     package_name: '',
     package_description: '',
+
     package_charge: '',
     bill_of_lading: null,
     weight: '',
@@ -48,6 +49,7 @@ const ExportHandling = ({packageInfo}) => {
         time_of_delivery: '',
         shipping_mode: '',
         logistics_company: '',
+        
     },
     buyer: null,
     seller: sellers.length > 0 ? sellers[0].id : null, // Initialize with the first seller's ID if available
@@ -59,18 +61,19 @@ const handleModalToggle = () => {
 
 const handleBuyerSellerChange = (e) => {
   const { name, value } = e.target;
+  const selectedBuyer = buyers.find(buyer => buyer.id === parseInt(value));
+  const selectedSeller = sellers.find(seller => seller.id === parseInt(value));
+  
   if (name === 'buyer') {
-    // Set the buyer's ID directly
-    setFormData({ ...formData, buyer: parseInt(value) });
+    // Set the buyer object directly
+    setFormData({ ...formData, buyer: selectedBuyer.id });
   } else if (name === 'seller') {
-    // Set the seller's ID directly
-    setFormData({ ...formData, seller: parseInt(value) });
+    // Set the seller object directly
+    setFormData({ ...formData, seller: selectedSeller.id });
   } else {
     setFormData({ ...formData, [name]: value });
   }
 };
-
-
 
 const handleBOLChange = (e) => {
   if (e.target.name === 'bill_of_lading') {
@@ -156,7 +159,6 @@ useEffect(() => {
 
   fetchInvoices();
 }, [accessToken, baseUrl]);
-
 const handleSubmit = async (e) => {
   e.preventDefault();
   try {
@@ -183,8 +185,8 @@ const handleSubmit = async (e) => {
         ...formData.logistics,
         invoice: newInvoiceId, // Pass the newly created invoice ID
       },
-      buyer: formData.buyer.id,
-      seller: formData.seller.id,
+      buyer: formData.buyer,
+      seller: formData.seller,
     };
     const packageRes = await axios.post(`${baseUrl}/api/package-info/`, packageData, {
       headers: {
@@ -218,7 +220,6 @@ const handleSubmit = async (e) => {
     // Handle error, show error message to user, etc.
   }
 };
-
 
 
   const [show, setShow] = useState(false);
@@ -393,15 +394,7 @@ const handleSubmit = async (e) => {
 }}>
     <td style={{ color: '#999999', fontWeight: 'bold' }}>
         <button 
-          style={{ 
-            border: 'none', 
-            background: 'none', 
-            color: '#001b40', 
-            textDecoration: 'underline', 
-            cursor: 'pointer',
-            textDecoration:'none',
-            fontSize:'10px',
-          }} 
+          style={{ width: '200px', background: '#f2f2f2', padding: '8px', borderRadius:'30px',color:'#999999', fontWeight:'bold', padding:'12px' }}
           onClick={() => handleInvoiceDetailsClick(status.invoice_number)}
         >
           {status.invoice_number}
@@ -409,25 +402,14 @@ const handleSubmit = async (e) => {
       </td>
       <td className='d-flex align-items-center'>
       <button
-  style={{
-    fontWeight: '',
-    color: '#fff',
-    backgroundColor: status.status === 'ordered' ? '#001b42' : 'dispatched' ? '#001b42' : status.status === 'shipped' ? '#001b42' : status.status === 'arrived' ? '#001b42' : status.status === 'received' ? 'green' : '',
-    border: 'none', 
-    borderRadius: '5px', 
-    fontSize: '11px', 
-    cursor: 'pointer', 
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-    borderRadius:'30px',
-    textTransform:'capitalize' 
-  }} 
+ style={{ width: '120px', background: '#f2f2f2', padding: '8px', borderRadius:'30px',color:'#999999', fontWeight:'bold', padding:'12px' }}
   disabled={status.status === 'received'} // Disable the button if status is 'received'
 >
   {status.status}
-  {status.status === 'ordered' && <FaShoppingCart style={{ marginLeft: '5px', fontSize: '11px', color: 'white', textTransform:'capitalize' }} />}
-  {status.status === 'dispatched' && <FaTruck style={{ marginLeft: '5px', fontSize: '11px', color: 'white' , textTransform:'capitalize' }} />}
-  {status.status === 'shipped' && <FaShippingFast style={{ marginLeft: '5px', fontSize: '11px', color: 'blue' , textTransform:'capitalize' }} />}
-  {status.status === 'received' && <FaCheck style={{ marginLeft: '5px', fontSize: '11px', color: 'green', textTransform:'capitalize'}} />}
+  {status.status === 'ordered' && <FaShoppingCart style={{ marginLeft: '5px', fontSize: '16px', color: 'white', textTransform:'capitalize' }} />}
+  {status.status === 'dispatched' && <FaTruck style={{ marginLeft: '5px', fontSize: '16px', color: 'white' , textTransform:'capitalize' }} />}
+  {status.status === 'shipped' && <FaShippingFast style={{ marginLeft: '5px', fontSize: '16px', color: 'blue' , textTransform:'capitalize' }} />}
+  {status.status === 'received' && <FaCheck style={{ marginLeft: '5px', fontSize: '16px', color: 'green', textTransform:'capitalize'}} />}
 </button>
       </td>
       <td style={{ color: '#999999', fontWeight: 'bold' }}>
@@ -441,28 +423,23 @@ const handleSubmit = async (e) => {
           </select>
         </div>
       </td>
-      {/* <td style={{ color: '#999999', fontSize: '12px' }}>{status ? status.buyer_full_name: ''}</td>
-      <td style={{ color: '#999999', fontSize: '12px' }}>{status ? status.seller_full_name: ''}</td> */}
-      <td style={{ color: '#999999', fontSize:'12px' }}>{status.logistics_company}</td>
+      <td style={{ width: '200px', background: '#f2f2f2', color:'#999999', fontWeight:'bold' }}>{status ? status.buyer_full_name : ''}</td>
+<td style={{ width: '200px', background: '#f2f2f2', color:'#999999', fontWeight:'bold' }}>{status ? status.seller_full_name : ''}</td>
+
+      <td style={{ width: '200px', background: '#f2f2f2', padding: '8px',color:'#999999', fontWeight:'bold', padding:'12px' }}>{status.logistics_company}</td>
       <td style={{ color: '#999999', fontSize:'12px' }}>
         <button 
-          style={{ 
-            border: 'none', 
-            background: 'none', 
-            color: '#007bff', 
-            textDecoration: 'underline', 
-            cursor: 'pointer' 
-          }} 
+          style={{ width: '150px', background: '#f2f2f2', padding: '8px', borderRadius:'30px',color:'#001b42', fontWeight:'bold', padding:'12px', border:'1px solid #999999' }}
           onClick={() => {
             handlePackageInfoClick(status.package_info);
             handleShow(); // Set show state to true
           }}
         >
-          View 
+          View package
         </button>
       </td>
-      <td style={{ color: '#999999', fontSize:'12px' }}>{status.shipping_mode}</td>
-      <td style={{ color: '#999999', fontSize:'12px' }}>{status.time_of_delivery}</td>
+      <td style={{ width: '200px', background: '#f2f2f2',color:'#999999', fontWeight:'bold', padding:'12px' }}>{status.shipping_mode}</td>
+      {/* <td style={{ width: '200px', background: '#f2f2f2', padding: '8px', borderRadius:'30px',color:'#999999', fontWeight:'bold', padding:'12px' }}>{status.time_of_delivery}</td> */}
     </tr>
   );
   
@@ -633,10 +610,11 @@ const handleSubmit = async (e) => {
   <div className="card-body">
   <div className="d-flex justify-content-between align-items-center">
       <h5 className="card-title" style={{ color: '#999999'}}>List Of Shipment</h5>
-      <Button className='btn btn-sm text-white mb-2' variant="" type="submit" style={{ width: '200px', background: '#001b42', padding: '8px', borderRadius:'30px' }} onClick={handleModalToggle}>
-        <i className='dw dw-plus'></i>Create new shipment
+      <Button className='btn btn-sm mb-2' variant="" type="submit" style={{ width: '200px', background: '#f2f2f2', padding: '8px', borderRadius:'30px',color:'#666666', fontWeight:'bold', padding:'12px' }} onClick={handleModalToggle}>
+        <i className='dw dw-plus'></i> Create new shipment
       </Button>
     </div>
+    <hr />
     {/* Your progress bar code */}
     <div className="table-responsive">
       <table className="table">
@@ -645,8 +623,8 @@ const handleSubmit = async (e) => {
             <th style={{ color: '#666666', fontSize:'12px' }}>Tracking No</th>
             <th style={{ color: '#666666', fontSize:'12px' }}>Current Status</th>
             <th style={{ color: '#666666', fontSize:'12px' }}>Actions</th>
-            {/* <th style={{ color: '#666666', fontSize:'12px' }}>Buyer</th>
-            <th style={{ color: '#666666', fontSize:'12px' }}>Seller</th> */}
+            <th style={{ color: '#666666', fontSize:'12px' }}>Buyer</th>
+            <th style={{ color: '#666666', fontSize:'12px' }}>Seller</th>
             <th style={{ color: '#666666', fontSize:'12px' }}>Logistics Company</th>
             <th style={{ color: '#666666', fontSize:'12px' }}>Package Info</th>
             <th style={{ color: '#666666', fontSize:'12px' }}>Shipping Mode</th>

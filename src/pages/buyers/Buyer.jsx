@@ -46,6 +46,11 @@ const CustomerServiceDashboard = ({packageInfo}) => {
   const [showPackageModal, setShowPackageModal] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [selectedPackageInfo, setSelectedPackageInfo] = useState(null);
+  const [buyers, setBuyers] = useState([]);
+
+  const [sellers, setSellers] = useState([]);
+  const [selectedBuyer, setSelectedBuyer] = useState(null);
+  const [selectedSeller, setSelectedSeller] = useState(null);
 
   // LC
   const [lcUploadMessage, setLcUploadMessage] = useState('');
@@ -213,7 +218,7 @@ const handleLcUpload = async () => {
       });
 
       setInvoiceData(response.data);
-      console.log('buyer response', response.data);
+      console.log('invoices response', response.data);
     } catch (error) {
       // Handle errors
       console.error('Error fetching invoice data:', error);
@@ -263,6 +268,8 @@ const toggleInvoice = (invoiceNumber) => {
   }));
 };
 
+
+
 useEffect(() => {
   // Fetch sellers
   axios.get(`${baseUrl}/api/sellers/`, { headers: { Authorization: `Bearer ${accessToken}` } })
@@ -274,18 +281,19 @@ useEffect(() => {
       console.error('Error fetching sellers:', error);
     });
 
-  // Fetch buyers
-  axios.get(`${baseUrl}/api/buyers/`, { headers: { Authorization: `Bearer ${accessToken}` } })
-    .then(response => {
-      setBuyers(response.data);
-      console.log('buyers', buyers)
+    axios.get(`${baseUrl}/api/buyers/`, { headers: { Authorization: `Bearer ${accessToken}` } })
+    .then(buyerResponse => {
+      setBuyers(buyerResponse.data);
+      console.log('buyers object', buyerResponse)
     })
     .catch(error => {
-      console.error('Error fetching buyers:', error);
+      console.error('Error fetching sellers:', error);
     });
+
+
     axios.get(`${baseUrl}/api/package-info/`, { headers: { Authorization: `Bearer ${accessToken}` } })
     .then(response => {
-      setBuyers(response.data);
+      setSelectedPackageInfo(response.data);
       console.log('statuses', response.data)
     })
     .catch(error => {
@@ -413,6 +421,15 @@ useEffect(() => {
       .catch(error => console.error('Error updating payment status:', error));
   };
 
+
+  const handleBuyerChange = (event) => {
+    setSelectedBuyer(event.target.value);
+  };
+
+  const handleSellerChange = (event) => {
+    setSelectedSeller(event.target.value);
+  };
+
   const handleViewDetails = (payment) => {
     // Toggle the detailed view
     setShowDetails(!showDetails);
@@ -457,7 +474,7 @@ useEffect(() => {
           </td>
   
 
-          {/* <td style={{ color: '#999999', fontSize: '12px' }}>{status ? status.seller: ''}</td> */}
+          <td style={{ color: '#999999', fontSize: '12px' }}>{status ? status.seller_full_name: ''}</td>
           <td style={{ color: '#999999', fontSize:'12px' }}>
           
             {status.logistics_company}</td>
@@ -985,22 +1002,42 @@ useEffect(() => {
 {activeSection === 'LC' && (
   <>
   <div>
-        <Form>
-          <div className='d-flex align-center justify-space-between'>
-          <Form.Group controlId="lcDocument">
-            
-            <Form.Label className="text" style={{color:'#999999'}}>Upload new LC</Form.Label>
-            
-            <Form.Control
-              type="file"
-              onChange={(e) => setLcDocument(e.target.files[0])}
-            />
-          </Form.Group>
-          <Button variant="primary btn-sm mt-5 mx-1" onClick={handleLcUpload} style={{ width: '100px', fontSize:'14px' }}>
-            Upload
-          </Button>
-          </div>
-        </Form>
+  <Form>
+      <div className='d-flex align-center justify-space-between'>
+        <Form.Group controlId="buyer">
+          <Form.Label className="text" style={{ color:'#999999' }}>Select Buyer</Form.Label>
+          <Form.Control as="select" onChange={handleBuyerChange}>
+            <option value="">Select Buyer</option>
+            {buyers.map(buyer => (
+              <option key={buyer.id} value={buyer.full_name}>{buyer.full_name}</option>
+            ))}
+          </Form.Control>
+        </Form.Group>
+        
+        <Form.Group controlId="seller">
+          <Form.Label className="text" style={{ color:'#999999' }}>Select Seller</Form.Label>
+          <Form.Control as="select" onChange={handleSellerChange}>
+            <option value="">Select Seller</option>
+            {sellers.map(seller => (
+              <option key={seller.id} value={seller.id}>{seller.full_name}</option>
+            ))}
+          </Form.Control>
+        </Form.Group>
+      </div>
+
+      <div className='d-flex align-center justify-space-between'>
+        <Form.Group controlId="lcDocument">
+          <Form.Label className="text" style={{ color:'#999999' }}>Upload new LC</Form.Label>
+          <Form.Control
+            type="file"
+            onChange={(e) => setLcDocument(e.target.files[0])}
+          />
+        </Form.Group>
+        <Button variant="primary btn-sm mt-5 mx-1" onClick={handleLcUpload} style={{ width: '100px', fontSize:'14px' }}>
+          Upload
+        </Button>
+      </div>
+    </Form>
         <hr />
         {lcUploadMessage && (
           <div>
@@ -1228,7 +1265,7 @@ useEffect(() => {
                  <thead>
                    <tr>
                      <th style={{color:'#666666', fontSize:'12px'}}>Order No</th>
-                     {/* <th style={{color:'#666666', fontSize:'12px'}}>Seller</th> */}
+                     <th style={{color:'#666666', fontSize:'12px'}}>Seller</th>
                      <th style={{color:'#666666', fontSize:'12px'}}>Shipping Company</th>
                      <th style={{color:'#666666', fontSize:'12px'}}>View package Info</th>
 

@@ -44,8 +44,9 @@ const RemoveConfirmationForm = () => {
   };
 
   return (
-    <div className='main-container'>
-      <h5 style={{ color: '#001b40' }}>Confirmation Status</h5>
+    <div className='main-container' style={{minHeight:'85vh'}}>
+      <h5 style={{ color: '#666666' }}>Confirmation Status for inventory item removal</h5>
+      <hr />
       <table className="table table-bordered">
         <thead>
           <tr>
@@ -53,6 +54,7 @@ const RemoveConfirmationForm = () => {
             <th>Date</th>
             <th>Breed</th>
             <th>Quantity</th>
+            <th>Control center</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -63,7 +65,10 @@ const RemoveConfirmationForm = () => {
               <td>{index + 1}</td>
               <td>{item.slaughter_date}</td>
               <td>{item.breed}</td>
+
               <td>{item.quantity}</td>
+              <td>{item.control_center_name}</td>
+
               <td>{item.confirm ? 'Confirmed' : 'Pending'}</td>
               <td>
                 {!item.confirm && (

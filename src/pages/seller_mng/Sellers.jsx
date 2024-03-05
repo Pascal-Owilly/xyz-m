@@ -130,8 +130,6 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
     }
   };
   
-  
-
   const fetchUserData = async () => {
     try {
       const accessToken = Cookies.get('accessToken');
@@ -220,20 +218,22 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   useEffect(() => {
     const calculateRemainingBreeds = () => {
-      // Assuming supplyVsDemandData is an array of objects with breed, total_bred, and total_slaughtered properties
-      const remainingBreedsData = supplyVsDemandData.map((item) => {
-        const remainingCount = Math.max(0, item.total_bred - item.total_slaughtered);
-        return {
-          breed: item.breed,
-          remainingCount,
-        };
-      });
-
-      setRemainingBreeds(remainingBreedsData);
+      if (Array.isArray(supplyVsDemandData)) {
+        const remainingBreedsData = supplyVsDemandData.map((item) => {
+          const remainingCount = Math.max(0, item.total_bred - item.total_slaughtered);
+          return {
+            breed: item.breed,
+            remainingCount,
+          };
+        });
+  
+        setRemainingBreeds(remainingBreedsData);
+      }
     };
-
+  
     calculateRemainingBreeds();
   }, [supplyVsDemandData]);
+  
 
   const remainingBreedsChartData = {
     options: {
@@ -265,21 +265,21 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
    // New state for breed supply status
    const [breedSupplyStatus, setBreedSupplyStatus] = useState('');
    
-   useEffect(() => {
-    const calculateBreedSupplyStatus = () => {
-      const totalRemaining = remainingBreeds.reduce((acc, item) => acc + item.remainingCount, 0);
+  //  useEffect(() => {
+  //   const calculateBreedSupplyStatus = () => {
+  //     const totalRemaining = remainingBreeds.reduce((acc, item) => acc + item.remainingCount, 0);
 
-      if (totalRemaining > 0) {
-        setBreedSupplyStatus(`You have a total of ${totalRemaining} raw materials in the store.`);
-      } else if (totalRemaining < 0) {
-        setBreedSupplyStatus(`Heads up, you are completely out of breeds.`);
-      } else {
-        setBreedSupplyStatus(`The inventory level seems empty.`);
-      }
-    };
+  //     if (totalRemaining > 0) {
+  //       setBreedSupplyStatus(`You have a total of ${totalRemaining} raw materials in the store.`);
+  //     } else if (totalRemaining < 0) {
+  //       setBreedSupplyStatus(`Heads up, you are completely out of breeds.`);
+  //     } else {
+  //       setBreedSupplyStatus(`The inventory level seems empty.`);
+  //     }
+  //   };
 
-    calculateBreedSupplyStatus();
-  }, [remainingBreeds]);
+  //   calculateBreedSupplyStatus();
+  // }, [remainingBreeds]);
 
   const circularBarChartData = {
     options: {

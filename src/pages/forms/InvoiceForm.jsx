@@ -411,7 +411,6 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
                   placeholder=' eg. +254712345678'
                 />
               <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.phone_number}</div>
-
               </td>
             </tr>
             <tr>

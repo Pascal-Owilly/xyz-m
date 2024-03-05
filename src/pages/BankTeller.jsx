@@ -187,7 +187,7 @@ const ControlCenters = () => {
           <td style={{ color: '#999999', fontSize:'12px' }}>{status.logistics_company}</td>
           
           <td style={{ color: '#999999', fontSize:'12px' }}>{status.shipping_mode}</td>
-          <td style={{ color: '#999999', fontSize:'12px' }}>{status.time_of_delivery}</td>
+          {/* <td style={{ color: '#999999', fontSize:'12px' }}>{status.time_of_delivery}</td> */}
         </tr>
       );
 
@@ -577,6 +577,8 @@ const handleDownloadLC = () => {
           <tr>
             <th>Letter of credit</th>
             <th>LC ID</th>
+            <th>Buyer</th>
+            <th>Seller</th>
             <th>Issue Date</th>
             <th>Status</th>
           </tr>
@@ -591,7 +593,10 @@ const handleDownloadLC = () => {
         </td>
 
               <td>#{letterOfCredit.id}</td>
+              <td>{letterOfCredit.buyer}</td>
+              <td>{letterOfCredit.seller}</td>
               <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td>
+
               <td style={{ textTransform: 'capitalize' }}>
                 <button className='btn btn-sm text-white' style={{ backgroundColor: getButtonColor(letterOfCredit.status) }}>
                   {letterOfCredit.status}
@@ -644,7 +649,7 @@ const handleDownloadLC = () => {
             <th style={{ color: '#666666', fontSize:'12px' }}>Logistics Company</th>
 
             <th style={{ color: '#666666', fontSize:'12px' }}>Shipping Mode</th>
-            <th style={{ color: '#666666', fontSize:'12px' }}>Time of Delivery</th>
+            {/* <th style={{ color: '#666666', fontSize:'12px' }}>Time of Delivery</th> */}
           </tr>
         </thead>
         <tbody>
