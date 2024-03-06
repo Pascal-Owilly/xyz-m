@@ -19,7 +19,6 @@ const RemoveConfirmationForm = () => {
         console.error('Error fetching confirmation data:', error);
       }
     };
-
     fetchConfirmationData();
   }, [baseUrl]);
 
@@ -45,7 +44,7 @@ const RemoveConfirmationForm = () => {
 
   return (
     <div className='main-container' style={{minHeight:'85vh'}}>
-      <h5 style={{ color: '#666666' }}>Confirmation Status for inventory item removal</h5>
+      <h5 style={{ color: '#666666' }}>Warehouse transfer confirmation status</h5>
       <hr />
       <table className="table table-bordered">
         <thead>
@@ -61,7 +60,7 @@ const RemoveConfirmationForm = () => {
         </thead>
         <tbody>
           {currentItems.map((item, index) => (
-            <tr key={item.id} style={{ backgroundColor: item.confirm ? 'lightgreen' : (confirmedIds.includes(item.id) ? 'lightgreen' : '') }}>
+            <tr key={item.id} style={{ backgroundColor: item.confirm ? 'transparent' : (confirmedIds.includes(item.id) ? 'transparent' : '') }}>
               <td>{index + 1}</td>
               <td>{item.slaughter_date}</td>
               <td>{item.breed}</td>
@@ -98,5 +97,4 @@ const RemoveConfirmationForm = () => {
     </div>
   );
 };
-
 export default RemoveConfirmationForm;

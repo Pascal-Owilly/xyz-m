@@ -73,32 +73,37 @@ const CustomerServiceDashboard = ({packageInfo}) => {
  };
 
 //  lc
-const handleLcUpload = async () => {
-  try {
-    const formData = new FormData();
-    formData.append('lc_document', lcDocument);
-
-    const response = await axios.post(`${baseUrl}/api/all-lcs/`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-
-    console.log('upload response', response);
-    if (response.status === 201) {
-      setLcUploadSuccess(true);
-      setLcUploadMessage('Document uploaded successfully');
-      // Optionally, you can perform additional actions upon successful upload
-    } else {
-      const data = response.data;
-      setLcUploadSuccess(false);
-      setLcUploadMessage(data.error || 'Error uploading document');
-    }
-  } catch (error) {
-    console.error('Error uploading document:', error);
+const handleLcUpload = () => {
+  // Check if a document is selected
+  if (!lcDocument) {
+    setLcUploadMessage("Please select a document to upload.");
     setLcUploadSuccess(false);
-    setLcUploadMessage('Error uploading  document');
+    return;
   }
+
+  // Prepare form data
+  const formData = new FormData();
+  formData.append("lc_document", lcDocument);
+
+  // Make a POST request to upload the LC document
+  axios.post(`${baseUrl}/api/all-lcs/`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+    .then(response => {
+      // Handle successful upload
+      console.log("LC document uploaded successfully:", response.data);
+      setLcUploadMessage("LC document uploaded successfully.");
+      setLcUploadSuccess(true);
+    })
+    .catch(error => {
+      // Handle upload error
+      console.error("Error uploading LC document:", error);
+      setLcUploadMessage("Error uploading LC document. Please try again.");
+      setLcUploadSuccess(false);
+    });
 };
 
   // invoiceslist
@@ -996,8 +1001,6 @@ useEffect(() => {
     </table>
   </div>
 )}
-
-
 
 {activeSection === 'LC' && (
   <>

@@ -121,16 +121,140 @@ const Home = () => {
     quantity: null,
   });
   // ... (other state variables and functions)
+  const SALE_CHOICES = [
+    ['export_cut', 'Export Cut'],
+    ['local_sale', 'Local Sale Cut'],
+];
 
-  useEffect(() => {
-    const storedToken = Cookies.get('authToken');
-    if (storedToken) {
-      // Do something with the token if needed
-    }
-    fetchUserData();
-  }, []);
+const sale_cuts = SALE_CHOICES.map(([value, label]) => ({ value, label }));
 
+const local_sale = SALE_CHOICES.map(([value, label]) => (
+    `<option key="${value}" value="${value}">${label}</option>`
+));
 
+  const BreedCutForm = ({ showCutForm, onSubmit, cutData, onChange, submitMessage, onVisibilityChange }) => (
+    showCutForm && (
+      <div className="col-md-12">
+        <div className="card">
+          <div className="card-body">
+            <form onSubmit={onSubmit}>
+              <h5 className="mb-3" style={{color:'#001b40'}}>Finished products</h5>
+              <h6 className="mb-3 " style={{color:'#999999'}}>To be added to chilled warehouse</h6>
+  
+              <p>
+              <label htmlFor="breedInput" className="form-label">Enter raw product name: (eg Cow, Goat etc)</label>
+  <input
+    id="breedInput"
+    type="text"
+    name="breed"
+    value={cutData.breed}
+    onChange={onChange}
+    className="form-control mb-3"
+    required
+  />
+              </p>
+              <label htmlFor="partNameInput" className="form-label text-secondary">Enter finished product name: (eg ribs, intestines etc)</label>
+  <input
+    id="partNameInput"
+    type="text"
+    name="partName"
+    value={cutData.partName}
+    onChange={onChange}
+    className="form-control mb-3"
+    style={{
+      background: 'white',
+      color: '#999999', // Secondary text color
+      padding: '0.2rem',
+      width: '100%'
+    }}
+    required
+  />
+  
+  <label htmlFor="weightInput" className="form-label" style={{
+      background: 'white',
+      color: '#999999', // Secondary text color
+      padding: '0.1rem',
+      width: '100%'
+    }}>Enter weight in Kg: (eg 300, 120 etc)</label>
+  <input
+    id="weightInput"
+    type="number"
+    name="weight"
+    value={cutData.weight}
+    onChange={onChange}
+    className="form-control mb-3"
+    style={{
+      background: 'white',
+      color: '#999999', // Secondary text color
+      padding: '0.2rem',
+      width: '100%'
+    }}
+    required
+  />
+  
+  
+              <p>
+                <label htmlFor="saleTypeSelect" className="form-label">Select Sale Type:</label>
+                <select
+  style={{
+    background: 'white',
+    color: '#999999', // Secondary text color
+    padding: '0.2rem',
+    borderRadius: '30px',
+    width:'100%'
+  }}                id="saleTypeSelect"
+                  name="saleType"
+                  value={cutData.saleType}
+                  onChange={onChange}
+                  className='form-select mb-3 mx-2'
+                >
+                  {/* Use the SALE_CHOICES here */}
+                  {SALE_CHOICES.map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </p>
+              <label htmlFor="quantityInputCut" className="form-label" 
+              style={{
+                background: 'white',
+                color: '#999999', // Secondary text color
+              }}
+              >Enter quantity: (eg 30, 120 etc)</label>
+              <input
+                          id="quantityInputCut"
+                          type="number"
+                          name="quantity"
+                          value={cutData.quantity}
+                          onChange={onChange}
+                          className="form-control mb-3"
+                          required
+                          style={{
+                            background: 'white',
+                            color: '#6c757d', // Secondary text color
+                            borderRadius: '30px',
+                            padding: '0.2rem',
+                          }}
+                        />
+              <button type="submit" className="btn text-white" style={{background:'#001b40'}}>Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    )
+  );
+  
+  const SubmitMessage = ({ message, onVisibilityChange }) => (
+    message && (
+      <div className={`alert alert-${message.type} mt-3`}>
+        {message.text}
+        <button className="btn btn-sm btn-secondary ms-2 mx-2" onClick={onVisibilityChange}>
+          Submit Another
+        </button>
+      </div>
+    )
+  );
 
   const handleCutInputChange = (e) => {
     setCutData({
@@ -186,22 +310,22 @@ const Home = () => {
     <div className="main-container" style={{minHeight:'85vh'}}>
           <h5 className="mb-4">Inventory Update Record Form</h5>
       <Container>
-        <Col md={2}></Col>
-        <Col md={8}>
+        {/* <Col md={2}></Col> */}
+        <Col md={12}>
 
               {/* Submit Messages */}
-    <SubmitMessage message={submitMessage} onVisibilityChange={handleFormVisibility} />
-    <SubmitMessage message={cutSubmitMessage} onVisibilityChange={handleCutFormVisibility} />
+    {/* <SubmitMessage message={submitMessage} onVisibilityChange={handleFormVisibility} /> */}
+    {/* <SubmitMessage message={cutSubmitMessage} onVisibilityChange={handleCutFormVisibility} /> */}
 
 {/* Breed Cut Form */}
-<Col md={6}>
+<Col md={12}>
               <BreedCutForm
                 showCutForm={showCutForm}
                 onSubmit={handleCutSubmit}
                 cutData={cutData}
                 onChange={handleCutInputChange}
                 submitMessage={cutSubmitMessage}
-                onVisibilityChange={handleCutFormVisibility}
+                // onVisibilityChange={handleCutFormVisibility}
               />
             </Col>
 

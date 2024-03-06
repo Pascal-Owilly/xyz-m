@@ -83,7 +83,7 @@ const ActiveOrders = () => {
               <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Price/Kg</th>
               <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Product Description</th>
               <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Quantity</th>
-              <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Collected from</th>
+              <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Collection point</th>
 
               <th style={{ fontWeight: 'bold', fontSize: '16px' }}>Status</th>
             </tr>
