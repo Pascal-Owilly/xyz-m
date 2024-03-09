@@ -17,7 +17,7 @@ import defaultImg from './../../images/default.png'
 import { Link } from 'react-router-dom';
 import sidebarimg from '../../images/goat_1.jpg';
 // import { FaSignInAlt, FaUserPlus, FaUserCog, FaHome, FaTruck, FaBoxOpen, FaMapMarkedAlt } from 'react-icons/fa'; // Import icons from react-icons library
-import { FaSignInAlt, FaUserPlus, FaUserCog, FaHome, FaTruck, FaBoxOpen, FaMapMarkedAlt, FaShippingFast, FaArchive } from 'react-icons/fa';
+import { FaSignInAlt, FaUserPlus, FaUserCog, FaHome, FaTruck, FaBoxOpen, FaMapMarkedAlt, FaShippingFast, FaArchive,FaTools, FaSellcast,FaMoneyCheckAlt, FaExchangeAlt, FaAccessibleIcon, FaShopify, FaShip , FaGlobe, FaGlobeAfrica, FaGlobeAmericas, FaStreetView} from 'react-icons/fa';
 
 const Home = () => {
 const navigate =useNavigate()
@@ -52,11 +52,11 @@ const handleNavigation = (url) => {
   navigate(url);
 };
 
-useEffect(() => {
-  if (accessToken && baseUrl) {
-    fetchUserData();
-  }
-}, [accessToken, baseUrl]);
+// useEffect(() => {
+//   if (accessToken && baseUrl) {
+//     fetchUserData();
+//   }
+// }, [accessToken, baseUrl]);
 
 
 useEffect(() => {
@@ -130,6 +130,8 @@ useEffect(() => {
     };
   }, []);
   
+  useEffect(() => {
+
   const refreshAccessToken = async () => {
     try {
       console.log('fetching token refresh ... ')
@@ -143,14 +145,17 @@ useEffect(() => {
       const newAccessToken = response.data.access;
       // Update the stored access token
       Cookies.set('accessToken', newAccessToken);
-      // Optional: You can also update the user data using the new access token
+      // Optional: You can alzzso update the user data using the new access token
       await fetchUserData();
     } catch (error) {
       console.error('Error refreshing access token:', error);
       // Handle the error, e.g., redirect to login page
     }
   };
-  
+}, []);
+
+useEffect(() => {
+
   const fetchUserData = async () => {
     try {
       const accessToken = Cookies.get('accessToken');
@@ -166,6 +171,7 @@ useEffect(() => {
   
         const userProfile = response.data;
         setProfile(userProfile);
+        console.log('user', userProfile)
       }
     } catch (error) {
       // Check if the error indicates an expired access token
@@ -177,7 +183,9 @@ useEffect(() => {
       }
     }
   };
-  
+  fetchUserData()
+}, [accessToken, baseUrl]);
+
 // const fetchProfile = async () => {
 //   try {
 //     const response = await axios.get(`${baseUrl}/auth/user/`, {
@@ -309,7 +317,7 @@ const logout = async () => {
           </li>
           <li>s
             <a href="/export_handling_dashboard">
-              <FaMapMarkedAlt /> Export Handling Dashboard
+              <FaGlobe /> Export Handling Dashboard
             </a>
           </li>
         </>
@@ -326,39 +334,30 @@ const logout = async () => {
               </li> */}
 
               <li style={{ display: 'flex', alignItems: 'center' }}>
-                <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                <a href="/sellers">Sellers </a>
+                <FaTools style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+                <a href="/sellers">
+                  Sellers 
+                  </a>
               </li>
               
               <li style={{ display: 'flex', alignItems: 'center' }}>
                 <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                <a href="/supplier_dashboard">Supplier </a>
+                <a href="/supplier_dashboard">Suppliers </a>
               </li>
              
               <li style={{ display: 'flex', alignItems: 'center' }}>
-                <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+                <FaSellcast style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
                 <a href="/inventory-confirmation">Stock shift </a>
               </li>
               <li style={{ display: 'flex', alignItems: 'center' }}>
-                <FaHome style={{ marginRight: '12px', color: 'white', fontSize: '20px' }} />
+                <FaExchangeAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px' }} />
                 <a href="/buyer_dashboard" >
-                  Buyer 
+                  Buyers
                 </a>
               </li>
-              {/* <li style={{ display: 'flex', alignItems: 'center' }}>
-              <FaHome style={{ marginRight: '12px', color: 'white', fontSize: '20px' }} />
 
-            <a href="/inventory-record-forms">
-               Warehouse 
-            </a>
-          </li> */}
-              {/* <li style={{ display: 'flex', alignItems: 'center' }}>
-                <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                <a href="/slaughterhouse-dashboard">Slaughterhouse</a>
-              </li> */}
-             
               <li style={{ display: 'flex', alignItems: 'center' }}>
-                <FaMapMarkedAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+                <FaMoneyCheckAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
                 <a href="/bank_teller_dashboard">Bank </a>
               </li>
               
@@ -371,11 +370,10 @@ const logout = async () => {
                 <a href="/export_handling_dashboard">Export Management</a>
               </li> */}
 
-              <li>
-                <a href="/control-centers-list">
-                <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                Control centers
-                </a>
+            
+              <li style={{ display: 'flex', alignItems: 'center' }}>
+                <FaStreetView style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+                <a href="/control-centers-list">Control centers</a>
               </li>
               {/* <li>
                 <a href="warehouse">
@@ -387,7 +385,7 @@ const logout = async () => {
                
 
               <li style={{ display: 'flex', alignItems: 'center' }}>
-              <FaShippingFast style={{ marginRight: '12px', color: 'white', fontSize: '20px'}} />
+              <FaGlobe style={{ marginRight: '12px', color: 'white', fontSize: '20px'}} />
                 <a href="/dispatch_and_shipping">Export Management </a></li>
         
             </>

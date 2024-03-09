@@ -1,26 +1,21 @@
 // Import necessary dependencies
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Card, Container, Form, Button, ProgressBar, Navbar, Nav, NavDropdown, NavLink, FormGroup, FormLabel, InputGroup, Table, Pagination } from 'react-bootstrap';
-import { FaTruck } from 'react-icons/fa'; // Assuming you're using react-icons for the truck icon
+import { Row, Col, Card, Container, Form, Button, ProgressBar, Navbar, Nav, NavDropdown, NavLink, FormGroup, FormLabel, InputGroup, Table, Pagination, Carousel } from 'react-bootstrap';
+import { FaTruck } from 'react-icons/fa'; 
 import { BASE_URL } from '../auth/config';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import './Seller.css';
-import { FaFileInvoice, FaList, FaMoneyBillAlt, FaWarehouse, FaArchive } from 'react-icons/fa'; // Import the desired icons
-import { checkUserRole } from '../auth/CheckUserRoleUtils'; 
+import { FaFileInvoice, FaList, FaMoneyBillAlt, FaWarehouse, FaArchive } from 'react-icons/fa'; 
 import ReactApexChart from 'react-apexcharts';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import PurchaseOrderSeller from './PurchaseOrdersSeller';
 import Quotation from './Quotation';
 
-const BankDashboard = ({ orderId }) => {
-
+const Sellers = ({ orderId }) => {
 
   // ADMIN DASHBOARD
   const baseUrl = BASE_URL;
-
-  const [userRole, setUserRole] = useState('');
   const [breadersCount, setBreadersCount] = useState(0);
   const [supplyVsDemandData, setSupplyVsDemandData] = useState([]);
   const [totalBuyers, setTotalBuyers] = useState(0);
@@ -28,47 +23,113 @@ const BankDashboard = ({ orderId }) => {
   const [user, setUser] = useState(null);
   const [remainingBreeds, setRemainingBreeds] = useState([]);
   const [buyers, setBuyers] = useState([]);
-
   const [currentPage, setCurrentPage] = useState(1);
-
   const [quotationsPerPage] = useState(5); // Number of quotations per page
   const [quotations, setQuotations] = useState([]);
   const [updateCompleted, setUpdateCompleted] = useState(false);
 
   // Pagination
   const itemsPerPage = 7; // Number of items to display per page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-const indexOfLastItem = currentPage * itemsPerPage;
-const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-
-const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     // admin vars
     const [activeSection, setActiveSection] = useState('Negotiations');
-
     const [paymentCode, setPaymentCode] = useState('');
     const [paymentData, setPaymentData] = useState(null);
     const [error, setError] = useState(null);
     const accessToken = Cookies.get('accessToken');
-  
     const [selectedBreeder, setSelectedBreeder] = useState('');
     const [showForm, setShowForm] = useState(false);
-  
+
     // LC
-    const [lcId, setLcId] = useState(null);
     const [lcDocument, setLcDocument] = useState(null);
-    const [lcUploadError, setLcUploadError] = useState(null);
     const [profile, setProfile] = useState(null)
     const [userProfile, setUserProfile] = useState(null);
     const [arrivedOrdersData, setArrivedOrdersData] = useState([]);
     const [shipmentProgressData, setShipmentProgressData] = useState([]);
-    const [selectedOrder, setSelectedOrder] = useState(null);
     const [logisticsStatuses, setLogisticsStatuses] = useState([]);
     const [orders, setOrders] = useState([]);
     const [letterOfCredits, setLetterOfCredits] = useState([]);
-
     const [lcUploadSuccess, setLcUploadSuccess] = useState(false);
     const [lcUploadMessage, setLcUploadMessage] = useState('');
+
+    // Leven info
+
+    const [supplyStatus, setSupplyStatus] = useState('');
+    const [breedsData, setBreedsData] = useState([]);
+    const [showAll, setShowAll] = useState(false);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(`${BASE_URL}/api/supply-vs-demand`);
+          setBreedsData(response.data.supply_vs_demand_data);
+          calculateSupplyStatus(response.data.supply_vs_demand_data);
+        } catch (error) {
+          console.error('Error fetching supply vs demand data:', error);
+        }
+      };
+  
+      fetchData();
+    }, []);
+
+    useEffect(() => {
+      // Automatically reveal all cards after 5 seconds
+      const timer = setTimeout(() => {
+        setShowAll(true);
+      }, 5000);
+  
+      return () => clearTimeout(timer);
+    }, []);
+
+    const calculateSupplyStatus = (data) => {
+      const totalBreeds = data.reduce((acc, item) => acc + item.total_bred, 0);
+  
+      if (totalBreeds > 100) {
+        setSupplyStatus('Crucial');
+      } else if (totalBreeds > 50) {
+        setSupplyStatus('Need More Supplies');
+      } else {
+        setSupplyStatus('Normal Level');
+      }
+    };
+  
+    const getStatusMessage = (count) => {
+      if (count > 100) {
+        return 'Crucial';
+      } else if (count > 50) {
+        return 'Need More Supplies';
+      } else {
+        return 'Normal';
+      }
+    };
+
+    const chartData = {
+      options: {
+        chart: {
+          type: 'bar',
+        },
+        xaxis: {
+          categories: supplyVsDemandData.map(item => item.breed),
+        },
+      },
+      series: [
+        {
+          name: 'Total Bred',
+          data: supplyVsDemandData.map(item => item.total_bred),
+        },
+        {
+          name: 'Total Slaughtered',
+          data: supplyVsDemandData.map(item => item.total_slaughtered),
+        },
+      ],
+    };
+  
+
+    // end level
 
   
     useEffect(() => {
@@ -81,7 +142,6 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
         .then(response => {
           console.log('Fetched letter of credits:', response.data);
           setLetterOfCredits(response.data);
-  
           console.log('LC list', response)
         })
         .catch(error => console.error('Error fetching letter of credits:', error));
@@ -92,13 +152,10 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const refreshAccessToken = async () => {
     try {
       console.log('fetching token refresh ... ')
-
       const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
-  
       const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
         refresh: refreshToken,
       });
-  
       const newAccessToken = response.data.access;
       // Update the stored access token
       Cookies.set('accessToken', newAccessToken);
@@ -114,11 +171,9 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
     if (!documentUrl) {
       return null;
     }
-  
     // Get the file extension
     const fileExtension = documentUrl.split('.').pop()?.toLowerCase(); // Added null check with '?'
     console.log('File Extension:', fileExtension);
-  
     // Check the file type and render accordingly
     if (fileExtension === 'pdf') {
       return <embed src={documentUrl} type="application/pdf" width="50" height="50" />;
@@ -133,14 +188,12 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const fetchUserData = async () => {
     try {
       const accessToken = Cookies.get('accessToken');
-  
       if (accessToken) {
         const response = await axios.get(`${baseUrl}/auth/user/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-  
         const userProfile = response.data;
         setProfile(userProfile);
       }
@@ -168,8 +221,6 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
     fetchData();
   }, [baseUrl]);  
 
-  
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -194,8 +245,7 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
     fetchData();
   }, [baseUrl]);
   
-
-  const chartData = {
+  const chartLevelData = {
     options: {
       chart: {
         type: 'bar',
@@ -234,7 +284,6 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
     calculateRemainingBreeds();
   }, [supplyVsDemandData]);
   
-
   const remainingBreedsChartData = {
     options: {
       chart: {
@@ -265,21 +314,21 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
    // New state for breed supply status
    const [breedSupplyStatus, setBreedSupplyStatus] = useState('');
    
-  //  useEffect(() => {
-  //   const calculateBreedSupplyStatus = () => {
-  //     const totalRemaining = remainingBreeds.reduce((acc, item) => acc + item.remainingCount, 0);
+   useEffect(() => {
+    const calculateBreedSupplyStatus = () => {
+      const totalRemaining = remainingBreeds.reduce((acc, item) => acc + item.remainingCount, 0);
 
-  //     if (totalRemaining > 0) {
-  //       setBreedSupplyStatus(`You have a total of ${totalRemaining} raw materials in the store.`);
-  //     } else if (totalRemaining < 0) {
-  //       setBreedSupplyStatus(`Heads up, you are completely out of breeds.`);
-  //     } else {
-  //       setBreedSupplyStatus(`The inventory level seems empty.`);
-  //     }
-  //   };
+      if (totalRemaining > 0) {
+        setBreedSupplyStatus(`You have a total of ${totalRemaining} raw materials in the store.`);
+      } else if (totalRemaining < 0) {
+        setBreedSupplyStatus(`Heads up, you are completely out of breeds.`);
+      } else {
+        setBreedSupplyStatus(`The inventory level seems empty.`);
+      }
+    };
 
-  //   calculateBreedSupplyStatus();
-  // }, [remainingBreeds]);
+    calculateBreedSupplyStatus();
+  }, [remainingBreeds]);
 
   const circularBarChartData = {
     options: {
@@ -381,168 +430,6 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   // END ADMIN
 
-
-  // START PO
-  const [formData, setFormData] = useState({
-    seller: '',
-    po_number: '',
-    date: '',
-    trader_name: '',
-    buyer_address: '',
-    buyer_contact: '',
-    seller_address: '',
-    seller_contact: '',
-    shipping_address: '',
-    confirmed: false,
-    product_description: '',
-    quantity: '',
-    unit_price: '',
-    tax: '',
-    total_amount: '',
-    payment_terms: '',
-    delivery_terms: '',
-    reference_numbers: '',
-    special_instructions: '',
-    attachments: null,
-    authorized_signature: '',
-    signature_date: ''
-});
-
-useEffect(() => {
-  // Fetch data if editing existing purchase order
-  const fetchData = async () => {
-      try {
-          const response = await axios.get(`${baseUrl}/api/purchase-orders/${orderId}/`);
-          setFormData(response.data);
-      } catch (error) {
-          console.error('Error fetching data:', error);
-      }
-  };
-
-  // Fetch data only if orderId is provided
-  if (orderId) {
-      fetchData();
-  }
-}, [orderId]);
-
-const handleChange = (e) => {
-  const { name, value, type, checked, files } = e.target;
-  const val = type === 'checkbox' ? checked : type === 'file' ? files[0] : value;
-  setFormData(prevState => ({
-      ...prevState,
-      [name]: val
-  }));
-};
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    if (orderId) {
-      await axios.put(`${baseUrl}/api/purchase-orders/${orderId}/`, formData);
-    } else {
-      await axios.post(`${baseUrl}/api/purchase-orders/`, formData);
-    }
-    // Display success message
-    toast.success('Form submitted successfully!', {
-      position: 'top-center',
-      autoClose: 5000, // Close the toast after 5 seconds
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  } catch (error) {
-    // Display error message
-    toast.error('Error submitting form. Please try again later.', {
-      position: 'top-center',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-    console.error('Error submitting form:', error);
-  }
-};
-  // END PO
-
-
-  // Status tracking
-
-  const getStatusIndex = (status) => ['ordered', 'dispatched', 'shipped', 'arrived', 'received'].indexOf(status);
-
-  useEffect(() => {
-    axios.get(`${baseUrl}/api/all-logistics-statuses/`)
-      .then(response => {
-        setLogisticsStatuses(response.data);
-
-        console.log('response', response)
-      })
-      .catch(error => {
-        console.error('Error fetching logistics statuses:', error);
-      });
-
-    axios.get(`${baseUrl}/api/order/`)
-      .then(response => {
-        setOrders(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching orders:', error);
-      });
-
-    axios.get(`${baseUrl}/api/shipment-progress/`)
-      .then(response => {
-        setShipmentProgressData(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching shipment progress data:', error);
-      });
-
-    axios.get(`${baseUrl}/api/arrived-order/`)
-      .then(response => {
-        setArrivedOrdersData(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching arrived orders data:', error);
-      });
-  }, [baseUrl]);
-
-  const renderOrderDetails = (order) => (
-    <div key={order.id} className="order-details">
-      <h6 className='mb-3'>Order #{order.id} - {order.status}</h6>
-  
-      <Card className={`card ${getStatusColor(order.status)} mr-2`} disabled>
-        <Card.Body>
-          <Card.Title>{order.status}</Card.Title>
-          <Card.Text>
-            <FaTruck /> Track Location
-          </Card.Text>
-        </Card.Body>
-      </Card>
-  
-      {logisticsStatuses
-        .filter((status) => status.invoice === order.id)
-        .map((status) => (
-          <Card
-            key={status.id}
-            className={`card ${getStatusColor(status.status)} mr-2`}
-            disabled
-          >
-            <Card.Body>
-              {status.status}
-            </Card.Body>
-          </Card>
-        ))}
-      <ProgressBar now={calculatePercentage(order.status)} label={`${order.status} - ${calculatePercentage(order.status)}%`} />
-    </div>
-  );
-
-  const handleNavLinkClick = (section) => {
-    setActiveSection(section);
-  };
-
   const handleSearch = async () => {
     try {
       const response = await fetch(`${baseUrl}/api/abattoir-payments-to-breeders/search-payment-by-code/search_payment_by_code/?payment_code=${paymentCode}`);
@@ -560,12 +447,6 @@ const handleSubmit = async (e) => {
       setPaymentData(null);
       setError('Error searching for payment data');
     }
-  };
-
-  const formatPaymentInitiationDate = (dateString) => {
-    const options = { day: '2-digit', month: '2-digit', year: '2-digit' };
-    const formattedDate = new Date(dateString).toLocaleDateString(undefined, options);
-    return formattedDate;
   };
 
 
@@ -598,197 +479,14 @@ const handleSubmit = async (e) => {
       }
     };
 
-    fetchUserData(); // Call the function to fetch user data
-  }, []); // Empty dependency array to run the effect only once when the component mounts
+    fetchUserData();
+  }, []);
 
+  const [activeTab, setActiveTab] = useState('Home');
 
-
-  const handleLcUpload = async () => {
-    try {
-      const formData = new FormData();
-      formData.append('lc_document', lcDocument);
-  
-      const response = await axios.post(
-        `${baseUrl}/api/letter_of_credits/`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'X-User-ID': userProfile?.user?.id,
-            'X-User-Email': userProfile?.user?.email,
-          },
-        }
-      );
-  
-      console.log('upload response', response);
-      if (response.status === 201) {
-        setLcUploadSuccess(true);
-        setLcUploadMessage('Letter of credit document uploaded successfully');
-        // Optionally, you can perform additional actions upon successful upload
-      } else {
-        const data = response.data;
-        setLcUploadSuccess(false);
-        setLcUploadMessage(data.error || 'Error uploading letter of credit document');
-      }
-    } catch (error) {
-      console.error('Error uploading letter of credit document:', error);
-      setLcUploadSuccess(false);
-      setLcUploadMessage('Error uploading letter of credit document');
-    }
+  const handleTabClick = (tabId) => {
+    setActiveTab(tabId);
   };
-  
-  
-  const handleButtonClick = (section) => {
-    setActiveSection(section);
-  };
-
-  const breeders = ['Breeder1', 'Breeder2', 'Breeder3']; // Add your list of breeders here
-  const handleBreederClick = () => {
-    setShowForm(true);
-  };
-
-  const handleBreederSelect = (breeder) => {
-    setSelectedBreeder(breeder);
-  };
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-
-    // Your form submission logic here
-
-    // Reset form state
-    setShowForm(false);
-    setSelectedBreeder('');
-  };
-
-  const [isClicked, setIsClicked] = useState(false);
-
-  const navBackground = {
-    backgroundColor: isClicked ? 'white' : 'transparent',
-    color: isClicked ? 'black' : 'white',
-  };
-
-  const handleClick = () => {
-    setIsClicked(!isClicked);
-  };
-
-  // CSS
-  const formContainer = {
-    backgroundColor: '#f9f9f9',
-    padding: '20px',
-    borderRadius: '5px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-};
-
-
-const [activeTab, setActiveTab] = useState('Home');
-const handleTabClick = (tabId) => {
-  setActiveTab(tabId);
-};
-
-// LC
-const [lcFormData, setLcFormData] = useState({
-  paymentType: 'at_sight',
-  shipmentPeriod: 'immediate',
-  documentsRequired: 'bill_of_lading',
-  referenceType: 'order_number',
-  approvalStatus: 'pending',
-  trackingStatus: 'in_transit',
-  seller: '',
-  breeder: '',
-  bank: '',
-  lcNumber: '',
-  date: '',
-  beneficiaryName: '',
-  beneficiaryAddress: '',
-  issuingBankName: '',
-  issuingBankAddress: '',
-  advisingBankName: '',
-  advisingBankAddress: '',
-  amount: '',
-  expiryDate: '',
-  specialConditions: '',
-  paymentAtSight: false,
-  deferredPayment: false,
-  paymentTerms: '',
-  referenceNumbers: '',
-  authorizedSignatureIssuingBank: '',
-  authorizedSignatureAdvisingBank: '',
-  signatureDate: '',
-});
-
-const handleLcChange = (e) => {
-  const { name, value, type, checked } = e.target;
-  setFormData((prevData) => ({
-    ...prevData,
-    [name]: type === 'checkbox' ? checked : value,
-  }));
-};
-
-const handleLcSubmit = (e) => {
-  e.preventDefault();
-  // Handle form submission here, you can send formData to your backend
-  console.log(formData);
-};
-
-// END LC
-
-const formStyles = {
-  backgroundColor: 'rgb(249, 250, 251)',
-  color: '#666666',
-  fontSize: '15px',
-  width: '95.33% ', // Make the form occupy one-third of the container width
-  margin: '0 auto', // Center the form horizontally
-  padding: '20px', // Add padding to the form
-};
-
-// Function to determine button color based on status
-const getButtonColor = (status) => {
-  switch (status) {
-    case 'approved':
-      return 'green';
-    case 'rejected':
-      return 'red';
-    default:
-      return '#001b42'; // Default color for not confirmed
-  }
-};
-const [confirmationAlert, setConfirmationAlert] = useState(false);
-const [selectedStatus, setSelectedStatus] = useState('');
-const [updateMessage, setUpdateMessage] = useState(null);
-
-const handleStatusChange = (status) => {
-  setSelectedStatus(status);
-  setConfirmationAlert(true);
-
-  // Add your confirmation alert logic here
-  alert(`Are you sure you want to change the status to ${status}?`);
-};
-
-const [lcStatus, setLcStatus] = useState('active');
-const [disabledButtons, setDisabledButtons] = useState([]);
-
-
-const handleUpdateStatus = async (lcId, newStatus) => {
-  try {
-    // Make the API call to update the status
-    await axios.patch(`${baseUrl}/api/all-lcs/${lcId}/`, { status: newStatus }, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    // Update the letter of credits after successful update
-    setLetterOfCredits(prevState => prevState.map(lc => lc.id === lcId ? { ...lc, status: newStatus } : lc));
-    // Set updateCompleted to true
-    setUpdateCompleted(true);
-    // Display success message or toast notification
-    alert(`Are you sure you want to change the status to ${newStatus}?`);
-    toast.success('Status updated successfully');
-  } catch (error) {
-    // Handle errors
-    console.error('Error updating status:', error);
-    toast.error('Error updating status');
-  }
-};
 
 return (
    <div className='main-container ' style={{ minHeight: '85vh', backgroundColor: '' }}>
@@ -806,12 +504,7 @@ return (
              
         <li className="nav-item">
           <a href='/control-centers-single-trader' className={`nav-link`} style={{color:'#d9d9d9'}} id="home-tab">Control centers</a>
-        </li>
-
-        {/* <li className="nav-item">
-          <a className={`nav-link ${activeTab === 'Open LC' ? 'active' : ''}`} id="contact-tab" onClick={() => handleTabClick('Open LC')} role="tab" aria-controls="Open LC" aria-selected={activeTab === 'Open LC'}>LC</a>
-        </li> */}
-        
+        </li>        
       </ul>
 
       <div className="tab-content mt-3 mb-3" id="myTabContent">
@@ -861,7 +554,7 @@ return (
         </div>
         <div className="widget-icon" style={{background:'#001b40'}}>
           <div className="icon" data-color="#001b40">
-            <FaList /> {/* Use the FaList icon */}
+            <FaList />
           </div>
         </div>
       </div>
@@ -937,7 +630,10 @@ return (
                   }}
                 >
           <h6 className='mx-2'>{breedSupplyStatus}</h6>
+  
+
         </div>
+       
               </div>
             </div>
           </div>
@@ -958,96 +654,7 @@ return (
         </div>
         <div className={`tab-pane fade ${activeTab === 'Send LPO' ? 'show active' : ''}`} id="Open LC" role="tabpanel" aria-labelledby="contact-tab">
         <div className='card '></div>
-<Form className='p-4 m-3' style={{background:'#F9FAFB', color:'#666666', fontSize:'14px', border:'none'}} onSubmit={handleSubmit} >
-  {/* Header Information */}
 
-  <Row>
-  <Col md={3}>
-      <Form.Group controlId="seller">
-        <Form.Label>Seller:</Form.Label>
-        <Form.Control type="text" name="seller" value={formData.seller} onChange={handleChange} />
-      </Form.Group>
-    </Col>
-
-    <Col md={3}>
-      <Form.Group controlId="trader_name">
-        <Form.Label>Trader Name:</Form.Label>
-        <Form.Control type="text" name="trader_name" value={formData.trader_name} onChange={handleChange} />
-      </Form.Group>
-    </Col>
-    <Col md={3}>
-      <Form.Group controlId="shipping_address">
-        <Form.Label>Shipping Address:</Form.Label>
-        <Form.Control type="text" rows={3} name="shipping_address" value={formData.shipping_address} onChange={handleChange} />
-      </Form.Group>
-    </Col>
-
-        <Col md={3}>
-      <Form.Group controlId="product_description">
-        <Form.Label>Description:</Form.Label>
-        <Form.Control type="text" rows={3} name="product_description" value={formData.product_description} onChange={handleChange} />
-      </Form.Group>
-    </Col>
-
-     </Row>
-    <Row>
-    <Col md={3}>
-        <Form.Group controlId="quantity">
-        <Form.Label>Quantity:</Form.Label>
-        <Form.Control type="number" name="quantity" value={formData.quantity} onChange={handleChange} />
-      </Form.Group>
-      
-          </Col>
-    <Col md={3}>
-    <Form.Group controlId="unit_price">
-        <Form.Label>Unit Price:</Form.Label>
-        <Form.Control type="number" name="unit_price" value={formData.unit_price} onChange={handleChange} />
-      </Form.Group>
-    </Col>
-  <Col md={3}>
-        <Form.Group controlId="total_amount">
-        <Form.Label>Total amount:</Form.Label>
-        <Form.Control type="number" name="total_amount" value={formData.total_amount} onChange={handleChange} />
-      </Form.Group>
-      
-          </Col>
-        <Col md={3}>
-        <Form.Group controlId="tax">
-        <Form.Label>Tax rate:</Form.Label>
-        <Form.Control type="number" name="tax" value={formData.tax} onChange={handleChange} />
-      </Form.Group>
-      
-          </Col>
-    <Col md={3}>
-    <Form.Group controlId="payment_terms">
-        <Form.Label>Payment terms:</Form.Label>
-          <Form.Control 
-            type="text" 
-            name="payment_terms" // Ensure the name attribute matches the corresponding key in formData
-            value={formData.payment_terms} 
-            onChange={handleChange} 
-          />
-</Form.Group>
-
-    </Col>
-    <Col md={3}>
-         <Form.Group controlId="special_instructions">
-        <Form.Label>Special instructions:</Form.Label>
-        <Form.Control type="text" name="special_instructions" value={formData.special_instructions} onChange={handleChange} />
-      </Form.Group>
-    </Col>
-    <Col md={3}>
-      <Form.Group controlId="delivery_terms">
-              <Form.Label>Delivery Terms:</Form.Label>
-        <Form.Control type="text" rows={3} name="delivery_terms" value={formData.delivery_terms} onChange={handleChange} />
-      </Form.Group>
-    </Col>
-    </Row>
-
-<hr />
-
-  <Button className='btn btn-sm btn-primary bg-success text-white' style={{width:'200px'}}  type="submit">Create</Button>
-</Form>
         </div>
         <div className={`tab-pane fade ${activeTab === 'Open LC' ? 'show active' : ''}`} id="Open LC" role="tabpanel" aria-labelledby="home-tab">
          {/* lc */}
@@ -1077,9 +684,9 @@ return (
               <td>#{letterOfCredit.id}</td>
               <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td>
               <td style={{ textTransform: 'capitalize' }}>
-  <button className='btn btn-sm text-white' style={{ backgroundColor: getButtonColor(letterOfCredit.status) }}>
+  {/* <button className='btn btn-sm text-white' style={{ backgroundColor: getButtonColor(letterOfCredit.status) }}>
     {letterOfCredit.status}
-  </button>
+  </button> */}
 </td>
               <td>
               <select
@@ -1126,4 +733,4 @@ return (
   );
 };
 
-export default BankDashboard;
+export default Sellers;

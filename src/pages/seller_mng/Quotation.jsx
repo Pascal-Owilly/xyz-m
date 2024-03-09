@@ -15,6 +15,7 @@ function QuotationForm() {
   const accessToken = Cookies.get('accessToken');
   const [buyers, setBuyers] = useState([]);
   const [sellers, setSellers] = useState([]);
+  const [profile, setProfile] = useState([]);
 
   const [formData, setFormData] = useState({
     seller: null,
@@ -33,6 +34,68 @@ function QuotationForm() {
 
   });
 
+  const refreshAccessToken = async () => {
+    try {
+      console.log('fetching token refresh ... ')
+
+      const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
+  
+      const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
+        refresh: refreshToken,
+      });
+  
+      const newAccessToken = response.data.access;
+      // Update the stored access token
+      Cookies.set('accessToken', newAccessToken);
+      // Optional: You can also update the user data using the new access token
+      await fetchUserData();
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
+      // Handle the error, e.g., redirect to login page
+    }
+  };
+
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/auth/user/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+  
+      const userProfile = response.data;
+      console.log("User Profile:", userProfile); // Log the userProfile object
+      setProfile(userProfile);
+      // Set the default seller to the currently logged-in user when the profile state changes
+      if (userProfile && userProfile.user && userProfile.user) {
+        setFormData({
+          ...formData,
+          seller: userProfile.user.id,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      // Check if the error indicates an expired access token
+      if (error.response && error.response.status === 401) {
+        // Attempt to refresh the access token
+        await refreshAccessToken();
+      } else {
+        console.error('Error fetching user data:', error);
+      }
+    }
+  };
+  
+
+
+  useEffect(() => {
+    // Set the default seller to the currently logged-in user when the profile state changes
+    if (profile && profile.id) {
+      setFormData({
+        ...formData,
+        seller: profile.id,
+      });
+    }
+  }, [profile]);
   useEffect(() => {
     const fetchBuyers = async () => {
       try {
@@ -50,23 +113,23 @@ function QuotationForm() {
     fetchBuyers();
   }, [baseUrl, accessToken]);
 
-  useEffect(() => {
-    const fetchSellers = async () => {
-      try {
-        const response = await axios.get(`${baseUrl}/api/sellers/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        console.log('sellers', response.data)
-        setSellers(response.data);
-      } catch (error) {
-        console.error('Error fetching sellers:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchSellers = async () => {
+  //     try {
+  //       const response = await axios.get(`${baseUrl}/api/sellers/`, {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       });
+  //       console.log('sellers', response.data)
+  //       setSellers(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching sellers:', error);
+  //     }
+  //   };
 
-    fetchSellers();
-  }, [baseUrl, accessToken]);
+  //   fetchSellers();
+  // }, [baseUrl, accessToken]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -134,7 +197,7 @@ function QuotationForm() {
 
   return (
     <div className=" main-container text-secondary">
-      <div className='col-md-8 p-5' style={{background:'rgb(249, 250, 251)'}}>
+      <div className='col-md-8 p-5' style={{background:'rgb(255, 255, 251)'}}>
         <h5 className=' text-center p-3' style={{color:'#666666'}}>Product Quotation Form</h5>
         <hr />
         <form onSubmit={handleSubmit}>
@@ -171,19 +234,19 @@ function QuotationForm() {
                 Seller
               </label>
               <div>
-                <select
-                  className="form-select text-dark p-2 bg-light "
-                  style={{ borderRadius: '', width: '100%', border: '1px solid #999999', opacity: 0.5 }}
-                  id="seller"
-                  name="seller"
-                  value={formData.seller}
-                  onChange={handleSellerChange}
-                  required
-                >
-              {sellers.map((seller) => (
-                  <option  key={seller.id} value={seller.id} className='bg-light p-3 text-dark' >{seller.full_name}</option>
-                  ))}
-                </select>
+              <select
+                    className="form-select text-dark p-2 bg-light "
+                    style={{ borderRadius: '', width: '100%', border: '1px solid #999999', opacity: 0.5 }}
+                    id="seller"
+                    name="seller"
+                    value={formData.seller}
+                    onChange={handleChange}
+                    disabled={true} // or disabled={profile ? true : false}
+                    required
+                  >
+                    <option value={profile ? profile.id : ''}>{profile ? `${profile.first_name} ${profile.last_name}` : ''}</option>
+                  </select>
+
                
               </div>
               
@@ -192,20 +255,21 @@ function QuotationForm() {
               <label htmlFor="product" className="form-label">Product Name</label>
               <input type="text" className="form-control" id="product" name="product" value={formData.product} onChange={handleChange} required />
             </div>
-
-          </div>
-          <div className="row">
             <div className="col-md-6 mb-3">
               <label htmlFor="unit_price" className="form-label">Unit Price</label>
               <input type="number" className="form-control" id="unit_price" name="unit_price" value={formData.unit_price} onChange={handleChange} min="0" step="0.01" required />
             </div>
+
+          </div>
+          <div className="row">
+
             <div className="col-md-6 mb-3">
               <label htmlFor="quantity" className="form-label">Quantity</label>
               <input type="number" className="form-control" id="quantity" name="quantity" value={formData.quantity} onChange={handleChange} min="1" required />
             </div>
             <div className="col-md-6 mb-3">
               <label htmlFor="delivery_time" className="form-label">Delivery Date</label>
-              <input type="date" className="form-control" id="delivery_time" name="delivery_time" value={formData.delivery_time} onChange={handleChange} min="1" required />
+              <input type="date" className="form-control text-success" id="delivery_time" name="delivery_time" value={formData.delivery_time} onChange={handleChange} min="1" required />
             </div>
           </div>
           <div className="mb-3">

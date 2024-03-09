@@ -40,6 +40,16 @@ const Home = () => {
     }
   };
 
+  const handleFormVisibility = () => {
+    setShowForm(!showForm);
+    setSubmitMessage(null);
+  };
+
+  const handleCutFormVisibility = () => {
+    setShowCutForm(!showCutForm);
+    setCutSubmitMessage(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -134,11 +144,10 @@ const local_sale = SALE_CHOICES.map(([value, label]) => (
 
   const BreedCutForm = ({ showCutForm, onSubmit, cutData, onChange, submitMessage, onVisibilityChange }) => (
     showCutForm && (
-      <div className="col-md-12">
-        <div className="card">
+      <div className="col-md-12 mb-5" >
+        <div className="card" style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius:'11px' }}>
           <div className="card-body">
             <form onSubmit={onSubmit}>
-              <h5 className="mb-3" style={{color:'#001b40'}}>Finished products</h5>
               <h6 className="mb-3 " style={{color:'#999999'}}>To be added to chilled warehouse</h6>
   
               <p>
@@ -196,13 +205,14 @@ const local_sale = SALE_CHOICES.map(([value, label]) => (
               <p>
                 <label htmlFor="saleTypeSelect" className="form-label">Select Sale Type:</label>
                 <select
-  style={{
-    background: 'white',
-    color: '#999999', // Secondary text color
-    padding: '0.2rem',
-    borderRadius: '30px',
-    width:'100%'
-  }}                id="saleTypeSelect"
+                  style={{
+                    background: 'white',
+                    color: '#999999', // Secondary text color
+                    padding: '0.2rem',
+                    borderRadius: '30px',
+                    width:'100%'
+                  }}
+                  id="saleTypeSelect"
                   name="saleType"
                   value={cutData.saleType}
                   onChange={onChange}
@@ -308,26 +318,17 @@ const local_sale = SALE_CHOICES.map(([value, label]) => (
 
   return (
     <div className="main-container" style={{minHeight:'85vh'}}>
-          <h5 className="mb-4">Inventory Update Record Form</h5>
+          <h3 className="mb-4" style={{color:'#001b42'}}>Stock-exports update forms</h3>
+          <hr />
       <Container>
         {/* <Col md={2}></Col> */}
         <Col md={12}>
-
+<h6 className='mt-2 mb-3'>Outbound stock update </h6>
               {/* Submit Messages */}
-    {/* <SubmitMessage message={submitMessage} onVisibilityChange={handleFormVisibility} /> */}
-    {/* <SubmitMessage message={cutSubmitMessage} onVisibilityChange={handleCutFormVisibility} /> */}
+    <SubmitMessage message={submitMessage} onVisibilityChange={handleFormVisibility} /> 
+    <SubmitMessage message={cutSubmitMessage} onVisibilityChange={handleCutFormVisibility} />
 
-{/* Breed Cut Form */}
-<Col md={12}>
-              <BreedCutForm
-                showCutForm={showCutForm}
-                onSubmit={handleCutSubmit}
-                cutData={cutData}
-                onChange={handleCutInputChange}
-                submitMessage={cutSubmitMessage}
-                // onVisibilityChange={handleCutFormVisibility}
-              />
-            </Col>
+
 
         <div className="card p-4" style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius:'11px' }}>
           {submitMessage && (
@@ -391,6 +392,20 @@ const local_sale = SALE_CHOICES.map(([value, label]) => (
           )}
         </div>
         </Col>
+
+        {/* Breed Cut Form */}
+<Col md={12} >
+  <hr />
+  <h6 className='mb-3'>Export-ready inventory update</h6>
+              <BreedCutForm
+                showCutForm={showCutForm}
+                onSubmit={handleCutSubmit}
+                cutData={cutData}
+                onChange={handleCutInputChange}
+                submitMessage={cutSubmitMessage}
+                // onVisibilityChange={handleCutFormVisibility}
+              />
+            </Col>
 
       </Container>
     </div>

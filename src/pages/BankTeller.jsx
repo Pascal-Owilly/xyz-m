@@ -6,7 +6,7 @@ import { BASE_URL } from './auth/config';
 import { useNavigate } from 'react-router-dom';
 import { Row, Col, Card, Container, Form, Table, Button, ProgressBar, Navbar, Nav, NavDropdown, Pagination, Modal } from 'react-bootstrap';
 import ReactApexChart from 'react-apexcharts';
-import { FaUser, FaUserShield, FaShoppingBag, FaBoxes , FaUpload, FaTruck, FaShippingFast, FaCheck, FaShoppingCart} from 'react-icons/fa'; // Importing Font Awesome icons
+import { FaUser, FaUserShield, FaShoppingBag, FaBoxes , FaUpload, FaTruck, FaShippingFast, FaCheck, FaShoppingCart, FaFilePdf, FaFileImage, FaFileAlt } from 'react-icons/fa'; // Importing Font Awesome icons
 
 const ControlCenters = () => {
   const baseUrl = BASE_URL;
@@ -136,60 +136,53 @@ const ControlCenters = () => {
         status.status === 'shipped' ? '#f0f0f0' : // Light Gray
         status.status === 'received' ? 'lightgreen' : '' // Light Green
     }}>
-        <td style={{ color: '#999999', fontWeight: 'bold' }}>
-        <td style={{ color: '#999999', fontSize:'16px' }}>
-            <button 
-              style={{ 
-                border: 'none', 
-                background: 'none', 
-                color: '#007bff', 
-                textDecoration: 'underline', 
-                cursor: 'pointer' 
-              }} 
-              onClick={() => {
-                handlePackageInfoClick(status.package_info);
-                handleShow(); // Set show state to true
-              }}
-            >
-              See details
-            </button>
-          </td>
-          </td>
-          <td className='d-flex align-items-center'>
-          <button
-      style={{
-        fontWeight: '',
-        color: '#fff',
-        backgroundColor: status.status === 'ordered' ? '#001b42' : 'dispatched' ? '#001b42' : status.status === 'shipped' ? '#001b42' : status.status === 'arrived' ? '#001b42' : status.status === 'received' ? 'green' : '',
-        border: 'none', 
-        borderRadius: '5px', 
-        fontSize: '11px', 
-        cursor: 'pointer', 
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-        borderRadius:'30px',
-        textTransform:'capitalize' 
-      }} 
-      disabled={status.status === 'received'} // Disable the button if status is 'received'
-    >
-      {status.status}
-      {status.status === 'ordered' && <FaShoppingCart style={{ marginLeft: '5px', fontSize: '11px', color: 'white', textTransform:'capitalize' }} />}
-      {status.status === 'dispatched' && <FaTruck style={{ marginLeft: '5px', fontSize: '11px', color: 'white' , textTransform:'capitalize' }} />}
-      {status.status === 'shipped' && <FaShippingFast style={{ marginLeft: '5px', fontSize: '11px', color: 'blue' , textTransform:'capitalize' }} />}
-      {status.status === 'received' && <FaCheck style={{ marginLeft: '5px', fontSize: '11px', color: 'green', textTransform:'capitalize'}} />}
-    </button>
-          </td>
-          
-          <td style={{ color: '#999999', fontSize: '12px' }}>{status ? status.buyer_full_name: ''}</td>
-          {/* <td>
- 
-            </td> */}
-          <td style={{ color: '#999999', fontSize: '12px' }}>{status ? status.seller_full_name: ''}</td>
-          <td style={{ color: '#999999', fontSize:'12px' }}>{status.logistics_company}</td>
-          
-          <td style={{ color: '#999999', fontSize:'12px' }}>{status.shipping_mode}</td>
-          {/* <td style={{ color: '#999999', fontSize:'12px' }}>{status.time_of_delivery}</td> */}
-        </tr>
-      );
+      <td style={{ color: '#999999', fontWeight: 'bold' }}>
+        <button 
+          style={{ 
+            border: 'none', 
+            background: 'none', 
+            color: '#007bff', 
+            textDecoration: 'underline', 
+            cursor: 'pointer' 
+          }} 
+          onClick={() => {
+            handlePackageInfoClick(status.package_info);
+            handleShow(); // Set show state to true
+          }}
+        >
+          See details
+        </button>
+      </td>
+      <td className='d-flex align-items-center'>
+        <button
+          style={{
+            fontWeight: '',
+            color: '#fff',
+            backgroundColor: status.status === 'ordered' ? '#001b42' : 'dispatched' ? '#001b42' : status.status === 'shipped' ? '#001b42' : status.status === 'arrived' ? '#001b42' : status.status === 'received' ? 'green' : '',
+            border: 'none', 
+            borderRadius: '5px', 
+            fontSize: '11px', 
+            cursor: 'pointer', 
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            borderRadius:'30px',
+            textTransform:'capitalize' 
+          }} 
+          disabled={status.status === 'received'} // Disable the button if status is 'received'
+        >
+          {status.status}
+          {status.status === 'ordered' && <FaShoppingCart style={{ marginLeft: '5px', fontSize: '11px', color: 'white', textTransform:'capitalize' }} />}
+          {status.status === 'dispatched' && <FaTruck style={{ marginLeft: '5px', fontSize: '11px', color: 'white' , textTransform:'capitalize' }} />}
+          {status.status === 'shipped' && <FaShippingFast style={{ marginLeft: '5px', fontSize: '11px', color: 'blue' , textTransform:'capitalize' }} />}
+          {status.status === 'received' && <FaCheck style={{ marginLeft: '5px', fontSize: '11px', color: 'green', textTransform:'capitalize'}} />}
+        </button>
+      </td>
+      <td style={{ color: '#999999', fontSize: '12px' }}>{status.buyer ? status.buyer_full_name : ''}</td>
+      <td style={{ color: '#999999', fontSize: '12px' }}>{status.seller ? status.seller_full_name : ''}</td>
+      <td style={{ color: '#999999', fontSize:'12px' }}>{status.logistics_company}</td>
+      <td style={{ color: '#999999', fontSize:'12px' }}>{status.shipping_mode}</td>
+    </tr>
+  );
+  
 
       const handleModalToggle = () => {
         setShowForm(!showForm);
@@ -210,25 +203,31 @@ const ControlCenters = () => {
       
       
 
-  const renderDocumentPreview = (documentUrl, altText) => {
-    if (!documentUrl) {
-      return null;
-    }
-  
-    // Get the file extension
-    const fileExtension = documentUrl.split('.').pop()?.toLowerCase(); // Added null check with '?'
-    console.log('File Extension:', fileExtension);
-  
-    // Check the file type and render accordingly
-    if (fileExtension === 'pdf') {
-      return <embed src={documentUrl} type="application/pdf" width="50" height="50" />;
-    } else if (['png', 'jpg', 'jpeg', 'gif'].includes(fileExtension)) {
-      return <img src={documentUrl} alt={altText} width="50" height="50" />;
-    } else {
-      // For other file types, provide a generic link
-      return <a href={documentUrl} target="_blank" rel="noopener noreferrer">View Document</a>;
-    }
-  };
+      const renderDocumentPreview = (documentUrl, altText) => {
+        if (!documentUrl) {
+          return null;
+        }
+      
+        // Get the file extension
+        const fileExtension = documentUrl.split('.').pop()?.toLowerCase();
+      
+        // Check the file type and render accordingly
+        if (['png', 'jpg', 'jpeg', 'gif'].includes(fileExtension)) {
+          return <img src={documentUrl} alt={altText} style={{ width: '50px', height: '50px' }} />;
+        } else if (fileExtension === 'pdf') {
+          return <FaFilePdf style={{ fontSize: '24px', marginRight: '5px' }} />;
+        } else if (fileExtension === 'odt') {
+          return <FaFileAlt style={{ fontSize: '24px', marginRight: '5px' }} />;
+        } else {
+          // For other file types, provide a generic link
+          return (
+            <a href={documentUrl} target="_blank" rel="noopener noreferrer">
+              View Document
+            </a>
+          );
+        }
+      };
+      
 
   const getButtonColor = (status) => {
     switch (status) {
@@ -586,15 +585,19 @@ const handleDownloadLC = () => {
         <tbody>
         {currentDocuments.map(letterOfCredit => (
             <tr key={letterOfCredit.id}>
-             <td>{renderDocumentPreview(letterOfCredit.lc_document, `LC Document for ${letterOfCredit.buyer}`)} 
-             <a href={letterOfCredit.lc_document} target="_blank" rel="noopener noreferrer" className="btn btn-sm float-right " style={{backgroundColor:'rgb(255, 255, 255)', fontSize:'12px', color:'#999999'}}>
-              View
-              </a>
+             <td>
+              {renderDocumentPreview(letterOfCredit.lc_document, `LC Document for ${letterOfCredit.buyer}`)} 
+             
+              <FaFilePdf style={{ fontSize: '24px', marginRight: '5px' }} />
+  <a href={letterOfCredit.lc_document} target="_blank" rel="noopener noreferrer" className="btn btn-sm float-right" style={{backgroundColor:'rgb(255, 255, 255)', fontSize:'12px', color:'#999999'}}>
+    View
+  </a>
         </td>
 
               <td>#{letterOfCredit.id}</td>
-              <td>{letterOfCredit.buyer}</td>
-              <td>{letterOfCredit.seller}</td>
+              <td>{letterOfCredit.buyer ? letterOfCredit.buyer.full_name : ''}</td>
+              <td>{letterOfCredit.seller ? letterOfCredit.seller.full_name : ''}</td>
+
               <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td>
 
               <td style={{ textTransform: 'capitalize' }}>

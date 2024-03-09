@@ -122,13 +122,13 @@ const Breader = () => {
     <div className="main-container" style={{minHeight:'80vh'}}>
       {breaderData && (
         <div>
-          <h4 className='mb-4 text-success'>Your Supply History</h4>
+          <h4 className='mb-4 ' style={{color:'#001b42'}}>Your Supply History</h4>
           <div className="row">
           {currentItems && currentItems.map((breader) => (
   <div key={breader.id} className="col-lg-12 mb-2">
 
       <div className="card  text-secondary" style={{ borderRadius: '10px', backgroundColor:'#fff' }}>
-        <div className="card-body" style={{textTransform:'capitalize'}}>
+        <div className="card-body" style={{textTransform:'capitalize'}}>  
           <h5 className="card-title"></h5>
           <div className="row">
             <div className="col-md-3" style={{textTransform:'capitalize'}}>

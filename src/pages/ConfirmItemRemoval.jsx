@@ -7,6 +7,7 @@ const RemoveConfirmationForm = () => {
   const [confirmedIds, setConfirmedIds] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10); // Number of items per page
+  const [confirmingId, setConfirmingId] = useState(null); // State to track which item is being confirmed
   const baseUrl = BASE_URL;
 
   useEffect(() => {
@@ -31,6 +32,7 @@ const RemoveConfirmationForm = () => {
   };
 
   const handleConfirmStatus = async (id) => {
+    setConfirmingId(id); // Set the confirmingId to the current item id
     const shouldConfirm = window.confirm("Are you sure you want to confirm the removal of this item from the inventory?");
     if (shouldConfirm) {
       try {
@@ -38,7 +40,11 @@ const RemoveConfirmationForm = () => {
         setConfirmedIds([...confirmedIds, id]);
       } catch (error) {
         console.error('Error confirming status:', error);
+      } finally {
+        setConfirmingId(null); // Reset confirmingId after confirmation process is finished
       }
+    } else {
+      setConfirmingId(null); // Reset confirmingId if confirmation is cancelled
     }
   };
 
@@ -73,14 +79,15 @@ const RemoveConfirmationForm = () => {
                 {!item.confirm && (
                   <button
                     type="button"
-                    className="btn btn-success btn-sm"
+                    className={`btn btn-${confirmingId === item.id ? 'warning' : 'success'} btn-sm`}
                     onClick={() => handleConfirmStatus(item.id)}
-                    disabled={confirmedIds.includes(item.id)}
+                    disabled={confirmedIds.includes(item.id) || confirmingId === item.id}
                   >
-                    Confirm
+                    {confirmingId === item.id ? 'Confirming...' : (confirmedIds.includes(item.id) ? 'Confirmed' : 'Confirm')}
                   </button>
                 )}
               </td>
+
             </tr>
           ))}
         </tbody>

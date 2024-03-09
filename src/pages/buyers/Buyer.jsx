@@ -1007,16 +1007,18 @@ useEffect(() => {
   <div>
   <Form>
       <div className='d-flex align-center justify-space-between'>
-        <Form.Group controlId="buyer">
-          <Form.Label className="text" style={{ color:'#999999' }}>Select Buyer</Form.Label>
-          <Form.Control as="select" onChange={handleBuyerChange}>
-            <option value="">Select Buyer</option>
-            {buyers.map(buyer => (
-              <option key={buyer.id} value={buyer.full_name}>{buyer.full_name}</option>
-            ))}
-          </Form.Control>
-        </Form.Group>
-        
+      <Form.Group controlId="buyer" style={{ display: 'none' }}>
+  <Form.Label className="text" style={{ color:'#999999' }}>Select Buyer</Form.Label>
+  <Form.Control as="select" readOnly onChange={handleBuyerChange}>
+    {/* Assuming buyers array is defined elsewhere */}
+    <option value="">Select Buyer</option>
+    {/* Populate the options with buyers */}
+    {buyers.map(buyer => (
+      <option key={buyer.id} value={buyer.full_name}>{buyer.full_name}</option>
+    ))}
+  </Form.Control>
+</Form.Group>
+
         <Form.Group controlId="seller">
           <Form.Label className="text" style={{ color:'#999999' }}>Select Seller</Form.Label>
           <Form.Control as="select" onChange={handleSellerChange}>
