@@ -54,6 +54,7 @@ function QuotationForm() {
       // Handle the error, e.g., redirect to login page
     }
   };
+  useEffect(() => {
 
   const fetchUserData = async () => {
     try {
@@ -84,18 +85,27 @@ function QuotationForm() {
       }
     }
   };
+ fetchUserData()
+  if (profile.user && profile.user.id) {
+    setFormData({
+      ...formData,
+      seller: profile.user.id,
+    });
+  }
   
+}, []);
 
 
-  useEffect(() => {
-    // Set the default seller to the currently logged-in user when the profile state changes
-    if (profile && profile.id) {
-      setFormData({
-        ...formData,
-        seller: profile.id,
-      });
-    }
-  }, [profile]);
+  // useEffect(() => {
+  //   // Set the default seller to the currently logged-in user when the profile state changes
+  //   if (profile.user && profile.user.id) {
+  //     setFormData({
+  //       ...formData,
+  //       seller: profile.user.id,
+  //     });
+  //   }
+  // }, [profile.user]);
+  
   useEffect(() => {
     const fetchBuyers = async () => {
       try {
@@ -229,9 +239,9 @@ function QuotationForm() {
               </div>
               
             </div>
-            <div className="col-md-6 mb-3">
+            <div className="col-md-6 mb-3 d-none">
               <label htmlFor="seller" className="form-label">
-                Seller
+                To Seller
               </label>
               <div>
               <select
@@ -241,10 +251,10 @@ function QuotationForm() {
                     name="seller"
                     value={formData.seller}
                     onChange={handleChange}
-                    disabled={true} // or disabled={profile ? true : false}
+                    // disabled={true} // or disabled={profile ? true : false}
                     required
                   >
-                    <option value={profile ? profile.id : ''}>{profile ? `${profile.first_name} ${profile.last_name}` : ''}</option>
+                    <option value={profile.user ? profile.user.id : ''}>{profile.user ? `${profile.user.first_name} ${profile.user.last_name}` : ''}</option>
                   </select>
 
                
