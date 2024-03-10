@@ -9,15 +9,11 @@ const PurchaseOrders = () => {
     const baseUrl = BASE_URL;
     const [profile, setProfile] = useState([]);
     // const [user, setUser] = useState(null);
-
     const [confirmingId, setConfirmingId] = useState(null);
     const [unconfirmingId, setUnconfirmingId] = useState(null);
-
-  
     const accessToken = Cookies.get('accessToken');
     const [user, setUser] = useState(null); // Initialize with null or an empty object
-   
-  
+     
   // State to store the fetched purchase orders
   const [purchaseOrders, setPurchaseOrders] = useState([]);
   // State to track loading state
@@ -125,7 +121,6 @@ const PurchaseOrders = () => {
       }
     }
   };
-
   return (
     <div className='main-container'>
   <h2 style={{color:'#001b40'}}>Purchase Orders</h2>
@@ -171,7 +166,6 @@ const PurchaseOrders = () => {
           >
             {confirmingId === order.id ? 'Confirming...' : (unconfirmingId === order.id ? 'Unconfirming...' : (order.confirmed ? 'Confirmed' : 'Unconfirmed'))}
           </button>
-
           </td>
           <td>{order.product_description}</td>
           <td>{order.quantity}</td>

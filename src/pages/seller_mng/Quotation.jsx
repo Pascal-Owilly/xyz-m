@@ -34,78 +34,31 @@ function QuotationForm() {
 
   });
 
-  const refreshAccessToken = async () => {
-    try {
-      console.log('fetching token refresh ... ')
-
-      const refreshToken = Cookies.get('refreshToken'); // Replace with your actual cookie name
-  
-      const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
-        refresh: refreshToken,
-      });
-  
-      const newAccessToken = response.data.access;
-      // Update the stored access token
-      Cookies.set('accessToken', newAccessToken);
-      // Optional: You can also update the user data using the new access token
-      await fetchUserData();
-    } catch (error) {
-      console.error('Error refreshing access token:', error);
-      // Handle the error, e.g., redirect to login page
-    }
-  };
   useEffect(() => {
-
-  const fetchUserData = async () => {
-    try {
-      const response = await axios.get(`${baseUrl}/auth/user/`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-  
-      const userProfile = response.data;
-      console.log("User Profile:", userProfile); // Log the userProfile object
-      setProfile(userProfile);
-      // Set the default seller to the currently logged-in user when the profile state changes
-      if (userProfile && userProfile.user && userProfile.user) {
-        setFormData({
-          ...formData,
-          seller: userProfile.user.id,
+    const fetchSellers = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/api/sellers/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         });
+        console.log('sellers', response.data)
+        setSellers(response.data);
+      } catch (error) {
+        console.error('Error fetching sellers:', error);
       }
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-      // Check if the error indicates an expired access token
-      if (error.response && error.response.status === 401) {
-        // Attempt to refresh the access token
-        await refreshAccessToken();
-      } else {
-        console.error('Error fetching user data:', error);
-      }
+    };
+
+    fetchSellers();
+    if (sellers && sellers.id) {
+      setFormData({
+        ...formData,
+        seller: sellers.id,
+      });
     }
-  };
- fetchUserData()
-  if (profile.user && profile.user.id) {
-    setFormData({
-      ...formData,
-      seller: profile.user.id,
-    });
-  }
-  
-}, []);
+  }, [baseUrl, accessToken]);
 
 
-  // useEffect(() => {
-  //   // Set the default seller to the currently logged-in user when the profile state changes
-  //   if (profile.user && profile.user.id) {
-  //     setFormData({
-  //       ...formData,
-  //       seller: profile.user.id,
-  //     });
-  //   }
-  // }, [profile.user]);
-  
   useEffect(() => {
     const fetchBuyers = async () => {
       try {
@@ -123,24 +76,7 @@ function QuotationForm() {
     fetchBuyers();
   }, [baseUrl, accessToken]);
 
-  // useEffect(() => {
-  //   const fetchSellers = async () => {
-  //     try {
-  //       const response = await axios.get(`${baseUrl}/api/sellers/`, {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //       });
-  //       console.log('sellers', response.data)
-  //       setSellers(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching sellers:', error);
-  //     }
-  //   };
-
-  //   fetchSellers();
-  // }, [baseUrl, accessToken]);
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -239,7 +175,7 @@ function QuotationForm() {
               </div>
               
             </div>
-            <div className="col-md-6 mb-3 d-none">
+            <div className="col-md-6 mb-3">
               <label htmlFor="seller" className="form-label">
                 To Seller
               </label>
@@ -254,10 +190,8 @@ function QuotationForm() {
                     // disabled={true} // or disabled={profile ? true : false}
                     required
                   >
-                    <option value={profile.user ? profile.user.id : ''}>{profile.user ? `${profile.user.first_name} ${profile.user.last_name}` : ''}</option>
+                    <option value={sellers ? sellers.id : ''}>{sellers ? `${sellers.id} ${sellers.username}` : ''}</option>
                   </select>
-
-               
               </div>
               
             </div>
