@@ -10,135 +10,135 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function QuotationForm() {
-  const navigate = useNavigate();
-  const baseUrl = BASE_URL;
-  const accessToken = Cookies.get('accessToken');
-  const [buyers, setBuyers] = useState([]);
-  const [sellers, setSellers] = useState([]);
-  const [profile, setProfile] = useState([]);
+  // const navigate = useNavigate();
+  // const baseUrl = BASE_URL;
+  // const accessToken = Cookies.get('accessToken');
+  // const [buyers, setBuyers] = useState([]);
+  // const [sellers, setSellers] = useState([]);
+  // const [profile, setProfile] = useState([]);
 
-  const [formData, setFormData] = useState({
-    seller: null,
-    buyer: null,
-    product: '',
-    quantity: '',
-    unit_price: '',
-    market:  '',
-    message: '',
-    delivery_time: null,
-  });
+  // const [formData, setFormData] = useState({
+  //   seller: null,
+  //   buyer: null,
+  //   product: '',
+  //   quantity: '',
+  //   unit_price: '',
+  //   market:  '',
+  //   message: '',
+  //   delivery_time: null,
+  // });
 
-  const [formDataSeller, setFormDataSeller] = useState({
-    full_name: '',
-    id: null,
+  // const [formDataSeller, setFormDataSeller] = useState({
+  //   full_name: '',
+  //   id: null,
 
-  });
+  // });
 
-  useEffect(() => {
-    const fetchSellers = async () => {
-      try {
-        const response = await axios.get(`${baseUrl}/api/sellers/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        console.log('sellers', response.data)
-        setSellers(response.data);
-      } catch (error) {
-        console.error('Error fetching sellers:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchSellers = async () => {
+  //     try {
+  //       const response = await axios.get(`${baseUrl}/api/sellers/`, {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       });
+  //       console.log('sellers', response.data)
+  //       setSellers(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching sellers:', error);
+  //     }
+  //   };
 
-    fetchSellers();
-    if (sellers && sellers.id) {
-      setFormData({
-        ...formData,
-        seller: sellers.id,
-      });
-    }
-  }, [baseUrl, accessToken]);
+  //   fetchSellers();
+  //   if (sellers && sellers.id) {
+  //     setFormData({
+  //       ...formData,
+  //       seller: sellers.id,
+  //     });
+  //   }
+  // }, [baseUrl, accessToken]);
 
 
-  useEffect(() => {
-    const fetchBuyers = async () => {
-      try {
-        const response = await axios.get(`${baseUrl}/api/buyers/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setBuyers(response.data);
-      } catch (error) {
-        console.error('Error fetching buyers:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchBuyers = async () => {
+  //     try {
+  //       const response = await axios.get(`${baseUrl}/api/buyers/`, {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       });
+  //       setBuyers(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching buyers:', error);
+  //     }
+  //   };
 
-    fetchBuyers();
-  }, [baseUrl, accessToken]);
+  //   fetchBuyers();
+  // }, [baseUrl, accessToken]);
 
   
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData({
+  //     ...formData,
+  //     [name]: value,
+  //   });
+  // };
 
-  const handleSellerChange = (e) => {
-    const { name, value } = e.target;
-    setFormDataSeller({
-      ...formDataSeller,
-      [name]: value,
-    });
-  };
+  // const handleSellerChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormDataSeller({
+  //     ...formDataSeller,
+  //     [name]: value,
+  //   });
+  // };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await postData();
-      toast.success(<div>Quotation submitted successfully!<br /> <br />Redirecting ...</div>, {
-        position: 'top-center',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     await postData();
+  //     toast.success(<div>Quotation submitted successfully!<br /> <br />Redirecting ...</div>, {
+  //       position: 'top-center',
+  //       autoClose: 5000,
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //       progress: undefined,
+  //     });
   
-      // Redirect to the quotations list after 3 seconds
-      setTimeout(() => {
-        navigate('/quotation-submission-success');
-      }, 3000);
-    } catch (error) {
-      toast.error('Failed to submit quotation. Please try again later.', {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
-  };
+  //     // Redirect to the quotations list after 3 seconds
+  //     setTimeout(() => {
+  //       navigate('/quotation-submission-success');
+  //     }, 3000);
+  //   } catch (error) {
+  //     toast.error('Failed to submit quotation. Please try again later.', {
+  //       position: 'top-center',
+  //       autoClose: 3000,
+  //       hideProgressBar: false,
+  //       closeOnClick: true,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //       progress: undefined,
+  //     });
+  //   }
+  // };
   
 
-  const postData = async () => {
-    try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
+  // const postData = async () => {
+  //   try {
+  //     const config = {
+  //       headers: {
+  //         Authorization: `Bearer ${accessToken}`,
+  //       },
+  //     };
 
-      await axios.post(`${baseUrl}/api/send-quotation/`, formData, config);
-    } catch (error) {
-      console.error('Error creating quotation:', error);
-      throw error;
-    }
-  };
+  //     await axios.post(`${baseUrl}/api/send-quotation/`, formData, config);
+  //   } catch (error) {
+  //     console.error('Error creating quotation:', error);
+  //     throw error;
+  //   }
+  // };
 
 
   return (

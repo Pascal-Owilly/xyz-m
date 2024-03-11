@@ -127,11 +127,7 @@ const Sellers = ({ orderId }) => {
         },
       ],
     };
-  
-
     // end level
-
-  
     useEffect(() => {
       // Fetch letter of credits from the new endpoint with headers
       axios.get(`${baseUrl}/api/all-lcs/`, {
@@ -391,7 +387,6 @@ const Sellers = ({ orderId }) => {
     },
    
   };
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -411,7 +406,6 @@ const Sellers = ({ orderId }) => {
     fetchData();
   }, [baseUrl, accessToken]);
 
-  
   useEffect(() => {
     // Fetch data from Django API endpoint
     fetch(`${baseUrl}/api/breader-count/`, {
@@ -448,7 +442,6 @@ const Sellers = ({ orderId }) => {
       setError('Error searching for payment data');
     }
   };
-
 
   useEffect(() => {
     // Fetch user data when component mounts
@@ -630,31 +623,23 @@ return (
                   }}
                 >
           <h6 className='mx-2'>{breedSupplyStatus}</h6>
-  
-
-        </div>
-       
+        </div>     
               </div>
             </div>
           </div>
         </div>
-
       {/* END DASHBOARD */}
 
 </div>
-
 <div className={`tab-pane fade ${activeTab === 'Inventory' ? 'show active' : ''}`} id="Inventory" role="tabpanel" aria-labelledby="profile-tab">
-
       <div className="ap">
 <Quotation />
   </div>
 </div>
-
   <div className={`tab-pane fade ${activeTab === 'Open LC' ? 'show active' : ''}`} id="Send LPO" role="tabpanel" aria-labelledby="profile-tab">       
         </div>
         <div className={`tab-pane fade ${activeTab === 'Send LPO' ? 'show active' : ''}`} id="Open LC" role="tabpanel" aria-labelledby="contact-tab">
         <div className='card '></div>
-
         </div>
         <div className={`tab-pane fade ${activeTab === 'Open LC' ? 'show active' : ''}`} id="Open LC" role="tabpanel" aria-labelledby="home-tab">
          {/* lc */}
@@ -680,7 +665,6 @@ return (
               View
               </a>
 </td>
-
               <td>#{letterOfCredit.id}</td>
               <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td>
               <td style={{ textTransform: 'capitalize' }}>
@@ -721,13 +705,10 @@ return (
     </Card>
   </Row>
 {/* end lc */}
-
         </div>
       </div>
 </div>
-
   <ToastContainer />
-
 </div>
 
   );

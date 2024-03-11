@@ -12,7 +12,7 @@ const PurchaseOrders = () => {
     const [confirmingId, setConfirmingId] = useState(null);
     const [unconfirmingId, setUnconfirmingId] = useState(null);
     const accessToken = Cookies.get('accessToken');
-    const [user, setUser] = useState(null); // Initialize with null or an empty object
+    const [user, setUser] = useState(null); 
      
   // State to store the fetched purchase orders
   const [purchaseOrders, setPurchaseOrders] = useState([]);
@@ -24,20 +24,18 @@ const PurchaseOrders = () => {
   useEffect(() => {
     const fetchPurchaseOrders = async () => {
       try {
-        // Fetch all purchase orders from the API
         const response = await axios.get(`${baseUrl}/api/quotations/`);
-        // Set the response data to state
         setPurchaseOrders(response.data);
-        setLoading(false); // Set loading to false once data is fetched
+        setLoading(false); 
         console.log('quotation list', response.data)
       } catch (error) {
         console.error('Error fetching purchase orders:', error);
-        setError(error); // Set error state if there's an error
-        setLoading(false); // Set loading to false in case of error
+        setError(error); 
+        setLoading(false); 
       }
     };
     
-    fetchPurchaseOrders(); // Call the fetch function when the component mounts
+    fetchPurchaseOrders(); 
   }, []);
 
   if (loading) {
