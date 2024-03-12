@@ -920,6 +920,8 @@ useEffect(() => {
           {/* <th className='' style={{color:'#666666'}}>Seller</th> */}
 
           <th className='' style={{color:'#666666'}}>Product</th>
+          <th className='' style={{color:'#666666'}}>Buyer</th>
+          <th className='' style={{color:'#666666'}}>Seller</th>
           <th className='' style={{color:'#666666'}}>Unit Price</th>
           <th className='' style={{color:'#666666'}}>Quantity</th>
           <th className='' style={{color:'#666666'}}>Message</th>
@@ -935,6 +937,9 @@ useEffect(() => {
             {/* <td className='text' style={{color:'#666666'}}>{quotation.seller} </td> */}
 
             <td className='text' style={{color:'#666666'}}>{quotation.product}</td>
+            <td className='text' style={{color:'#666666'}}>{quotation.buyer_full_name}</td>
+            <td className='text' style={{color:'#666666'}}>{quotation.seller_full_name}</td>
+
             <td className='text' style={{color:'#666666'}}>{quotation.unit_price}</td>
             <td className='text' style={{color:'#666666'}}>{quotation.quantity}</td>
             <td className='text' style={{color:'#666666'}}>{quotation.message}</td>

@@ -39,24 +39,11 @@ const navigate =useNavigate()
   const [defaultTextColor, setDefaultTextColor] = useState('#000000');
   const [userRole, setUserRole] = useState('loading'); // Initialize with 'loading'
 
-// USE THIS INSTEAD INCASE OF DIFEERENT BEHAVIOUR IN USER SESSION
-      // useEffect(() => {
-      //   if (accessToken && baseUrl) {
-      //     fetchUserData();
-      //   }
-      // }, [accessToken, baseUrl]);
-// END USE
-
-const handleNavigation = (url) => {
-  // Add any custom logic you need here
-  navigate(url);
-};
-
-// useEffect(() => {
-//   if (accessToken && baseUrl) {
-//     fetchUserData();
-//   }
-// }, [accessToken, baseUrl]);
+useEffect(() => {
+  if (accessToken && baseUrl) {
+    fetchUserData();
+  }
+}, [accessToken, baseUrl]);
 
 
 useEffect(() => {
@@ -66,19 +53,12 @@ useEffect(() => {
   })
   }, []);
 
-const toggleNotificationPanel = () => {
-	setIsNotificationPanelVisible(!isNotificationPanelVisible);
-  };
   
 useEffect(() => {
 	setDefaultBackgroundColor('#0074cc');
 	setDefaultTextColor('#fff');
   }, []);
 
-  const handleResetSettings = () => {
-	setBackgroundColor(defaultBackgroundColor);
-	setTextColor(defaultTextColor);
-  };
   
   const handleCloseSidebar = () => {
 	setIsRightSidebarVisible(false)
@@ -86,19 +66,6 @@ useEffect(() => {
 
   // New state for managing background color
   const [backgroundColor, setBackgroundColor] = useState('#001b31'); // Set the initial background color
-  const [textColor, setTextColor] = useState('#000000'); // Set the initial text color
-
-    // Function to handle background color change
-	const handleBackgroundColorChange = (color) => {
-		setBackgroundColor(color);
-		// Set text color based on background color
-		setTextColor(color === '#ffffff' ? '#ffffff' : '#000000');
-	  };
-
-  const handleDashboardsToggle = () => {
-	console.log('Toggle function called');
-	setIsDashboardsVisible(!isDashboardsVisible);
- };
  
   useEffect(() => {
     const storedToken = Cookies.get('accessToken');
@@ -106,8 +73,6 @@ useEffect(() => {
       setIsLoggedIn(true);
 
     }
-    // fetchProfile();
-    // fetchUserData();
 
     // Determine initial state for the left sidebar based on the device width
     const handleWindowSizeChange = () => {
@@ -116,7 +81,7 @@ useEffect(() => {
       } else {
         setIsLeftSidebarVisible(true);
       }
-    };
+    };  
 
     // Set initial state on mount
     handleWindowSizeChange();
@@ -130,8 +95,6 @@ useEffect(() => {
     };
   }, []);
   
-  useEffect(() => {
-
   const refreshAccessToken = async () => {
     try {
       console.log('fetching token refresh ... ')
@@ -145,17 +108,14 @@ useEffect(() => {
       const newAccessToken = response.data.access;
       // Update the stored access token
       Cookies.set('accessToken', newAccessToken);
-      // Optional: You can alzzso update the user data using the new access token
+      // Optional: You can also update the user data using the new access token
       await fetchUserData();
     } catch (error) {
       console.error('Error refreshing access token:', error);
       // Handle the error, e.g., redirect to login page
     }
   };
-}, []);
-
-useEffect(() => {
-
+  
   const fetchUserData = async () => {
     try {
       const accessToken = Cookies.get('accessToken');
@@ -171,7 +131,6 @@ useEffect(() => {
   
         const userProfile = response.data;
         setProfile(userProfile);
-        console.log('user', userProfile)
       }
     } catch (error) {
       // Check if the error indicates an expired access token
@@ -183,23 +142,7 @@ useEffect(() => {
       }
     }
   };
-  fetchUserData()
-}, [accessToken, baseUrl]);
-
-// const fetchProfile = async () => {
-//   try {
-//     const response = await axios.get(`${baseUrl}/auth/user/`, {
-//       headers: {
-//         Authorization: `Bearer ${accessToken}`,
-//       },
-//     });
-//     const userProfile = response.data;
-//     setProfile(userProfile);
-//   } catch (error) {
-//     console.error('Error fetching user profile:', error);
-//   }
-// };
-
+  
 const [isLoggedIn, setIsLoggedIn] = useState(false); // Track user's authentication state
 
 const logout = async () => {
@@ -215,27 +158,6 @@ const logout = async () => {
     setIsSettingsDropdownVisible(false);
     setIsLeftSidebarVisible(false);
 
-    // Redirect based on user role
-    // switch (userRole) {
-    //   case 'superuser':
-    //     navigate('/');
-    //     break;
-    //     case 'admin':
-    //       navigate('/');
-    //       break;
-    //     case 'buyer':
-    //       navigate('/');
-    //       break;
-    //       case 'supplier':
-    //       navigate('/');
-    //       break;
-    //   case 'regular':
-    //     navigate('/');
-    //     break;
-    //   // Add more cases for other roles if needed
-    //   default:
-    //     navigate('/');
-    // }
 
   } catch (error) {
     console.error('Failed to logout', error);
@@ -317,80 +239,61 @@ const logout = async () => {
           </li>
           <li>s
             <a href="/export_handling_dashboard">
-              <FaGlobe /> Export Handling Dashboard
+              <FaMapMarkedAlt /> Export Handling Dashboard
             </a>
           </li>
         </>
       );
 
-          case 'admin':
-            return (
-              <>
-                            <hr />
+      case 'admin':
+        return (
+          <>
+                        <hr />
 
-              {/* <li style={{ display: 'flex', alignItems: 'center' }}>
-                <FaUserCog style={{ marginRight: '12px', color: 'white', fontSize: '20px'}} />
-                <a href="/admin_dashboard">SCM Administration</a>
-              </li> */}
+          <li style={{ display: 'flex', alignItems: 'center' }}>
+            <FaTools style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+            <a href="/sellers">
+              Sellers 
+              </a>
+          </li>
+          
+          <li style={{ display: 'flex', alignItems: 'center' }}>
+            <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+            <a href="/supplier_dashboard">Suppliers </a>
+          </li>
+         
+          <li style={{ display: 'flex', alignItems: 'center' }}>
+            <FaSellcast style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+            <a href="/inventory-confirmation">Stock shift </a>
+          </li>
+          <li style={{ display: 'flex', alignItems: 'center' }}>
+            <FaExchangeAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px' }} />
+            <a href="/buyer_dashboard" >
+              Buyers
+            </a>
+          </li>
 
-              <li style={{ display: 'flex', alignItems: 'center' }}>
-                <FaTools style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                <a href="/sellers">
-                  Sellers 
-                  </a>
-              </li>
-              
-              <li style={{ display: 'flex', alignItems: 'center' }}>
-                <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                <a href="/supplier_dashboard">Suppliers </a>
-              </li>
-             
-              <li style={{ display: 'flex', alignItems: 'center' }}>
-                <FaSellcast style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                <a href="/inventory-confirmation">Stock shift </a>
-              </li>
-              <li style={{ display: 'flex', alignItems: 'center' }}>
-                <FaExchangeAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px' }} />
-                <a href="/buyer_dashboard" >
-                  Buyers
-                </a>
-              </li>
-
-              <li style={{ display: 'flex', alignItems: 'center' }}>
-                <FaMoneyCheckAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                <a href="/bank_teller_dashboard">Bank </a>
-              </li>
-              
-              {/* <li style={{ display: 'flex', alignItems: 'center' }}>
-              <FaMapMarkedAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px' }} />
-                <a href="/customer_service_dashboard">Customer Care</a>
-              </li> */}
-              {/* <li style={{ display: 'flex', alignItems: 'center' }}>
-                <FaMapMarkedAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                <a href="/export_handling_dashboard">Export Management</a>
-              </li> */}
-
-            
-              <li style={{ display: 'flex', alignItems: 'center' }}>
-                <FaStreetView style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-                <a href="/control-centers-list">Control centers</a>
-              </li>
-              {/* <li>
-                <a href="warehouse">
-                  <FaMapMarkedAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-
-                   Warehouse
-                </a>
-          </li> */}
-               
-
-              <li style={{ display: 'flex', alignItems: 'center' }}>
-              <FaGlobe style={{ marginRight: '12px', color: 'white', fontSize: '20px'}} />
-                <a href="/dispatch_and_shipping">Export Management </a></li>
+          <li style={{ display: 'flex', alignItems: 'center' }}>
+            <FaMoneyCheckAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+            <a href="/bank_teller_dashboard">Bank </a>
+          </li>
+          
+          {/* <li style={{ display: 'flex', alignItems: 'center' }}>
+          <FaMapMarkedAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px' }} />
+            <a href="/customer_service_dashboard">Customer Care</a>
+          </li> */}        
+          <li style={{ display: 'flex', alignItems: 'center' }}>
+            <FaStreetView style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+            <a href="/control-centers-list">Control centers</a>
+          </li>
         
-            </>
-                          
-            );
+          <li style={{ display: 'flex', alignItems: 'center' }}>
+          <FaGlobe style={{ marginRight: '12px', color: 'white', fontSize: '20px'}} />
+            <a href="/dispatch_and_shipping">Export Management </a></li>
+    
+        </>
+                      
+        );
         case 'regular':
           return (
             <>
@@ -411,7 +314,6 @@ const logout = async () => {
           case 'warehouse_personnel':
           return (
             <>
-              <li><a href="/inventory-confirmation">Warehouse Dashboard</a></li>
               <li><a href="/warehouse">Warehouse Dashboard</a></li>
               <li><a href="/buyer_dashboard">Buyer Dashboard</a></li>
               <li><a href="/export_handling_dashboard">Export Handling Dashboard </a></li>
@@ -606,7 +508,6 @@ const logout = async () => {
     transition: 'left 0.3s ease',
     // backgroundImage: `linear-gradient(rgb(75, 73, 172, 0.7), rgb(75, 73, 172, 0.7)), url(${sidebarimg})`,
     backgroundImage: 'black',
-
     backgroundSize: 'cover',
     backgroundColor: '#001b42',
     // overflow:'scroll',
@@ -642,7 +543,6 @@ const logout = async () => {
     {renderDashboards()}
   </ul>
 )}
-
         </li>
         </a>
 
@@ -690,9 +590,7 @@ const logout = async () => {
 					</div>
 
 					<div className="reset-options pt-30 text-center">
-					{/* <button className="btn btn-danger" id="reset-settings" onClick={handleResetSettings}>
-							Contact Us
-						</button> */}
+
 					</div>
 				</div>
 			</div>

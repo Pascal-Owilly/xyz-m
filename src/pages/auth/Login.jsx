@@ -3,6 +3,8 @@ import Cookies from 'js-cookie';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import AuthService from './AuthService';
 import { checkUserRole } from './CheckUserRoleUtils'; // Import the checkUserRole function
+import axios from 'axios';
+import { BASE_URL } from './config';
 
 function FlashMessage({ message, type }) {
   return (
@@ -13,12 +15,14 @@ function FlashMessage({ message, type }) {
 }
 
 const LoginTest = () => {
+  const baseUrl = BASE_URL;
   const [flashMessage, setFlashMessage] = useState(null); // Initialize with null
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginData, setLoginData] = useState({
     username: '',
     password: '',
   });
+  const [loginButtonText, setLoginButtonText] = useState('Login'); // State for login button text
   const [errorMessages, setErrorMessages] = useState({});
   const [loading, setLoading] = useState(false); // New state for loading
 
@@ -26,37 +30,35 @@ const LoginTest = () => {
   const location = useLocation();
 
   const login = async (e) => {
-    if (e) {
-      e.preventDefault();
-    }
-  
+    e.preventDefault();
+    setLoading(true);
+
     try {
-      setLoading(true); // Set loading to true before making the login request
-  
-      const accessToken = await AuthService.login(loginData);
-      setIsLoggedIn(true);
-      Cookies.set('accessToken', accessToken, { expires: 10, sameSite: 'None', secure: true });
-      
-      const role = await checkUserRole();
-  
-      switch (role) {
-        case 'superuser':
-          navigate('/admin_dashboard');
-          break;
-        case 'regular':
-          navigate('/supplier_dashboard');
-          break;
-        // Add more cases for other roles if needed
-        default:
-          navigate('/');
-      }
-  
-      setFlashMessage({ message: `Welcome back ${loginData.username}!`, type: 'success' });
+      setErrorMessages({});
+
+      // Make the API call to log in the user
+      const response = await axios.post(`${baseUrl}/api/login/`, loginData);
+      // Assuming the login is successful, redirect the user to a new page
+      navigate('/dashboard');
     } catch (error) {
-      console.error('Login error:', error);
-      setFlashMessage({ message: 'Invalid credentials. Try again.', type: 'error' });
+      console.error('Error during login:', error);
+      setLoading(false);
+
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', error.response.data);
+
+        const serverErrors = error.response.data;
+
+        if (serverErrors) {
+          setErrorMessages(serverErrors);
+        } else {
+          setErrorMessages({ generic: 'An error occurred during login. Please try again.' });
+        }
+      }
     } finally {
-      setLoading(false); // Set loading to false after the login request is complete
+      // Reset loading state
+      setLoading(false);
     }
   };
   
@@ -86,7 +88,8 @@ const LoginTest = () => {
   const handleLoginSubmit = async (event) => {
     try {
       event.preventDefault();
-      
+      setLoading(true); // Set loading to true before making the login request
+  
       // Log the login data for debugging purposes
       console.log('loginData:', loginData);
   
@@ -107,27 +110,22 @@ const LoginTest = () => {
         case 'admin':
           navigate('/sellers');
           break;
-          case 'admin':
-            navigate('/admin_dashboard');
-            break;
-            case 'Breeder':
-              navigate('/supplier_dashboard');
-              break;
-            case 'buyer':
-              navigate('/buyer_dashboard');
-              break;
-                case 'warehouse personnel':
-                  navigate('/warehouse');
-                  break;
-              case 'inventory manager':
-                navigate('/inventory');
-                break;
-                case 'Slaughterhouse Manager':
-                  navigate('/slaughterhouse-dashboard');
-                  break;
-
+        case 'Breeder':
+          navigate('/supplier_dashboard');
+          break;
+        case 'buyer':
+          navigate('/buyer_dashboard');
+          break;
+        case 'warehouse personnel':
+          navigate('/warehouse');
+          break;
+        case 'inventory manager':
+          navigate('/inventory');
+          break;
+        case 'Slaughterhouse Manager':
+          navigate('/slaughterhouse-dashboard');
+          break;
         // Add more cases for other roles if needed
-  
         default:
           // Redirect to the default page (e.g., home page)
           navigate('/');
@@ -136,7 +134,7 @@ const LoginTest = () => {
       // Note: Removing the page reload for testing
       // window.location.reload();
       window.location.reload();
-
+  
       // Set a flash message for successful login
       setFlashMessage({ message: `Welcome back ${loginData.username}!`, type: 'success' });
     } catch (error) {
@@ -146,12 +144,11 @@ const LoginTest = () => {
   
       // You might want to set a flash message for unsuccessful login
       setFlashMessage({ message: 'Invalid credentials. try again. Please note that the credentials are case sensitive', type: 'error' });
-    }
-    finally {
+    } finally {
       setLoading(false); // Set loading to false after the login request is complete
     }
   };
- 
+   
 
   const handleLoginChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
@@ -205,20 +202,14 @@ const LoginTest = () => {
               )}
             </div>
 
-            <button
-              type='submit'
-              className='btn btn-sm btn-outline-primary text-secondary mt-1'
-              style={{ background: '#fff', width:'100%' }}
-              disabled={loading} // Disable the button when loading is true
-            >
-              {loading ? (
-                <div>
-                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                  {' '}Logging in...
-                </div>
-              ) : 'Login'}
-            </button>
-
+          <button
+                  type='submit'
+                  className='btn btn-sm btn-outline-secondary text-primary mt-1'
+                  style={{ background: '#fff' }}
+                  disabled={loading} // Disable the button when loading
+                >
+                  {loading ? 'Logging in...' : 'Login'}
+                </button>
 
             <hr />
             {flashMessage && (

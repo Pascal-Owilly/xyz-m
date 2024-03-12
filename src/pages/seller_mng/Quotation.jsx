@@ -10,136 +10,181 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function QuotationForm() {
-  // const navigate = useNavigate();
-  // const baseUrl = BASE_URL;
-  // const accessToken = Cookies.get('accessToken');
-  // const [buyers, setBuyers] = useState([]);
-  // const [sellers, setSellers] = useState([]);
-  // const [profile, setProfile] = useState([]);
+  const navigate = useNavigate();
+  const baseUrl = BASE_URL;
+  const accessToken = Cookies.get('accessToken');
+  const [buyers, setBuyers] = useState([]);
+  const [sellers, setSellers] = useState([]);
+  const [profile, setProfile] = useState([]);
+  const [defaultSellerId, setDefaultSellerId] = useState(null);
 
-  // const [formData, setFormData] = useState({
-  //   seller: null,
-  //   buyer: null,
-  //   product: '',
-  //   quantity: '',
-  //   unit_price: '',
-  //   market:  '',
-  //   message: '',
-  //   delivery_time: null,
-  // });
+  const [formData, setFormData] = useState({
+    seller: null, // Initialize seller as null
+    buyer: null,
+    product: '',
+    quantity: '',
+    unit_price: '',
+    market:  '',
+    message: '',
+    delivery_time: null,
+  });
 
-  // const [formDataSeller, setFormDataSeller] = useState({
-  //   full_name: '',
-  //   id: null,
+  const [formDataSeller, setFormDataSeller] = useState({
+    full_name: '',
+    id: null,
+  });
 
-  // });
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const accessToken = Cookies.get('accessToken');
+        if(!accessToken){
+          navigate('/')
+        }
+        if (accessToken) {
+          const response = await axios.get(`${baseUrl}/auth/user/`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
 
-  // useEffect(() => {
-  //   const fetchSellers = async () => {
-  //     try {
-  //       const response = await axios.get(`${baseUrl}/api/sellers/`, {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //       });
-  //       console.log('sellers', response.data)
-  //       setSellers(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching sellers:', error);
-  //     }
-  //   };
+          const userProfile = response.data;
+          setProfile(userProfile);
+        }
+      } catch (error) {
+        // Check if the error indicates an expired access token
+        if (error.response && error.response.status === 401) {
+          // Attempt to refresh the access token
+          await refreshAccessToken();
+        } else {
+          console.error('Error fetching user data:', error);
+        }
+      }
+    };
 
-  //   fetchSellers();
-  //   if (sellers && sellers.id) {
-  //     setFormData({
-  //       ...formData,
-  //       seller: sellers.id,
-  //     });
-  //   }
-  // }, [baseUrl, accessToken]);
+    fetchUserData();
+  }, [baseUrl, navigate]);
 
-
-  // useEffect(() => {
-  //   const fetchBuyers = async () => {
-  //     try {
-  //       const response = await axios.get(`${baseUrl}/api/buyers/`, {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //       });
-  //       setBuyers(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching buyers:', error);
-  //     }
-  //   };
-
-  //   fetchBuyers();
-  // }, [baseUrl, accessToken]);
-
+  useEffect(() => {
+    const fetchSellers = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/api/sellers/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        console.log('sellers', response.data)
+        setSellers(response.data);
   
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: value,
-  //   });
-  // };
-
-  // const handleSellerChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormDataSeller({
-  //     ...formDataSeller,
-  //     [name]: value,
-  //   });
-  // };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     await postData();
-  //     toast.success(<div>Quotation submitted successfully!<br /> <br />Redirecting ...</div>, {
-  //       position: 'top-center',
-  //       autoClose: 5000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //     });
+        // Set the default seller if profile is available
+        if (profile) {
+          const loggedInSeller = response.data.find(seller => seller.id === profile.id);
+          if (loggedInSeller) {
+            setFormData(prevFormData => ({
+              ...prevFormData,
+              seller: loggedInSeller.id, // Set the ID of the logged-in seller
+            }));
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching sellers:', error);
+      }
+    };
   
-  //     // Redirect to the quotations list after 3 seconds
-  //     setTimeout(() => {
-  //       navigate('/quotation-submission-success');
-  //     }, 3000);
-  //   } catch (error) {
-  //     toast.error('Failed to submit quotation. Please try again later.', {
-  //       position: 'top-center',
-  //       autoClose: 3000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //     });
-  //   }
-  // };
+    fetchSellers();
+  
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [baseUrl, accessToken, profile]);
+  
   
 
-  // const postData = async () => {
-  //   try {
-  //     const config = {
-  //       headers: {
-  //         Authorization: `Bearer ${accessToken}`,
-  //       },
-  //     };
+  useEffect(() => {
+    const fetchBuyers = async () => {
+      try {
+        const response = await axios.get(`${baseUrl}/api/buyers/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setBuyers(response.data);
+      } catch (error) {
+        console.error('Error fetching buyers:', error);
+      }
+    };
 
-  //     await axios.post(`${baseUrl}/api/send-quotation/`, formData, config);
-  //   } catch (error) {
-  //     console.error('Error creating quotation:', error);
-  //     throw error;
-  //   }
-  // };
+    fetchBuyers();
+  }, [baseUrl, accessToken]);
 
+  
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  useEffect(() => {
+    handleSellerChange();
+  }, [sellers]);
+  
+
+  const handleSellerChange = () => {
+    // Check if there are sellers available
+    if (sellers.length > 0) {
+      // Set the seller ID to the ID of the first seller
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        seller: sellers[0].id,
+      }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await postData();
+      toast.success(<div>Quotation submitted successfully!<br /> <br />Redirecting ...</div>, {
+        position: 'top-center',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+  
+      // Redirect to the quotations list after 3 seconds
+      setTimeout(() => {
+        navigate('/quotation-submission-success');
+      }, 3000);
+    } catch (error) {
+      toast.error('Failed to submit quotation. Please try again later.', {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  };
+  
+  const postData = async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      await axios.post(`${baseUrl}/api/send-quotation/`, formData, config);
+    } catch (error) {
+      console.error('Error creating quotation:', error);
+      throw error;
+    }
+  };
 
   return (
     <div className=" main-container text-secondary">
@@ -175,26 +220,33 @@ function QuotationForm() {
               </div>
               
             </div>
-            <div className="col-md-6 mb-3">
-              <label htmlFor="seller" className="form-label">
-                To Seller
-              </label>
-              <div>
-              <select
-                    className="form-select text-dark p-2 bg-light "
-                    style={{ borderRadius: '', width: '100%', border: '1px solid #999999', opacity: 0.5 }}
+            <div className="col-md-6 mb-3" style={{display:'none'}}>
+                <label htmlFor="seller" className="form-label">
+                  To Seller
+                </label>
+                <div>
+                {formData.seller ? (
+                    <p>{formData.seller.full_name}</p>
+                  ) : (
+                    <select
+                    style={{ border: 'none', backgroundColor: 'rgb(238, 240, 251)', color: '#999999' }}
+                    className="form-control"
                     id="seller"
                     name="seller"
-                    value={formData.seller}
-                    onChange={handleChange}
-                    // disabled={true} // or disabled={profile ? true : false}
                     required
+                    value={formData.seller ? formData.seller.id : sellers.length > 0 ? sellers[0].id : ''}
+                    onChange={handleSellerChange}
+                    disabled={!!formData.seller}
                   >
-                    <option value={sellers ? sellers.id : ''}>{sellers ? `${sellers.id} ${sellers.username}` : ''}</option>
+                    {sellers.map((seller) => (
+                      <option key={seller.id} value={seller.id}>{seller.full_name}</option>
+                    ))}
                   </select>
+                  
+                  )}
+
+                </div>
               </div>
-              
-            </div>
             <div className="col-md-6 mb-3">
               <label htmlFor="product" className="form-label">Product Name</label>
               <input type="text" className="form-control" id="product" name="product" value={formData.product} onChange={handleChange} required />
@@ -203,10 +255,8 @@ function QuotationForm() {
               <label htmlFor="unit_price" className="form-label">Unit Price</label>
               <input type="number" className="form-control" id="unit_price" name="unit_price" value={formData.unit_price} onChange={handleChange} min="0" step="0.01" required />
             </div>
-
           </div>
           <div className="row">
-
             <div className="col-md-6 mb-3">
               <label htmlFor="quantity" className="form-label">Quantity</label>
               <input type="number" className="form-control" id="quantity" name="quantity" value={formData.quantity} onChange={handleChange} min="1" required />
