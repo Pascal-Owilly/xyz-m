@@ -5,10 +5,9 @@ import { BASE_URL } from '../auth/config';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { useNavigate } from 'react-router-dom';
-
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import './styles.css';
 function QuotationForm() {
   const navigate = useNavigate();
   const baseUrl = BASE_URL;
@@ -186,16 +185,23 @@ function QuotationForm() {
     }
   };
 
+  const handleIconClick = () => {
+    const input = document.getElementById('delivery_time');
+    if (input) {
+      input.focus();
+    }
+  };
+
   return (
     <div className=" main-container text-secondary">
-      <div className='col-md-8 p-5' style={{background:'rgb(255, 255, 251)'}}>
-        <h5 className=' text-center p-3' style={{color:'#666666'}}>Product Quotation Form</h5>
+      <div className='col-md-8 p-5' style={{background:'#001b42',color:'white'}}>
+        <h5 className=' text-center p-3' style={{color:'#fff'}}>Product Quotation Form</h5>
         <hr />
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className=''>
           <div className="row">
-            <div className="col-md-6 mb-3">
+            <div className="col-md-6 mb-3" style={{background:'transparent'}}>
               <label htmlFor="buyer" className="form-label">
-                Buyer
+                Select buyer
               </label>
               <div>
                 <select
@@ -215,7 +221,7 @@ function QuotationForm() {
                   ))}
                 </select>
                 <small className="text-primary">
-                  <a href="/register-buyer" className="text-primary">Register new buyer</a>
+                  <a href="/register-buyer" className="text" style={{color:'#001b42', fontWeight:'500', textDecoration:'underline'}}>Register new buyer</a>
                 </small>
               </div>
               
@@ -229,7 +235,7 @@ function QuotationForm() {
                     <p>{formData.seller.full_name}</p>
                   ) : (
                     <select
-                    style={{ border: 'none', backgroundColor: 'rgb(238, 240, 251)', color: '#999999' }}
+                    style={{ border: 'none', backgroundColor: 'rgb(238, 240, 251)', color: '#666666' }}
                     className="form-control"
                     id="seller"
                     name="seller"
@@ -249,25 +255,39 @@ function QuotationForm() {
               </div>
             <div className="col-md-6 mb-3">
               <label htmlFor="product" className="form-label">Product Name</label>
-              <input type="text" className="form-control" id="product" name="product" value={formData.product} onChange={handleChange} required />
+              <input type="text" className="form-control" id="product" name="product" value={formData.product} onChange={handleChange} placeholder='Eg Goat, sheep etc' required />
             </div>
             <div className="col-md-6 mb-3">
-              <label htmlFor="unit_price" className="form-label">Unit Price</label>
-              <input type="number" className="form-control" id="unit_price" name="unit_price" value={formData.unit_price} onChange={handleChange} min="0" step="0.01" required />
+              <label htmlFor="unit_price" className="form-label">Price/Kg</label>
+              <input type="number" className="form-control" id="unit_price" name="unit_price" value={formData.unit_price} onChange={handleChange} min="0" step="0.01" placeholder='Enter price per kg' required />
+            </div>
+            <div className="col-md-6 mb-3">
+              <label htmlFor="quantity" className="form-label">Quantity</label>
+              <input type="number" className="form-control" id="quantity" name="quantity" value={formData.quantity} onChange={handleChange} min="1" placeholder='Eg 500, 30, etc' required />
             </div>
           </div>
           <div className="row">
-            <div className="col-md-6 mb-3">
-              <label htmlFor="quantity" className="form-label">Quantity</label>
-              <input type="number" className="form-control" id="quantity" name="quantity" value={formData.quantity} onChange={handleChange} min="1" required />
-            </div>
-            <div className="col-md-6 mb-3">
-              <label htmlFor="delivery_time" className="form-label">Delivery Date</label>
-              <input type="date" className="form-control text-success" id="delivery_time" name="delivery_time" value={formData.delivery_time} onChange={handleChange} min="1" required />
-            </div>
+
+          <div className="col-md-6 mb-3" style={{ position: 'relative' }}>
+            <label htmlFor="delivery_time" className="form-label">Delivery Date</label>
+            <input 
+              type="date" 
+              className="form-control " 
+              id="delivery_time" 
+              name="delivery_time" 
+              value={formData.delivery_time} 
+              onChange={handleChange} 
+              min="1" 
+              required 
+              style={{ paddingRight: '10px', fontSize:'', color:'#666666' }} // Add some padding to make room for the icon
+            />
+            {/* <span className="custom-calendar-icon" style={{ color: 'green', position: 'absolute', top: '50%', right: '10px', transform: 'translateY(-50%)' }}>📅</span> */}
+          </div>
+
+
           </div>
           <div className="mb-3">
-            <label htmlFor="message" className="form-label">Special Message</label>
+            <label htmlFor="message" className="form-label"> Message</label>
             <textarea className="form-control" id="message" placeholder='Eg Supply of goats, etc' name="message" value={formData.message} onChange={handleChange} rows="4"></textarea>
           </div>
           <div className="mb-3">

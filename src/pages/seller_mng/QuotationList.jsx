@@ -69,6 +69,9 @@ const [expandedInvoices, setExpandedInvoices] = useState({});
 
   // Quotation
 
+  
+
+
   const [confirmedQuotation, setConfirmedQuotation] = useState(null);
 
   useEffect(() => {
@@ -94,6 +97,9 @@ const [expandedInvoices, setExpandedInvoices] = useState({});
   const handleConfirmation = async (quotationId) => {
     try {
       const accessToken = Cookies.get('accessToken');
+      const currentStatus = quotations.find(q => q.id === quotationId).status;
+      const newStatus = currentStatus === "active" ? "closed" : "active";
+  
       const response = await axios.put(
         `${baseUrl}/api/quotations/${quotationId}/`, 
         {
@@ -123,6 +129,71 @@ const [expandedInvoices, setExpandedInvoices] = useState({});
       // Optionally, you can show an error message or handle the error in other ways
     }
   };
+
+  const [closingQuotationId, setClosingQuotationId] = useState(null);
+
+const handleToggleStatus = async (quotationId) => {
+    const accessToken = Cookies.get('accessToken');
+
+    try {
+        setClosingQuotationId(quotationId); // Set the ID of the quotation being closed
+        const quotationToUpdate = quotations.find(q => q.id === quotationId);
+        
+        // Create form data with required fields
+        const formData = {
+            buyer: quotationToUpdate.buyer,
+            message: quotationToUpdate.message,
+            product: quotationToUpdate.product,
+            quantity: quotationToUpdate.quantity,
+            unit_price: quotationToUpdate.unit_price,
+            status: 'closed', // Always set the status to 'closed'
+        };
+
+        // Ask for confirmation before proceeding
+        const confirmClose = window.confirm("Are you sure you want to close this order? This action is irreversible.");
+
+        if (confirmClose) {
+            // Update the quotation status on the server
+            const response = await axios.put(
+                `${baseUrl}/api/quotations/${quotationId}/`,
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+
+            // Optionally, you can update the UI to reflect the new status
+        }
+    } catch (error) {
+        console.error('Error closing quotation:', error);
+        // Optionally, you can show an error message or handle the error in other ways
+    } finally {
+        setClosingQuotationId(null); // Reset the closingQuotationId after the process is complete
+    }
+};
+
+useEffect(() => {
+  // Fetch quotations from the server whenever closingQuotationId changes
+  const fetchUpdatedQuotations = async () => {
+      try {
+          const accessToken = Cookies.get('accessToken');
+          const response = await axios.get(`${baseUrl}/api/quotations/`, {
+              headers: {
+                  Authorization: `Bearer ${accessToken}`,
+              },
+          });
+          setQuotations(response.data);
+      } catch (error) {
+          console.error('Error fetching quotations:', error);
+      }
+  };
+
+  if (closingQuotationId !== null) {
+      fetchUpdatedQuotations();
+  }
+}, [baseUrl, closingQuotationId]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -276,41 +347,24 @@ const [expandedInvoices, setExpandedInvoices] = useState({});
             <td className='text' style={{color:'#666666'}}>{quotation.quantity}</td>
             <td className='text' style={{color:'#666666'}}>{quotation.message}</td>
             <td className='text' style={{color:'#666666'}}>
-              {quotation.status ? 'Confirmed' : 'Pending'}
+              {quotation.status}
             </td>
             <td className='text' style={{color:'#666666'}}>
-              {quotation.confirm ? (
-                <button
-                  disabled
-                  style={{
-                    fontSize: '13px',
-                    padding: '5px 10px',
-                    borderRadius: '5px',
-                    background: 'green',
-                    color: 'white',
-                    border: 'none',
-                    cursor: 'not-allowed'
-                  }}
-                >
-                  Confirmed
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleConfirm(quotation.id)}
-                  disabled={isConfirming(quotation.id) || confirmedQuotation === quotation.id}
-                  style={{
-                    fontSize: '13px',
-                    padding: '5px 10px',
-                    borderRadius: '5px',
-                    background: isConfirming(quotation.id) ? '#999999' : '#001b40',
-                    color: 'white',
-                    border: 'none',
-                    cursor: isConfirming(quotation.id) ? 'not-allowed' : 'pointer'
-                  }}
-                >
-                  {isConfirming(quotation.status) ? 'Opening...' : 'Close'}
-                </button>
-              )}
+            <button
+    onClick={() => handleToggleStatus(quotation.id)}
+    style={{
+        fontSize: '13px',
+        padding: '5px 10px',
+        borderRadius: '5px',
+        background: quotation.status === 'active' ? '#008000' : '#001b42',
+        color: 'white',
+        border: 'none',
+        cursor: quotation.status === 'active' ? 'pointer' : 'not-allowed', // Set cursor based on status
+        pointerEvents: quotation.status === 'active' ? 'auto' : 'none', // Disable pointer events if status is closed
+    }}
+>
+    {closingQuotationId === quotation.id ? 'Closing...' : (quotation.status === 'active' ? 'Open' : 'Closed')}
+</button>
             </td>
             <div className='d-flex mt-3 mx-3'>
     <PDFDownloadLink document={<QuotationListPDF quotation={quotation} />} fileName={`quotation_${quotation.id}.pdf`}>

@@ -4,3 +4,25 @@
     background-color: #001b40;
     border-color: #1b00ff;
 }
+
+/* Custom calendar icon */
+.custom-calendar-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px; /* Adjust as needed */
+    transform: translateY(-50%);
+    width: 20px; /* Adjust icon size as needed */
+    height: 20px;
+    background-size: cover;
+    cursor: pointer;
+    color: #001b40;
+
+  }
+  
+/* CSS */
+/* Hide the default calendar icon */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    color: green; /* Change the color of the calendar icon to green */
+  }
+  
+  
