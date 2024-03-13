@@ -405,7 +405,7 @@ useEffect(() => {
   <div className="quotation-list-container" style={{ background: 'white', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', borderRadius: '10px', padding: '20px', color: '#999999', fontSize: '13px' }}>
     <h1 className="quotation-list-header text-secondary" style={{ fontSize: '1.5rem', marginBottom: '20px' }}>Quotation List</h1>
    
-    <table className="table responsive">
+    <table className="table table-responsive">
       <thead>
         <tr>
           <th className='' style={{color:'#666666'}}> No</th>
