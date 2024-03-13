@@ -695,15 +695,29 @@ useEffect(() => {
     page: {
       padding: 30,
     },
-    title: {
-      fontSize: 24,
+    header: {
       marginBottom: 20,
-      textAlign: 'center',
-      fontWeight: 'bold',
-      textDecoration: 'underline',
-      color: '#999999',
     },
-    section: {
+    headerTitle: {
+      fontSize: 16,
+      marginBottom: 5,
+      fontWeight: 'bold',
+      color: '#666666',
+    },
+    detail: {
+      fontSize: 13,
+      color: '#666666',
+      marginBottom: 2,
+    },
+    header: {
+      marginBottom: 20,
+    },
+    headerText: {
+      fontSize: 16,
+      marginBottom: 5,
+      fontWeight: 'bold',
+    },
+    body: {
       marginBottom: 20,
     },
     table: {
@@ -746,14 +760,29 @@ useEffect(() => {
   const QuotationListPDF = ({ quotation }) => (
     <Document>
       <Page style={styles.page}>
-        <Text style={styles.title}>Quotation Details</Text>
-        <View style={styles.hr} />
+        {/* Header Section */}
+        <View style={styles.header}>
+          {/* Buyer Details */}
+          <Text style={styles.headerText}>Buyer:</Text>
+          <Text>Full Name: Dummy Buyer</Text>
+          <Text>Email: buyer@example.com</Text>
+          <Text>Address: 123 Buyer St, Buyer City</Text>
+          <Text>Country: Buyerland</Text>
   
+          {/* Seller Details */}
+          <Text style={styles.headerText}>Seller:</Text>
+          <Text>Full Name: Dummy Seller</Text>
+          <Text>Email: seller@example.com</Text>
+          <Text>Address: 456 Seller St, Seller City</Text>
+          <Text>Country: Sellerland</Text>
+        </View>
+  
+        {/* Quotation Details Section */}
         <View style={styles.table}>
-          {/* <View style={styles.tableRow}>
+          <View style={styles.tableRow}>
             <Text style={styles.tableCellLabel}>Quotation Number:</Text>
             <Text style={styles.tableCellData}>{quotation.number}</Text>
-          </View> */}
+          </View>
           
           <View style={styles.tableRow}>
             <Text style={styles.tableCellLabel}>Delivery by:</Text>
@@ -781,6 +810,7 @@ useEffect(() => {
           </View>
         </View>
   
+        {/* Footer Section */}
         <View style={styles.footer}>
           <Text>Thank you</Text>
         </View>
@@ -788,7 +818,6 @@ useEffect(() => {
     </Document>
   );
   
- 
   return (
     <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
 
@@ -844,7 +873,6 @@ useEffect(() => {
       </li>
     </ul>
         <hr />
-
       {/* Contact Form */}
         <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>

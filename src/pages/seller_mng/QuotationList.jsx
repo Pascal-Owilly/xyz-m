@@ -11,9 +11,9 @@ import { FaTruck, FaShippingFast, FaCheck, FaArchive } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import PurchaseOrders from '../seller_mng/PurchaseOrdersSeller';
 import './styles.css'
-import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
+import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
 
-
+import logo from './logo.jpeg';
 
 const CustomerServiceDashboard = () => {
 
@@ -185,6 +185,7 @@ useEffect(() => {
               },
           });
           setQuotations(response.data);
+          console.log('quotations', response.data)
       } catch (error) {
           console.error('Error fetching quotations:', error);
       }
@@ -206,14 +207,31 @@ useEffect(() => {
   const styles = StyleSheet.create({
     page: {
       padding: 30,
+      backgroundColor:'rgb(249, 250, 251)',
+      color: '#666666',
+    },
+    headerTitle: {
+      color:'#666666',
+      fontWeight:'bold',
+      marginBottom:'10px',
+      marginTop:'10px',
+
+    },
+    detail:{
+      fontSize:'13px',
+      fontWeight:'medium',
     },
     title: {
-      fontSize: 24,
-      marginBottom: 20,
+      fontSize: 16,
+      marginBottom: 10,
       textAlign: 'center',
-      fontWeight: 'bold',
-      textDecoration: 'underline',
-      color: '#999999',
+      fontWeight:'bold',
+      textDecoration: '',
+      color: '#fff',
+      marginBottom:'20px',
+      backgroundColor:'green',
+      padding:'7px',
+      borderRadius:'5px',
     },
     section: {
       marginBottom: 20,
@@ -222,8 +240,8 @@ useEffect(() => {
       display: 'table',
       width: '100%',
       borderStyle: 'solid',
-      borderWidth: 1,
-      borderColor: '#000',
+      borderWidth: 0.5,
+      borderColor: '#999999',
       marginBottom: 10,
     },
     tableRow: {
@@ -232,45 +250,111 @@ useEffect(() => {
     tableCellLabel: {
       width: '30%',
       borderStyle: 'solid',
-      borderWidth: 1,
-      borderColor: '#000',
+      borderWidth: 0.5,
+      borderColor: '#999999',
       padding: 5,
-      backgroundColor: '#008000',
-      color: '#fff',
-      fontWeight: 'bold',
+      backgroundColor: '',
+      color: '#666666',
+      fontWeight: '500',
       fontSize: 13,
+      flexDirection: 'column',
+
     },
     tableCellData: {
       width: '70%',
       borderStyle: 'solid',
-      borderWidth: 1,
-      borderColor: '#000',
+      borderWidth: 0.5,
+      borderColor: '#666666',
       padding: 5,
-      fontSize: 18,
-      color: '#666666',
+      fontSize: 13,
+      color: '#999999',
+      flexDirection: 'column',
+
     },
     footer: {
       textAlign: 'center',
       marginTop: 20,
+    },
+    logoContainer: {
+      position: 'absolute',
+      top: 30, // Adjust the position as needed
+      left: 30, // Adjust the position as needed
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    logo: {
+      width: 50, // Adjust the size of the logo as needed
+      height: 50, // Adjust the size of the logo as needed
+      marginRight: 10, // Adjust the spacing between the logo and buyer details as needed
+    },
+    buyerDetailsContainer: {
+      position: '',
+      top: 30, // Adjust the position as needed
+      right: 30, // Adjust the position as needed
+      display:'block',
+    },
+    hr :{
+      width:'100%',
+      color:'green',
+      marginBottom:'2rem',
+      marginTop:'1rem',
+    },
+    addressContainer: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between' ,
+      flexDirection:'row',
+      border:'1px solid #ddd',
+      padding:'7px',
+      marginBottom:'20px',
+      // fontFamily:'verdana',
+      fontSize:'11px',
+      color: '#999999',
+
     },
   });
 
   const QuotationListPDF = ({ quotation }) => (
     <Document>
       <Page style={styles.page}>
-        <Text style={styles.title}>Quotation Details</Text>
+      <View style={styles.titlePage}>
+        <Image src={logo} style={styles.logoContainer} />
+      </View>
+      <Text style={styles.title}>Quotation for Supply of {quotation.product}</Text>
         <View style={styles.hr} />
+        {/* Header Section */}
+      <View style={styles.header}>
+        {/* Buyer Details */}
+        <View style={styles.addressContainer}>
+        <View>
+          <Text style={styles.headerTitle}>From:</Text>
+          <View style={styles.hr} />
+          <Text style={styles.detail}>Full Name: {quotation.seller_full_name}</Text>
+          <Text style={styles.detail}>Email:{quotation.seller_email}</Text>
+          <Text style={styles.detail}>Address:{quotation.seller_address}</Text>
+          <Text style={styles.detail}>County:{quotation.seller_county}</Text>
+        </View>
+          {/* Seller Details */}
+        <View>
+          <Text style={styles.headerTitle}>To:</Text>
+          <View style={styles.hr} />
+          <Text style={styles.detail}>Full Name: {quotation.buyer_full_name }</Text>
+          <Text style={styles.detail}>Email: {quotation.buyer_email}</Text>
+          <Text style={styles.detail}>Address: {quotation.buyer_address}</Text>
+          <Text style={styles.detail}>Country:  {quotation.buyer_country}</Text>
+        </View>
+        </View>
+      </View>
+
+      {/* Content Image */}
+      {/* <Image src="./logo.jpeg" style={styles.contentImage} /> */}
+
+      {/* Title Page Logo Image */}
   
+
+
         <View style={styles.table}>
-          {/* <View style={styles.tableRow}>
-            <Text style={styles.tableCellLabel}>Quotation Number:</Text>
-            <Text style={styles.tableCellData}>{quotation.number}</Text>
-          </View> */}
-          
-          <View style={styles.tableRow}>
-            <Text style={styles.tableCellLabel}>Delivery by:</Text>
-            <Text style={styles.tableCellData}>{formatDate(quotation.created_at)}</Text>
-          </View>
+
           <View style={styles.tableRow}>
             <Text style={styles.tableCellLabel}>Product:</Text>
             <Text style={styles.tableCellData}>{quotation.product}</Text>
@@ -279,19 +363,24 @@ useEffect(() => {
             <Text style={styles.tableCellLabel}>Unit Price:</Text>
             <Text style={styles.tableCellData}>{quotation.unit_price}</Text>
           </View>
+
           <View style={styles.tableRow}>
-            <Text style={styles.tableCellLabel}>Message:</Text>
-            <Text style={styles.tableCellData}>{quotation.message}</Text>
+            <Text style={styles.tableCellLabel}>Created on:</Text>
+            <Text style={styles.tableCellData}>{formatDate(quotation.created_at)}</Text>
           </View>
           <View style={styles.tableRow}>
-            <Text style={styles.tableCellLabel}>Date created:</Text>
+            <Text style={styles.tableCellLabel}>Delivered by:</Text>
             <Text style={styles.tableCellData}>{quotation.delivery_time}</Text>
           </View>
           <View style={styles.tableRow}>
-            <Text style={styles.tableCellLabel}>Status:</Text>
-            <Text style={styles.tableCellData}>{confirmedQuotation === quotation.id ? 'Confirmed' : 'Pending'}</Text>
+            <Text style={styles.tableCellLabel}>No:</Text>
+            <Text style={styles.tableCellData}>#{quotation.id}</Text>
           </View>
         </View>
+        <View style={styles.tableRow}>
+            <Text style={styles.tableCellLabel}>Message:</Text>
+            <Text style={styles.tableCellData}>{quotation.message}</Text>
+          </View>
   
         <View style={styles.footer}>
           <Text>Thank you</Text>

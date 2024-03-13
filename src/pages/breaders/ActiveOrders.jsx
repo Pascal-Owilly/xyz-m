@@ -102,7 +102,7 @@ const ActiveOrders = () => {
               <td style={{ fontSize: '13px', textTransform:'capitalize' }}>{quotation.market} market</td>
 
               <td style={{ fontSize: '13px' }}>
-                <button style={{ backgroundColor: quotation.status === 'active' ? 'green' : 'red', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }}>
+                <button style={{ backgroundColor: quotation.status === 'active' ? 'green' : '#001b42', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }}>
                   {quotation.status === 'active' ? 'Active' : 'Closed'}
                 </button>
               </td>

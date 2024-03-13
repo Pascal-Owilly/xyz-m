@@ -6,12 +6,9 @@ import { BASE_URL } from './config';
 
 const refreshAccessToken = async () => {
   const baseUrl = BASE_URL;
-
   try {
     console.log('Fetching token refresh...');
-
     const refreshToken = Cookies.get('refreshToken');
-
     const response = await axios.post(`${baseUrl}/auth/token/refresh/`, {
       refresh: refreshToken,
     });
@@ -24,7 +21,6 @@ const refreshAccessToken = async () => {
     throw error;
   }
 };
-
 const fetchUserData = async () => {
   const baseUrl = BASE_URL;
 
@@ -61,19 +57,14 @@ const checkUserRole = async () => {
     if (!accessToken) {
       return 'anonymous';
     }
-
     console.log('Checking user role...');
-
     // Make a request to your API to get user data (you need to implement this API endpoint)
     const user = await fetchUserData(baseUrl, accessToken);
-
     // Assuming your API returns user role as 'superuser' or 'regular'
     const userRole = user.user.role;
     console.log('User Role:', userRole);
-
     // Notify the user about the assigned role
     notifyUserAboutRole(userRole);
-
     return userRole;
   } catch (error) {
     console.error('Error checking user role:', error);

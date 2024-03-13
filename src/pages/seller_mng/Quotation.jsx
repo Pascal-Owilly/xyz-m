@@ -294,7 +294,7 @@ function QuotationForm() {
             <label htmlFor="market" className="form-label">Market to collect from (Not vissible to buyer)</label>
             <input className="form-control" placeholder='Enter market to inform your suppliers where you will be collecting from' id="market" name="market" value={formData.market} onChange={handleChange} ></input>
           </div>
-          <button type="button" className="btn btn-primary mb-2" style={{fontSize:'15px'}} onClick={handleSubmit}>Send Quotation as PDF</button>
+          <button type="button" className="btn btn-primary mb-2" style={{fontSize:'15px'}} onClick={handleSubmit}>Send </button>
         </form>
       </div>
       <ToastContainer />
