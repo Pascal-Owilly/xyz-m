@@ -29,7 +29,7 @@ useEffect(() => {
 // Fetch sellers from the backend
 const fetchBuyers = async () => {
     try {
-        const response = await axios.get(`${baseUrl}/api/buyers/`);
+        const response = await axios.get(`${baseUrl}/api/all-buyers/`);
         setBuyers(response.data);
         console.log(response.data)
     } catch (error) {
@@ -37,10 +37,8 @@ const fetchBuyers = async () => {
     }
 };
 
-
   return (
     <div className="main-container" style={{minHeight:'80vh'}}>
-
 <div>
         <h4 className='mb-3 mt-4' style={{color:'#666666'}}> Buyers List</h4>
         <div className="table-responsive">
@@ -51,7 +49,6 @@ const fetchBuyers = async () => {
                         <th>Name</th>
                         <th>Date added</th>
                         <th>Details</th>
-
                     </tr>
                 </thead>
                 <tbody>

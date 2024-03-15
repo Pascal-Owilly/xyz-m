@@ -668,6 +668,8 @@ return (
             <th>Seller</th>
             <th>Issue Date</th>
             <th>Status</th>
+            <th>Update</th>
+
           </tr>
         </thead>
         <tbody>

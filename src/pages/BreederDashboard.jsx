@@ -66,7 +66,6 @@ const Supplier = () => {
           }
         };
         
-      
         const fetchUserData = async () => {
           try {
             const accessToken = Cookies.get('accessToken');
@@ -150,15 +149,15 @@ const Supplier = () => {
     
 
   return (
-    <Container fluid>
-  <Row className='main-container' style={{ textAlign: 'left', marginBottom: '20px', minHeight: '85vh' }}>
-    <div className='p-3'>
-      <h5 className='mb-4 mt-2' style={{color:'#001b40'}}>Product supplies and management </h5>
-      <p style={{ textAlign: 'center', marginTop: '1rem' }}>Go to active orders to view details of new orders and the market will be collecting from. </p>
-    </div>
+    <Container fluid className='main-container' style={{ textAlign: 'left', marginBottom: '', minHeight: '85vh' }}>
+       <div className=''>
+      <h5 className='mb-4 mt-2' style={{color:'#001b40'}}>Product supplies  </h5>
+      <p style={{ textAlign: '', marginTop: '' }}>Go to active orders to view details of new orders and the market we will be collecting from. </p>
+      
 
-    <br />
-
+  <Row  className='mb-4 mt-2 '>
+   
+    
     <Col xs={12} md={4} lg={4}>
   <Card className='mt-2' style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
     <Card.Body>
@@ -224,6 +223,7 @@ const Supplier = () => {
       </Col>
     )}
   </Row>
+  </div>
 </Container>
 
   );

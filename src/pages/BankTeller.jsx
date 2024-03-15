@@ -167,7 +167,7 @@ const ControlCenters = () => {
             borderRadius:'30px',
             textTransform:'capitalize' 
           }} 
-          disabled={status.status === 'received'} // Disable the button if status is 'received'
+          disabled={status.status === 'received'} 
         >
           {status.status}
           {status.status === 'ordered' && <FaShoppingCart style={{ marginLeft: '5px', fontSize: '11px', color: 'white', textTransform:'capitalize' }} />}
@@ -176,14 +176,13 @@ const ControlCenters = () => {
           {status.status === 'received' && <FaCheck style={{ marginLeft: '5px', fontSize: '11px', color: 'green', textTransform:'capitalize'}} />}
         </button>
       </td>
-      <td style={{ color: '#999999', fontSize: '12px' }}>{status.buyer ? status.buyer_full_name : ''}</td>
-      <td style={{ color: '#999999', fontSize: '12px' }}>{status.seller ? status.seller_full_name : ''}</td>
-      <td style={{ color: '#999999', fontSize:'12px' }}>{status.logistics_company}</td>
-      <td style={{ color: '#999999', fontSize:'12px' }}>{status.shipping_mode}</td>
+      <td style={{ color: '#999999', fontWeight:'bold', fontSize:'14px' }}>{status.buyer ? status.buyer_full_name : ''}</td>
+      <td style={{ color: '#999999', fontWeight:'bold', fontSize:'14px' }}>{status.seller ? status.seller_full_name : ''}</td>
+      <td style={{ color: '#999999', fontWeight:'bold', fontSize:'14px' }}>{status.logistics_company}</td>
+      <td style={{ color: '#999999', fontWeight:'bold', fontSize:'14px' }}>{status.shipping_mode}</td>
     </tr>
   );
   
-
       const handleModalToggle = () => {
         setShowForm(!showForm);
       };
@@ -201,8 +200,6 @@ const ControlCenters = () => {
         }
       };
       
-      
-
       const renderDocumentPreview = (documentUrl, altText) => {
         if (!documentUrl) {
           return null;
@@ -248,7 +245,6 @@ const ControlCenters = () => {
     setSelectedSeller(seller);
     setShowModal(true);
   };
-
 
   // dummy starts
   const transactionOverviewData = {
@@ -473,11 +469,11 @@ const handleDownloadLC = () => {
      <p style={{ marginBottom: '8px', fontSize: '16px', fontWeight: 'bold' }}></p>
 
     {/* Make Bill of Lading clickable */}
-    <p style={{ marginBottom: '8px', width:'100%' }}>
-            <a href={selectedPackageInfo.bill_of_lading} style={{ marginBottom: '8px', width:'100%' }} target="_blank" rel="noopener noreferrer">
-              {selectedPackageInfo.bill_of_lading}
-            </a>
-          </p>
+    <p style={{ marginBottom: '8px', fontWeight:'bold' }}>Bill of Lading(BOL): <br />
+          <span style={{ cursor: 'pointer' }} onClick={() => window.open(selectedPackageInfo.bill_of_lading, '_blank')}>
+           <span style={{color:'#001b42', fontWeight:'400', textDecoration:'underline', fontStyle:'italics'}}> View document</span>
+          </span>
+        </p>
    </>
     )}
   </Modal.Body>
@@ -591,13 +587,13 @@ const handleDownloadLC = () => {
               {renderDocumentPreview(letterOfCredit.lc_document, `LC Document for ${letterOfCredit.buyer}`)} 
              
               <FaFilePdf style={{ fontSize: '24px', marginRight: '5px' }} />
-  <a href={letterOfCredit.lc_document} target="_blank" rel="noopener noreferrer" className="btn btn-sm float-right" style={{backgroundColor:'rgb(255, 255, 255)', fontSize:'12px', color:'#999999'}}>
+  <a href={letterOfCredit.lc_document} target="_blank" rel="noopener noreferrer" className="btn btn-sm float-right" style={{backgroundColor:'rgb(255, 255, 255)', fontSize:'12px', color:'#666666'}}>
     View
   </a>
         </td>
 
-              <td>{letterOfCredit.buyer ? letterOfCredit.buyer_full_name : ''}</td>
-              <td>{letterOfCredit.seller ? letterOfCredit.seller_full_name : ''}</td>
+              <td className='text-dark'>{letterOfCredit.buyer ? letterOfCredit.buyer_full_name : ''}</td>
+              <td className='text-dark'>{letterOfCredit.seller ? letterOfCredit.seller_full_name : ''}</td>
 
               <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td>
 

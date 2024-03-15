@@ -16,7 +16,7 @@ const BreaderInfo = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/api/buyers/${buyerId}/`)
+        const response = await axios.get(`${baseUrl}/api/all-buyers/${buyerId}/`)
         setBreaderData(response.data);
         console.log('buyer info', response.data);
       } catch (error) {
@@ -52,13 +52,9 @@ const BreaderInfo = () => {
       <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd', textTransform:'capitalize' }}>{breaderData.full_name}'s profile</td>
 
       </h2>
-
-
       <div className='row mt-4' >
-  
       <div className='col-md-4'>
-     
-
+    
       <img src={defaultIng} className='img img-rounded'  alt="Profile" />
     </div>
     <div className='col-md-8'>

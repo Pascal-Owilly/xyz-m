@@ -1092,13 +1092,13 @@ useEffect(() => {
      <p style={{ marginBottom: '8px' }}>Weight: {selectedPackageInfo.weight}</p>
      <p style={{ marginBottom: '8px' }}>Height: {selectedPackageInfo.height}</p>
      <p style={{ marginBottom: '8px' }}>Length: {selectedPackageInfo.length}</p>
-     <h4>Boll of lading Document</h4>
-
-     <p style={{ marginBottom: '8px', width:'100%' }}>
-            <a href={selectedPackageInfo.bill_of_lading} style={{ marginBottom: '8px', width:'100%' }} target="_blank" rel="noopener noreferrer">
-              {selectedPackageInfo.bill_of_lading}
-            </a>
-          </p>
+     {/* <h4>Bill of lading Document</h4> */}
+< hr />
+     <p style={{ marginBottom: '8px', fontWeight:'bold' }}>Bill of Lading(BOL): <br />
+          <span style={{ cursor: 'pointer' }} onClick={() => window.open(selectedPackageInfo.bill_of_lading, '_blank')}>
+           <span style={{color:'#001b42', fontWeight:'400', textDecoration:'underline', fontStyle:'italics'}}> View document</span>
+          </span>
+        </p>
    </>
     )}
   </Modal.Body>
@@ -1122,7 +1122,7 @@ useEffect(() => {
         </Card>
       )}
 {activeSection === 'Quotation' && (
-  <div className="quotation-list-container" style={{ background: 'white', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', borderRadius: '10px', padding: '20px', color: '#999999', fontSize: '13px' }}>
+  <div className="quotation-list-container" style={{ background: 'white', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', borderRadius: '10px', padding: '20px', color: '666666', fontSize: '13px' }}>
     <h1 className="quotation-list-header text-secondary" style={{ fontSize: '1.5rem', marginBottom: '20px' }}>Quotation List</h1>
    
     <table className="table table-responsive">

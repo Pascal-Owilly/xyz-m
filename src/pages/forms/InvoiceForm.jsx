@@ -49,7 +49,7 @@ useEffect(() => {
   const fetchControlCentersAndSellers = async () => {
     try {
       const controlCentersResponse = await axios.get(`${baseUrl}/api/control-centers/`);
-      const sellersResponse = await axios.get(`${baseUrl}/api/sellers/`);
+      const sellersResponse = await axios.get(`${baseUrl}/api/all-sellers/`);
 
       setControlCenters(controlCentersResponse.data);
       setSellers(sellersResponse.data);
@@ -68,7 +68,7 @@ useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch seller data for the currently logged-in breeder
-        const response = await axios.get(`${baseUrl}/api/sellers/`, {
+        const response = await axios.get(`${baseUrl}/api/all-sellers/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
@@ -147,7 +147,7 @@ useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch seller data for the currently logged-in breeder
-        const abattoirResponse = await axios.get(`${baseUrl}/api/sellers/`, {
+        const abattoirResponse = await axios.get(`${baseUrl}/api/all-sellers/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
@@ -460,7 +460,7 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
               </td>
               </tr>
               <tr>
-              <th style={{ border: '1px solid #999999', padding: '5px' }}>Select seller</th>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>Control center</th>
               <td>
               <div className='form-group'>
                   <label htmlFor='control_center'>Select Control Center:</label>
@@ -479,13 +479,11 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
                 </div>
               </td>
               </tr>
-            
               <tr>
-              <th style={{ border: '1px solid #999999', padding: '5px' }}>Select control center</th>
+              <th style={{ border: '1px solid #999999', padding: '5px' }}>Seller</th>
               <td style={{ border: '1px solid #999999', padding: '5px' }}>
-
               <div className='form-group'>
-                  <label htmlFor='seller'>Select Seller:</label>
+                  <label htmlFor='seller'>Control center:</label>
                   <select
                     id='seller'
                     name='seller'
@@ -509,7 +507,6 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
                   onChange={handleInputChange}
                   className='form-control'
                   readOnly
-
                   placeholder='Name of your community'
 
                 />
