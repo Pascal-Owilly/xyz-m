@@ -176,10 +176,10 @@ const ControlCenters = () => {
           {status.status === 'received' && <FaCheck style={{ marginLeft: '5px', fontSize: '11px', color: 'green', textTransform:'capitalize'}} />}
         </button>
       </td>
-      <td style={{ color: '#999999', fontWeight:'bold', fontSize:'14px' }}>{status.buyer ? status.buyer_full_name : ''}</td>
-      <td style={{ color: '#999999', fontWeight:'bold', fontSize:'14px' }}>{status.seller ? status.seller_full_name : ''}</td>
-      <td style={{ color: '#999999', fontWeight:'bold', fontSize:'14px' }}>{status.logistics_company}</td>
-      <td style={{ color: '#999999', fontWeight:'bold', fontSize:'14px' }}>{status.shipping_mode}</td>
+      <td style={{ color: '#666666', fontWeight:'bold', fontSize:'14px' }}>{status.buyer ? status.buyer_full_name : ''}</td>
+      <td style={{ color: '#666666', fontWeight:'bold', fontSize:'14px' }}>{status.seller ? status.seller_full_name : ''}</td>
+      <td style={{ color: '#666666', fontWeight:'bold', fontSize:'14px' }}>{status.logistics_company}</td>
+      <td style={{ color: '#666666', fontWeight:'bold', fontSize:'14px' }}>{status.shipping_mode}</td>
     </tr>
   );
   
@@ -372,7 +372,7 @@ const handleDownloadLC = () => {
       });
 
     // Fetch buyers
-    axios.get(`${baseUrl}/api/buyers/`, { headers: { Authorization: `Bearer ${accessToken}` } })
+    axios.get(`${baseUrl}/api/all-buyers/`, { headers: { Authorization: `Bearer ${accessToken}` } })
       .then(response => {
         setBuyers(response.data);
         console.log('buyers', buyers)
@@ -382,7 +382,7 @@ const handleDownloadLC = () => {
       });
       axios.get(`${baseUrl}/api/package-info/`, { headers: { Authorization: `Bearer ${accessToken}` } })
       .then(response => {
-        setBuyers(response.data);
+        setSelectedPackageInfo(response.data);
         console.log('statuses', response.data)
       })
       .catch(error => {
@@ -595,7 +595,7 @@ const handleDownloadLC = () => {
               <td className='text-dark'>{letterOfCredit.buyer ? letterOfCredit.buyer_full_name : ''}</td>
               <td className='text-dark'>{letterOfCredit.seller ? letterOfCredit.seller_full_name : ''}</td>
 
-              <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td>
+              <td className='text-dark'>{new Date(letterOfCredit.issue_date).toLocaleString()}</td>
 
               <td style={{ textTransform: 'capitalize' }}>
                 <button className='btn btn-sm text-white' style={{ backgroundColor: getButtonColor(letterOfCredit.status) }}>

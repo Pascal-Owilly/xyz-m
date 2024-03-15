@@ -12,13 +12,19 @@ const BreaderInfo = () => {
   const { managerId } = useParams();
   const [breaderData, setBreaderData] = useState({});
   const [loading, setLoading] = useState(false); 
+  const [controlCenters, setControlCenters] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${baseUrl}/api/collateral-managers/${managerId}/`)
         setBreaderData(response.data);
+        const controlCenterResponse = await axios.get(`${baseUrl}/api/control-centers/`);
+        const filteredCenters = controlCenterResponse.data.filter(center => center.assigned_collateral_agent === parseInt(managerId));
+        setControlCenters(filteredCenters);
         console.log('collateram info', response.data);
+        console.log('filtered centers', filteredCenters);
+
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -37,21 +43,21 @@ const BreaderInfo = () => {
       background: 'rgb(248, 250, 251)', 
       color: '#111',
       padding: '5px',
-      minHeight: '100vh',
     }}>
     <div className='main-container' style={{
     width: '100%',
     backgroundColor: 'rgb(249, 250, 251)', // Corrected syntax for rgb
-    color: 'rgb(153, 153, 153)' // Corrected syntax for rgb
+    color: 'rgb(153, 153, 153)', // Corrected syntax for rgb
+    minHeight:'82vh'
   }}>
     <div 
     
   >
     <div className='container'>
-      <h2 className=' ' style={{color:'#999999'}}>
-      <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd', textTransform:'capitalize' }}>{breaderData.full_name}'s profile</td>
-
-      </h2>
+      <h4 className=' ' style={{color:'#777'}}>
+      <p style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd', textTransform:'capitalize' }}>{breaderData.full_name}'s profile</p>
+    {/* <hr /> */}
+      </h4>
       <div className='row mt-4' >
   
       <div className='col-md-4'>
@@ -70,12 +76,12 @@ const BreaderInfo = () => {
 
         }}
       >
-        <div style={{ display: '', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <div style={{ background: '#fff', borderRadius: '8px', padding: '20px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
               {/* Profile Name */}
 
               {/* Role */}
                       </div>
-<table  style={{ borderCollapse: 'collapse', width: '100%', border: '1px solid #ddd', borderRadius: '5px' }}>
+<table  style={{ borderCollapse: 'collapse', width: '100%', border: '1px solid #ddd', borderRadius: '5px', color:'black' }}>
           <tbody>
           <tr style={{ backgroundColor: '#f2f2f2' }}>
       <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Joined on:</td>
@@ -103,6 +109,18 @@ const BreaderInfo = () => {
           </tbody>
         </table>
       </div>
+      {controlCenters.length > 0 && (
+              <div className="mt-4">
+                <h5 className="mb-3" style={{color:'#777'}}>Assigned control centers:</h5>
+                <hr />
+                <ol className='d-flex' >
+                  {controlCenters.map(center => (
+                    <li className='mx-3 text-dark' style={{listStyleType:'square', textTransform:'capitalize'}} key={center.id}>{center.name}</li>
+                  ))}
+                  
+                </ol>
+              </div>
+            )}
         </div>
     </div>
       </div>

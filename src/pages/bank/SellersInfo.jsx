@@ -21,6 +21,7 @@ const BreaderInfo = () => {
         const controlCenterResponse = await axios.get(`${baseUrl}/api/control-centers/`);
         const filteredCenters = controlCenterResponse.data.filter(center => center.seller === parseInt(sellerId));
         setControlCenters(filteredCenters);
+        console.log('filtered centers', filteredCenters)
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -36,7 +37,7 @@ const BreaderInfo = () => {
   return (
     <div className='main-container' style={{ backgroundColor: 'rgb(248, 250, 251)', color: '#111', padding: '', minHeight: '85vh' }}>
       <div className='container' style={{ maxWidth: '', margin: '' }}>
-        <h4 className='mb-4' style={{ color: '#666', textTransform: '' }}>{sellerData.full_name}'s profile</h4>
+        <h4 className='mb-4' style={{ color: '#777', textTransform: '' }}>{sellerData.full_name}'s profile</h4>
         <hr />
         <div className='row'>
           <div className='col-md-4'>
@@ -72,11 +73,12 @@ const BreaderInfo = () => {
             {controlCenters.length > 0 && (
               <div className="mt-4">
                 <h4 className="mb-3">Control Centers:</h4>
-                <ul>
+                <ol className='d-flex' >
                   {controlCenters.map(center => (
-                    <li key={center.id}>{center.name}</li>
+                    <li className='mx-3' style={{listStyleType:'square', textTransform:'capitalize'}} key={center.id}>{center.name}</li>
                   ))}
-                </ul>
+                  
+                </ol>
               </div>
             )}
           </div>

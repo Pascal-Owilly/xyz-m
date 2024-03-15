@@ -37,7 +37,7 @@ const BreaderInfo = () => {
       background: 'rgb(248, 250, 251)', 
       color: '#111',
       padding: '5px',
-      minHeight: '100vh',
+      minHeight: '85vh',
     }}>
     <div className='main-container' style={{
     width: '100%',
@@ -48,10 +48,10 @@ const BreaderInfo = () => {
     
   >
     <div className='container'>
-      <h2 className=' ' style={{color:'#999999'}}>
-      <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd', textTransform:'capitalize' }}>{breaderData.full_name}'s profile</td>
+      <h4 className=' ' style={{color:'#777'}}>
+      <p style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd', textTransform:'capitalize' }}>{breaderData.full_name}'s profile</p>
 
-      </h2>
+      </h4>
       <div className='row mt-4' >
       <div className='col-md-4'>
     
@@ -75,7 +75,7 @@ const BreaderInfo = () => {
 
               {/* Role */}
                       </div>
-<table  style={{ borderCollapse: 'collapse', width: '100%', border: '1px solid #ddd', borderRadius: '5px' }}>
+<table  style={{ borderCollapse: 'collapse', width: '100%', border: '1px solid #ddd', borderRadius: '5px',color:'black' }}>
           <tbody>
           <tr style={{ backgroundColor: '#f2f2f2' }}>
       <td style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Joined on:</td>

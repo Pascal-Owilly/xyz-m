@@ -27,6 +27,7 @@ const Sellers = ({ orderId }) => {
   const [quotationsPerPage] = useState(5); // Number of quotations per page
   const [quotations, setQuotations] = useState([]);
   const [updateCompleted, setUpdateCompleted] = useState(false);
+  const [lcStatus, setLcStatus] = useState('');
 
   // Pagination
   const itemsPerPage = 7; // Number of items to display per page
@@ -61,6 +62,30 @@ const Sellers = ({ orderId }) => {
     const [supplyStatus, setSupplyStatus] = useState('');
     const [breedsData, setBreedsData] = useState([]);
     const [showAll, setShowAll] = useState(false);
+
+    const handleUpdateStatus = async (lcId, newStatus) => {
+      try {
+        // Send a PATCH request to update the LC status
+        const response = await axios.patch(
+          `${BASE_URL}/api/all-lcs/${lcId}/`,
+          { status: newStatus },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+  
+        // Handle successful update
+        console.log('LC status updated successfully:', response.data);
+        setLcStatus(newStatus);
+        toast.success('LC status updated successfully.');
+      } catch (error) {
+        // Handle error
+        console.error('Error updating LC status:', error);
+        toast.error('Error updating LC status. Please try again.');
+      }
+    };
 
     useEffect(() => {
       const fetchData = async () => {
@@ -659,7 +684,7 @@ return (
 
 <hr />
           <Card style={{ width: '100%', padding: '1rem', borderRadius: '10px', minHeight: '70vh', color: '#666666' }}>
-      <Table style={{ color: '#999999' }} responsive striped bordered hover>
+      <Table style={{ color: '' }} responsive striped bordered hover>
         <thead>
           <tr>
           <th>LC ID</th>
@@ -675,13 +700,13 @@ return (
         <tbody>
         {letterOfCredits && letterOfCredits.map(letterOfCredit => (
             <tr key={letterOfCredit.id}>
-              <td>#{letterOfCredit.id}</td>
+              <td style={{ color:'#666666'}}>{letterOfCredit.id}</td>
 
              <td>
               {renderDocumentPreview(letterOfCredit.lc_document, `LC Document for ${letterOfCredit.buyer}`)} 
              
               <FaFilePdf style={{ fontSize: '24px', marginRight: '5px' }} />
-  <a href={letterOfCredit.lc_document} target="_blank" rel="noopener noreferrer" className="btn btn-sm float-right" style={{backgroundColor:'rgb(255, 255, 255)', fontSize:'12px', color:'#999999'}}>
+  <a href={letterOfCredit.lc_document} target="_blank" rel="noopener noreferrer" className="btn btn-sm float-right" style={{backgroundColor:'rgb(255, 255, 255)', fontSize:'12px', color:'#666666'}}>
     View
   </a>
         </td>
@@ -692,7 +717,7 @@ return (
               <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td>
 
               <td style={{ textTransform: 'capitalize' }}>
-                <button className='btn btn-sm text-white' style={{ backgroundColor: getButtonColor(letterOfCredit.status) }}>
+                <button className='btn-sm text-white' style={{ backgroundColor: getButtonColor(letterOfCredit.status), fontSize:'12px' }}>
                   {letterOfCredit.status}
                 </button>
               </td>
@@ -713,7 +738,6 @@ return (
       <option style={{ fontSize: '12px' }} value="">Update</option>
       <option style={{ fontSize: '12px' }} value="approved">Approv</option>
       <option style={{ fontSize: '12px' }} value="rejected">Reject</option>
-
     </select>
               </td>
             </tr>

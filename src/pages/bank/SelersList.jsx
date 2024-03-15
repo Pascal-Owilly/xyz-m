@@ -62,7 +62,7 @@ const SellersList = () => {
                 <th>Id</th>
                 <th>Name</th>
                 <th>Date added</th>
-                <th>Control Center</th>
+                {/* <th>Control Center</th> */}
                 <th>Details</th>
               </tr>
             </thead>
@@ -72,7 +72,7 @@ const SellersList = () => {
                   <td>{seller.id}</td>
                   <td>{seller.full_name}</td>
                   <td>{seller.formatted_created_at}</td>
-                  <td>{getControlCenterForSeller(seller.id)}</td>
+                  {/* <td>{getControlCenterForSeller(seller.id)}</td> */}
                   <td>
                     <Link to={`/seller-info/${seller.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                       <button style={{ backgroundColor: 'white', color: '#666666', minWidth: '100px' }}>View details</button>
