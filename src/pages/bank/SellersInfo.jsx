@@ -16,7 +16,7 @@ const BreaderInfo = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/api/sellers/${sellerId}/`)
+        const response = await axios.get(`${baseUrl}/api/all-sellers/${sellerId}/`)
         setBreaderData(response.data);
         console.log('seller info', response.data);
       } catch (error) {

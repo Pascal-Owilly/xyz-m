@@ -296,8 +296,8 @@ useEffect(() => {
     hr :{
       width:'100%',
       color:'green',
-      marginBottom:'2rem',
-      marginTop:'1rem',
+      marginBottom:'20px',
+      marginTop:'10px',
     },
     addressContainer: {
       display: 'flex',
@@ -351,8 +351,6 @@ useEffect(() => {
 
       {/* Title Page Logo Image */}
   
-
-
         <View style={styles.table}>
 
           <View style={styles.tableRow}>

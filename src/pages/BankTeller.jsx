@@ -574,8 +574,8 @@ const handleDownloadLC = () => {
       <Table style={{ color: '#999999' }} responsive striped bordered hover>
         <thead>
           <tr>
-            <th>Letter of credit</th>
-            <th>LC ID</th>
+          <th>LC ID</th>
+            <th>LC document</th>
             <th>Buyer</th>
             <th>Seller</th>
             <th>Issue Date</th>
@@ -585,6 +585,8 @@ const handleDownloadLC = () => {
         <tbody>
         {currentDocuments.map(letterOfCredit => (
             <tr key={letterOfCredit.id}>
+              <td>#{letterOfCredit.id}</td>
+
              <td>
               {renderDocumentPreview(letterOfCredit.lc_document, `LC Document for ${letterOfCredit.buyer}`)} 
              
@@ -594,9 +596,8 @@ const handleDownloadLC = () => {
   </a>
         </td>
 
-              <td>#{letterOfCredit.id}</td>
-              <td>{letterOfCredit.buyer ? letterOfCredit.buyer.full_name : ''}</td>
-              <td>{letterOfCredit.seller ? letterOfCredit.seller.full_name : ''}</td>
+              <td>{letterOfCredit.buyer ? letterOfCredit.buyer_full_name : ''}</td>
+              <td>{letterOfCredit.seller ? letterOfCredit.seller_full_name : ''}</td>
 
               <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td>
 

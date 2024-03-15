@@ -195,53 +195,58 @@ const logout = async () => {
         case 'superuser':
       return (
         <>
-          <li>
-            <a href="/supplier_dashboard">
-              <FaUserCog /> SCM Administration
-            </a>
-          </li>
-          <li>
-            <a href="/supplier_dashboard">
-              <FaUserCog /> Breeder Dashboard
-            </a>
-          </li>
-          <li>
-            <a href="/buyer_dashboard" onClick={handleLinkClick}>
-              <FaHome /> Buyer Dashboard
-            </a>
-          </li>
-          <li>
-            <a href="/slaughterhouse-dashboard">
-              <FaTruck /> Slaughterhouse Dashboard
-            </a>
-          </li>
-          
-          <li>
-            <a href="/bank_telinventorler_dashboard">
-              <FaMapMarkedAlt /> Bank Teller Dashboard
-            </a>
-          </li>
-          <li>inventor
-            <a href="inventory-dashboard">
-            <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
-               Control centers
-            </a>
-          </li>
-          <li>
-            <a href="warehouse">
-              <FaIconName /> Warehouse Dashboard
-            </a>
-          </li>
-          <li>
-            <a href="/customer_service_dashboard">
-              <FaMapMarkedAlt /> Customer Care
-            </a>
-          </li>
-          <li>s
-            <a href="/export_handling_dashboard">
-              <FaMapMarkedAlt /> Export Handling Dashboard
-            </a>
-          </li>
+                     <hr />
+
+<li style={{ display: 'flex', alignItems: 'center' }}>
+  <FaTools style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+  <a href="/sellers">
+    Sellers 
+    </a>
+</li>
+<span className='mx-3' style={{ display: 'flex', alignItems: 'center' }}>
+  <a href="/register-seller">
+  <FaUserPlus style={{ marginRight: '12px', color: '#f9f9f9', fontSize: '16px'}}/>
+  <span  style={{ marginRight: '12px', color: '#f9f9f9', fontSize: '10px'}}>
+  Register seller
+  </span>
+    </a>
+</span>
+<hr />
+
+
+<li style={{ display: 'flex', alignItems: 'center' }}>
+  <FaTruck style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+  <a href="/supplier_dashboard">Suppliers </a>
+</li>
+
+<li style={{ display: 'flex', alignItems: 'center' }}>
+  <FaSellcast style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+  <a href="/inventory-confirmation">Stock shift </a>
+</li>
+<li style={{ display: 'flex', alignItems: 'center' }}>
+  <FaExchangeAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px' }} />
+  <a href="/buyer_dashboard" >
+    Buyers
+  </a>
+</li>
+
+<li style={{ display: 'flex', alignItems: 'center' }}>
+  <FaMoneyCheckAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+  <a href="/bank_teller_dashboard">Bank </a>
+</li>
+
+{/* <li style={{ display: 'flex', alignItems: 'center' }}>
+<FaMapMarkedAlt style={{ marginRight: '12px', color: 'white', fontSize: '20px' }} />
+  <a href="/customer_service_dashboard">Customer Care</a>
+</li> */}        
+<li style={{ display: 'flex', alignItems: 'center' }}>
+  <FaStreetView style={{ marginRight: '12px', color: 'white', fontSize: '20px'}}/>
+  <a href="/control-centers-list">Control centers</a>
+</li>
+
+<li style={{ display: 'flex', alignItems: 'center' }}>
+<FaGlobe style={{ marginRight: '12px', color: 'white', fontSize: '20px'}} />
+  <a href="/dispatch_and_shipping">Export Management </a></li>
         </>
       );
 

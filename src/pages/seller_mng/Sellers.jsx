@@ -6,7 +6,7 @@ import { BASE_URL } from '../auth/config';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import './Seller.css';
-import { FaFileInvoice, FaList, FaMoneyBillAlt, FaWarehouse, FaArchive } from 'react-icons/fa'; 
+import { FaFileInvoice, FaList, FaMoneyBillAlt, FaWarehouse, FaArchive, FaFilePdf } from 'react-icons/fa'; 
 import ReactApexChart from 'react-apexcharts';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -443,6 +443,7 @@ const Sellers = ({ orderId }) => {
     }
   };
 
+
   useEffect(() => {
     // Fetch user data when component mounts
     const fetchUserData = async () => {
@@ -479,6 +480,17 @@ const Sellers = ({ orderId }) => {
 
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);
+  };
+
+  const getButtonColor = (status) => {
+    switch (status) {
+      case 'approved':
+        return 'green';
+      case 'rejected':
+        return 'red';
+      default:
+        return '#001b42'; // Default color for not confirmed
+    }
   };
 
 return (
@@ -646,33 +658,44 @@ return (
 <Row>
 <h5 className='mt-2 mb-3' style={{ color:'#999999'}}>List of LCs</h5>
 
-<Card style={{ width: '100%', padding: '1rem', borderRadius: '10px', minHeight: '70vh', color: '#666666' }}>
+<hr />
+          <Card style={{ width: '100%', padding: '1rem', borderRadius: '10px', minHeight: '70vh', color: '#666666' }}>
       <Table style={{ color: '#999999' }} responsive striped bordered hover>
         <thead>
           <tr>
-            <th>Letter of credit</th>
-            <th>LC ID</th>
+          <th>LC ID</th>
+            <th>LC document</th>
+            <th>Buyer</th>
+            <th>Seller</th>
             <th>Issue Date</th>
             <th>Status</th>
-            <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {letterOfCredits && letterOfCredits.map(letterOfCredit => (
+        {letterOfCredits && letterOfCredits.map(letterOfCredit => (
             <tr key={letterOfCredit.id}>
-             <td>{renderDocumentPreview(letterOfCredit.lc_document, `LC Document for ${letterOfCredit.buyer}`)} 
-             <a href={letterOfCredit.lc_document} target="_blank" rel="noopener noreferrer" className="btn btn-sm float-right " style={{backgroundColor:'rgb(255, 255, 255)', fontSize:'12px', color:'#999999'}}>
-              View
-              </a>
-</td>
               <td>#{letterOfCredit.id}</td>
+
+             <td>
+              {renderDocumentPreview(letterOfCredit.lc_document, `LC Document for ${letterOfCredit.buyer}`)} 
+             
+              <FaFilePdf style={{ fontSize: '24px', marginRight: '5px' }} />
+  <a href={letterOfCredit.lc_document} target="_blank" rel="noopener noreferrer" className="btn btn-sm float-right" style={{backgroundColor:'rgb(255, 255, 255)', fontSize:'12px', color:'#999999'}}>
+    View
+  </a>
+        </td>
+
+              <td>{letterOfCredit.buyer ? letterOfCredit.buyer_full_name : ''}</td>
+              <td>{letterOfCredit.seller ? letterOfCredit.seller_full_name : ''}</td>
+
               <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td>
+
               <td style={{ textTransform: 'capitalize' }}>
-  {/* <button className='btn btn-sm text-white' style={{ backgroundColor: getButtonColor(letterOfCredit.status) }}>
-    {letterOfCredit.status}
-  </button> */}
-</td>
-              <td>
+                <button className='btn btn-sm text-white' style={{ backgroundColor: getButtonColor(letterOfCredit.status) }}>
+                  {letterOfCredit.status}
+                </button>
+              </td>
+               <td>
               <select
       className="form-select p-1 text-dark bg-white"
       onChange={(e) => {
@@ -703,6 +726,7 @@ return (
         paginate={paginate}
       />
     </Card>
+
   </Row>
 {/* end lc */}
         </div>

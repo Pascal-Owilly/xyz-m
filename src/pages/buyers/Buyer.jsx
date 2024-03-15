@@ -7,13 +7,10 @@ import Cookies from 'js-cookie';
 import { HiBell, HiCube, HiExclamation, HiCurrencyDollar, HiChartBar } from 'react-icons/hi';
 import { FaEnvelope } from 'react-icons/fa';  
 import { HiEye, HiEyeOff } from 'react-icons/hi'; // Example icons, you can choose others
-import { FaTruck, FaShippingFast, FaCheck, FaArchive, FaShoppingCart } from 'react-icons/fa';
+import { FaTruck, FaShippingFast, FaCheck, FaArchive, FaShoppingCart, FaFilePdf } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import PurchaseOrders from '../seller_mng/PurchaseOrdersSeller';
-
 // convert quotation to pdf
 import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
-
 
 const CustomerServiceDashboard = ({packageInfo}) => {
   const navigate = useNavigate()
@@ -51,6 +48,8 @@ const CustomerServiceDashboard = ({packageInfo}) => {
   const [sellers, setSellers] = useState([]);
   const [selectedBuyer, setSelectedBuyer] = useState(null);
   const [selectedSeller, setSelectedSeller] = useState(null);
+  const [profile, setProfile] = useState([]);
+  const [defaultSellerId, setDefaultSellerId] = useState(null);
 
   // LC
   const [lcUploadMessage, setLcUploadMessage] = useState('');
@@ -73,17 +72,48 @@ const CustomerServiceDashboard = ({packageInfo}) => {
  };
 
 //  lc
+
+const [buyerError, setBuyerError] = useState('');
+const [sellerError, setSellerError] = useState('');
+const [lcError, setLcError] = useState('');
+
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setFormData({
+    ...formData,
+    [name]: value,
+  });
+};
+
+const [formData, setFormData] = useState({
+  seller: null,
+  buyer: null,
+  lc_document: null,
+  // Add other LC form fields here
+});
+
 const handleLcUpload = () => {
-  // Check if a document is selected
   if (!lcDocument) {
-    setLcUploadMessage("Please select a document to upload.");
-    setLcUploadSuccess(false);
+    setLcError("Please select a document to upload.");
     return;
   }
+
+  // Check if both buyer and seller are selected
+  // if (!formData.buyer) {
+  //   setLcError("Please select both a buyer and a seller.");
+  //   return;
+  // }
+
+  // Reset other error states
+  setLcError('');
+  setBuyerError('');
+  setSellerError('');
 
   // Prepare form data
   const formData = new FormData();
   formData.append("lc_document", lcDocument);
+  formData.append("buyer", buyers[0].id);
+  formData.append("seller", sellers[0].id);
 
   // Make a POST request to upload the LC document
   axios.post(`${baseUrl}/api/all-lcs/`, formData, {
@@ -101,11 +131,9 @@ const handleLcUpload = () => {
     .catch(error => {
       // Handle upload error
       console.error("Error uploading LC document:", error);
-      setLcUploadMessage("Error uploading LC document. Please try again.");
-      setLcUploadSuccess(false);
+      setLcError("Error uploading LC document. Please try again.");
     });
 };
-
   // invoiceslist
   const [loading, setLoading] = useState(true);
   const [invoiceData, setInvoiceData] = useState([]);
@@ -137,6 +165,7 @@ const handleLcUpload = () => {
       });
   };
 
+
   useEffect(() => {
 
     axios.get(`${baseUrl}/api/package-info/`)
@@ -162,11 +191,46 @@ const handleLcUpload = () => {
     setShowModal(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your logic for handling form submission here
-    // You may want to send the data to your backend or perform any other actions
-    handleModalClose();  // Close the modal after submission
+    try {
+      await postData();
+      toast.success('LC submitted successfully!', {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      navigate('/lc-submission-success');
+    } catch (error) {
+      console.error('Error submitting LC:', error);
+      toast.error('Failed to submit LC. Please try again later.', {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  };
+
+  const postData = async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      await axios.post(`${baseUrl}/api/all-lcs/`, formData, config);
+    } catch (error) {
+      console.error('Error creating LC:', error);
+      throw error;
+    }
   };
 
   const getButtonColor = (status) => {
@@ -179,7 +243,6 @@ const handleLcUpload = () => {
         return '#001b42'; // Default color for not confirmed
     }
   };
-
 
   const refreshAccessToken = async () => {
     try {
@@ -273,28 +336,117 @@ const toggleInvoice = (invoiceNumber) => {
   }));
 };
 
+// Fetch sellers from the backend
+
+useEffect(() => {
+  const fetchSellers = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/api/all-sellers/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      setSellers(response.data);
+      console.log('all sellers', response.data)
+    } catch (error) {
+      console.error('Error fetching sellers:', error);
+    }
+  };
+
+  fetchSellers();
+}, [baseUrl, accessToken]);
+
 
 
 useEffect(() => {
-  // Fetch sellers
-  axios.get(`${baseUrl}/api/sellers/`, { headers: { Authorization: `Bearer ${accessToken}` } })
-    .then(response => {
-      setSellers(response.data);
-      
-    })
-    .catch(error => {
-      console.error('Error fetching sellers:', error);
-    });
+  handleBuyerChange();
+}, [sellers]);
 
-    axios.get(`${baseUrl}/api/buyers/`, { headers: { Authorization: `Bearer ${accessToken}` } })
-    .then(buyerResponse => {
-      setBuyers(buyerResponse.data);
-      console.log('buyers object', buyerResponse)
-    })
-    .catch(error => {
-      console.error('Error fetching sellers:', error);
-    });
+const handleSellerChange = () => {
+  // Check if there are sellers available
+  if (sellers.length > 0) {
+    // Set the seller ID to the ID of the first seller
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      seller: sellers[0].id,
+    }));
+  }
+};
 
+const handleBuyerChange = () => {
+  // Check if there are sellers available
+  if (buyers.length > 0) {
+    // Set the seller ID to the ID of the first seller
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      buyer: buyers[0].id,
+    }));
+  }
+};
+
+useEffect(() => {
+  const fetchUserData = async () => {
+    try {
+      const accessToken = Cookies.get('accessToken');
+      if(!accessToken){
+        navigate('/')
+      }
+      if (accessToken) {
+        const response = await axios.get(`${baseUrl}/auth/user/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        const userProfile = response.data;
+        setProfile(userProfile);
+      }
+    } catch (error) {
+      // Check if the error indicates an expired access token
+      if (error.response && error.response.status === 401) {
+        // Attempt to refresh the access token
+        await refreshAccessToken();
+      } else {
+        console.error('Error fetching user data:', error);
+      }
+    }
+  };
+
+  fetchUserData();
+}, [baseUrl, navigate]);
+
+useEffect(() => {
+  const fetchBuyers = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/api/buyers/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log('buyers', response.data)
+      setBuyers(response.data);
+
+      // Set the default seller if profile is available
+      if (profile) {
+        const loggedInBuyer = response.data.find(buyer => buyer.id === profile.id);
+        if (loggedInBuyer) {
+          setFormData(prevFormData => ({
+            ...prevFormData,
+            buyer: loggedInBuyer.id, // Set the ID of the logged-in buyer
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching buyers:', error);
+    }
+  };
+
+  fetchBuyers();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [baseUrl, accessToken, profile]);
+
+useEffect(() => {
 
     axios.get(`${baseUrl}/api/package-info/`, { headers: { Authorization: `Bearer ${accessToken}` } })
     .then(response => {
@@ -427,13 +579,13 @@ useEffect(() => {
   };
 
 
-  const handleBuyerChange = (event) => {
-    setSelectedBuyer(event.target.value);
-  };
+  // const handleBuyerChange = (event) => {
+  //   setSelectedBuyer(event.target.value);
+  // };
 
-  const handleSellerChange = (event) => {
-    setSelectedSeller(event.target.value);
-  };
+  // const handleSellerChange = (event) => {
+  //   setSelectedSeller(event.target.value);
+  // };
 
   const handleViewDetails = (payment) => {
     // Toggle the detailed view
@@ -523,16 +675,13 @@ useEffect(() => {
       {status.status === 'received' && <FaCheck style={{ marginLeft: '5px', fontSize: '11px', color: 'green', textTransform:'capitalize'}} />}
     </button>
           </td>
-
-          <td style={{ color: '#999999', fontSize:'12px' }}>
+        <td style={{ color: '#999999', fontSize:'12px' }}>
             {status.shipping_mode}
             </td>
             <td style={{ color: '#999999', fontSize:'12px' }}>{status.time_of_delivery}</td>
-
         </tr>
       );
   
-
   const renderOrderDetails = (order) => (
     <div key={order.id} className="order-details">
       <h6 className='mb-3'>Order #{order.id} - {order.status}</h6>
@@ -584,25 +733,7 @@ useEffect(() => {
     );
   };
 
-  const QuotationPDF = ({ quotation }) => (
-    <Document>
-      <Page style={styles.page}>
-        <View style={styles.section}>
-          <Text style={styles.heading}>Quotation Details</Text>
-          <Text style={styles.text}>Quotation Number: {quotation.number}</Text>
-          <Text style={styles.text}>Date: {quotation.date}</Text>
-          <Text style={styles.text}>Buyer: {quotation.buyer}</Text>
-          <Text style={styles.text}>Seller: {quotation.seller}</Text>
-          <Text style={styles.text}>Product: {quotation.product}</Text>
-          <Text style={styles.text}>Unit Price: {quotation.unit_price}</Text>
-          <Text style={styles.text}>Quantity: {quotation.quantity}</Text>
-          <Text style={styles.text}>Message: {quotation.message}</Text>
-          <Text style={styles.text}>Status: {confirmedQuotation === quotation.id ? 'Confirmed' : 'Pending'}</Text>
-          {/* Add more quotation details here */}
-        </View>
-      </Page>
-    </Document>
-  );
+
 
   const handleButtonClick = (section) => {
     setActiveSection(section);
@@ -1076,6 +1207,7 @@ useEffect(() => {
           rel="noopener noreferrer"
           style={{
             fontSize: '15px',
+            padding:'5px',
             borderRadius: '5px',
             background: loading ? '#999999' : '#fff',
             color: '#666666',
@@ -1099,19 +1231,20 @@ useEffect(() => {
   <div>
   <Form>
       <div className='d-flex align-center justify-space-between'>
-      <Form.Group controlId="buyer" style={{ display: 'none' }}>
+      <Form.Group controlId="buyer" style={{  }}>
   <Form.Label className="text" style={{ color:'#999999' }}>Select Buyer</Form.Label>
   <Form.Control as="select" readOnly onChange={handleBuyerChange}>
     {/* Assuming buyers array is defined elsewhere */}
-    <option value="">Select Buyer</option>
-    {/* Populate the options with buyers */}
     {buyers.map(buyer => (
-      <option key={buyer.id} value={buyer.full_name}>{buyer.full_name}</option>
+    <option key={buyer.id} value={buyer.id}>{buyer.full_name}</option>
     ))}
   </Form.Control>
+              {buyerError && <Form.Text className="text-danger">{buyerError}</Form.Text>}
+
 </Form.Group>
 
-        <Form.Group controlId="seller">
+
+<Form.Group controlId="seller">
           <Form.Label className="text" style={{ color:'#999999' }}>Select Seller</Form.Label>
           <Form.Control as="select" onChange={handleSellerChange}>
             <option value="">Select Seller</option>
@@ -1119,6 +1252,8 @@ useEffect(() => {
               <option key={seller.id} value={seller.id}>{seller.full_name}</option>
             ))}
           </Form.Control>
+            {sellerError && <Form.Text className="text-danger">{sellerError}</Form.Text>}
+
         </Form.Group>
       </div>
 
@@ -1129,6 +1264,8 @@ useEffect(() => {
             type="file"
             onChange={(e) => setLcDocument(e.target.files[0])}
           />
+            {lcError && <Form.Text className="text-danger">{lcError}</Form.Text>}
+
         </Form.Group>
         <Button variant="primary btn-sm mt-5 mx-1" onClick={handleLcUpload} style={{ width: '100px', fontSize:'14px' }}>
           Upload
@@ -1143,14 +1280,15 @@ useEffect(() => {
         )}
       </div>
 
-  <Card style={{ width: '100%', padding: '1rem', borderRadius: '10px', minHeight: '70vh', color: '#666666' }}>
-  <h5 className='mt-1 mx-3 mb-3' style={{color:'#999999'}}>List of LCs</h5>
-
+      <hr />
+          <Card style={{ width: '100%', padding: '1rem', borderRadius: '10px', minHeight: '70vh', color: '#666666' }}>
       <Table style={{ color: '#999999' }} responsive striped bordered hover>
         <thead>
           <tr>
-            <th>Letter of credit</th>
-            <th>LC ID</th>
+          <th>LC ID</th>
+            <th>LC document</th>
+            <th>Buyer</th>
+            <th>Seller</th>
             <th>Issue Date</th>
             <th>Status</th>
           </tr>
@@ -1158,14 +1296,22 @@ useEffect(() => {
         <tbody>
         {letterOfCredits && letterOfCredits.map(letterOfCredit => (
             <tr key={letterOfCredit.id}>
-             <td>{renderDocumentPreview(letterOfCredit.lc_document, `LC Document for ${letterOfCredit.buyer}`)} 
-             <a href={letterOfCredit.lc_document} target="_blank" rel="noopener noreferrer" className="btn btn-sm float-right " style={{backgroundColor:'rgb(255, 255, 255)', fontSize:'12px', color:'#999999'}}>
-              View
-              </a>
+              <td>#{letterOfCredit.id}</td>
+
+             <td>
+              {renderDocumentPreview(letterOfCredit.lc_document, `LC Document for ${letterOfCredit.buyer}`)} 
+             
+              <FaFilePdf style={{ fontSize: '24px', marginRight: '5px' }} />
+  <a href={letterOfCredit.lc_document} target="_blank" rel="noopener noreferrer" className="btn btn-sm float-right" style={{backgroundColor:'rgb(255, 255, 255)', fontSize:'12px', color:'#999999'}}>
+    View
+  </a>
         </td>
 
-              <td>#{letterOfCredit.id}</td>
+              <td>{letterOfCredit.buyer ? letterOfCredit.buyer_full_name : ''}</td>
+              <td>{letterOfCredit.seller ? letterOfCredit.seller_full_name : ''}</td>
+
               <td>{new Date(letterOfCredit.issue_date).toLocaleString()}</td>
+
               <td style={{ textTransform: 'capitalize' }}>
                 <button className='btn btn-sm text-white' style={{ backgroundColor: getButtonColor(letterOfCredit.status) }}>
                   {letterOfCredit.status}

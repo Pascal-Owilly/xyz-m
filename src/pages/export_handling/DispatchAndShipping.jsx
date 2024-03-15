@@ -109,7 +109,7 @@ const handleChange = (e) => {
 useEffect(() => {
   const fetchBuyers = async () => {
     try {
-      const response = await axios.get(`${baseUrl}/api/buyers/`);
+      const response = await axios.get(`${baseUrl}/api/all-buyers/`);
       setBuyers(response.data);
       console.log('buyers',response.data)
     } catch (error) {
@@ -125,7 +125,7 @@ useEffect(() => {
   const fetchBuyersAndSellers = async () => {
     try {
       // const buyersRes = await axios.get(`${baseUrl}/api/buyers/`);
-      const sellersRes = await axios.get(`${baseUrl}/api/sellers/`);
+      const sellersRes = await axios.get(`${baseUrl}/api/all-sellers/`);
 
       //  setBuyers(buyersRes.data);
       setSellers(sellersRes.data);
@@ -390,11 +390,11 @@ const handleSubmit = async (e) => {
     status.status === 'ordered' ? '#f0f8ff' : // Light Blue
     status.status === 'dispatched' ? '#f0ffff' : // Light Cyan
     status.status === 'shipped' ? '#f0f0f0' : // Light Gray
-    status.status === 'received' ? 'lightgreen' : '' // Light Green
+    status.status === 'received' ? '' : '' // Light Green
 }}>
     <td style={{ color: '#999999', fontWeight: 'bold' }}>
         <button 
-          style={{ width: '200px', background: '#f2f2f2', padding: '8px', borderRadius:'30px',color:'#999999', fontWeight:'bold', padding:'12px' }}
+          style={{ width: '200px', background: '#f2f2f2', padding: '8px', borderRadius:'30px',color:'#999999', fontWeight:'', padding:'12px' }}
           onClick={() => handleInvoiceDetailsClick(status.invoice_number)}
         >
           {status.invoice_number}
@@ -402,7 +402,7 @@ const handleSubmit = async (e) => {
       </td>
       <td className='d-flex align-items-center'>
       <button
- style={{ width: '120px', background: '#f2f2f2', padding: '8px', borderRadius:'30px',color:'#999999', fontWeight:'bold', padding:'12px' }}
+ style={{ width: '120px', background: '#f2f2f2', padding: '8px', borderRadius:'30px',color:'#999999', fontWeight:'', padding:'12px' }}
   disabled={status.status === 'received'} // Disable the button if status is 'received'
 >
   {status.status}
@@ -423,13 +423,13 @@ const handleSubmit = async (e) => {
           </select>
         </div>
       </td>
-      <td style={{ width: '200px', background: '#f2f2f2', color:'#999999', fontWeight:'bold' }}>{status ? status.buyer_full_name : ''}</td>
-<td style={{ width: '200px', background: '#f2f2f2', color:'#999999', fontWeight:'bold' }}>{status ? status.seller_full_name : ''}</td>
+      <td style={{ width: '200px', background: '#f2f2f2', color:'#999999', fontWeight:'' }}>{status ? status.buyer_full_name : ''}</td>
+<td style={{ width: '200px', background: '#f2f2f2', color:'#999999', fontWeight:'' }}>{status ? status.seller_full_name : ''}</td>
 
-      <td style={{ width: '200px', background: '#f2f2f2', padding: '8px',color:'#999999', fontWeight:'bold', padding:'12px' }}>{status.logistics_company}</td>
+      <td style={{ width: '200px', background: '#f2f2f2', padding: '8px',color:'#999999', fontWeight:'', padding:'12px' }}>{status.logistics_company}</td>
       <td style={{ color: '#999999', fontSize:'12px' }}>
         <button 
-          style={{ width: '150px', background: '#f2f2f2', padding: '8px', borderRadius:'30px',color:'#001b42', fontWeight:'bold', padding:'12px', border:'1px solid #999999' }}
+          style={{ width: '130px', background: '#f2f2f2', padding: '2px', borderRadius:'30px',color:'#001b42', fontWeight:'bold', padding:'12px', border:'none' }}
           onClick={() => {
             handlePackageInfoClick(status.package_info);
             handleShow(); // Set show state to true
@@ -438,7 +438,7 @@ const handleSubmit = async (e) => {
           View package
         </button>
       </td>
-      <td style={{ width: '200px', background: '#f2f2f2',color:'#999999', fontWeight:'bold', padding:'12px' }}>{status.shipping_mode}</td>
+      <td style={{ width: '200px', background: '#f2f2f2',color:'#999999', fontWeight:'', padding:'12px' }}>{status.shipping_mode}</td>
       {/* <td style={{ width: '200px', background: '#f2f2f2', padding: '8px', borderRadius:'30px',color:'#999999', fontWeight:'bold', padding:'12px' }}>{status.time_of_delivery}</td> */}
     </tr>
   );
@@ -446,25 +446,29 @@ const handleSubmit = async (e) => {
   return (
 
     <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
-    <section className="" >
 
-    <Modal style={{ color: '#666666', fontSize:'12px', width:'100%' }} show={showForm} onHide={handleModalToggle}>
-      <Modal.Header closeButton>
-        <Modal.Title>Create Package</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <form onSubmit={handleSubmit}>
+<Modal
+  show={showForm}
+  onHide={handleModalToggle}
+  dialogClassName="modal-100w"
+  centered
+  style={{background:'rgb(0, 0, 0, 0.7'}}
+>
+  <div className="modal" style={{ display: 'block' }}>
+    <div className="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div className="modal-content mx-2" style={{marginLeft:''}}>
+        <div className="modal-header">
+          <h5 className="modal-title">Create Package</h5>
+          <button type="button" className="close" onClick={handleModalToggle}>
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div className="modal-body" style={{ backgroundColor: '' }}>
+        <form onSubmit={handleSubmit}  className='' style={{marginLeft:'2rem'}}>
           <div className="row">
           <div className="col-md-3">
           <div>
-      <label>Select Buyer:</label>
-<select claccName='m-2' style={{background:'white', color:'#999999', padding:'7px', borderRadius:'30px'}} name="buyer" value={formData.buyer ? formData.buyer.id : ''} onChange={handleBuyerSellerChange}>
-  <option value="">Select Buyer</option>
-  {buyers.map(buyer => (
-    <option key={buyer.id} value={buyer.id}>{buyer.full_name}</option>
-  ))}
-</select>
-
+ 
 
       <label>Select Seller:</label>
       <select style={{background:'white', color:'#999999', padding:'7px', borderRadius:'30px'}} name="seller" value={formData.seller ? formData.seller.id : ''} onChange={handleBuyerSellerChange}>
@@ -473,6 +477,20 @@ const handleSubmit = async (e) => {
           <option key={seller.id} value={seller.id}>{seller.full_name}</option>
         ))}
       </select>
+    </div>
+
+            </div>
+            <div className="col-md-3">
+          <div>
+      <label>Select Buyer:</label>
+        <select claccName='m-2' style={{background:'white', color:'#999999', padding:'7px', borderRadius:'30px'}} name="buyer" value={formData.buyer ? formData.buyer.id : ''} onChange={handleBuyerSellerChange}>
+          <option value="">Select Buyer</option>
+          {buyers.map(buyer => (
+            <option key={buyer.id} value={buyer.id}>{buyer.full_name}</option>
+          ))}
+        </select>
+
+     
     </div>
 
             </div>
@@ -574,8 +592,11 @@ const handleSubmit = async (e) => {
            Create
           </Button>
         </form>
-      </Modal.Body>
-    </Modal>
+        </div>
+      </div>
+    </div>
+  </div>
+</Modal>
 
 <h3 style={{color:'#999999'}}>Shipping</h3>
 <div className='row'>
@@ -648,28 +669,26 @@ const handleSubmit = async (e) => {
 </div>
 
     </div>
-  </section> 
-
-  <Modal show={show} onHide={handleClose} animation={true}>
+  <Modal show={show} onHide={handleClose} animation={true} dialogClassName="modal-100w">
   <Modal.Header closeButton>
     <Modal.Title>Package Info</Modal.Title>
   </Modal.Header>
   <Modal.Body>
     {selectedPackageInfo && (
-     <>
-     <p style={{ marginBottom: '8px', fontSize: '16px', fontWeight: 'bold' }}>Package Name: {selectedPackageInfo.package_name}</p>
-     <p style={{ marginBottom: '8px' }}>Package Description: {selectedPackageInfo.package_description}</p>
-     <p style={{ marginBottom: '8px' }}>Package Charge: {selectedPackageInfo.package_charge}</p>
-     <p style={{ marginBottom: '8px' }}>Weight: {selectedPackageInfo.weight}</p>
-     <p style={{ marginBottom: '8px' }}>Height: {selectedPackageInfo.height}</p>
-     <p style={{ marginBottom: '8px' }}>Length: {selectedPackageInfo.length}</p>
-    {/* Make Bill of Lading clickable */}
-    <p style={{ marginBottom: '8px' }}>Bill of Lading(BOL): 
-            <a href={selectedPackageInfo.bill_of_lading} target="_blank" rel="noopener noreferrer">
-              {selectedPackageInfo.bill_of_lading}
-            </a>
-          </p>
-   </>
+      <>
+        <p style={{ marginBottom: '8px', fontSize: '16px', fontWeight: 'bold' }}>Package Name: {selectedPackageInfo.package_name}</p>
+        <p style={{ marginBottom: '8px' }}>Package Description: {selectedPackageInfo.package_description}</p>
+        <p style={{ marginBottom: '8px' }}>Package Charge: {selectedPackageInfo.package_charge}</p>
+        <p style={{ marginBottom: '8px' }}>Weight: {selectedPackageInfo.weight}</p>
+        <p style={{ marginBottom: '8px' }}>Height: {selectedPackageInfo.height}</p>
+        <p style={{ marginBottom: '8px' }}>Length: {selectedPackageInfo.length}</p>
+        {/* Make BOL clickable */}
+        <p style={{ marginBottom: '8px', fontWeight:'bold' }}>Bill of Lading(BOL): <br />
+          <span style={{ cursor: 'pointer' }} onClick={() => window.open(selectedPackageInfo.bill_of_lading, '_blank')}>
+           <span style={{color:'#001b42', fontWeight:'400', textDecoration:'underline', fontStyle:'italics'}}> View document</span>
+          </span>
+        </p>
+      </>
     )}
   </Modal.Body>
   <Modal.Footer>
@@ -678,6 +697,8 @@ const handleSubmit = async (e) => {
     </Button>
   </Modal.Footer>
 </Modal>
+
+
   </div>
    );
 };

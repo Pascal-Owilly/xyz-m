@@ -29,7 +29,7 @@ useEffect(() => {
 // Fetch sellers from the backend
 const fetchSellers = async () => {
     try {
-        const response = await axios.get(`${baseUrl}/api/sellers/`);
+        const response = await axios.get(`${baseUrl}/api/all-sellers/`);
         setSellers(response.data);
     } catch (error) {
         console.error('Error fetching sellers:', error);

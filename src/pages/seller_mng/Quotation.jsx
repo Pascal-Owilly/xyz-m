@@ -18,7 +18,7 @@ function QuotationForm() {
   const [defaultSellerId, setDefaultSellerId] = useState(null);
 
   const [formData, setFormData] = useState({
-    seller: null, // Initialize seller as null
+    seller: null, 
     buyer: null,
     product: '',
     quantity: '',
@@ -89,18 +89,15 @@ function QuotationForm() {
         console.error('Error fetching sellers:', error);
       }
     };
-  
     fetchSellers();
   
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseUrl, accessToken, profile]);
   
-  
-
   useEffect(() => {
     const fetchBuyers = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/api/buyers/`, {
+        const response = await axios.get(`${baseUrl}/api/all-buyers/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -114,7 +111,6 @@ function QuotationForm() {
     fetchBuyers();
   }, [baseUrl, accessToken]);
 
-  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -127,7 +123,6 @@ function QuotationForm() {
     handleSellerChange();
   }, [sellers]);
   
-
   const handleSellerChange = () => {
     // Check if there are sellers available
     if (sellers.length > 0) {
@@ -145,7 +140,7 @@ function QuotationForm() {
       await postData();
       toast.success(<div>Quotation submitted successfully!<br /> <br />Redirecting ...</div>, {
         position: 'top-center',
-        autoClose: 5000,
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -221,7 +216,7 @@ function QuotationForm() {
                   ))}
                 </select>
                 <small className="text-primary">
-                  <a href="/register-buyer" className="text" style={{color:'#001b42', fontWeight:'500', textDecoration:'underline'}}>Register new buyer</a>
+                  <a href="/register-buyer" className="text" style={{color:'#fff', fontWeight:'500', textDecoration:'underline'}}>Register new buyer</a>
                 </small>
               </div>
               
@@ -283,8 +278,6 @@ function QuotationForm() {
             />
             {/* <span className="custom-calendar-icon" style={{ color: 'green', position: 'absolute', top: '50%', right: '10px', transform: 'translateY(-50%)' }}>📅</span> */}
           </div>
-
-
           </div>
           <div className="mb-3">
             <label htmlFor="message" className="form-label"> Message</label>
