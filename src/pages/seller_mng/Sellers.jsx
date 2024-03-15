@@ -631,7 +631,6 @@ return (
                     color: '#ffffff',
                     border:'none',
                     height:'130px'
-                    // Set text color to white
                   }}
                 >
           <h6 className='mx-2'>{breedSupplyStatus}</h6>
