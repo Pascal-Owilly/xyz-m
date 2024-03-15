@@ -99,10 +99,10 @@ const handleLcUpload = () => {
   }
 
   // Check if both buyer and seller are selected
-  // if (!formData.buyer) {
-  //   setLcError("Please select both a buyer and a seller.");
-  //   return;
-  // }
+  if (!sellers) {
+    setLcError("Please select both a buyer and a seller.");
+    return;
+  }
 
   // Reset other error states
   setLcError('');
@@ -141,7 +141,6 @@ const handleLcUpload = () => {
   // paination logic
 
   const itemsPerPage = 7; // Number of items to display per page
- 
   const handlePackageInfoClick = (packageInfo) => {
     axios.get(`${baseUrl}/api/package-info/${packageInfo}/`)
       .then(response => {
@@ -164,7 +163,6 @@ const handleLcUpload = () => {
         console.error('Error fetching invoice details:', error);
       });
   };
-
 
   useEffect(() => {
 
@@ -268,7 +266,6 @@ const handleLcUpload = () => {
   const fetchInvoiceData = async () => {
     try {
       const accessToken = Cookies.get('accessToken');
-
       // Fetch user data to get the user's ID
       const userResponse = await axios.get(`${baseUrl}/auth/user/`, {
         headers: {
@@ -325,7 +322,6 @@ const currentInvoices = invoices.slice(indexOfFirstItem, indexOfLastItem);
 
 const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-
 // State to manage expanded/minimized state of invoices
 const [expandedInvoices, setExpandedInvoices] = useState({});
 
@@ -355,8 +351,6 @@ useEffect(() => {
 
   fetchSellers();
 }, [baseUrl, accessToken]);
-
-
 
 useEffect(() => {
   handleBuyerChange();
@@ -1232,7 +1226,7 @@ useEffect(() => {
   <Form>
       <div className='d-flex align-center justify-space-between'>
       <Form.Group controlId="buyer" style={{  }}>
-  <Form.Label className="text" style={{ color:'#999999' }}>Select Buyer</Form.Label>
+  <Form.Label className="text" style={{ color:'#999999' }}>From</Form.Label>
   <Form.Control as="select" readOnly onChange={handleBuyerChange}>
     {/* Assuming buyers array is defined elsewhere */}
     {buyers.map(buyer => (
@@ -1252,9 +1246,10 @@ useEffect(() => {
               <option key={seller.id} value={seller.id}>{seller.full_name}</option>
             ))}
           </Form.Control>
-            {sellerError && <Form.Text className="text-danger">{sellerError}</Form.Text>}
 
         </Form.Group>
+        {sellerError && <Form.Text className="text-danger">{sellerError}</Form.Text>}
+
       </div>
 
       <div className='d-flex align-center justify-space-between'>
@@ -1282,7 +1277,7 @@ useEffect(() => {
 
       <hr />
           <Card style={{ width: '100%', padding: '1rem', borderRadius: '10px', minHeight: '70vh', color: '#666666' }}>
-      <Table style={{ color: '#999999' }} responsive striped bordered hover>
+      <Table className='text-secondary' style={{ color: '#' }} responsive striped bordered hover>
         <thead>
           <tr>
           <th>LC ID</th>

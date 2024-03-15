@@ -366,7 +366,7 @@ const handleDownloadLC = () => {
  
   useEffect(() => {
     // Fetch sellers
-    axios.get(`${baseUrl}/api/sellers/`, { headers: { Authorization: `Bearer ${accessToken}` } })
+    axios.get(`${baseUrl}/api/all-sellers/`, { headers: { Authorization: `Bearer ${accessToken}` } })
       .then(response => {
         setSellers(response.data);
         
