@@ -200,10 +200,10 @@ useEffect(() => {
      const errors = {};
 
 // Validate phone number format
-const phoneNumberRegex = /^\+(\d{1,4})\d{8,}$/;
-if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || /^\+\d{12}$/.test(formData.phone_number))) {
-  errors.phone_number = 'Please enter a valid phone number. Use the format +2547112345678 or include a valid country code.';
-}
+// const phoneNumberRegex = /^\+(\d{1,4})\d{8,}$/;
+// if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || /^\+\d{12}$/.test(formData.phone_number))) {
+//   errors.phone_number = 'Please enter a valid phone number. Use the format +2547112345678 or include a valid country code.';
+// }
 
 
 
@@ -399,66 +399,7 @@ if (!formData.phone_number || !(phoneNumberRegex.test(formData.phone_number) || 
 
               </td>
               </tr>
-              <tr>
-              <th style={{ border: '1px solid #999999', padding: '5px' }}>Phone Number</th>
-              <td style={{ border: '1px solid #999999', padding: '5px' }}>
-                <input
-                  type="text"
-                  name="phone_number"
-                  value={formData.phone_number}
-                  onChange={handleInputChange}
-                  className='form-control'
-                  placeholder=' eg. +254712345678'
-                />
-              <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.phone_number}</div>
-              </td>
-            </tr>
-            <tr>
-              <th style={{ border: '1px solid #999999', padding: '5px' }}>Email</th>
-              <td style={{ border: '1px solid #999999', padding: '5px' }}>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className='form-control'
-                  placeholder='eg. john@example.com'
-
-                />
-                <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.email}</div>
-
-              </td>
-            </tr>
-            <tr>
-              <th style={{ border: '1px solid #999999', padding: '5px' }}>National ID No</th>
-              <td style={{ border: '1px solid #999999', padding: '5px' }}>
-                <input
-                  type="text"
-                  name="id_number"
-                  value={formData.id_number}
-                  onChange={handleInputChange}
-                  className='form-control'
-                  placeholder='Enter Id Number'
-                />
-              <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.id_number}</div>
-
-              </td>
-            </tr>
-            <tr>
-              <th style={{ border: '1px solid #999999', padding: '5px' }}>Account No</th>
-              <td style={{ border: '1px solid #999999', padding: '5px' }}>
-                <input
-                  type="text"
-                  name="bank_account_number"
-                  value={formData.bank_account_number}
-                  onChange={handleInputChange}
-                  className='form-control'
-                  placeholder='13754712345678'
-                />
-              <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.bank_account_number}</div>
-
-              </td>
-              </tr>
+                        
               <tr>
               <th style={{ border: '1px solid #999999', padding: '5px' }}>Control center</th>
               <td>

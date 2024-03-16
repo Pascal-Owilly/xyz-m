@@ -69,8 +69,7 @@ const fetchBuyers = async () => {
                               </td>
 
                         </tr>
-                        
-                        
+                      
                     ))}
                 </tbody>
             </table>

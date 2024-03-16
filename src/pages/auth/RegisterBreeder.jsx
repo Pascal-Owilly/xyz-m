@@ -15,6 +15,7 @@ const SignUpForm = () => {
     first_name: '',
     last_name: '',
     phone_number: null,
+    bank_account_number: null,
     id_number: null,
     market: '',
     community: '',
@@ -180,7 +181,7 @@ const SignUpForm = () => {
             name='id_number'
             value={registrationData.id_number}
             onChange={handleRegistrationChange}
-            
+            required
           />
           {errorMessages.id_number && (
             <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.id_number}</p>
@@ -197,10 +198,27 @@ const SignUpForm = () => {
             name='phone_number'
             value={registrationData.phone_number}
             onChange={handleRegistrationChange}
-            
+            required
           />
           {errorMessages.phone_number && (
             <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.phone_number}</p>
+          )}
+        </div>
+        <div className='form-group col-md-4'>
+          <label htmlFor='bank_account_number' className='text-secondary'>
+            Bank acc. Number
+          </label>
+          <input
+            type='bank_account_number'
+            className='form-control mb-1'
+            id='bank_account_number'
+            name='bank_account_number'
+            value={registrationData.bank_account_number}
+            onChange={handleRegistrationChange}
+            required
+          />
+          {errorMessages.phone_number && (
+            <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.bank_account_number}</p>
           )}
         </div>
         <div className='form-group col-md-4'>
@@ -214,7 +232,7 @@ const SignUpForm = () => {
             name='community'
             value={registrationData.community}
             onChange={handleRegistrationChange}
-            
+            required
           />
           {errorMessages.generic && (
             <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.community}</p>
@@ -234,7 +252,7 @@ const SignUpForm = () => {
             name='market'
             value={registrationData.market}
             onChange={handleRegistrationChange}
-            
+            required
           />
            {errorMessages.generic && (
             <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.market}</p>
@@ -251,7 +269,7 @@ const SignUpForm = () => {
             name='head_of_family'
             value={registrationData.head_of_family}
             onChange={handleRegistrationChange}
-            
+            required
           />
            {errorMessages.generic && (
             <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.head_of_family}</p>
@@ -268,7 +286,7 @@ const SignUpForm = () => {
             name='county'
             value={registrationData.county}
             onChange={handleRegistrationChange}
-            
+            required
           />
            {errorMessages.generic && (
             <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.county}</p>
@@ -312,10 +330,10 @@ const SignUpForm = () => {
             required
           />
           {errorMessages.confirm_password && (
-            <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.confirm_password[0]}</p>
+            <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.password[0]}</p>
           )}
           {errorMessages.confirm_password && (
-            <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.confirm_password}</p>
+            <p style={{ color: 'red', fontSize: '12px' }}>{errorMessages.password}</p>
           )}
         </div>
         {/* Add more form groups for other fields if needed */}
