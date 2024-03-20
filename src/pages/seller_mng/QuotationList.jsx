@@ -229,7 +229,7 @@ useEffect(() => {
       textDecoration: '',
       color: '#fff',
       marginBottom:'20px',
-      backgroundColor:'green',
+      backgroundColor:'#001b42',
       padding:'7px',
       borderRadius:'5px',
     },
@@ -241,7 +241,7 @@ useEffect(() => {
       width: '100%',
       borderStyle: 'solid',
       borderWidth: 0.5,
-      borderColor: '#999999',
+      borderColor: 'rgb(102, 102, 102)',
       marginBottom: 10,
     },
     tableRow: {
@@ -251,10 +251,10 @@ useEffect(() => {
       width: '30%',
       borderStyle: 'solid',
       borderWidth: 0.5,
-      borderColor: '#999999',
+      borderColor: 'rgb(102, 102, 102)',
       padding: 5,
       backgroundColor: '',
-      color: '#666666',
+      color: 'rgb(102, 102, 102)',
       fontWeight: '500',
       fontSize: 13,
       flexDirection: 'column',
@@ -264,10 +264,10 @@ useEffect(() => {
       width: '70%',
       borderStyle: 'solid',
       borderWidth: 0.5,
-      borderColor: '#666666',
+      borderColor: 'rgb(102, 102, 102)',
       padding: 5,
       fontSize: 13,
-      color: '#999999',
+      color: 'rgb(102, 102, 102)',
       flexDirection: 'column',
 
     },
@@ -309,7 +309,7 @@ useEffect(() => {
       marginBottom:'20px',
       // fontFamily:'verdana',
       fontSize:'11px',
-      color: '#999999',
+      color: 'rgb(102, 102, 102)',
 
     },
   });
@@ -328,7 +328,7 @@ useEffect(() => {
         <View style={styles.addressContainer}>
         <View>
           <Text style={styles.headerTitle}>From:</Text>
-          <View style={styles.hr} />
+          {/* <View style={styles.hr} /> */}
           <Text style={styles.detail}>Full Name: {quotation.seller_full_name}</Text>
           <Text style={styles.detail}>Email:{quotation.seller_email}</Text>
           <Text style={styles.detail}>Address:{quotation.seller_address}</Text>
@@ -337,7 +337,7 @@ useEffect(() => {
           {/* Seller Details */}
         <View>
           <Text style={styles.headerTitle}>To:</Text>
-          <View style={styles.hr} />
+          {/* <View style={styles.hr} /> */}
           <Text style={styles.detail}>Full Name: {quotation.buyer_full_name }</Text>
           <Text style={styles.detail}>Email: {quotation.buyer_email}</Text>
           <Text style={styles.detail}>Address: {quotation.buyer_address}</Text>
@@ -414,7 +414,7 @@ useEffect(() => {
           <th className='' style={{color:'#666666'}}>Seller</th>
           <th className='' style={{color:'#666666'}}>Unit Price</th>
           <th className='' style={{color:'#666666'}}>Quantity</th>
-          <th className='' style={{color:'#666666'}}>Message</th>
+          {/* <th className='' style={{color:'#666666'}}>Message</th> */}
           <th className='' style={{color:'#666666'}}>Status</th>
           <th className='' style={{color:'#666666'}}>Action</th>
           <th className='' style={{color:'#666666'}}>View PDF </th>
@@ -432,7 +432,7 @@ useEffect(() => {
 
             <td className='text' style={{color:'#666666'}}>{quotation.unit_price}</td>
             <td className='text' style={{color:'#666666'}}>{quotation.quantity}</td>
-            <td className='text' style={{color:'#666666'}}>{quotation.message}</td>
+            {/* <td className='text' style={{color:'#666666'}}>{quotation.message}</td> */}
             <td className='text' style={{color:'#666666'}}>
               {quotation.status}
             </td>

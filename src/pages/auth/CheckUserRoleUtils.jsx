@@ -1,8 +1,11 @@
 // CheckUserRoleUtils.js
+import React, { useState, useEffect } from 'react';
 
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { BASE_URL } from './config';
+
+const accessToken = Cookies.get('accessToken');
 
 const refreshAccessToken = async () => {
   const baseUrl = BASE_URL;
@@ -22,6 +25,7 @@ const refreshAccessToken = async () => {
   }
 };
 const fetchUserData = async () => {
+  
   const baseUrl = BASE_URL;
 
   try {
@@ -48,6 +52,13 @@ const fetchUserData = async () => {
     }
   }
 };
+
+// useEffect(() => {
+//   // fetchUserData();
+//   // refreshAccessToken()
+//   // fetchUserData()
+//   // checkUserRole()
+// }, [accessToken]);
 
 const checkUserRole = async () => {
   try {

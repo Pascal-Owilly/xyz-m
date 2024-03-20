@@ -40,32 +40,132 @@ const ControlCenters = () => {
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [showInventoryModal, setShowInventoryModal] = useState(false);
+  const [sellers, setSellers] = useState([]);
+  const [profile, setProfile] = useState([]);
+  const [selectedSeller, setSelectedSeller] = useState(null); // State to track selected seller
+  const [formData, setFormData] = useState({
+    seller: null, 
 
-const handleAddControlCenter = async () => {
-  try {
-    await axios.post(`${baseUrl}/api/control-centers/`, {
-      name: newControlCenterName,
-      location: newLocation,
-      address: newAddress,
-      contact: newContact
-      // Add other fields as needed
-    });
-    fetchControlCenters(); // Refresh control centers after adding a new one
-    setNewControlCenterName(''); // Clear the input field after adding
-    setNewLocation(''); // Clear the location field after adding
-    setNewAddress(''); // Clear the address field after adding
-    setNewContact(''); // Clear the contact field after adding
-    setSuccessMessage('Control center added successfully.');
-    setErrorMessage('');
+  });
 
-    // Close the modal
-    setShowModal(false);
-    // Reset the form
-    setNewControlCenterName('');
-  } catch (error) {
-    console.error('Error adding control center:', error);
-    setSuccessMessage('');
-    setErrorMessage('Failed to add control center.');
+  const handleAddControlCenter = async () => {
+    try {
+      // Create a new FormData object
+      const formData = new FormData();
+  
+      // Extract the seller ID from the selected seller object
+      const sellerId = selectedSeller ? selectedSeller.id : null;
+      // Convert sellerId to an integer if it's a string
+      const sellerIdInt = parseInt(sellerId);
+
+      // Append control center data to FormData
+      formData.append('name', newControlCenterName);
+      formData.append('location', newLocation);
+      formData.append('address', newAddress);
+      formData.append('contact', newContact);
+      formData.append('seller', sellers[0].id); // Append the selected seller's ID
+  
+      // Make the POST request with the FormData object
+      await axios.post(`${baseUrl}/api/control-centers/`, formData);
+  
+      // Refresh control centers after adding a new one
+      fetchControlCenters();
+  
+      // Clear the input fields after adding
+      setNewControlCenterName('');
+      setNewLocation('');
+      setNewAddress('');
+      setNewContact('');
+  
+      // Show success message
+      setSuccessMessage('Control center added successfully.');
+      setErrorMessage('');
+  
+      // Close the modal
+      setShowModal(false);
+    } catch (error) {
+      console.error('Error adding control center:', error);
+      // Show error message
+      setSuccessMessage('');
+      setErrorMessage('Failed to add control center.');
+    }
+  };
+  
+useEffect(() => {
+  const fetchUserData = async () => {
+    try {
+      const accessToken = Cookies.get('accessToken');
+      if(!accessToken){
+        navigate('/')
+      }
+      if (accessToken) {
+        const response = await axios.get(`${baseUrl}/auth/user/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        const userProfile = response.data;
+        setProfile(userProfile);
+      }
+    } catch (error) {
+      // Check if the error indicates an expired access token
+      if (error.response && error.response.status === 401) {
+        // Attempt to refresh the access token
+        await refreshAccessToken();
+      } else {
+        console.error('Error fetching user data:', error);
+      }
+    }
+  };
+
+  fetchUserData();
+}, [baseUrl, navigate]);
+
+useEffect(() => {
+  const fetchSellers = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/api/sellers/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log('sellers', response.data)
+      setSellers(response.data);
+
+      // Set the default seller if profile is available
+      if (profile) {
+        const loggedInSeller = response.data.find(seller => seller.id === profile.id);
+        if (loggedInSeller) {
+          setFormData(prevFormData => ({
+            ...prevFormData,
+            seller: loggedInSeller, // Set the entire seller object
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching sellers:', error);
+    }
+  };
+  fetchSellers();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [baseUrl, accessToken, profile]);
+
+
+
+useEffect(() => {
+  handleSellerChange();
+}, [sellers]);
+
+// Function to handle changes in the selected seller
+const handleSellerChange = (event) => {
+  if (event && event.target) {
+    const selectedSellerId = parseInt(event.target.value);
+    // Find the selected seller by ID
+    const seller = sellers.find((seller) => seller.id === selectedSellerId);
+    // Set the selected seller
+    setSelectedSeller(seller);
   }
 };
 
@@ -397,6 +497,31 @@ const handleManagerClick = async (center) => {
       <Form.Label>Contact:</Form.Label>
       <Form.Control type="text" placeholder="Enter contact" value={newContact} onChange={(e) => setNewContact(e.target.value)} />
     </Form.Group>
+    <div className="col-md-6 mb- d-none">
+  <label htmlFor="seller" className="form-label">
+  </label>
+  <div>
+    {formData.seller ? (
+      <p>{formData.seller.full_name}</p>
+    ) : (
+      <select
+      className="form-control"
+      id="seller"
+      name="seller"
+      required
+      value={selectedSeller ? selectedSeller.id : ''}
+      onChange={handleSellerChange}
+    >
+      {sellers.map((seller) => (
+        <option key={seller.id} value={seller.id}>
+          {seller.full_name}
+        </option>
+      ))}
+    </select>
+    )}
+  </div>
+</div>
+
   </Form>
 </Modal.Body>
 <Modal.Footer>
@@ -437,8 +562,8 @@ const handleManagerClick = async (center) => {
         <th>Location</th>
         <th>Address</th>
         <th>Contact</th>
+        <th>Seller</th>
         <th>Collateral Agent</th>
-
         <th>Action</th>
       </tr>
     </thead>
@@ -449,10 +574,12 @@ const handleManagerClick = async (center) => {
       <td>{center.location}</td>
       <td>{center.address}</td>
       <td>{center.contact}</td>
+      <td>{center.seller_full_name} {center.username}</td>
+
       <td style={{fontFamily:'verdana', fontWeight:'bold',fontSize:'15px'}}>{center.assigned_agent_full_name}</td>
 
       <td>
-        <button className="btn btn-sm text-light" style={{backgroundColor:'#001b42', fontSize:'11px'}} onClick={() => handleManagerClick(center)}>View Details</button>
+        <button className="btn btn-sm text-light" style={{backgroundColor:'#001b42', fontSize:'11px', fontWeight:'bold'}} onClick={() => handleManagerClick(center)}>View Details</button>
       </td>
     </tr>
   ))}

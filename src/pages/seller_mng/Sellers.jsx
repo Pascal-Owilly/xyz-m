@@ -28,6 +28,7 @@ const Sellers = ({ orderId }) => {
   const [quotations, setQuotations] = useState([]);
   const [updateCompleted, setUpdateCompleted] = useState(false);
   const [lcStatus, setLcStatus] = useState('');
+  const [lcId, setLcId] = useState(null);
 
   // Pagination
   const itemsPerPage = 7; // Number of items to display per page
@@ -63,29 +64,58 @@ const Sellers = ({ orderId }) => {
     const [breedsData, setBreedsData] = useState([]);
     const [showAll, setShowAll] = useState(false);
 
-    const handleUpdateStatus = async (lcId, newStatus) => {
-      try {
-        // Send a PATCH request to update the LC status
-        const response = await axios.patch(
-          `${BASE_URL}/api/all-lcs/${lcId}/`,
-          { status: newStatus },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-  
-        // Handle successful update
-        console.log('LC status updated successfully:', response.data);
-        setLcStatus(newStatus);
-        toast.success('LC status updated successfully.');
-      } catch (error) {
-        // Handle error
-        console.error('Error updating LC status:', error);
-        toast.error('Error updating LC status. Please try again.');
-      }
-    };
+    useEffect(() => {
+      // Fetch letter of credits from the new endpoint with headers
+      axios.get(`${baseUrl}/api/all-lcs/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+        .then(response => {
+          console.log('Fetched letter of credits:', response.data);
+          setLetterOfCredits(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching letter of credits:', error);
+        });
+    }, [lcStatus]); // Fetch again whenever lcStatus changes
+
+    useEffect(() => {
+      if (!lcStatus || !lcId) return; // Skip if lcStatus or lcId is not set
+    
+      // Update lcStatus whenever the status of the LC changes
+      handleClickUpdateStatus(lcId, newStatus);
+    }, [lcStatus, lcId]); // Listen for changes in lcStatus or lcId
+    
+  // Function to handle click on update status button
+  // const handleClickUpdateStatus = (lcId, newStatus) => {
+  //   setLcStatus(newStatus); // Update lcStatus when the button is clicked
+  // };
+
+   // Function to handle click on update status button
+  // Function to handle click on update status button
+const handleClickUpdateStatus = async (lcId, newStatus) => {
+  try {
+    // Show confirmation alert
+    if (window.confirm('Are you sure you want to update the LC status?')) {
+      // Send PATCH request to update LC status
+      const response = await axios.patch(
+        `${baseUrl}/api/all-lcs/${lcId}/`,
+        { status: newStatus }
+      );
+      // Handle success and update lcStatus accordingly
+      setLcStatus(newStatus);
+      // toast.success('LC status updated successfully.');
+    } else {
+      toast.info('Update canceled.');
+    }
+  } catch (error) {
+    // Handle error
+    console.error('Error updating LC status:', error);
+    toast.error('Error updating LC status. Please try again.');
+  }
+};
+
 
     useEffect(() => {
       const fetchData = async () => {
@@ -721,25 +751,18 @@ return (
                   {letterOfCredit.status}
                 </button>
               </td>
-               <td>
-              <select
-      className="form-select p-1 text-dark bg-white"
-      onChange={(e) => {
-        // Check LC status before updating
-        if (lcStatus === 'active') {
-          handleUpdateStatus(letterOfCredit.id, e.target.value);
-        } else {
-          // Display error message or prevent update
-          console.error('Cannot update status. Letter of credit is not active.');
-        }
-      }}
-      style={{ border: 'none', borderRadius: '30px', padding: '5px' }}
-    >
-      <option style={{ fontSize: '12px' }} value="">Update</option>
-      <option style={{ fontSize: '12px' }} value="approved">Approv</option>
-      <option style={{ fontSize: '12px' }} value="rejected">Reject</option>
-    </select>
-              </td>
+              <td>
+  <select
+    className="form-select p-1 text-dark bg-white"
+    onChange={(e) => handleClickUpdateStatus(letterOfCredit.id, e.target.value, lcId)}
+    style={{ border: 'none', borderRadius: '30px', padding: '5px' }}
+  >
+    <option style={{ fontSize: '12px' }} value="">Update</option>
+    <option style={{ fontSize: '12px' }} value="approved">Approv</option>
+    <option style={{ fontSize: '12px' }} value="rejected">Reject</option>
+  </select>
+</td>
+
             </tr>
           ))}
         </tbody>

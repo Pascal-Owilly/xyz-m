@@ -392,9 +392,9 @@ const handleSubmit = async (e) => {
     status.status === 'shipped' ? '#f0f0f0' : // Light Gray
     status.status === 'received' ? '' : '' // Light Green
 }}>
-    <td style={{ color: '#999999', fontWeight: 'bold' }}>
+    <td style={{ color: 'rgb(102, 102, 102)', fontWeight: '' }}>
         <button 
-          style={{ width: '200px', background: '#f2f2f2', padding: '8px', borderRadius:'30px',color:'#999999', fontWeight:'', padding:'12px' }}
+          style={{ width: '200px', background: 'transparent', padding: '8px', borderRadius:'30px',color:'rgb(102, 102, 102)', fontWeight:'', padding:'12px' }}
           onClick={() => handleInvoiceDetailsClick(status.invoice_number)}
         >
           {status.invoice_number}
@@ -402,7 +402,7 @@ const handleSubmit = async (e) => {
       </td>
       <td className='d-flex align-items-center'>
       <button
- style={{ width: '120px', background: '#f2f2f2', padding: '8px', borderRadius:'30px',color:'#999999', fontWeight:'', padding:'12px' }}
+ style={{ width: '120px', background: '#f2f2f2', padding: '8px', borderRadius:'30px',color:'rgb(102, 102, 102)', fontWeight:'', padding:'12px' }}
   disabled={status.status === 'received'} // Disable the button if status is 'received'
 >
   {status.status}
@@ -412,7 +412,7 @@ const handleSubmit = async (e) => {
   {status.status === 'received' && <FaCheck style={{ marginLeft: '5px', fontSize: '16px', color: 'green', textTransform:'capitalize'}} />}
 </button>
       </td>
-      <td style={{ color: '#999999', fontWeight: 'bold' }}>
+      <td style={{ color: 'rgb(102, 102,102)', fontWeight: '' }}>
         <div className='d-flex'>
           <select className="form-select p-1 text-dark bg-white" onChange={(e) => handleUpdateStatus(status.id, e.target.value)} style={{border:'none', borderRadius:'30px', padding:'5px'}}>
             <option style={{fontSize:'12px'}} value="">Update</option>
@@ -423,26 +423,26 @@ const handleSubmit = async (e) => {
           </select>
         </div>
       </td>
-      <td style={{ width: '200px', background: '#f2f2f2', color:'#999999', fontWeight:'' }}>{status ? status.buyer_full_name : ''}</td>
-<td style={{ width: '200px', background: '#f2f2f2', color:'#999999', fontWeight:'' }}>{status ? status.seller_full_name : ''}</td>
+      <td style={{ width: '', background: '', color:'rgb(102, 102, 102)', fontWeight:'' }}>{status ? status.buyer_full_name : ''}</td>
+<td style={{ width: '', background: '', color:'rgb(102, 102, 102)', fontWeight:'' }}>{status ? status.seller_full_name : ''}</td>
 
-      <td style={{ width: '200px', background: '#f2f2f2', padding: '8px',color:'#999999', fontWeight:'', padding:'12px' }}>{status.logistics_company}</td>
-      <td style={{ color: '#999999', fontSize:'12px' }}>
+      <td style={{ width: '', background: '', padding: '8px',color:'rgb(102, 102, 102)', fontWeight:'', padding:'12px' }}>{status.logistics_company}</td>
+      <td style={{ color: 'rgb(102, 102, 102)', fontSize:'12px' }}>
         <button 
-          style={{ width: '130px', background: '#f2f2f2', padding: '2px', borderRadius:'30px',color:'#001b42', fontWeight:'bold', padding:'12px', border:'none' }}
+          style={{ width: '', background: 'transparent', padding: '2px', borderRadius:'30px',color:'#001b42', fontWeight:'bold', padding:'12px', border:'none' }}
           onClick={() => {
             handlePackageInfoClick(status.package_info);
             handleShow(); // Set show state to true
           }}
         >
-          View package
+          View 
         </button>
       </td>
-      <td style={{ width: '200px', background: '#f2f2f2',color:'#999999', fontWeight:'', padding:'12px' }}>{status.shipping_mode}</td>
+      <td style={{ width: '', background: '',color:'rgb(102, 102, 102)', fontWeight:'', padding:'12px' }}>{status.shipping_mode}</td>
       {/* <td style={{ width: '200px', background: '#f2f2f2', padding: '8px', borderRadius:'30px',color:'#999999', fontWeight:'bold', padding:'12px' }}>{status.time_of_delivery}</td> */}
     </tr>
   );
-  
+
   return (
 
     <div className='main-container container-fluid' style={{ minHeight: '85vh' }}>
@@ -620,9 +620,6 @@ const handleSubmit = async (e) => {
         </div>
       </div>
     </div>
-
-
-    
     <div>
     </div>
       {updateMessage && <div className="alert alert-success">{updateMessage}</div>}
@@ -630,25 +627,25 @@ const handleSubmit = async (e) => {
       <div className="card mb-4 mt-3" style={{ width: '100%', margin: 'auto', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '10px' }}>
   <div className="card-body">
   <div className="d-flex justify-content-between align-items-center">
-      <h5 className="card-title" style={{ color: '#999999'}}>List Of Shipment</h5>
-      <Button className='btn btn-sm mb-2' variant="" type="submit" style={{ width: '200px', background: '#f2f2f2', padding: '8px', borderRadius:'30px',color:'#666666', fontWeight:'bold', padding:'12px' }} onClick={handleModalToggle}>
+      <h5 className="card-title" style={{ color: 'rgb(102, 102, 102)', fontSize:'1.2rem'}}>List Of Shipment</h5>
+      <Button className='btn btn-sm mb-2' variant="" type="submit" style={{ width: '200px', background: '', padding: '8px', borderRadius:'30px',color:'#666666', fontWeight:'bold', padding:'12px', border:'', boxShadow: 'rgba(10, 10, 10, 0.2) 0px 4px 8px' }} onClick={handleModalToggle}>
         <i className='dw dw-plus'></i> Create new shipment
       </Button>
     </div>
     <hr />
     {/* Your progress bar code */}
     <div className="table-responsive">
-      <table className="table">
+      <table className="table" style={{fontSize:''}}>
         <thead>
-          <tr style={{ backgroundColor: '#f8f9fa', color:'#666666' }}>
-            <th style={{ color: '#666666', fontSize:'12px' }}>Tracking No</th>
-            <th style={{ color: '#666666', fontSize:'12px' }}>Current Status</th>
-            <th style={{ color: '#666666', fontSize:'12px' }}>Actions</th>
-            <th style={{ color: '#666666', fontSize:'12px' }}>Buyer</th>
-            <th style={{ color: '#666666', fontSize:'12px' }}>Seller</th>
-            <th style={{ color: '#666666', fontSize:'12px' }}>Logistics Company</th>
-            <th style={{ color: '#666666', fontSize:'12px' }}>Package Info</th>
-            <th style={{ color: '#666666', fontSize:'12px' }}>Shipping Mode</th>
+          <tr style={{ backgroundColor: '', color:'rgb(102, 102, 102)' }}>
+            <th style={{}}>Tracking No</th>
+            <th style={{}}>Current Status</th>
+            <th style={{}}>Actions</th>
+            <th style={{}}>Buyer</th>
+            <th style={{}}>Seller</th>
+            <th style={{}}>Logistics Company</th>
+            <th style={{}}>Package Info</th>
+            <th style={{}}>Shipping Mode</th>
             {/* <th style={{ color: '#666666', fontSize:'12px' }}>Time of Delivery</th> */}
           </tr>
         </thead>

@@ -81,8 +81,6 @@ const Breader = () => {
     }
   }, [accessToken, baseUrl]);
   
-  
-
   useEffect(() => {
     const fetchData = async () => {
       try {

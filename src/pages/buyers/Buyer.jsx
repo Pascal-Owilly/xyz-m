@@ -820,10 +820,10 @@ useEffect(() => {
     page: {
       padding: 30,
       backgroundColor:'rgb(249, 250, 251)',
-      color: '#666666',
+      color: 'rgb(102,102,102)',
     },
     headerTitle: {
-      color:'#666666',
+      color:'rgb(102,102,102)',
       fontWeight:'bold',
       marginBottom:'10px',
       marginTop:'10px',
@@ -841,7 +841,7 @@ useEffect(() => {
       textDecoration: '',
       color: '#fff',
       marginBottom:'20px',
-      backgroundColor:'green',
+      backgroundColor:'#001b42',
       padding:'7px',
       borderRadius:'5px',
     },
@@ -1136,7 +1136,7 @@ useEffect(() => {
           <th className='' style={{color:'#666666'}}>Seller</th>
           <th className='' style={{color:'#666666'}}>Unit Price</th>
           <th className='' style={{color:'#666666'}}>Quantity</th>
-          <th className='' style={{color:'#666666'}}>Message</th>
+          {/* <th className='' style={{color:'#666666'}}>Message</th> */}
           <th className='' style={{color:'#666666'}}>Status</th>
           <th className='' style={{color:'#666666'}}>Action</th>
           <th className='' style={{color:'#666666'}}>Download </th>
@@ -1154,7 +1154,7 @@ useEffect(() => {
 
             <td className='text' style={{color:'#666666'}}>{quotation.unit_price}</td>
             <td className='text' style={{color:'#666666'}}>{quotation.quantity}</td>
-            <td className='text' style={{color:'#666666'}}>{quotation.message}</td>
+            {/* <td className='text' style={{color:'#666666'}}>{quotation.message}</td> */}
             <td className='text' style={{color:'#666666'}}>
               {quotation.confirm ? 'Confirmed' : 'Pending'}
             </td>

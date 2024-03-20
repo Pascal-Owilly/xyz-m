@@ -105,7 +105,7 @@ const LoginTest = () => {
       // Redirect based on user role
       switch (role) {
         case 'superuser':
-          navigate('/admin_dashboard');
+          navigate('/sellers');
           break;
         case 'admin':
           navigate('/sellers');

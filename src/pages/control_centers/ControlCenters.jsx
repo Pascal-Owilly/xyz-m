@@ -385,6 +385,7 @@ const handleManagerClick = async (center) => {
         <th>Location</th>
         <th>Address</th>
         <th>Contact</th>
+        <th>Seller</th>
         <th>Collateral Agent</th>
         <td>Update</td>
         <th>Action</th>
@@ -397,6 +398,8 @@ const handleManagerClick = async (center) => {
       <td>{center.location}</td>
       <td>{center.address}</td>
       <td>{center.contact}</td>
+      <td>{center.seller_full_name}</td>
+
       <td style={{fontFamily:'verdana', fontWeight:'bold',fontSize:'15px'}}>{center.assigned_agent_full_name}</td>
       <td>
   <select
@@ -412,7 +415,7 @@ const handleManagerClick = async (center) => {
   </select>
 </td>
       <td>
-        <button className="btn btn-sm text-light" style={{backgroundColor:'#001b42', fontSize:'11px'}} onClick={() => handleManagerClick(center)}>View Details</button>
+        <button className="btn btn-sm text-light" style={{backgroundColor:'#001b42', fontSize:'10px', width:'90px', fontWeight:'bold'}} onClick={() => handleManagerClick(center)}>View Details</button>
       </td>
     </tr>
   ))}
