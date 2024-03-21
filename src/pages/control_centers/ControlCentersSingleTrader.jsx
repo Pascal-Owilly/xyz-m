@@ -413,7 +413,7 @@ const handleManagerClick = async (center) => {
           <a className={`nav-link ${activeTab === 'ControlCenters' ? 'active' : ''}`} onClick={() => handleTabClick('ControlCenters')} role="tab" aria-controls="ControlCenters" aria-selected={activeTab === 'ControlCenters'}>Control Centers</a>
         </li>
         <li className="nav-item">
-          <a className={`nav-link text-secondary ${activeTab === 'CollateralManager' ? 'active' : ''}`} onClick={() => handleTabClick('CollateralManager')} role="tab" aria-controls="CollateralManager" aria-selected={activeTab === 'CollateralManager'}>Inventory Overview</a>
+          <a className={`nav-link text-secondary ${activeTab === 'InventoryOverview' ? 'active' : ''}`} onClick={() => handleTabClick('CollateralManager')} role="tab" aria-controls="InventoryOverview" aria-selected={activeTab === 'InventoryOverview'}>Inventory Overview</a>
         </li>
       </ul>
 

@@ -64,50 +64,6 @@ useEffect(() => {
   fetchControlCentersAndSellers();
 }, [baseUrl]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       // Fetch seller data for the currently logged-in breeder
-  //       const response = await axios.get(`${baseUrl}/api/all-sellers/`, {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //           'Content-Type': 'application/json',
-  //         },
-  //         params: {
-  //           breeder_id: user?.id, // Pass the currently logged-in breeder's ID as a parameter
-  //         },
-  //       });
-    
-  //       const sellerData = response.data;
-  //       console.log('seller data', sellerData); // Log the sellerData array
-    
-  //       // Set Abattoir name to the full name of the first seller related to the breeder
-  //       if (sellerData.length > 0) {
-  //         setFormData((prevData) => ({
-  //           ...prevData,
-  //           full_name: sellerData[0]?.full_name || '',
-  //         }));
-  //       } else {
-  //         console.error('No seller data found for the breeder.');
-  //         // Handle the case where no seller data is found
-  //       }
-  //     } catch (error) {
-  //       if (error.response && error.response.status === 401) {
-  //         // Token expired, try refreshing the token
-  //         await refreshAccessToken();
-  //         // Retry fetching data
-  //         await fetchData();
-  //       } else {
-  //         // Handle other errors
-  //         console.error('Error fetching seller data:', error);
-  //         // You can set an error state here to display an error message to the user
-  //       }
-  //     }
-  //   };
-    
-  //   fetchData();
-  // }, [accessToken, user]);
-
   useEffect(() => {
     fetchUserData();
   }, [navigate, accessToken]);
@@ -143,46 +99,6 @@ useEffect(() => {
     fetchUserData();
   }, [navigate, accessToken]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       // Fetch seller data for the currently logged-in breeder
-  //       const abattoirResponse = await axios.get(`${baseUrl}/api/all-sellers/`, {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //           'Content-Type': 'application/json',
-  //         },
-  //         params: {
-  //           breeder_id: user?.id, // Pass the currently logged-in breeder's ID as a parameter
-  //         },
-  //       });
-  
-  //       if (sellerData.length > 0) {
-  //         setFormData((prevData) => ({
-  //           ...prevData,
-  //           seller: sellerData[0].id, // Update field to "seller" instead of "abattoir"
-  //           seller_full_name: sellerData[0].seller_full_name, // Update field to "seller_name"
-  //         }));
-  //       }
-  
-  //       // Set default breeder name
-  //       setFormData((prevData) => ({
-  //         ...prevData,
-  //         breeder: user?.id,
-  //         user: user?.id,
-  //         breeder_name: user?.username,
-  //       }));
-  //     } catch (error) {
-  //       if (error.response && error.response.status === 401) {
-  //         await refreshAccessToken();
-  //       }
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   };
-  
-  //   fetchData();
-  // }, [accessToken, user]);
-
   useEffect(() => {
     const fetchSellers = async () => {
       try {
@@ -206,6 +122,10 @@ useEffect(() => {
   
     // Initialize errors object
     const errors = {};
+    if (!formData.breed || formData.breed <= 0) {
+      errors.breed = 'Please enter a name for this product.';
+    }
+  
   
     // Validate breeds supplied
     if (!formData.breeds_supplied || formData.breeds_supplied <= 0) {
@@ -288,10 +208,10 @@ useEffect(() => {
           const phoneError = backendErrors.phone_number[0].string;
           setErrors({ phone_number: phoneError });
         } else {
-          console.error('Error in creating BreaderTrade:', backendErrors);
+          alert('Error in creating BreaderTrade:', backendErrors);
         }
       } else {
-        console.error('Error submitting invoice form:', error.response.data);
+        alert('Error submitting invoice form:', error.response.data);
       }
     }
   };
@@ -351,6 +271,8 @@ useEffect(() => {
     className='form-control'
     placeholder="Enter product name"
   />
+                  <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.breed}</div>
+
 </td>
 
 </tr>
@@ -433,59 +355,37 @@ useEffect(() => {
                     ))}
                   </select>
                 </div>
+                <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.control_center}</div>
+
               </td>
+
               </tr>
               <tr>
               <th style={{ border: '1px solid #999999', padding: '5px' }}>Seller</th>
               <td style={{ border: '1px solid #999999', padding: '5px' }}>
               <div className='form-group'>
                   <label htmlFor='seller'>Select seller</label>
-                  {/* <select
-                    id='seller'
-                    name='seller'
-                    className='form-control'
+                    <select
+                    className="form-select text-dark p-2 bg-light "
+                    style={{ borderRadius: '', width: '100%', border: '1px solid #999999', opacity: 0.5 }}
+                    id="seller"
+                    name="seller"
                     value={formData.seller}
-                    onChange={handleInputChange}
+                    onChange={handleChange}
+                    required
                   >
-                    <option value=''>Select Seller</option>
+                    <option className='bg-light p-3 text-dark' value="">Select seller</option>
                     {sellers.map((seller) => (
-                      <option key={seller.id} value={seller.id}>{seller.full_name} - ({seller.username})</option>
+                      <option className='bg-light p-2' key={seller.id} value={seller.seller}>
+                        {seller.full_name} - ({seller.username})
+                      </option>
                     ))}
-                  </select> */}
-                  {/* <select
-                  className="form-select text-dark p-2 bg-light "
-                  style={{ borderRadius: '', width: '100%', border: '1px solid #999999', opacity: 0.5 }}
-                  id="buyer"
-                  name="buyer"
-                  value={formData.buyer}
-                  onChange={handleChange}
-                  required
-                >
-                  <option className='bg-light p-3 text-dark' value="">Select Buyer</option>
-                  {buyers.map((buyer) => (
-                    <option className='bg-light p-2' key={buyer.id} value={buyer.id}>
-                      {buyer.full_name}
-                    </option>
-                  ))}
-                </select> */}
-                   <select
-                  className="form-select text-dark p-2 bg-light "
-                  style={{ borderRadius: '', width: '100%', border: '1px solid #999999', opacity: 0.5 }}
-                  id="seller"
-                  name="seller"
-                  value={formData.seller}
-                  onChange={handleChange}
-                  required
-                >
-                  <option className='bg-light p-3 text-dark' value="">Select seller</option>
-                  {sellers.map((seller) => (
-                    <option className='bg-light p-2' key={seller.id} value={seller.seller}>
-                      {seller.full_name} - ({seller.username})
-                    </option>
-                  ))}
-                </select>
+                  </select>
                 </div>
+                <div className="error-message text-danger" style={{fontSize:'14px'}}>{errors.seller}</div>
+
                 </td>
+
                 </tr>
    
                 <input
