@@ -38,22 +38,16 @@ const Sellers = ({ orderId }) => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     // admin vars
-    const [activeSection, setActiveSection] = useState('Negotiations');
     const [paymentCode, setPaymentCode] = useState('');
     const [paymentData, setPaymentData] = useState(null);
     const [error, setError] = useState(null);
     const accessToken = Cookies.get('accessToken');
-    const [selectedBreeder, setSelectedBreeder] = useState('');
-    const [showForm, setShowForm] = useState(false);
-
+    
     // LC
     const [lcDocument, setLcDocument] = useState(null);
     const [profile, setProfile] = useState(null)
-    const [userProfile, setUserProfile] = useState(null);
     const [arrivedOrdersData, setArrivedOrdersData] = useState([]);
     const [shipmentProgressData, setShipmentProgressData] = useState([]);
-    const [logisticsStatuses, setLogisticsStatuses] = useState([]);
-    const [orders, setOrders] = useState([]);
     const [letterOfCredits, setLetterOfCredits] = useState([]);
     const [lcUploadSuccess, setLcUploadSuccess] = useState(false);
     const [lcUploadMessage, setLcUploadMessage] = useState('');
@@ -87,13 +81,6 @@ const Sellers = ({ orderId }) => {
       handleClickUpdateStatus(lcId, newStatus);
     }, [lcStatus, lcId]); // Listen for changes in lcStatus or lcId
     
-  // Function to handle click on update status button
-  // const handleClickUpdateStatus = (lcId, newStatus) => {
-  //   setLcStatus(newStatus); // Update lcStatus when the button is clicked
-  // };
-
-   // Function to handle click on update status button
-  // Function to handle click on update status button
 const handleClickUpdateStatus = async (lcId, newStatus) => {
   try {
     // Show confirmation alert
@@ -115,7 +102,6 @@ const handleClickUpdateStatus = async (lcId, newStatus) => {
     toast.error('Error updating LC status. Please try again.');
   }
 };
-
 
     useEffect(() => {
       const fetchData = async () => {
@@ -762,8 +748,7 @@ return (
     <option style={{ fontSize: '12px' }} value="rejected">Reject</option>
   </select>
 </td>
-
-            </tr>
+  </tr>
           ))}
         </tbody>
         

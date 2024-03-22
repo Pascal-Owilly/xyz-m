@@ -530,8 +530,7 @@ const handleManagerClick = async (center) => {
 </Modal.Footer>
 
       </Modal>
-            {successMessage && <div className='success text-success'>{successMessage}</div>}
-            {errorMessage && <div className='error'>{errorMessage}</div>}      
+              
       {activeTab === 'ControlCenters' && (
         <div>
           <hr />
@@ -548,6 +547,8 @@ const handleManagerClick = async (center) => {
 
           </div>
           <hr />
+          {successMessage && <div className='success text-success'>{successMessage}</div>}
+            {errorMessage && <div className='error'>{errorMessage}</div>}   
           {message && (
   <div className={`alert ${isSuccess ? 'alert-success' : 'alert-danger'}`} role="alert">
     {message}

@@ -259,9 +259,9 @@ const local_sale = SALE_CHOICES.map(([value, label]) => (
     message && (
       <div className={`alert alert-${message.type} mt-3`}>
         {message.text}
-        <button className="btn btn-sm btn-secondary ms-2 mx-2" onClick={onVisibilityChange}>
-          Submit Another
-        </button>
+        {/* <button className="btn btn-sm btn-secondary ms-2 mx-2" onClick={onVisibilityChange}>
+           Submit Another 
+        </button> */}
       </div>
     )
   );

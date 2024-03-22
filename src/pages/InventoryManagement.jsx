@@ -23,7 +23,7 @@ const InventoryPage = () => {
   };
 
   const getColorClass = (breed) => {
-    switch (breed.toLowerCase()) {
+    switch (breed) {
       case 'cherry':
         return 'cherry';
       case 'blue-dark':
@@ -76,15 +76,15 @@ const InventoryPage = () => {
         ]);
 
         const breedTotalsMap = breederTotalsResponse.data.reduce((acc, item) => {
-          const breed = item.breed.toLowerCase();
+          const breed = item.breed;
           acc[breed] = (acc[breed] || 0) + item.total_breed_supply;
           return acc;
         }, {});
 
         const breedPartsMap = breedCutResponse.data.reduce((acc, item) => {
-          const breed = item.breed.toLowerCase();
-          const partName = item.part_name.toLowerCase();
-          const saleType = item.sale_type.toLowerCase();
+          const breed = item.breed;
+          const partName = item.part_name;
+          const saleType = item.sale_type;
           if (!acc[breed]) {
             acc[breed] = {};
           }
@@ -169,7 +169,7 @@ const InventoryPage = () => {
                   </div>
                   <div className="row align-items-center d-fle">
                     <div className="col-4">
-                      <p className=" mb-0" style={{ backgroundColor: '', color: '#666666', fontSize: '16px', fontWeight: 'bold' }}>{capitalizeFirstLetter(breed)}</p>
+                      <p className=" mb-0" style={{ backgroundColor: '', color: '#666666', fontSize: '16px', fontWeight: 'bold' }}>{breed}</p>
                     </div>
                     <div className="col-3">
                       <span className="mb-0" style={{ backgroundColor: '', color: '#666666', fontSize: '15px' }}>{total}</span>

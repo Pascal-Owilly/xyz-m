@@ -130,13 +130,48 @@ const updateCollateralManager = async () => {
 };
 
 // Function to handle changes in the selected collateral manager
-const handleCollateralManagerChange = (controlCenterId, event) => {
+const handleCollateralManagerChange = async (controlCenterId, event) => {
   const selectedCollateralManagerId = event.target.value;
-  // Set the selected collateral manager and associated control center ID
-  setSelectedCollateralManagerId(selectedCollateralManagerId);
-  setSelectedControlCenterId(controlCenterId);
-  handleConfirmUpdate();
-  console.log('collateram manager change', selectedCollateralManagerId)
+  
+  // Show a confirmation alert to confirm the update
+  const isConfirmed = window.confirm('Are you sure you want to update the collateral manager?');
+  
+  // Proceed with the update only if the user confirms
+  if (isConfirmed) {
+    try {
+      // Make an API request to update the control center with the selected collateral manager's ID
+      const response = await axios.put(`${baseUrl}/api/control-centers/${controlCenterId}/`, {
+        assigned_collateral_agent: selectedCollateralManagerId,
+      });
+
+      // Update the state or UI to reflect the changes
+      if (response.status === 200) {
+        // Update the control centers state with the updated data
+        const updatedControlCenters = controlCenters.map(center => {
+          if (center.id === controlCenterId) {
+            return {
+              ...center,
+              assigned_collateral_agent: selectedCollateralManagerId,
+            };
+          }
+          return center;
+        });
+        setControlCenters(updatedControlCenters);
+        // Optionally, show a success message to the user
+        setSuccessMessage('Collateral manager successfully assigned to control center.');
+      } else {
+        // Handle the error scenario, show an error message or take appropriate action
+        setErrorMessage('Failed to assign collateral manager to control center.');
+      }
+    } catch (error) {
+      // Handle any errors that occur during the API request
+      console.error('Error assigning collateral manager:', error);
+      setErrorMessage('Error assigning collateral manager. Please try again.');
+    }
+  } else {
+    // If the user cancels the update, do nothing
+    console.log('Update cancelled by user');
+  }
 };
 
 const handleManagerClick = async (center) => {
@@ -199,13 +234,13 @@ const handleManagerClick = async (center) => {
         </Modal.Footer>
       </Modal>
 
-            {successMessage && <div className='success text-success'>{successMessage}</div>}
-            {errorMessage && <div className='error'>{errorMessage}</div>}      
+              
       {activeTab === 'ControlCenters' && (
         <div>
           <hr />
           <div className='d-flex justify-content-between align-items-center'>
             <h4 className='text-secondary mx-2' style={{ marginRight: '5px', color:'#666666' }}><FaClipboardList />  Control Centers</h4>
+            
           <a href='/collateral-manager-register'>
           <Button variant="" style={{fontSize:"12px", backgroundColor:'#001b42', color:'white'}} >
           <FaPlus style={{ marginRight: '5px', fontSize:'15px' }} />
@@ -214,6 +249,8 @@ const handleManagerClick = async (center) => {
           </a>
           </div>
           <hr />
+          {successMessage && <div className='success text-success'>{successMessage}</div>}
+            {errorMessage && <div className='error'>{errorMessage}</div>}   
           {message && (
   <div className={`alert ${isSuccess ? 'alert-success' : 'alert-danger'}`} role="alert">
     {message}
@@ -243,17 +280,19 @@ const handleManagerClick = async (center) => {
       <td>{center.seller_full_name}</td>
       <td style={{fontFamily:'verdana', fontWeight:'bold',fontSize:'15px'}}>{center.assigned_agent_full_name}</td>
       <td>
-  <select 
-    className="form-select" 
-    value={center.assigned_collateral_agent}
-    onChange={(e) => handleCollateralManagerChange(center.id, e)}
-    style={{ boxShadow: 'none', border: '1px solid #ced4da', borderRadius: '4px', background:'#fff', color:'#666666', padding:'5px' }} // Custom inline styles for additional styling
-  >
-    <option value="">Select collateral manager</option>
-    {collateralManagers.map(manager => (
-      <option key={manager.id} value={manager.id}>{manager.full_name}</option>
-    ))}
-  </select>
+   
+<select 
+  className="form-select" 
+  value={center.assigned_collateral_agent ? center.assigned_collateral_agent.id : ""} // Use ID for value
+  onChange={(e) => handleCollateralManagerChange(center.id, e)}
+  style={{ boxShadow: 'none', border: '1px solid #ced4da', borderRadius: '4px', background:'#fff', color:'#666666', padding:'5px' }} // Custom inline styles for additional styling
+>
+  <option value="">Select collateral manager</option>
+  {collateralManagers.map(manager => (
+    <option key={manager.id} value={manager.id}>{manager.full_name}</option> // Display manager's name
+  ))}
+</select>
+
 </td>
       <td>
         <button className="btn btn-sm text-light" style={{backgroundColor:'#001b42', fontSize:'10px', width:'90px', fontWeight:'bold'}} onClick={() => handleManagerClick(center)}>View Details</button>
